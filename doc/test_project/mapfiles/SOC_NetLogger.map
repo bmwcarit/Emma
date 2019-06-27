@@ -1,0 +1,38 @@
+// Emma - Emma Memory and Mapfile Analyser
+// Copyright (C) 2019 The Emma authors
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>
+
+Image Summary
+
+  Section              Base      Size(hex)    Size(dec)  SecOffs
+  .netlog_text         00000000  0002ed00     00065536   0000000
+  .netlog_rodata       0002ed00  00010000     00065536   0000000
+  .netlog_data         0003ed00  00010000     00065536   0000000
+  .netlog_bss          0004ed00  00010000     00065536   0000000
+  .netlog_heap         0005ed00  00010000     00065536   0000000
+  .netlog_stack        0006ed00  00010000     00065536   0000000
+
+Module Summary
+
+  Origin+Size    Section          Module
+00000000+000400  .text            main.o
+00000400+009c40  .text            glibc.o
+0000a040+002800  .text            netlog_driver.o
+0000c840+005000  .text            netlog_filter.o
+00011840+007530  .text            netlog_network_handler.o
+00018d70+00c350  .text            netlog_transfer.o
+000250c0+009c40  .text            netlog_connection.o
+
+Global Symbols (sorted alphabetically)

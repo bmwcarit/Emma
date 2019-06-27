@@ -1,0 +1,3 @@
+[submodule "MAdZ-configs"]
+	path = MAdZ-configs
+	url = git@cc-github.bmwgroup.net:marcelschmalzlpartner/MAdZ-configs.git

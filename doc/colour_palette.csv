@@ -1,0 +1,8 @@
+Colour;HSL(A);RGB(A);RGBA (hex)
+Yellow;34, 255, 192;255, 230, 128;ffe680ff
+Light orange;17, 255, 213;255, 204, 170;ffccaaff
+Dark orange;17, 145, 204;233, 198, 175;e9c6afff
+Light blue;136, 145, 204;175, 221, 233;afdde9ff
+Green;68, 145, 204;198, 233, 175;c6e9afff
+Light grey;0, 0, 236;236, 236, 236;ecececff
+Grey;0, 0, 204;204, 204, 204;ccccccff

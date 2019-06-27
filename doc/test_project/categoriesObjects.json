@@ -1,0 +1,53 @@
+{
+  "Identifiers": [
+    "identifiers.o"
+  ],
+  "Globals": [
+    "globals.o"
+  ],
+  "MCU_RTOS": [
+    "os_scheduler.o",
+    "os_tick.o",
+    "os_heap.o",
+    "os_queue.o",
+    "os_diagnostics.o"
+    ],
+    "MCU_CAN_Stack": [
+    "can_driver.o",
+    "can_prot_frame.o",
+    "can_prot_transfer.o",
+    "can_prot_message.o",
+    "can_prot_connection.o",
+    "can_prot_control.o",
+    "can_prot_firmware.o"
+  ],
+  "SOC_OperatingSystem": [
+    "kernel.o",
+    "kernel_api.o",
+    "scheduler.o",
+    "memory_manager.o",
+    "network_manager.o",
+    "process_manager.o",
+    "ethernet_driver.o",
+    "tcp_ip_stack.o",
+    "display_driver.o",
+    "touch_driver.o"
+  ],
+  "SOC_ApplicationLogging": [
+    "netlog_lib.o",
+    "logging.o"
+  ],
+  "SOC_ApplicationGraphics": [
+    "gfx_lib.o",
+    "touch_screen.o",
+    "gui_main.o",
+    "gui_animations.o"
+  ],
+  "SOC_NetLog": [
+    "netlog_driver.o",
+    "netlog_filter.o",
+    "netlog_network_handler.o",
+    "netlog_transfer.o",
+    "netlog_connection.o"
+  ]
+}

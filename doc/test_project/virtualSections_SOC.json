@@ -1,0 +1,18 @@
+{
+    "APP": [
+        ".app_text",
+        ".app_rodata",
+        ".app_data",
+        ".app_bss",
+        ".app_heap",
+        ".app_stack"
+    ],
+    "NETLOG": [
+        ".netlog_text",
+        ".netlog_rodata",
+        ".netlog_data",
+        ".netlog_bss",
+        ".netlog_heap",
+        ".netlog_stack"
+    ]
+}

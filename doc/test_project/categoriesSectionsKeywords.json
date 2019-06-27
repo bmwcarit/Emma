@@ -1,0 +1,20 @@
+{
+  "InterruptVectors": [
+    "vectors"
+  ],
+  "Code": [
+    "text",
+    "os"
+  ],
+  "ConstantData": [
+    "rodata"
+  ],
+  "StaticData": [
+    "data",
+    "bss"
+  ],
+  "DynamicData": [
+    "stack",
+    "heap"
+  ]
+}

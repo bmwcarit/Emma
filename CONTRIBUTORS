@@ -1,0 +1,44 @@
+----------------------------------------------------------------
+Authors ordered by first contribution.
+
+
+Tags:
+N: Full name
+I: Initials (besides the name initials can be used (alternatively to someones name) to identify someones comments)
+E: Email address
+K: PGP key ID and fingerprint
+F: Files and directories with globbing patterns patterns
+L: Link providing more information about this individual
+D: Description
+C: Country
+
+Use of above tags multiple times allowed.
+A new entry starts with ````````````````````.
+An entry ends with two newlines.
+----------------------------------------------------------------
+
+
+````````````````````
+N: Marcel Schmalzl
+I: MSc
+E: marcel.schmalzl@partner.bmw.de
+F: *
+D: Emma originator
+L: https://github.com/holzkohlengrill/
+C: Germany
+
+````````````````````
+N: Felix Müller
+I: FM
+E: felix.mm.mueller@partner.bmw.de
+F: *
+D: Emma maintainer
+C: Germany
+
+````````````````````
+N: Gergő Kocsis
+I: AGK
+E: andras-gergoe.kocsis@partner.bmw.de
+F: *
+D: Emma maintainer
+C: Germany
