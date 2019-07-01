@@ -3,13 +3,13 @@ __pycache__
 .test
 .delta_config*
 doc/tmp
-doc/callgraph_uml/
-doc/call_graph_uml/
-genDoc/callgraph_uml/
-genDoc/call_graph_uml/
 doc/test/
 doc/test_project/memStats
 doc/test_project/results
+
+# Exclude the content of the "genDoc/call_graph_uml" folder except the .png files
+genDoc/call_graph_uml/*
+!genDoc/call_graph_uml/*.png
 
 # Exclude PyCharm config files but include inspection profiles
 .idea/*
