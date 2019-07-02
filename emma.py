@@ -147,7 +147,7 @@ def parseArgs(arguments=""):
     )
     parser.add_argument(
         "--noprompt",
-        help="Exit programm with an error if a user prompt occurs; useful for CI systems",
+        help="Exit program with an error if a user prompt occurs; useful for CI systems",
         action="store_true",
         default=False
     )
