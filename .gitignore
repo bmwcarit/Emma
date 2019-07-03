@@ -14,3 +14,6 @@ genDoc/call_graph_uml/*
 # Exclude PyCharm config files but include inspection profiles
 .idea/*
 !.idea/inspectionProfiles/
+
+# Exclude the coverate reports
+tests/other_files/coverage/reports/*
