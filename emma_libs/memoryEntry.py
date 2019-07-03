@@ -146,8 +146,7 @@ class SectionEntry(MemEntry):
                     (self.mapfile == other.mapfile)           and
                     (self.vasName == other.vasName))
         else:
-            # TODO : This is wrong, NotImplemented will be evaluated as True! (AGK)
-            return NotImplemented
+            raise NotImplementedError("Operator __eq__ not defined between " + type(self).__name__ + " and " + type(other).__name__)
 
     def __hash__(self):
         return hash((self.addressStart, self.addressEnd, self.section, self.configID, self.mapfile, self.vasName))
@@ -169,8 +168,7 @@ class ObjectEntry(MemEntry):
                     (self.vasName == other.vasName)                and
                     (self.vasSectionName == other.vasSectionName))
         else:
-            # TODO : This is wrong, NotImplemented will be evaluated as True! (AGK)
-            return NotImplemented
+            raise NotImplementedError("Operator __eq__ not defined between " + type(self).__name__ + " and " + type(other).__name__)
 
     def __hash__(self):
         return hash((self.addressStart, self.addressEnd, self.section, self.moduleName, self.configID, self.mapfile, self.vasName, self.vasSectionName))
