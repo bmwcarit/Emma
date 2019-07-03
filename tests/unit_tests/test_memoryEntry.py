@@ -407,5 +407,5 @@ class ObjectEntryTestCase(unittest.TestCase):
         self.assertEqual(entry.__hash__(), calculated_hash)
 
 
-if __name__ == '__main__':
+if "__main__" == __name__:
     unittest.main()
