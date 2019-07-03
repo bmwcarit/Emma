@@ -56,13 +56,13 @@ class MemEntry:
         # Start address
         self.addressStartHex, self.addressStart = shared_libs.emma_helper.unifyAddress(addressStart)
 
-        if addressLength is None:
+        if addressLength is None and addressEnd is None:
+            sc.error("Either addressLength or addressEnd must be given!")
+            sys.exit(-10)
+        elif addressLength is None:
             self.__setAddressesGivenEnd(addressEnd)
         elif addressEnd is None:
             self.__setAddressesGivenLength(addressLength)
-        elif addressLength is None and addressEnd is None:
-            sc.error("Either addressLength or addressEnd must be given!")
-            sys.exit(-10)
         else:
             # TODO: Add verbose output here (MSc)
             # TODO: if self.args.verbosity <= 1:
@@ -92,6 +92,7 @@ class MemEntry:
         self.containingOthersFlag = None
         self.overlappingOthersFlag = None
 
+        # TODO Rename the members addressStartOriginal and addressEndOriginal to addressStartHexOriginal and addressEndHexOriginal respectively (AGK)
         # Original values. These are stored in case the element is moved later. Then the original values will be still accessible.
         self.addressStartOriginal = self.addressStartHex
         self.addressLengthOriginal = self.addressLength
@@ -119,16 +120,6 @@ class MemEntry:
         """
         return self.configID == other.configID
 
-    def equalSection(self, other):
-        if isinstance(other, MemEntry):
-            return self.addressStart == other.addressStart and self.addressEnd == other.addressEnd and self.section == other.section and self.configID == other.configID and self.mapfile == other.mapfile and self.vasName == other.vasName
-        return NotImplemented
-
-    def equalObject(self, other):
-        if isinstance(other, MemEntry):
-            return self.addressStart == other.addressStart and self.addressEnd == other.addressEnd and self.section == other.section and self.moduleName == other.moduleName and self.configID == other.configID and self.mapfile == other.mapfile and self.vasName == other.vasName
-        return NotImplemented
-
     def __lt__(self, other):
         """
         We only want the `<` operator to compare the address start element (dec); nothing else
@@ -148,8 +139,14 @@ class SectionEntry(MemEntry):
 
     def __eq__(self, other):
         if isinstance(other, MemEntry):
-            return self.addressStart == other.addressStart and self.addressEnd == other.addressEnd and self.section == other.section and self.configID == other.configID and self.mapfile == other.mapfile and self.vasName == other.vasName
+            return ((self.addressStart == other.addressStart) and
+                    (self.addressEnd == other.addressEnd)     and
+                    (self.section == other.section)           and
+                    (self.configID == other.configID)         and
+                    (self.mapfile == other.mapfile)           and
+                    (self.vasName == other.vasName))
         else:
+            # TODO : This is wrong, NotImplemented will be evaluated as True! (AGK)
             return NotImplemented
 
     def __hash__(self):
@@ -163,15 +160,16 @@ class ObjectEntry(MemEntry):
 
     def __eq__(self, other):
         if isinstance(other, MemEntry):
-            return self.addressStart == other.addressStart and  \
-                   self.addressEnd == other.addressEnd and      \
-                   self.section == other.section and            \
-                   self.moduleName == other.moduleName and      \
-                   self.configID == other.configID and          \
-                   self.mapfile == other.mapfile and            \
-                   self.vasName == other.vasName and            \
-                   self.vasSectionName == other.vasSectionName
+            return ((self.addressStart == other.addressStart)      and
+                    (self.addressEnd == other.addressEnd)          and
+                    (self.section == other.section)                and
+                    (self.moduleName == other.moduleName)          and
+                    (self.configID == other.configID)              and
+                    (self.mapfile == other.mapfile)                and
+                    (self.vasName == other.vasName)                and
+                    (self.vasSectionName == other.vasSectionName))
         else:
+            # TODO : This is wrong, NotImplemented will be evaluated as True! (AGK)
             return NotImplemented
 
     def __hash__(self):
