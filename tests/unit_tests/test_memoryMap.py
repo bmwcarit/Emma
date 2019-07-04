@@ -30,11 +30,12 @@ import emma_libs.memoryMap
 
 class MemEntryData:
     """
-    This class contains two member variables, the addressStart and the addressEnd.
-    The purpose of it is that from the objects of this class we can generate MemEntry Objects that
+    The purpose of this class is that from its objects we can generate MemEntry Objects that
     only differ from each other by the address and length values.
+    If the addressEnd is None, then we an entry with zero length will be created.
+    In this case the addressEnd needs to have the same value as addressStart.
     The reason why not the addressLength is used here that the specific cases can be easier defined with the addressEnd.
-    The MemEntry objects can be generated with the CreateMemEntryObjects() function.
+    The MemEntry objects can be generated with the CreateMemEntryObjects() function from these objects.
     """
 
     def __init__(self, addressStart, addressEnd):
@@ -49,26 +50,34 @@ def CreateMemEntryObjects(sectionDataContainer, objectDataContainer):
     :param objectDataContainer: List of MemEntry objects from which the objectContainer elements will be created.
     :return: sectionContainer, objectContainer lists that can be processed with the caluclateObjectsInSections() function.
     """
+
     sectionContainer = []
-    objectContainer = []
     for element in sectionDataContainer:
-        sectionContainer.append(emma_libs.memoryEntry.MemEntry(tag="", vasName="", section=".text", moduleName="",
-                                                               mapfileName="", configID="MCU", memType="INT_FLASH",
-                                                               category="<Unspecified>",
-                                                               addressStart=element.addressStart,
-                                                               addressLength=None, addressEnd=element.addressEnd,
-                                                               vasSectionName=None))
+        sectionContainer.append(emma_libs.memoryEntry.SectionEntry(tag="", vasName="", section=".text", moduleName="",
+                                                                   mapfileName="", configID="MCU", memType="INT_FLASH",
+                                                                   category="<Unspecified>", vasSectionName=None,
+                                                                   addressStart=element.addressStart,
+                                                                   addressLength=0 if element.addressEnd is None else None,
+                                                                   addressEnd=element.addressEnd))
+    objectContainer = []
     for element in objectDataContainer:
-        objectContainer.append(
-            emma_libs.memoryEntry.MemEntry(tag="", vasName="", section=".text", moduleName=".object",
-                                           mapfileName="", configID="MCU", memType="INT_FLASH",
-                                           category="<Unspecified>", addressStart=element.addressStart,
-                                           addressLength=None, addressEnd=element.addressEnd, vasSectionName=None))
+        objectContainer.append(emma_libs.memoryEntry.ObjectEntry(tag="", vasName="", section=".text", moduleName=".object",
+                                                                 mapfileName="", configID="MCU", memType="INT_FLASH",
+                                                                 category="<Unspecified>", vasSectionName=None,
+                                                                 addressStart=element.addressStart,
+                                                                 addressLength=0 if element.addressEnd is None else None,
+                                                                 addressEnd=element.addressEnd))
     return sectionContainer, objectContainer
 
 
 class CalculateObjectsInSectionsTestCase(unittest.TestCase):
     def CheckSectionNonChangingData(self, sectionToCheck, sourceSection):
+        """
+        Checks the data of a section that shall never be changed during caluclateObjectsInSections().
+        :param sectionToCheck: This is the section that was calculated.
+        :param sourceSection: This is the section from which the sectionToCheck was calculated.
+        :return: None
+        """
         self.assertEqual(sectionToCheck.memTypeTag, sourceSection.memTypeTag)
         self.assertEqual(sectionToCheck.vasName, sourceSection.vasName)
         self.assertEqual(sectionToCheck.vasSectionName, sourceSection.vasSectionName)
@@ -89,6 +98,12 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         self.assertEqual(sectionToCheck.addressEndOriginal, sourceSection.addressEndOriginal)
 
     def CheckSectionEntry(self, sectionEntry, sourceSection):
+        """
+        Checks a section entry, whether it was created correctly.
+        :param sectionEntry: This is the section entry that was calculated.
+        :param sourceSection: This is the section from which the section entry was calculated
+        :return: None
+        """
         self.CheckSectionNonChangingData(sectionEntry, sourceSection)
         self.assertEqual(sectionEntry.addressStart, sourceSection.addressStart)
         self.assertEqual(sectionEntry.addressLength, 0)
@@ -99,6 +114,14 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         self.assertEqual(sectionEntry.moduleName, OBJECTS_IN_SECTIONS_SECTION_ENTRY)
 
     def CheckSectionReserve(self, sectionReserve, sourceSection, expectedAddressStart, expectedAddressEnd):
+        """
+        Checks a section reserve, whether it was created correctly.
+        :param sectionReserve: This is the section reserve that was calculated.
+        :param sourceSection: This is the section from which the section reserve was calculated.
+        :param expectedAddressStart: The AddressStart value that the section reserve must have.
+        :param expectedAddressEnd: The AddressEnd value that the section reserve must have.
+        :return: None
+        """
         self.CheckSectionNonChangingData(sectionReserve, sourceSection)
         self.assertEqual(sectionReserve.addressStart, expectedAddressStart)
         self.assertEqual(sectionReserve.addressLength, (expectedAddressEnd - expectedAddressStart + 1))
@@ -109,44 +132,521 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         self.assertEqual(sectionReserve.moduleName, OBJECTS_IN_SECTIONS_SECTION_RESERVE)
 
     def test_SingleSection(self):
+        """
+        S  |---|
+        O
+        """
+        # Creating the sections and objects for the test
         addressStart = 0x0100
-        addressEnd = 0x0100
+        addressEnd = 0x01FF
         sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(addressStart, addressEnd)], [])
+        # Calculating the objectsInSections list
         objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
-        # Check whether the SectionEntry was created properly
+
+        # Check the number of created elements: sectionEntry + sectionReserve
+        self.assertEqual(len(objectsInSections), 2)
+        # Check whether the sectionEntry was created properly
         self.CheckSectionEntry(objectsInSections[0], sectionContainer[0])
-        # Check whether the SectionReserve was created properly
+        # Check whether the sectionReserve was created properly
         self.CheckSectionReserve(objectsInSections[1], sectionContainer[0], addressStart, addressEnd)
 
-"""
-TestFunktion(0,
-             [TestElement(0x0100, 0x01FF)],
-             [TestElement(0x00F0, 0x01FF)])
+    def test_SingleSectionWithZeroObjects(self):
+        """
+        S    |-------|
+        O  | |   |   | |
+        """
+        # Creating the sections and objects for the test
+        sectionAddressStart = 0x0200
+        sectionAddressEnd = 0x03FF
+        firstObjectAddressStart = 0x00100
+        secondObjectAddressStart = 0x0200
+        thirdObjectAddressStart = 0x0300
+        fourthObjectAddressStart = 0x03FF
+        fifthObjectAddressStart = 0x0500
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(sectionAddressStart, sectionAddressEnd)],
+                                                                  [MemEntryData(firstObjectAddressStart, None),
+                                                                   MemEntryData(secondObjectAddressStart, None),
+                                                                   MemEntryData(thirdObjectAddressStart, None),
+                                                                   MemEntryData(fourthObjectAddressStart, None),
+                                                                   MemEntryData(fifthObjectAddressStart, None)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
 
-TestFunktion(1,
-             [TestElement(0x0100, 0x01FF)],
-             [TestElement(0x0100, 0x0110)])
+        # Check the number of created elements: firstObject +
+        #                                       sectionEntry +
+        #                                       secondObject +
+        #                                       thirdObject +
+        #                                       fourthObject +
+        #                                       sectionReserve +
+        #                                       fifthObject
+        self.assertEqual(len(objectsInSections), 7)
+        # Check whether the firstObject was created properly
+        self.assertEqual(objectsInSections[0], objectContainer[0])
+        # Check whether the sectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[1], sectionContainer[0])
+        # Check whether the sectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[2], sectionContainer[0], sectionAddressStart, sectionAddressEnd)
+        # Check whether the secondObject was created properly
+        self.assertEqual(objectsInSections[3], objectContainer[1])
+        # Check whether the thirdObject was created properly
+        self.assertEqual(objectsInSections[4], objectContainer[2])
+        # Check whether the fourthObject was created properly
+        self.assertEqual(objectsInSections[5], objectContainer[3])
+        # Check whether the fifthObject was created properly
+        self.assertEqual(objectsInSections[6], objectContainer[4])
 
-TestFunktion(2,
-             [TestElement(0x0100, 0x01FF)],
-             [TestElement(0x0110, 0x0120)])
+    def test_MultipleSectionsAndObjectsWithZeroLengths(self):
+        """
+        S     | | | | |
+        O   |   | |---|
+        """
+        # Creating the sections and objects for the test
+        firstSectionAddressStart = 0x0150
+        secondSectionAddressStart = 0x0200
+        thirdSectionAddressStart = 0x0300
+        fourthSectionAddressStart = 0x0350
+        fifthSectionAddressStart = 0x03FF
+        firstObjectAddressStart = 0x0100
+        secondObjectAddressStart = 0x0200
+        thirdObjectAddressStart = 0x0300
+        thirdObjectAddressEnd = 0x03FF
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(firstSectionAddressStart, None),
+                                                                   MemEntryData(secondSectionAddressStart, None),
+                                                                   MemEntryData(thirdSectionAddressStart, None),
+                                                                   MemEntryData(fourthSectionAddressStart, None),
+                                                                   MemEntryData(fifthSectionAddressStart, None)],
+                                                                  [MemEntryData(firstObjectAddressStart, None),
+                                                                   MemEntryData(secondObjectAddressStart, None),
+                                                                   MemEntryData(thirdObjectAddressStart, thirdObjectAddressEnd)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
 
-TestFunktion(3,
-             [TestElement(0x0100, 0x01FF)],
-             [TestElement(0x01F0, 0x0210)])
+        # Check the number of created elements: firstObject +
+        #                                       firstSectionEntry +
+        #                                       secondSectionEntry +
+        #                                       secondObject +
+        #                                       thirdSectionEntry +
+        #                                       thirdObject +
+        #                                       fourthSectionEntry +
+        #                                       fifthSectionEntry
+        self.assertEqual(len(objectsInSections), 8)
+        # Check whether the firstObject was created properly
+        self.assertEqual(objectsInSections[0], objectContainer[0])
+        # Check whether the firstSectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[1], sectionContainer[0])
+        # Check whether the secondSectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[2], sectionContainer[1])
+        # Check whether the secondObject was created properly
+        self.assertEqual(objectsInSections[3], objectContainer[1])
+        # Check whether the thirdSectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[4], sectionContainer[2])
+        # Check whether the thirdObject was created properly
+        self.assertEqual(objectsInSections[5], objectContainer[2])
+        # Check whether the fourthSectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[6], sectionContainer[3])
+        # Check whether the fifthSectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[7], sectionContainer[4])
 
-TestFunktion(4,
-             [TestElement(0x0100, 0x01FF)],
-             [TestElement(0x0210, 0x0220)])
+    def test_MultipleSectionsAndObjectsWithContainmentFlag(self):
+        """
+        S  |--| |--|
+        O    |---|
+        """
+        # Creating the sections and objects for the test
+        firstSectionAddressStart = 0x0100
+        firstSectionAddressEnd = 0x01FF
+        secondSectionAddressStart = 0x0300
+        secondSectionAddressEnd = 0x03FF
+        objectAddressStart = 0x0150
+        objectAddressEnd = 0x034F
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(firstSectionAddressStart, firstSectionAddressEnd),
+                                                                   MemEntryData(secondSectionAddressStart, secondSectionAddressEnd)],
+                                                                  [MemEntryData(objectAddressStart, objectAddressEnd)])
+        # Editing the sections: switching the the containmentFlags on
+        sectionContainer[0].containmentFlag = True
+        sectionContainer[1].containmentFlag = True
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
 
-TestFunktion(5,
-             [TestElement(0x0100, 0x01FF)],
-             [TestElement(0x0080, 0x0085), TestElement(0x0090, 0x0110), TestElement(0x0150, 0x0180), TestElement(0x01F0, 0x001FE), TestElement(0x01FF, 0x01FF), TestElement(0x0210, 0x0220)])
+        # Check the number of created elements: firstSectionEntry +
+        #                                       object +
+        #                                       secondSectionEntry
+        self.assertEqual(len(objectsInSections), 3)
+        # Check whether the firstSectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[0], sectionContainer[0])
+        # Check whether the object was created properly
+        self.assertEqual(objectsInSections[1], objectContainer[0])
+        # Check whether the secondSectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[2], sectionContainer[1])
 
-TestFunktion(6,
-             [TestElement(0x0100, 0x0124), TestElement(0x0125, 0x0149), TestElement(0x0150, 0x0174),TestElement(0x0175, 0x01FF)],
-             [TestElement(0x0080, 0x0085), TestElement(0x0090, 0x0110), TestElement(0x0150, 0x0180), TestElement(0x01F0, 0x001FE), TestElement(0x01FF, 0x01FF), TestElement(0x0210, 0x0220)])
-"""
+    def test_SectionFullWithSingleObject(self):
+        """
+        S  |----|
+        O  |----|
+        """
+        # Creating the sections and objects for the test
+        sectionAddressStart = 0x0200
+        sectionAddressEnd = 0x02FF
+        objectAddressStart = 0x0200
+        objectAddressEnd = 0x02FF
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(sectionAddressStart, sectionAddressEnd)], [MemEntryData(objectAddressStart, objectAddressEnd)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+
+        # Check the number of created elements: sectionEntry + object
+        self.assertEqual(len(objectsInSections), 2)
+        # Check whether the sectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[0], sectionContainer[0])
+        # Check whether the object was created properly
+        self.assertEqual(objectsInSections[1], objectContainer[0])
+
+    def test_SectionFullWithTwoObjects(self):
+        """
+        S  |-----|
+        O  |--|--|
+        """
+        # Creating the sections and objects for the test
+        sectionAddressStart = 0x0400
+        sectionAddressEnd = 0x05FF
+        firstObjectAddressStart = 0x0400
+        firstObjectAddressEnd = 0x04FF
+        secondObjectAddressStart = 0x0500
+        secondObjectAddressEnd = 0x05FF
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(sectionAddressStart, sectionAddressEnd)],
+                                                                  [MemEntryData(firstObjectAddressStart, firstObjectAddressEnd), MemEntryData(secondObjectAddressStart, secondObjectAddressEnd)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+
+        # Check the number of created elements: sectionEntry + firstObject + secondObject
+        self.assertEqual(len(objectsInSections), 3)
+        # Check whether the sectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[0], sectionContainer[0])
+        # Check whether the firstObject was created properly
+        self.assertEqual(objectsInSections[1], objectContainer[0])
+        # Check whether the secondObject was created properly
+        self.assertEqual(objectsInSections[2], objectContainer[1])
+
+    def test_SectionFullWithOverlappingSingleObjectAtStart(self):
+        """
+        S     |-----|
+        O  |--------|
+        """
+        # Creating the sections and objects for the test
+        sectionAddressStart = 0x0800
+        sectionAddressEnd = 0x09FF
+        objectAddressStart = 0x0700
+        objectAddressEnd = 0x09FF
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(sectionAddressStart, sectionAddressEnd)], [MemEntryData(objectAddressStart, objectAddressEnd)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+
+        # Check the number of created elements: object + sectionEntry
+        self.assertEqual(len(objectsInSections), 2)
+        # Check whether the object was created properly
+        self.assertEqual(objectsInSections[0], objectContainer[0])
+        # Check whether the sectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[1], sectionContainer[0])
+
+    def test_SectionFullWithOverlappingSingleObjectAtEnd(self):
+        """
+        S  |-----|
+        O  |--------|
+        """
+        # Creating the sections and objects for the test
+        sectionAddressStart = 0x0600
+        sectionAddressEnd = 0x06FF
+        objectAddressStart = 0x0600
+        objectAddressEnd = 0x07FF
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(sectionAddressStart, sectionAddressEnd)], [MemEntryData(objectAddressStart, objectAddressEnd)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+
+        # Check the number of created elements: sectionEntry + object
+        self.assertEqual(len(objectsInSections), 2)
+        # Check whether the sectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[0], sectionContainer[0])
+        # Check whether the object was created properly
+        self.assertEqual(objectsInSections[1], objectContainer[0])
+
+    def test_SectionFullWithOverlappingSingleObjectAtStartAndEnd(self):
+        """
+        S     |-----|
+        O  |-----------|
+        """
+        # Creating the sections and objects for the test
+        sectionAddressStart = 0x0200
+        sectionAddressEnd = 0x02FF
+        objectAddressStart = 0x0100
+        objectAddressEnd = 0x03FF
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(sectionAddressStart, sectionAddressEnd)], [MemEntryData(objectAddressStart, objectAddressEnd)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+
+        # Check the number of created elements: object + sectionEntry
+        self.assertEqual(len(objectsInSections), 2)
+        # Check whether the object was created properly
+        self.assertEqual(objectsInSections[0], objectContainer[0])
+        # Check whether the sectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[1], sectionContainer[0])
+
+    def test_SectionNotFullWithSingleObjectAtStart(self):
+        """
+        S     |-----|
+        O     |--|
+        """
+        # Creating the sections and objects for the test
+        sectionAddressStart = 0x0400
+        sectionAddressEnd = 0x04FF
+        objectAddressStart = 0x0400
+        objectAddressEnd = 0x0410
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(sectionAddressStart, sectionAddressEnd)], [MemEntryData(objectAddressStart, objectAddressEnd)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+
+        # Check the number of created elements: sectionEntry + object + sectionReserve
+        self.assertEqual(len(objectsInSections), 3)
+        # Check whether the sectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[0], sectionContainer[0])
+        # Check whether the object was created properly
+        self.assertEqual(objectsInSections[1], objectContainer[0])
+        # Check whether the sectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[2], sectionContainer[0], (objectAddressEnd + 1), sectionAddressEnd)
+
+    def test_SectionNotFullWithSingleObjectAtEnd(self):
+        """
+        S     |-----|
+        O        |--|
+        """
+        # Creating the sections and objects for the test
+        sectionAddressStart = 0x0500
+        sectionAddressEnd = 0x05FF
+        objectAddressStart = 0x0550
+        objectAddressEnd = 0x05FF
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(sectionAddressStart, sectionAddressEnd)], [MemEntryData(objectAddressStart, objectAddressEnd)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+
+        # Check the number of created elements: sectionEntry + sectionReserve + object
+        self.assertEqual(len(objectsInSections), 3)
+        # Check whether the sectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[0], sectionContainer[0])
+        # Check whether the sectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[1], sectionContainer[0], sectionAddressStart, (objectAddressStart - 1))
+        # Check whether the object was created properly
+        self.assertEqual(objectsInSections[2], objectContainer[0])
+
+    def test_SectionNotFullWithSingleObjectAtMiddle(self):
+        """
+        S    |------|
+        O      |--|
+        """
+        # Creating the sections and objects for the test
+        sectionAddressStart = 0x0500
+        sectionAddressEnd = 0x05FF
+        objectAddressStart = 0x0550
+        objectAddressEnd = 0x05A0
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(sectionAddressStart, sectionAddressEnd)], [MemEntryData(objectAddressStart, objectAddressEnd)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+
+        # Check the number of created elements: sectionEntry + sectionReserve + object + sectionReserve
+        self.assertEqual(len(objectsInSections), 4)
+        # Check whether the sectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[0], sectionContainer[0])
+        # Check whether the sectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[1], sectionContainer[0], sectionAddressStart, (objectAddressStart - 1))
+        # Check whether the object was created properly
+        self.assertEqual(objectsInSections[2], objectContainer[0])
+        # Check whether the sectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[3], sectionContainer[0], (objectAddressEnd + 1), sectionAddressEnd)
+
+    def test_SectionNotFullWithSingleObjectBeforeStart(self):
+        """
+        S          |--|
+        O    |--|
+        """
+        # Creating the sections and objects for the test
+        sectionAddressStart = 0x0500
+        sectionAddressEnd = 0x05FF
+        objectAddressStart = 0x0300
+        objectAddressEnd = 0x03FF
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(sectionAddressStart, sectionAddressEnd)], [MemEntryData(objectAddressStart, objectAddressEnd)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+
+    def test_SectionNotFullWithOverlappingSingleObjectBeforeStart(self):
+        """
+        S        |--------|
+        O    |-------|
+        """
+        # Creating the sections and objects for the test
+        sectionAddressStart = 0x0500
+        sectionAddressEnd = 0x06FF
+        objectAddressStart = 0x0400
+        objectAddressEnd = 0x05FF
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(sectionAddressStart, sectionAddressEnd)], [MemEntryData(objectAddressStart, objectAddressEnd)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+
+        # Check the number of created elements: object + sectionEntry + sectionReserve
+        self.assertEqual(len(objectsInSections), 3)
+        # Check whether the object was created properly
+        self.assertEqual(objectsInSections[0], objectContainer[0])
+        # Check whether the sectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[1], sectionContainer[0])
+        # Check whether the sectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[2], sectionContainer[0], (objectAddressEnd + 1), sectionAddressEnd)
+
+    def test_SectionNotFullWithOverlappingSingleObjectAfterEnd(self):
+        """
+        S    |--------|
+        O         |-------|
+        """
+        # Creating the sections and objects for the test
+        sectionAddressStart = 0x0200
+        sectionAddressEnd = 0x03FF
+        objectAddressStart = 0x0300
+        objectAddressEnd = 0x04FF
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(sectionAddressStart, sectionAddressEnd)], [MemEntryData(objectAddressStart, objectAddressEnd)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+
+        # Check the number of created elements: sectionEntry + sectionReserve + object
+        self.assertEqual(len(objectsInSections), 3)
+        # Check whether the sectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[0], sectionContainer[0])
+        # Check whether the sectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[1], sectionContainer[0], sectionAddressStart, (objectAddressStart - 1))
+        # Check whether the object was created properly
+        self.assertEqual(objectsInSections[2], objectContainer[0])
+
+    def test_SectionNotFullWithMultipleObjects(self):
+        """
+        S         |-------------|
+        O   |-| |---| |--| |--|   |--|
+        """
+        # Creating the sections and objects for the test
+        sectionAddressStart = 0x0100
+        sectionAddressEnd = 0x01FF
+        firstObjectAddressStart = 0x0080
+        firstObjectAddressEnd = 0x0085
+        secondObjectAddressStart = 0x0090
+        secondObjectAddressEnd = 0x00110
+        thirdObjectAddressStart = 0x0150
+        thirdObjectAddressEnd = 0x0180
+        fourthObjectAddressStart = 0x01A0
+        fourthObjectAddressEnd = 0x01D0
+        fifthObjectAddressStart = 0x0210
+        fifthObjectAddressEnd = 0x0220
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(sectionAddressStart, sectionAddressEnd)],
+                                                                  [MemEntryData(firstObjectAddressStart, firstObjectAddressEnd),
+                                                                   MemEntryData(secondObjectAddressStart, secondObjectAddressEnd),
+                                                                   MemEntryData(thirdObjectAddressStart, thirdObjectAddressEnd),
+                                                                   MemEntryData(fourthObjectAddressStart, fourthObjectAddressEnd),
+                                                                   MemEntryData(fifthObjectAddressStart, fifthObjectAddressEnd)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+
+        # Check the number of created elements: sectionEntry +
+        #                                       firstObject +
+        #                                       secondObject + firstSectionReserve +
+        #                                       thirdObject + secondSectionReserve +
+        #                                       fourthObject + thirdSectionReserve +
+        #                                       fifthObject
+        self.assertEqual(len(objectsInSections), 9)
+        # Check whether the firstObject was created properly
+        self.assertEqual(objectsInSections[0], objectContainer[0])
+        # Check whether the secondObject was created properly
+        self.assertEqual(objectsInSections[1], objectContainer[1])
+        # Check whether the sectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[2], sectionContainer[0])
+        # Check whether the firstSectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[3], sectionContainer[0], (secondObjectAddressEnd + 1), (thirdObjectAddressStart - 1))
+        # Check whether the thirdObject was created properly
+        self.assertEqual(objectsInSections[4], objectContainer[2])
+        # Check whether the secondSectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[5], sectionContainer[0], (thirdObjectAddressEnd + 1), (fourthObjectAddressStart - 1))
+        # Check whether the fourthObject was created properly
+        self.assertEqual(objectsInSections[6], objectContainer[3])
+        # Check whether the thirdSectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[7], sectionContainer[0], (fourthObjectAddressEnd + 1), sectionAddressEnd)
+        # Check whether the fifthObject was created properly
+        self.assertEqual(objectsInSections[8], objectContainer[4])
+
+    def test_MultipleSectionsWithMultipleObjects(self):
+        """
+        S       |--|---| |------|    |--|
+        O   |-| |-|  |---| |--| |--|
+        """
+        # Creating the sections and objects for the test
+        firstSectionAddressStart = 0x0100
+        firstSectionAddressEnd = 0x01FF
+        secondSectionAddressStart = 0x0200
+        secondSectionAddressEnd = 0x02FF
+        thirdSectionAddressStart = 0x0400
+        thirdSectionAddressEnd = 0x05FF
+        fourthSectionAddressStart = 0x0700
+        fourthSectionAddressEnd = 0x07FF
+        firstObjectAddressStart = 0x0080
+        firstObjectAddressEnd = 0x008F
+        secondObjectAddressStart = 0x0100
+        secondObjectAddressEnd = 0x001AF
+        thirdObjectAddressStart = 0x0250
+        thirdObjectAddressEnd = 0x03FF
+        fourthObjectAddressStart = 0x0450
+        fourthObjectAddressEnd = 0x04FF
+        fifthObjectAddressStart = 0x0600
+        fifthObjectAddressEnd = 0x063F
+        sectionContainer, objectContainer = CreateMemEntryObjects([MemEntryData(firstSectionAddressStart, firstSectionAddressEnd),
+                                                                   MemEntryData(secondSectionAddressStart, secondSectionAddressEnd),
+                                                                   MemEntryData(thirdSectionAddressStart, thirdSectionAddressEnd),
+                                                                   MemEntryData(fourthSectionAddressStart, fourthSectionAddressEnd)],
+                                                                  [MemEntryData(firstObjectAddressStart, firstObjectAddressEnd),
+                                                                   MemEntryData(secondObjectAddressStart, secondObjectAddressEnd),
+                                                                   MemEntryData(thirdObjectAddressStart, thirdObjectAddressEnd),
+                                                                   MemEntryData(fourthObjectAddressStart, fourthObjectAddressEnd),
+                                                                   MemEntryData(fifthObjectAddressStart, fifthObjectAddressEnd)])
+        # Calculating the objectsInSections list
+        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+
+        # Check the number of created elements: firstObject +
+        #                                       firstSectionEntry +
+        #                                       secondObject + firstSectionReserve +
+        #                                       secondSectionEntry + secondSectionReserve +
+        #                                       thirdSectionObject +
+        #                                       thirdSectionEntry + thirdSectionReserve +
+        #                                       fourthObject + thirdSectionReserve +
+        #                                       fifthObject +
+        #                                       fourthSectionEntry + fourthSectionReserve
+        self.assertEqual(len(objectsInSections), 14)
+        # Check whether the firstObject was created properly
+        self.assertEqual(objectsInSections[0], objectContainer[0])
+        # Check whether the firstSectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[1], sectionContainer[0])
+        # Check whether the secondObject was created properly
+        self.assertEqual(objectsInSections[2], objectContainer[1])
+        # Check whether the firstSectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[3], sectionContainer[0], (secondObjectAddressEnd + 1), firstSectionAddressEnd)
+        # Check whether the secondSectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[4], sectionContainer[1])
+        # Check whether the secondSectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[5], sectionContainer[1], secondSectionAddressStart, (thirdObjectAddressStart - 1))
+        # Check whether the thirdObject was created properly
+        self.assertEqual(objectsInSections[6], objectContainer[2])
+        # Check whether the thirdSectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[7], sectionContainer[2])
+        # Check whether the thirdSectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[8], sectionContainer[2], thirdSectionAddressStart, (fourthObjectAddressStart - 1))
+        # Check whether the fourthObject was created properly
+        self.assertEqual(objectsInSections[9], objectContainer[3])
+        # Check whether the thirdSectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[10], sectionContainer[2], (fourthObjectAddressEnd + 1), thirdSectionAddressEnd)
+        # Check whether the fifthObject was created properly
+        self.assertEqual(objectsInSections[11], objectContainer[4])
+        # Check whether the fourthSectionEntry was created properly
+        self.CheckSectionEntry(objectsInSections[12], sectionContainer[3])
+        # Check whether the fourthSectionReserve was created properly
+        self.CheckSectionReserve(objectsInSections[13], sectionContainer[3], fourthSectionAddressStart, fourthSectionAddressEnd)
 
 
 if "__main__" == __name__:

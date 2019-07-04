@@ -110,7 +110,7 @@ def caluclateObjectsInSections(sectionContainer, objectContainer):
                 cutOffTheBeginningOfTheSection(sectionCopy, objectContainerElement.addressEnd + 1)
 
             # Case 3: The object is overlapping the end of the section
-            elif sectionCopy.addressStart < objectContainerElement.addressStart <= sectionCopy.addressEnd < objectContainerElement.addressEnd:
+            elif sectionCopy.addressStart < objectContainerElement.addressStart <= sectionCopy.addressEnd <= objectContainerElement.addressEnd:
                 # Creating the sectionReserve
                 createASectionReserve(sectionCopy, objectContainerElement.addressStart - 1)
                 # This object is overlapping the end of the section. This means that all the following objects will be

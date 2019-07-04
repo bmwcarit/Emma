@@ -120,6 +120,9 @@ class MemEntry:
         """
         return self.configID == other.configID
 
+    def __eq__(self, other):
+        raise NotImplementedError("Operator __eq__ not defined between " + type(self).__name__ + " objects!")
+
     def __lt__(self, other):
         """
         We only want the `<` operator to compare the address start element (dec); nothing else

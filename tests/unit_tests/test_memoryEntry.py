@@ -90,7 +90,6 @@ class MemEntryTestCase(unittest.TestCase):
         self.assertEqual(entryWithLengthAndAddressEnd.addressLength, self.addressLength)
         self.assertEqual(entryWithLengthAndAddressEnd.addressEnd, (self.addressStart + self.addressLength - 1))
 
-
     def test_ConstructorDmaEntry(self):
         # Testing the creation of a DMA entry
         entryWithDma = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=None, vasSectionName=self.vasSectionName,
