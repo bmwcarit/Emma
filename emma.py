@@ -68,7 +68,7 @@ def main(args):
 
     sc.header("Preparing objects in sections summary", symbol=".")
 
-    objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionSummary.consumerCollection, objectSummary.consumerCollection)
+    objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionSummary.consumerCollection, objectSummary.consumerCollection)
     emma_libs.memoryMap.memoryMapToCSV(args.dir, args.subdir, args.project, objectsInSections)
 
 

@@ -42,7 +42,7 @@ def checkIfFolderExists(folderName):
     :param folderName: Project to check
     """
     if not os.path.isdir(folderName):
-        sc.error("Given directory (" + folderName + ") does not exist; exiting...")
+        sc.error("Given directory (" + os.path.abspath(folderName) + ") does not exist; exiting...")
         sys.exit(-10)
 
 
