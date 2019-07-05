@@ -41,7 +41,7 @@ class MemEntryTestCase(unittest.TestCase):
         self.addressLength = 0x100
         self.addressEnd = 0x1000 + 0x100 - 0x01
 
-    def test_ConstructorBasicCase(self):
+    def test_constructorBasicCase(self):
         # Do not use named parameters here so that the order of parameters are also checked
         basicEntry = emma_libs.memoryEntry.MemEntry(self.tag, self.vasName, self.vasSectionName, self.section,
                                                     self.moduleName, self.mapfileName, self.configID, self.memType,
@@ -72,7 +72,7 @@ class MemEntryTestCase(unittest.TestCase):
         self.assertEqual(basicEntry.addressLengthHexOriginal, hex(self.addressLength))
         self.assertEqual(basicEntry.addressEndOriginal, hex(self.addressEnd))
 
-    def test_ConstructorAddressLengthAndAddressEnd(self):
+    def test_constructorAddressLengthAndAddressEnd(self):
         # Modifying the self.addressEnd to make sure it is wrong
         self.addressEnd = self.addressStart + self.addressLength + 0x100
         entryWithLengthAndAddressEnd = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName,
@@ -90,7 +90,7 @@ class MemEntryTestCase(unittest.TestCase):
         self.assertEqual(entryWithLengthAndAddressEnd.addressLength, self.addressLength)
         self.assertEqual(entryWithLengthAndAddressEnd.addressEnd, (self.addressStart + self.addressLength - 1))
 
-    def test_ConstructorDmaEntry(self):
+    def test_constructorDmaEntry(self):
         # Testing the creation of a DMA entry
         entryWithDma = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=None, vasSectionName=self.vasSectionName,
                                                       section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
@@ -99,7 +99,7 @@ class MemEntryTestCase(unittest.TestCase):
                                                       addressEnd=None)
         self.assertEqual(entryWithDma.dma, True)
 
-    def test_ConstructorNoAddressLengthNorAddressEnd(self):
+    def test_constructorNoAddressLengthNorAddressEnd(self):
         # Testing the creation of a DMA entry
         with self.assertRaises(SystemExit) as contextManager:
             entryWithoutLengthAndAddressEnd = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName,
@@ -339,9 +339,9 @@ class ObjectEntryTestCase(unittest.TestCase):
 
     def test___eq__(self):
         entryFirst = emma_libs.memoryEntry.ObjectEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
-                                                        section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
-                                                        configID=self.configID, memType=self.memType, category=self.category,
-                                                        addressStart=self.addressStart, addressLength=self.addressLength, addressEnd=None)
+                                                       section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
+                                                       configID=self.configID, memType=self.memType, category=self.category,
+                                                       addressStart=self.addressStart, addressLength=self.addressLength, addressEnd=None)
         # Testing with an object that is not a MemEntry
         with self.assertRaises(NotImplementedError):
             self.assertEqual((8 == entryFirst), False)
@@ -350,10 +350,10 @@ class ObjectEntryTestCase(unittest.TestCase):
 
         # Testing with an object that is equal
         entryOther = emma_libs.memoryEntry.ObjectEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
-                                                        section=self.section, moduleName=self.moduleName,
-                                                        mapfileName=self.mapfileName, configID=self.configID, memType=self.memType,
-                                                        category=self.category, addressStart=self.addressStart,
-                                                        addressLength=self.addressLength, addressEnd=None)
+                                                       section=self.section, moduleName=self.moduleName,
+                                                       mapfileName=self.mapfileName, configID=self.configID, memType=self.memType,
+                                                       category=self.category, addressStart=self.addressStart,
+                                                       addressLength=self.addressLength, addressEnd=None)
         self.assertEqual((entryFirst == entryOther), True)
 
         # Changing one attribute that is important to the __eq__ operation then asserting it whether they are now different
