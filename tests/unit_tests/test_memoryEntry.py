@@ -122,9 +122,9 @@ class MemEntryTestCase(unittest.TestCase):
         self.assertEqual(entry.addressEnd, self.addressEnd)
         self.assertEqual(entry.addressEndHex, hex(self.addressEnd))
 
-        extension = 0x1000
-        self.addressEnd = self.addressEnd + extension
-        self.addressLength = self.addressLength + extension
+        EXTENSION = 0x1000
+        self.addressEnd = self.addressEnd + EXTENSION
+        self.addressLength = self.addressLength + EXTENSION
         entry._MemEntry__setAddressesGivenEnd(self.addressEnd)
 
         self.assertEqual(entry.addressStart, self.addressStart)
@@ -144,9 +144,9 @@ class MemEntryTestCase(unittest.TestCase):
         self.assertEqual(entry.addressEnd, self.addressEnd)
         self.assertEqual(entry.addressEndHex, hex(self.addressEnd))
 
-        extension = 0x1000
-        self.addressEnd = self.addressEnd + extension
-        self.addressLength = self.addressLength + extension
+        EXTENSION = 0x1000
+        self.addressEnd = self.addressEnd + EXTENSION
+        self.addressLength = self.addressLength + EXTENSION
         entry._MemEntry__setAddressesGivenLength(self.addressLength)
 
         self.assertEqual(entry.addressStart, self.addressStart)
