@@ -25,7 +25,7 @@ from shared_libs.stringConstants import *
 import emma_libs.memoryManager
 
 
-def caluclateObjectsInSections(sectionContainer, objectContainer):
+def calculateObjectsInSections(sectionContainer, objectContainer):
     """
         Assumptions:
             - The sectionCollection is a list of MemEntry objects:
@@ -141,7 +141,7 @@ def caluclateObjectsInSections(sectionContainer, objectContainer):
 
 def memoryMapToCSV(argsDir, argsSubdir, argsProject, memoryMap):
     """
-    Writes the memoryMap created in caluclateObjectsInSections(...) to CSV
+    Writes the memoryMap created in calculateObjectsInSections(...) to CSV
     """
     filepath = emma_libs.memoryManager.createMemStatsFilepath(argsDir, argsSubdir, FILE_IDENTIFIER_OBJECTS_IN_SECTIONS, os.path.split(os.path.normpath(argsProject))[-1])
     emma_libs.memoryManager.consumerCollectionToCSV(filepath, memoryMap)

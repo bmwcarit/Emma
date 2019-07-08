@@ -141,7 +141,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         ADDRESS_END = 0x01FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(ADDRESS_START, ADDRESS_END)], [])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + sectionReserve
         self.assertEqual(len(objectsInSections), 2)
@@ -170,7 +170,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
                                                                    MemEntryData(FOURTH_OBJECT_ADDRESS_START, None),
                                                                    MemEntryData(FIFTH_OBJECT_ADDRESS_START, None)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: firstObject +
         #                                       sectionEntry +
@@ -219,7 +219,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
                                                                    MemEntryData(SECOND_OBJECT_ADDRESS_START, None),
                                                                    MemEntryData(THIRD_OBJECT_ADDRESS_START, THIRD_OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: firstObject +
         #                                       firstSectionEntry +
@@ -266,7 +266,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         sectionContainer[0].containmentFlag = True
         sectionContainer[1].containmentFlag = True
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: firstSectionEntry +
         #                                       object +
@@ -291,7 +291,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x02FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + object
         self.assertEqual(len(objectsInSections), 2)
@@ -315,7 +315,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)],
                                                                   [MemEntryData(FIRST_OBJECT_ADDRESS_START, FIRST_OBJECT_ADDRESS_END), MemEntryData(SECOND_OBJECT_ADDRESS_START, SECOND_OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + firstObject + secondObject
         self.assertEqual(len(objectsInSections), 3)
@@ -338,7 +338,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x09FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: object + sectionEntry
         self.assertEqual(len(objectsInSections), 2)
@@ -359,7 +359,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x07FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + object
         self.assertEqual(len(objectsInSections), 2)
@@ -380,7 +380,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x03FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: object + sectionEntry
         self.assertEqual(len(objectsInSections), 2)
@@ -401,7 +401,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x0410
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + object + sectionReserve
         self.assertEqual(len(objectsInSections), 3)
@@ -424,7 +424,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x05FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + sectionReserve + object
         self.assertEqual(len(objectsInSections), 3)
@@ -447,7 +447,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x05A0
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + sectionReserve + object + sectionReserve
         self.assertEqual(len(objectsInSections), 4)
@@ -472,7 +472,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x03FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: object + sectionEntry + sectionReserve
         self.assertEqual(len(objectsInSections), 3)
@@ -495,7 +495,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x05FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + sectionReserve + object
         self.assertEqual(len(objectsInSections), 3)
@@ -518,7 +518,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x05FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: object + sectionEntry + sectionReserve
         self.assertEqual(len(objectsInSections), 3)
@@ -541,7 +541,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x04FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + sectionReserve + object
         self.assertEqual(len(objectsInSections), 3)
@@ -577,7 +577,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
                                                                    MemEntryData(FOURTH_OBJECT_ADDRESS_START, FOURTH_OBJECT_ADDRESS_END),
                                                                    MemEntryData(FIFTH_OBJECT_ADDRESS_START, FIFTH_OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry +
         #                                       firstObject +
@@ -639,7 +639,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
                                                                    MemEntryData(FOURTH_OBJECT_ADDRESS_START, FOURTH_OBJECT_ADDRESS_END),
                                                                    MemEntryData(FIFTH_OBJECT_ADDRESS_START, FIFTH_OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.caluclateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: firstObject +
         #                                       firstSectionEntry +
