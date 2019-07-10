@@ -40,7 +40,7 @@ class EmmaTestProject(unittest.TestCase):
         testProjectFolder = os.path.join(emmaRootFolder, "doc", "test_project")
         mapfilesFolder = os.path.join(testProjectFolder, "mapfiles")
         self.resultsFolder = os.path.join("..", "other_files", "test__test_project")
-        self.memStatsFolder = os.path.join(self.resultsFolder, "memStats")
+        self.memStatsFolder = os.path.join(self.resultsFolder, OUTPUT_DIR)
 
         # Checking whether the result folder exists, deleting it if it does,
         # and then creating it again, so we have a clean results folder
@@ -60,9 +60,9 @@ class EmmaTestProject(unittest.TestCase):
         timeStampLength = len(datetime.datetime.now().strftime("%Y-%m-%d-%Hh%Ms%S"))
         reportFileExtension = ".csv"
         reportFileExtensionLength = len(reportFileExtension)
-        imageSummaryFileNameFixPart = projectName + "_Image_Summary_"
-        moduleSummaryFileNameFixPart = projectName + "_Module_Summary_"
-        objectsInSectionsFileNameFixPart = projectName + "_Objects_in_Sections_"
+        imageSummaryFileNameFixPart = projectName + "_" + FILE_IDENTIFIER_SECTION_SUMMARY + "_"
+        moduleSummaryFileNameFixPart = projectName + "_" + FILE_IDENTIFIER_OBJECT_SUMMARY + "_"
+        objectsInSectionsFileNameFixPart = projectName + "_" + FILE_IDENTIFIER_OBJECTS_IN_SECTIONS + "_"
 
         # Checking whether the expected report names are there and setting up the variables with their paths
         for file in os.listdir(self.memStatsFolder):
@@ -76,12 +76,12 @@ class EmmaTestProject(unittest.TestCase):
                 self.assert_(False, "Unexpected file: " + os.path.join(self.memStatsFolder, file))
 
         # Setting up the variable with the expected column values
-        self.expectedColumns = ['addrStartHex', 'addrEndHex', 'sizeHex', 'addrStartDec', 'addrEndDec',
-                                'sizeDec', 'sizeHumanReadable', 'section', 'moduleName', 'configID',
-                                'vasName', 'vasSectionName', 'memType', 'tag', 'category', 'DMA',
-                                'mapfile', 'overlapFlag', 'containmentFlag', 'duplicateFlag',
-                                'containgOthers', 'addrStartHexOriginal', 'addrEndHexOriginal',
-                                'sizeHexOriginal', 'sizeDecOriginal']
+        self.expectedColumns = [ADDR_START_HEX, ADDR_END_HEX, SIZE_HEX, ADDR_START_DEC, ADDR_END_DEC,
+                                SIZE_DEC, SIZE_HUMAN_READABLE, SECTION_NAME, MODULE_NAME, CONFIG_ID,
+                                VAS_NAME, VAS_SECTION_NAME, MEM_TYPE, TAG, CATEGORY, DMA,
+                                MAPFILE, OVERLAP_FLAG, CONTAINMENT_FLAG, DUPLICATE_FLAG,
+                                CONTAINING_OTHERS_FLAG, ADDR_START_HEX_ORIGINAL, ADDR_END_HEX_ORIGINAL,
+                                SIZE_HEX_ORIGINAL, SIZE_DEC_ORIGINAL]
 
     def tearDown(self):
         # Checking whether the result folder exists, deleting it if it does
@@ -108,7 +108,7 @@ class EmmaTestProject(unittest.TestCase):
 
     def checkDataTypeData(self, dataTypeData, expectedDataTypeData: ExpectedDataTypeData):
         dataTypeNumberOfRows, _ = dataTypeData.shape
-        dataTypeTotalSizeDec = dataTypeData["sizeDec"].sum()
+        dataTypeTotalSizeDec = dataTypeData[SIZE_DEC].sum()
 
         # Checking the number of elements
         self.assertEqual(dataTypeNumberOfRows, expectedDataTypeData.numberOfRows)
