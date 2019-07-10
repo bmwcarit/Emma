@@ -30,7 +30,14 @@ from shared_libs.stringConstants import *
 
 
 class EmmaTestProject(unittest.TestCase):
+    """
+    A test case to test the Emma with the test_project.
+    """
     def setUp(self):
+        """
+        A function to setup the variables used in the tests and to run the Emma on the test_project.
+        :return: None
+        """
         # Changing the working directory to the scripts path
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -56,6 +63,7 @@ class EmmaTestProject(unittest.TestCase):
             self.assertEqual(len(directories), 0)
             self.assertEqual(len(files), 3)
 
+        # Setting up the file name related variables
         projectName = "test_project"
         timeStampLength = len(datetime.datetime.now().strftime("%Y-%m-%d-%Hh%Ms%S"))
         reportFileExtension = ".csv"
@@ -84,29 +92,48 @@ class EmmaTestProject(unittest.TestCase):
                                 SIZE_HEX_ORIGINAL, SIZE_DEC_ORIGINAL]
 
     def tearDown(self):
+        """
+        A function to clean up after the tests.
+        :return: None
+        """
         # Checking whether the result folder exists, deleting it if it does
         if os.path.isdir(self.resultsFolder):
             shutil.rmtree(self.resultsFolder)
 
     class ExpectedDataTypeData:
+        """
+        A class that contains the expected data of a data type.
+        """
         def __init__(self, name, numberOfRows, totalSizeDec):
             self.name = name
             self.numberOfRows = numberOfRows
             self.totalSizeDec = totalSizeDec
 
     class ExpectedConfigIdData:
+        """
+        A class that contains the expected data of a configId.
+        """
         def __init__(self, name, numberOfRows, listOfDataTypeData):
             self.name = name
             self.numerOfRows = numberOfRows
             self.listOfDataTypeData = listOfDataTypeData
 
     class ExpectedReportData:
+        """
+        A class that contains the expected data of a report.
+        """
         def __init__(self, numberOfRows, listOfColumns, listOfConfigIdData):
             self.numberOfRows = numberOfRows
             self.listOfColumns = listOfColumns
             self.listOfConfigIdData = listOfConfigIdData
 
-    def checkDataTypeData(self, dataTypeData, expectedDataTypeData: ExpectedDataTypeData):
+    def checkDataTypeData(self, dataTypeData: pandas.DataFrame, expectedDataTypeData: ExpectedDataTypeData):
+        """
+        A function to test a data type.
+        :param dataTypeData: The data frame containing the data of a data type.
+        :param expectedDataTypeData: The expected data of the data type.
+        :return: None
+        """
         dataTypeNumberOfRows, _ = dataTypeData.shape
         dataTypeTotalSizeDec = dataTypeData[SIZE_DEC].sum()
 
@@ -116,7 +143,13 @@ class EmmaTestProject(unittest.TestCase):
         # Checking the total consumption
         self.assertEqual(dataTypeTotalSizeDec, expectedDataTypeData.totalSizeDec)
 
-    def checkConfigIdData(self, configIdData, expectedConfigIdData: ExpectedConfigIdData):
+    def checkConfigIdData(self, configIdData: pandas.DataFrame, expectedConfigIdData: ExpectedConfigIdData):
+        """
+        A function to test a configId.
+        :param configIdData: The data frame containing the data of the configId.
+        :param expectedConfigIdData: The expected data of the configId.
+        :return: None
+        """
         configIdNumberOfRows, _ = configIdData.shape
 
         # Checking the number of the elements
@@ -127,7 +160,13 @@ class EmmaTestProject(unittest.TestCase):
             dataTypeData = configIdData[configIdData.memType == expectedDataTypeData.name]
             self.checkDataTypeData(dataTypeData, expectedDataTypeData)
 
-    def checkReport(self, reportData, expectedReportData: ExpectedReportData):
+    def checkReport(self, reportData: pandas.DataFrame, expectedReportData: ExpectedReportData):
+        """
+        A functon to test a report.
+        :param reportData: The data frame containing the data of the report.
+        :param expectedReportData: The expected data of the report.
+        :return: None
+        """
         # Checking the type of the imageSummary
         self.assertEqual(type(reportData).__name__, "DataFrame")
         numberOfRows, numberOfColumns = reportData.shape
@@ -150,6 +189,10 @@ class EmmaTestProject(unittest.TestCase):
             self.checkConfigIdData(configIdData, expectedConfigIdData)
 
     def test_imageSummaryReport(self):
+        """
+        A function to test the Image Summary report of the test_project.
+        :return: None
+        """
         # Loading the report data
         reportData = pandas.read_csv(self.imageSummaryPath, sep=";")
 
@@ -169,6 +212,10 @@ class EmmaTestProject(unittest.TestCase):
         self.checkReport(reportData, expectedReportData)
 
     def test_moduleSummaryReport(self):
+        """
+        A function to test the Module Summary report of the test_project.
+        :return: None
+        """
         # Loading the report data
         reportData = pandas.read_csv(self.moduleSummaryPath, sep=";")
 
@@ -188,6 +235,10 @@ class EmmaTestProject(unittest.TestCase):
         self.checkReport(reportData, expectedReportData)
 
     def test_objectsInSectionsReport(self):
+        """
+        A function to test the Objects In Sections report of the test_project.
+        :return: None
+        """
         # Loading the report data
         reportData = pandas.read_csv(self.objectsInSectionsPath, sep=";")
 
