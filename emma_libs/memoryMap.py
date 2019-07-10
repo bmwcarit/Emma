@@ -138,6 +138,12 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
 
     return objectsInSections
 
+def writeSummary(self):
+    """
+    Wrapper for writing consumerCollection to file
+    :return: nothing
+    """
+    consumerCollectionToCSV(self.outputPath, self.consumerCollection)
 
 def memoryMapToCSV(argsDir, argsSubdir, argsProject, memoryMap):
     """
@@ -145,3 +151,123 @@ def memoryMapToCSV(argsDir, argsSubdir, argsProject, memoryMap):
     """
     filepath = emma_libs.memoryManager.createMemStatsFilepath(argsDir, argsSubdir, FILE_IDENTIFIER_OBJECTS_IN_SECTIONS, os.path.split(os.path.normpath(argsProject))[-1])
     emma_libs.memoryManager.consumerCollectionToCSV(filepath, memoryMap)
+
+def resolveDuplicateContainmentOverlap(self, nameGetter):
+    """
+    Goes trough the consumerCollection and checks all the elements for the following situations:
+        1 - Duplicate
+        2 - Containment
+        3 - Overlap
+
+    Assumptions:
+        - The consumerCollection is a list of MemEntry objects:
+            - It is ordered based on the startAddress attribute
+
+    :param nameGetter: A function to get the name of the element. This is solved in this abstract way so it can work for section and object resolving as well.
+    """
+    for actualElement in self.consumerCollection:
+        for otherElement in self.consumerCollection:
+
+            # Don't compare element with itself and only compare the same configID
+            if actualElement.equalConfigID(otherElement) and not actualElement == otherElement:
+
+                # Case 0: actualElement and otherElement are completely separated
+                if actualElement.addressEnd < otherElement.addressStart or actualElement.addressStart > otherElement.addressEnd:
+                    # There is not much to do here...
+                    pass
+                else:
+                    # Case 1: actualElement and otherElement are duplicates
+                    if actualElement.addressStart == otherElement.addressStart and actualElement.addressEnd == otherElement.addressEnd:
+                        # Setting the actualElement´s duplicateFlag if it was not already set
+                        if actualElement.duplicateFlag is None:
+                            actualElement.duplicateFlag = "Duplicate of (" + nameGetter(otherElement) + ", " + otherElement.configID + ", " + otherElement.mapfile + ")"
+                        # Setting the actualElement to zero addressLength if this was not the first element of the duplicates
+                        # This is needed to include only one of the duplicate elements with the real size in the report and not to distort the results
+                        if otherElement.duplicateFlag is not None:
+                            actualElement.addressLength = 0
+                            actualElement.addressLengthHex = hex(actualElement.addressLength)
+                    else:
+                        # Case 2: actualElement contains otherElement
+                        if actualElement.addressStart <= otherElement.addressStart and actualElement.addressEnd >= otherElement.addressEnd:
+                            actualElement.containingOthersFlag = True
+                        else:
+                            # Case 3: actualElement is contained by otherElement
+                            if actualElement.addressStart >= otherElement.addressStart and actualElement.addressEnd <= otherElement.addressEnd:
+                                # Setting the actualElement´s containmentFlag if it was not already set
+                                if actualElement.containmentFlag is None:
+                                    actualElement.containmentFlag = "Contained by (" + nameGetter(otherElement) + ", " + otherElement.configID + ", " + otherElement.mapfile + ")"
+                                    # Setting the actualElement to zero addressLength because this was contained by the otherElement
+                                    # This is needed to include only one of these elements with the real size in the report and not to distort the results
+                                    actualElement.addressLength = 0
+                                    actualElement.addressLengthHex = hex(actualElement.addressLength)
+                            else:
+                                # Case 4: actualElement overlaps otherElement: otherElement starts inside and ends outside actualElement
+                                if actualElement.addressStart < otherElement.addressStart and actualElement.addressEnd < otherElement.addressEnd:
+                                    actualElement.overlappingOthersFlag = True
+                                else:
+                                    # Case 5: actualElement is overlapped by otherElement: otherElement starts before and ends inside actualElement
+                                    if actualElement.addressStart > otherElement.addressStart and actualElement.addressEnd > otherElement.addressEnd:
+                                        actualElement.overlapFlag = "Overlapped by (" + nameGetter(otherElement) + ", " + otherElement.configID + ", " + otherElement.mapfile + ")"
+                                        # Adjusting the addresses and length of the actualElement: reducing its size by the overlapping part
+                                        actualElement.addressStart = otherElement.addressEnd + 1
+                                        actualElement.addressStartHex = hex(actualElement.addressStart)
+                                        actualElement.addressLength = actualElement.addressEnd - actualElement.addressStart + 1
+                                        actualElement.addressLengthHex = hex(actualElement.addressLength)
+                                    # Case X: SW error, unhandled case...
+                                    else:
+                                        sc.error("MemoryManager::resolveOverlap(): Case X: SW error, unhandled case...")
+
+def createMemStatsFilepath(rootdir, subdir, csvFilename, projectName):
+    memStatsRootPath = shared_libs.emma_helper.joinPath(rootdir, subdir, OUTPUT_DIR)
+    shared_libs.emma_helper.mkDirIfNeeded(memStatsRootPath)
+    memStatsFileName = projectName + "_" + csvFilename + "_" + timestamp.replace(" ", "") + ".csv"
+    return shared_libs.emma_helper.joinPath(memStatsRootPath, memStatsFileName)
+
+def consumerCollectionToCSV(filepath, consumerCollection):
+    """
+    Writes the consumerCollection containig MemoryEntrys to CSV
+    :param filepath: Absolute path to the csv file
+    :param consumerCollection: List containing memEntrys
+    """
+    with open(filepath, "w") as fp:
+        writer = csv.writer(fp, delimiter=";", lineterminator="\n")
+        header = [ADDR_START_HEX, ADDR_END_HEX, SIZE_HEX, ADDR_START_DEC, ADDR_END_DEC, SIZE_DEC, SIZE_HUMAN_READABLE,
+                  SECTION_NAME, MODULE_NAME, CONFIG_ID, VAS_NAME, VAS_SECTION_NAME, MEM_TYPE, TAG, CATEGORY, DMA, MAPFILE, OVERLAP_FLAG,
+                  CONTAINMENT_FLAG, DUPLICATE_FLAG, CONTAINING_OTHERS_FLAG, ADDR_START_HEX_ORIGINAL,
+                  ADDR_END_HEX_ORIGINAL, SIZE_HEX_ORIGINAL, SIZE_DEC_ORIGINAL]
+        writer.writerow(header)
+        for row in consumerCollection:
+            writer.writerow([
+                row.addressStartHex,
+                row.addressEndHex,
+                row.addressLengthHex,
+                row.addressStart,
+                row.addressEnd,
+                row.addressLength,
+                shared_libs.emma_helper.toHumanReadable(row.addressLength),
+                row.section,
+                row.moduleName,
+                row.configID,
+                row.vasName,
+                row.vasSectionName,
+                row.memType,
+                row.memTypeTag,
+                row.category,
+                row.dma,
+                row.mapfile,
+                row.overlapFlag,
+                row.containmentFlag,
+                row.duplicateFlag,
+                row.containingOthersFlag,
+                # Addresses are modified in case of overlapping so we will post the original values so that the changes can be seen
+                row.addressStartOriginal if (row.overlapFlag is not None) else "",
+                row.addressEndOriginal if (row.overlapFlag is not None) else "",
+                # Lengths are modified in case of overlapping, containment and duplication so we will post the original values so that the changes can be seen
+                row.addressLengthHexOriginal if ((row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
+                row.addressLengthOriginal if ((row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else ""
+            ])
+
+    sc.info("Summary saved in:", os.path.abspath(filepath))
+    sc.info("Filename:", os.path.split(filepath)[-1])
+    print("\n")
+
