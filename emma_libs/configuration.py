@@ -17,139 +17,104 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 
-def readGlobalConfigJson(configPath):
-    """
-    :param configPath: file path
-    :return: the globalConfig dict
-    """
-    # Load global config file
-    globalConfig = shared_libs.emma_helper.readJson(configPath)
+import os
+import sys
 
-    # Loading the config files of the defined configID-s
-    for configID in list(globalConfig.keys()):  # List of keys required so we can remove the ignoreConfigID entrys
-        if IGNORE_CONFIG_ID in globalConfig[configID].keys():
-            # Skip configID if ["ignoreConfigID"] is True
-            if type(globalConfig[configID][IGNORE_CONFIG_ID]) is not bool:
-                # Check that flag has the correct type
-                sc.error("The " + IGNORE_CONFIG_ID + " of " + configID + " has a type " + str(
-                    type(globalConfig[configID][IGNORE_CONFIG_ID])) + " instead of bool. " +
-                         "Please be sure to use correct JSON syntax: boolean constants are written true and false.")
-                sys.exit(-10)
-            elif globalConfig[configID][IGNORE_CONFIG_ID] is True:
-                globalConfig.pop(configID)
-                if len(globalConfig) < 1 and self.args.verbosity <= 1:
-                    sc.warning("No configID left; all were ignored.")
-                continue
+import pypiscout as sc
 
-        # Loading the addressSpaces
-        if "addressSpacesPath" in globalConfig[configID].keys():
-            globalConfig[configID]["addressSpaces"] = shared_libs.emma_helper.readJson(
-                shared_libs.emma_helper.joinPath(self.projectPath, globalConfig[configID]["addressSpacesPath"]))
+from shared_libs.stringConstants import *
+import shared_libs.emma_helper
+import emma_libs.ghsConfiguration
 
-            # Removing the imported memory entries if they are listed in IGNORE_MEM_TYPE key
-            if IGNORE_MEMORY in globalConfig[configID]["addressSpaces"].keys():
-                for memoryToIgnore in globalConfig[configID]["addressSpaces"][IGNORE_MEMORY]:
-                    if globalConfig[configID]["addressSpaces"]["memory"][memoryToIgnore]:
-                        globalConfig[configID]["addressSpaces"]["memory"].pop(memoryToIgnore)
-                        sc.info(
-                            "The memory entry \"" + memoryToIgnore + "\" of the configID \"" + configID + "\" is marked to be ignored...")
-                    else:
-                        sc.error(
-                            "The key " + memoryToIgnore + " which is in the ignore list, does not exist in the memory object of " +
-                            globalConfig[configID]["addressSpacesPath"])
-                        sys.exit(-10)
-        else:
-            sc.error("The " + CONFIG_ID + " does not have the key: " + "addressSpacesPath")
-            sys.exit(-10)
 
-        # Loading the sections if the file is present (only needed in case of VAS-es)
-        if "virtualSectionsPath" in globalConfig[configID].keys():
-            globalConfig[configID]["virtualSections"] = shared_libs.emma_helper.readJson(
-                shared_libs.emma_helper.joinPath(self.projectPath, globalConfig[configID]["virtualSectionsPath"]))
+class Configuration:
+    def __init__(self, configurationPath, mapfilesPath):
+        # Check whether the configurationPath exists
+        shared_libs.emma_helper.checkIfFolderExists(configurationPath)
 
-        # Loading the patterns
-        if "patternsPath" in globalConfig[configID].keys():
-            globalConfig[configID]["patterns"] = shared_libs.emma_helper.readJson(
-                shared_libs.emma_helper.joinPath(self.projectPath, globalConfig[configID]["patternsPath"]))
-        else:
-            sc.error("The " + CONFIG_ID + " does not have the key: " + "patternsPath")
-            sys.exit(-10)
+        # Processing the globalConfig.json
+        globalConfigPath = shared_libs.emma_helper.joinPath(configurationPath, "globalConfig.json")
+        self.globalConfig = self.readGlobalConfigJson(globalConfigPath)
+        sc.info("Imported " + str(len(self.globalConfig)) + " global config entries")
 
-        # Flag to load a monolith file only once; we don't do it here since we might work with DMA only
-        globalConfig[configID]["monolithLoaded"] = False
-        # Flag to sort monolith table only once; we don't do it here since we might work with DMA only
-        globalConfig[configID]["sortMonolithTabularised"] = False
-    return globalConfig
-
-# TODO : This could be renamed to "__addFileTypesForAConfigId" (AGK)
-def __addFilesPerConfigID(self, configID, fileType):
-    """
-    Adds the found full absolute path of the found file as new element to `self.globalConfig[configID]["patterns"]["mapfiles"]["associatedFilename"]`
-    Deletes elements from `self.globalConfig[configID]["patterns"]["mapfiles"]` which were not found and prints a warning for each
-    :param fileType: Either "patterns" (=default) for mapfiles or "monoliths" for monolith files
-    :return: Number of files detected
-    """
-    # Find mapfiles
-    # TODO : Would this not make more sense to execute it the other way around? (for every regex, for every file) (AGK)
-    # TODO : Also, could we save time by breaking earlier and not checking all the files if we have found something? (that would remove config error detection) (AGK)
-    # TODO : The function name is __addFilesPerConfigID but the search path is fixed to the self.mapfileRootPath. This is confusing. It shall be either more generic or renamed (AGK)
-    for file in os.listdir(self.mapfileRootPath):
-        for entry in self.globalConfig[configID]["patterns"][fileType]:
-            foundFiles = []
-            for regex in self.globalConfig[configID]["patterns"][fileType][entry]["regex"]:
-                searchCandidate = shared_libs.emma_helper.joinPath(self.mapfileRootPath, file)
-                match = re.search(regex, searchCandidate)
-                if match:
-                    foundFiles.append(os.path.abspath(searchCandidate))
-            if foundFiles:
-                self.globalConfig[configID]["patterns"][fileType][entry]["associatedFilename"] = foundFiles[0]
-                print("\t\t\t Found " + fileType + ": ", foundFiles[0])
-                if len(foundFiles) > 1:
-                    sc.warning("Ambiguous regex pattern in '" + self.globalConfig[configID]["patternsPath"] + "'. Selected '" + foundFiles[0] + "'. Regex matched: " + "".join(foundFiles))
-                    # TODO : we could have a logging class that could handle this exit if all warnings are errors thing. (AGK)
-                    if self.args.Werror:
-                        sys.exit(-10)
-
-    # Check for found files in patterns and do some clean-up
-    # We need to convert the keys into a temporary list in order to avoid iterating on the original which may be changed during the loop, that causes a runtime error
-    for entry in list(self.globalConfig[configID]["patterns"][fileType]):
-        if "associatedFilename" not in self.globalConfig[configID]["patterns"][fileType][entry]:
-            sc.warning("No file found for ", str(entry).ljust(20), "(pattern:", ''.join(self.globalConfig[configID]["patterns"][fileType][entry]["regex"]) + " );", "skipping...")
-            if self.args.Werror:
-                sys.exit(-10)
-            del self.globalConfig[configID]["patterns"][fileType][entry]
-    return len(self.globalConfig[configID]["patterns"][fileType])
-
-def __addMapfilesToGlobalConfig(self):
-    for configID in self.globalConfig:
-        sc.info("Processing configID \"" + configID + "\"")
-        numMapfiles = self.__addFilesPerConfigID(configID=configID, fileType="mapfiles")
-        sc.info(str(numMapfiles) + " mapfiles found")
-
-def __validateConfigIDs(self):
-    configIDsToDelete = []
-
-    # Search for invalid configIDs
-    for configID in self.globalConfig:
-        numMapfiles = len(self.globalConfig[configID]["patterns"]["mapfiles"])
-        if numMapfiles < 1:
-            if self.args.Werror:
-                sc.error("No mapfiles found for configID: '" + configID + "'")
-                sys.exit(-10)
+        # Processing the addressSpaces*.json for all the configIds
+        for configId in self.globalConfig:
+            if "addressSpacesPath" in self.globalConfig[configId].keys():
+                addressSpacesPath = shared_libs.emma_helper.joinPath(configurationPath, self.globalConfig[configId]["addressSpacesPath"])
+                self.globalConfig[configId]["addressSpaces"] = self.readAddressSpacesJson(addressSpacesPath)
             else:
-                sc.warning("No mapfiles found for configID: '" + configID + "', skipping...")
-            configIDsToDelete.append(configID)
+                sc.error("The " + configId + " does not have the key: " + "addressSpacesPath")
+                sys.exit(-10)
 
-    # Remove invalid configIDs separately (for those where no mapfiles were found)
-    # Do this in a separate loop since we cannot modify and iterate in the same loop
-    for invalidConfigID in configIDsToDelete:
-        del self.globalConfig[invalidConfigID]
-        if self.args.verbosity <= 2:
-            sc.warning("Removing the configID " + invalidConfigID + " because no mapfiles were found for it...")
-    else:
-        if 0 == len(self.globalConfig):
-            sc.error("No mapfiles were found for any of the configIDs...")
-            sys.exit(-10)
+        # Loading the categories config files. These files are optional, if they are not present we will store None instead.
+        categoriesObjectsPath = shared_libs.emma_helper.joinPath(configurationPath, CATEGORIES_OBJECTS_JSON)
+        self.categoriesObjects = self.readCategoriesJson(categoriesObjectsPath)
+        categoriesObjectsKeywordsPath = shared_libs.emma_helper.joinPath(configurationPath, CATEGORIES_KEYWORDS_OBJECTS_JSON)
+        self.categoriesObjectsKeywords = self.readCategoriesJson(categoriesObjectsKeywordsPath)
+        categoriesSectionsPath = shared_libs.emma_helper.joinPath(configurationPath, CATEGORIES_SECTIONS_JSON)
+        self.categoriesSections = self.readCategoriesJson(categoriesSectionsPath)
+        categoriesSectionsKeywordsPath = shared_libs.emma_helper.joinPath(configurationPath, CATEGORIES_KEYWORDS_SECTIONS_JSON)
+        self.categoriesSectionsKeywords = self.readCategoriesJson(categoriesSectionsKeywordsPath)
+
+        # FIXME The mapfiles and other non-compiler dependent parts of the patterns*.json needs to be read in here
+
+        # Processing the compiler dependent parts of the configuration
+        for configId in self.globalConfig:
+            sc.info("Processing configID \"" + configId + "\"")
+            usedCompiler = self.globalConfig[configId]["compiler"]
+            if "GreenHills" == usedCompiler:
+                emma_libs.ghsConfiguration.GhsConfiguration(configurationPath, mapfilesPath, self.globalConfig[configId])
+            else:
+                sc.error("The " + configId + " contains an unexpected compiler value: " + usedCompiler)
+                sys.exit(-10)
+
+    def readGlobalConfigJson(self, path):
+        # Load the globalConfig file
+        globalConfig = shared_libs.emma_helper.readJson(path)
+
+        # Loading the config files of the defined configID-s
+        for configId in list(globalConfig.keys()):  # List of keys required so we can remove the ignoreConfigID entrys
+            if IGNORE_CONFIG_ID in globalConfig[configId].keys():
+                # Skip configID if ["ignoreConfigID"] is True
+                if type(globalConfig[configId][IGNORE_CONFIG_ID]) is not bool:
+                    # Check that flag has the correct type
+                    sc.error("The " + IGNORE_CONFIG_ID + " of " + configId + " has a type " +
+                             str(type(globalConfig[configId][IGNORE_CONFIG_ID])) + " instead of bool. " +
+                             "Please be sure to use correct JSON syntax: boolean constants are written true and false.")
+                    sys.exit(-10)
+                elif globalConfig[configId][IGNORE_CONFIG_ID] is True:
+                    globalConfig.pop(configId)
+
+        if len(globalConfig):
+            sc.warning("No configID was defined or all of them were ignored.")
+
+        return globalConfig
+
+    def readAddressSpacesJson(self, path):
+        # Load the addressSpaces file
+        addressSpaces = shared_libs.emma_helper.readJson(path)
+
+        # Removing the imported memory entries if they are listed in the IGNORE_MEMORY
+        if IGNORE_MEMORY in addressSpaces.keys():
+            for memoryToIgnore in addressSpaces[IGNORE_MEMORY]:
+                if addressSpaces["memory"][memoryToIgnore]:
+                    addressSpaces["memory"].pop(memoryToIgnore)
+                    sc.info("The memory entry \"" + memoryToIgnore + "\" of the \"" + path + "\" is marked to be ignored...")
+                else:
+                    sc.error("The key " + memoryToIgnore + " which is in the ignore list, does not exist in the memory object of " + path)
+                    sys.exit(-10)
+
+        return addressSpaces
+
+    def readCategoriesJson(self, path):
+        if os.path.exists(path):
+            categoriesJson = shared_libs.emma_helper.readJson(path)
+        else:
+            categoriesJson = None
+            sc.warning("There was no " + os.path.basename(path) + " file found, the categorization based on this will be skipped.")
+
+        return categoriesJson
+
 
 def removeUnmatchedFromCategoriesJson(self):
     """

@@ -28,8 +28,8 @@ import pypiscout as sc
 
 from shared_libs.stringConstants import *
 import shared_libs.emma_helper
-import emma_libs.mapfileRegexes
-import emma_libs.memoryEntry
+import emma_libs.configuration
+import emma_libs.ghsMapfileProcessor
 
 
 # Global timestamp
@@ -38,89 +38,59 @@ timestamp = datetime.datetime.now().strftime("%Y-%m-%d - %Hh%Ms%S")
 
 
 class MemoryManager:
-    # TODO : After discussions with MSc, this class could be cut up into more parts. (AGK)
-    """
-    Class for reading and saving/sorting the mapfiles
-    """
-    def __init__(self, args, categoriesPath, categoriesKeywordsPath, fileIdentifier, regexData):
-        """
-        Memory manager for mapfile information aggregation.
-        :param args: command line arguments
-        :param categoriesPath: Path to a projects categories JSON
-        :param categoriesKeywordsPath: Path to a projects categoriesKeywords JSON
-        :param fileIdentifier: String for the summary filename written in writeSummary()
-        :param regexData: An object derived from class RegexPatternBase holding the regex patterns
-        """
+    class Settings:
+        def __init__(self, args):
+            self.projectName = shared_libs.emma_helper.projectNameFromPath(shared_libs.emma_helper.joinPath(args.project))
+            self.configurationPath = args.project
+            self.mapfilesPath = shared_libs.emma_helper.joinPath(args.mapfiles)
+            self.analyseDebug = args.analyse_debug
+            self.verbosity = args.verbosity
+            self.Werror = args.Werror
 
-        self.args = args
-        # Attributes for file paths
-        self.analyseDebug = args.analyse_debug
-        self.projectPath = args.project
-        self.project = shared_libs.emma_helper.projectNameFromPath(shared_libs.emma_helper.joinPath(args.project))
-        self.mapfileRootPath = shared_libs.emma_helper.joinPath(args.mapfiles)
-        self.__categoriesFilePath = categoriesPath
-        self.__categoriesKeywordsPath = categoriesKeywordsPath
-        shared_libs.emma_helper.checkIfFolderExists(self.projectPath)
-
-        # Regex data, has to be a sub-class of RegexPatternBase
-        self.regexPatternData = regexData
-
-        # Load local config JSONs from global config
-        self.globalConfig = readGlobalConfigJson(configPath=shared_libs.emma_helper.joinPath(self.projectPath, "globalConfig.json"))
-        sc.info("Imported " + str(len(self.globalConfig)) + " global config entries")
-
-        # Loading the categories config files. These files are optional, if they are not present we will store None instead.
-        if os.path.exists(self.__categoriesFilePath):
-            self.categoriesJson = shared_libs.emma_helper.readJson(self.__categoriesFilePath)
-        else:
-            self.categoriesJson = None
-            sc.warning("There was no " + os.path.basename(self.__categoriesFilePath) + " file found, the categorization based on this will be skipped.")
-        if os.path.exists(self.__categoriesKeywordsPath):
-            self.categorisedKeywordsJson = shared_libs.emma_helper.readJson(self.__categoriesKeywordsPath)
-        else:
-            self.categorisedKeywordsJson = None
-            sc.warning("There was no " + os.path.basename(self.__categoriesKeywordsPath) + " file found, the categorization based on this will be skipped.")
-
-        # Init consumer data
-        self.consumerCollection = []        # the actual data (contains instances of `MemEntry`)
-        self.categorisedFromKeywords = []   # This list will be filled with matches from category keywords, needed in createCategoriesJson()
-        # self.containingOthers = set()
-
-        # The file identifier is used for the filename in writeReport()
-        self.__fileIdentifier = fileIdentifier
-
-        # Add map and monolith files
-        self.__addMonolithsToGlobalConfig()
-        self.__addMapfilesToGlobalConfig()
-        self.__validateConfigIDs()
-
-        # Filename for csv file
-        self.outputPath = createMemStatsFilepath(args.dir, args.subdir, self.__fileIdentifier, self.project)
-
-        checkMonolithSections()
-
-
-class SectionParser(MemoryManager):
     def __init__(self, args):
-        regexData = emma_libs.mapfileRegexes.ImageSummaryPattern()                                                  # Regex Data containing the groups
-        categoriesPath = shared_libs.emma_helper.joinPath(args.project, CATEGORIES_SECTIONS_JSON)                   # The file path to categories.JSON
-        categoriesKeywordsPath = shared_libs.emma_helper.joinPath(args.project, CATEGORIES_KEYWORDS_SECTIONS_JSON)  # The file path to categoriesKeyowrds.JSON
-        fileIdentifier = FILE_IDENTIFIER_SECTION_SUMMARY
-        super().__init__(args, categoriesPath, categoriesKeywordsPath, fileIdentifier, regexData)
+        # Processing the command line arguments and storing it into the settings member
+        self.settings = MemoryManager.Settings(args)
+        # Check whether the configuration and the mapfiles folders exist
+        shared_libs.emma_helper.checkIfFolderExists(self.settings.mapfilesPath)
+        # The configuration is empty at this moment, it can be read in with another method
+        self.configuration = None
+        # The memory content is empty at this moment, it can be loaded with another method
+        self.memoryContent = None
 
-    def resolveDuplicateContainmentOverlap(self):
-        nameGetter = lambda target: target.section
-        super().resolveDuplicateContainmentOverlap(nameGetter)
+    def readConfiguration(self):
+        # Reading in the configuration
+        self.configuration = emma_libs.configuration.Configuration(self.settings.configurationPath, self.settings.mapfilesPath)
 
+    def processMapfiles(self):
+        # If the configuration was already loaded
+        if self.configuration is not None:
 
-class ObjectParser(MemoryManager):
-    def __init__(self, args):
-        regexData = emma_libs.mapfileRegexes.ModuleSummaryPattern()                                                 # Regex Data containing the groups
-        categoriesPath = shared_libs.emma_helper.joinPath(args.project, CATEGORIES_OBJECTS_JSON)                    # The filepath to categories.JSON
-        categoriesKeywordsPath = shared_libs.emma_helper.joinPath(args.project, CATEGORIES_KEYWORDS_OBJECTS_JSON)   # The filepath to categoriesKeyowrds.JSON
-        fileIdentifier = FILE_IDENTIFIER_OBJECT_SUMMARY
-        super().__init__(args, categoriesPath, categoriesKeywordsPath, fileIdentifier, regexData)
+            # We will create an empty memory content that will be filled now
+            self.memoryContent = dict()
 
-    def resolveDuplicateContainmentOverlap(self):
-        nameGetter = lambda target: target.section + "::" + target.moduleName
-        super().resolveDuplicateContainmentOverlap(nameGetter)
+            # Processing the mapfiles for every configId
+            for configId in self.configuration.globalConfig:
+
+                # Creating the configId in the memory content
+                self.memoryContent[configId] = dict()
+
+                sc.info("Importing Data for \"" + configId + "\", this may take some time...")
+
+                # Creating a mapfile processor based on the compiler that was defined for the configId
+                usedCompiler = self.configuration.globalConfig[configId]["compiler"]
+                if "GreenHills" == usedCompiler:
+                    mapfileProcessor = emma_libs.ghsMapfileProcessor.GhsMapfileProcessor(configId, self.settings.analyseDebug, self.settings.verbosity, self.settings.Werror)
+                else:
+                    sc.error("The " + configId + " contains an unexpected compiler value: " + usedCompiler)
+                    sys.exit(-10)
+
+                # Importing the mapfile contents for the configId with the created mapfile processor
+                sectionCollection, objectCollection = mapfileProcessor.processMapfiles(self.configuration.globalConfig[configId])
+                self.memoryContent[configId]["sectionCollection"] = sectionCollection
+                self.memoryContent[configId]["objectCollection"] = objectCollection
+        else:
+            sc.error("The configuration needs to be loaded before processing the mapfiles!")
+            sys.exit(-10)
+
+    def storeResults(self):
+        pass

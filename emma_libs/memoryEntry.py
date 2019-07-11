@@ -137,8 +137,8 @@ class MemEntry:
 
 # TODO : Evaluate, whether we could delete this class and only have the MemEntry (AGK)
 class SectionEntry(MemEntry):
-    def __init__(self, tag, vasName, vasSectionName, section, moduleName, mapfileName, configID, memType, category, addressStart, addressLength=None, addressEnd=None):
-        super().__init__(tag, vasName, vasSectionName, section, moduleName, mapfileName, configID, memType, category, addressStart, addressLength, addressEnd)
+    def __init__(self, memEntry):
+        super().__init__(memEntry)
 
     def __eq__(self, other):
         if isinstance(other, MemEntry):
@@ -157,8 +157,8 @@ class SectionEntry(MemEntry):
 
 # TODO : Evaluate, whether we could delete this class and only have the MemEntry (AGK)
 class ObjectEntry(MemEntry):
-    def __init__(self, tag, vasName, vasSectionName, section, moduleName, mapfileName, configID, memType, category, addressStart, addressLength=None, addressEnd=None):
-        super().__init__(tag, vasName, vasSectionName, section, moduleName, mapfileName, configID, memType, category, addressStart, addressLength, addressEnd)
+    def __init__(self, memEntry):
+        super().__init__(memEntry)
 
     def __eq__(self, other):
         if isinstance(other, MemEntry):

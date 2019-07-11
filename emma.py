@@ -30,6 +30,16 @@ import emma_libs.memoryMap
 
 
 def main(args):
+
+    memoryManager = emma_libs.memoryManager.MemoryManager(args)
+    memoryManager.readConfiguration()
+    memoryManager.processMapfiles()
+    memoryManager.storeResults()
+
+"""
+    # ------------------------------------------------------------------------------------------------------------------
+    # --- Image Summary ------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
     sc.header("Preparing image summary", symbol=".")
 
     # Create MemoryManager instance with Variables for image summary
@@ -48,12 +58,17 @@ def main(args):
             # Categorisation-only run: do not write a csv report
             pass
 
+    # ------------------------------------------------------------------------------------------------------------------
+    # --- Module Summary -----------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
     sc.header("Preparing module summary", symbol=".")
 
+    # Create MemoryManager instance with Variables for module summary
     objectSummary = emma_libs.memoryManager.ObjectParser(args)                              # String identifier for outfilenames
 
     # FIXME: Something before importData() takes quite a lot of processing time (MSc)
     numAnalyzedConfigIDs = objectSummary.importData()                                       # Read Data
+
     if numAnalyzedConfigIDs >= 1:
         objectSummary.resolveDuplicateContainmentOverlap()
 
@@ -66,10 +81,14 @@ def main(args):
         else:
             objectSummary.writeSummary()
 
+    # ------------------------------------------------------------------------------------------------------------------
+    # --- Objects in Sections ------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
     sc.header("Preparing objects in sections summary", symbol=".")
 
     objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionSummary.consumerCollection, objectSummary.consumerCollection)
     emma_libs.memoryMap.memoryMapToCSV(args.dir, args.subdir, args.project, objectsInSections)
+"""
 
 
 def parseArgs(arguments=""):
@@ -158,11 +177,14 @@ def parseArgs(arguments=""):
         default=False
     )
 
+    # We will either parse the arguments string if it is not empty,
+    # or in the default case the data from sys.argv
     if "" == arguments:
         args = parser.parse_args()
     else:
         args = parser.parse_args(arguments)
 
+    # If an output directory was not specified then the result will be stored to the project folder
     if args.dir is None:
         args.dir = args.project
     else:
@@ -179,14 +201,18 @@ def parseArgs(arguments=""):
 
 
 if __name__ == "__main__":
+    # Parsing the arguments
     args = parseArgs()
 
     sc.header("Emma Memory and Mapfile Analyser", symbol="/")
 
+    # Starting the time measurement of Emma
     timeStart = timeit.default_timer()
     sc.info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
 
+    # Executing Emma
     main(args)
 
+    # Stopping the time measurement of Emma
     timeEnd = timeit.default_timer()
     sc.info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " "{0:.2f}".format(timeEnd - timeStart) + "s)")
