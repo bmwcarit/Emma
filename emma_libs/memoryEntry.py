@@ -22,13 +22,27 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 
 import sys
+import abc
 
 import pypiscout as sc
 
 import shared_libs.emma_helper
 
 
-class MemEntry:
+# FIXME These classes need to be reworked:
+#       The MemEntry would stay as it is,
+#       but the other two classes would only be wrappers that would operate on a MemEntry object.
+#       These would have no data members themselves.
+
+class MemEntry(abc.ABC):
+    def __eq__(self, other):
+        """
+        This is not implemented because we shall compare MemEntry objects trough the SectionEntry and ObjectEntry wrappers.
+        :param other: another MemEntry object.
+        :return: None
+        """
+        raise NotImplementedError("Operator __eq__ not defined between " + type(self).__name__ + " objects!")
+
     def __init__(self, tag, vasName, vasSectionName, section, moduleName, mapfileName, configID, memType, category, addressStart, addressLength=None, addressEnd=None):
         """
         Class storing one memory entry + meta data
@@ -120,9 +134,6 @@ class MemEntry:
         """
         return self.configID == other.configID
 
-    def __eq__(self, other):
-        raise NotImplementedError("Operator __eq__ not defined between " + type(self).__name__ + " objects!")
-
     def __lt__(self, other):
         """
         We only want the `<` operator to compare the address start element (dec); nothing else
@@ -135,43 +146,67 @@ class MemEntry:
         return self.addressStart < other.addressStart
 
 
-# TODO : Evaluate, whether we could delete this class and only have the MemEntry (AGK)
-class SectionEntry(MemEntry):
-    def __init__(self, memEntry):
-        super().__init__(memEntry)
+class MemEntryWrapper(abc.ABC):
+    @staticmethod
+    @abc.abstractmethod
+    def __eq__(first, second):
+        pass
 
-    def __eq__(self, other):
-        if isinstance(other, MemEntry):
-            return ((self.addressStart == other.addressStart) and
-                    (self.addressEnd == other.addressEnd)     and
-                    (self.section == other.section)           and
-                    (self.configID == other.configID)         and
-                    (self.mapfile == other.mapfile)           and
-                    (self.vasName == other.vasName))
+    @staticmethod
+    @abc.abstractmethod
+    def __hash__(memEntry):
+        pass
+
+    @staticmethod
+    @abc.abstractmethod
+    def getName(memEntry):
+        pass
+
+
+# FIXME This needs to be reworked, see the FIXME in the top of the file.
+class SectionEntry(MemEntryWrapper):
+    @staticmethod
+    def __eq__(first, second):
+        if isinstance(first, MemEntry) and isinstance(second, MemEntry):
+            return ((first.addressStart == second.addressStart) and
+                    (first.addressEnd == second.addressEnd)     and
+                    (first.section == second.section)           and
+                    (first.configID == second.configID)         and
+                    (first.mapfile == second.mapfile)           and
+                    (first.vasName == second.vasName))
         else:
-            raise NotImplementedError("Operator __eq__ not defined between " + type(self).__name__ + " and " + type(other).__name__)
+            raise NotImplementedError("Operator __eq__ not defined between " + type(first).__name__ + " and " + type(second).__name__)
 
-    def __hash__(self):
-        return hash((self.addressStart, self.addressEnd, self.section, self.configID, self.mapfile, self.vasName))
+    @staticmethod
+    def __hash__(memEntry):
+        return hash((memEntry.addressStart, memEntry.addressEnd, memEntry.section, memEntry.configID, memEntry.mapfile, memEntry.vasName))
+
+    @staticmethod
+    def getName(memEntry):
+        return memEntry.section
 
 
-# TODO : Evaluate, whether we could delete this class and only have the MemEntry (AGK)
-class ObjectEntry(MemEntry):
-    def __init__(self, memEntry):
-        super().__init__(memEntry)
-
-    def __eq__(self, other):
-        if isinstance(other, MemEntry):
-            return ((self.addressStart == other.addressStart)      and
-                    (self.addressEnd == other.addressEnd)          and
-                    (self.section == other.section)                and
-                    (self.moduleName == other.moduleName)          and
-                    (self.configID == other.configID)              and
-                    (self.mapfile == other.mapfile)                and
-                    (self.vasName == other.vasName)                and
-                    (self.vasSectionName == other.vasSectionName))
+# FIXME This needs to be reworked, see the FIXME in the top of the file.
+class ObjectEntry(MemEntryWrapper):
+    @staticmethod
+    def __eq__(first, second):
+        if isinstance(first, MemEntry) and isinstance(second, MemEntry):
+            return ((first.addressStart == second.addressStart)      and
+                    (first.addressEnd == second.addressEnd)          and
+                    (first.section == second.section)                and
+                    (first.moduleName == second.moduleName)          and
+                    (first.configID == second.configID)              and
+                    (first.mapfile == second.mapfile)                and
+                    (first.vasName == second.vasName)                and
+                    (first.vasSectionName == second.vasSectionName))
         else:
-            raise NotImplementedError("Operator __eq__ not defined between " + type(self).__name__ + " and " + type(other).__name__)
+            raise NotImplementedError("Operator __eq__ not defined between " + type(first).__name__ + " and " + type(second).__name__)
 
-    def __hash__(self):
-        return hash((self.addressStart, self.addressEnd, self.section, self.moduleName, self.configID, self.mapfile, self.vasName, self.vasSectionName))
+    @staticmethod
+    def __hash__(memEntry):
+        return hash((memEntry.addressStart, memEntry.addressEnd, memEntry.section, memEntry.moduleName, memEntry.configID,
+                     memEntry.mapfile, memEntry.vasName, memEntry.vasSectionName))
+
+    @staticmethod
+    def getName(memEntry):
+        return memEntry.section + "::" + memEntry.moduleName

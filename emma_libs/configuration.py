@@ -56,8 +56,6 @@ class Configuration:
         categoriesSectionsKeywordsPath = shared_libs.emma_helper.joinPath(configurationPath, CATEGORIES_KEYWORDS_SECTIONS_JSON)
         self.categoriesSectionsKeywords = self.readCategoriesJson(categoriesSectionsKeywordsPath)
 
-        # FIXME The mapfiles and other non-compiler dependent parts of the patterns*.json needs to be read in here
-
         # Processing the compiler dependent parts of the configuration
         for configId in self.globalConfig:
             sc.info("Processing configID \"" + configId + "\"")
@@ -115,80 +113,75 @@ class Configuration:
 
         return categoriesJson
 
+    def removeUnmatchedFromCategoriesJson(self):
+        """
+        Removes unused module names from categories.json.
+        The function prompts the user to confirm the overwriting of categories.json
+        :return: Bool if file has been overwritten
+        """
+        sc.info("Remove unmatched modules from" + self.__categoriesFilePath + "?\n" + self.__categoriesFilePath + " will be overwritten.\n`y` to accept, any other key to discard.")
+        text = input("> ") if not self.args.noprompt else sys.exit(-10)
+        if text == "y":
+            # Make a dict of {modulename: category} from consumerCollection
+            # Remember: consumerCollection is a list of memEntry objects
+            rawCategorisedModulesConsumerCollection = {memEntry.moduleName: memEntry.category for memEntry in self.consumerCollection}
 
-def removeUnmatchedFromCategoriesJson(self):
-    """
-    Removes unused module names from categories.json.
-    The function prompts the user to confirm the overwriting of categories.json
-    :return: Bool if file has been overwritten
-    """
-    sc.info("Remove unmatched modules from" + self.__categoriesFilePath + "?\n" + self.__categoriesFilePath + " will be overwritten.\n`y` to accept, any other key to discard.")
-    text = input("> ") if not self.args.noprompt else sys.exit(-10)
-    if text == "y":
-        # Make a dict of {modulename: category} from consumerCollection
-        # Remember: consumerCollection is a list of memEntry objects
-        rawCategorisedModulesConsumerCollection = {memEntry.moduleName: memEntry.category for memEntry in self.consumerCollection}
+            # Format rawCategorisedModulesConsumerCollection to {Categ1: [Modulename1, Modulename2, ...], Categ2: [...]}
+            categorisedModulesConsumerCollection = {}
+            for k, v in rawCategorisedModulesConsumerCollection.items():
+                categorisedModulesConsumerCollection[v] = categorisedModulesConsumerCollection.get(v, [])
+                categorisedModulesConsumerCollection[v].append(k)
 
-        # Format rawCategorisedModulesConsumerCollection to {Categ1: [Modulename1, Modulename2, ...], Categ2: [...]}
-        categorisedModulesConsumerCollection = {}
-        for k, v in rawCategorisedModulesConsumerCollection.items():
-            categorisedModulesConsumerCollection[v] = categorisedModulesConsumerCollection.get(v, [])
-            categorisedModulesConsumerCollection[v].append(k)
+            for category in self.categoriesJson:  # For every category in categories.json
+                if category not in categorisedModulesConsumerCollection:
+                    # If category is in categories.json but has never occured in the mapfiles (hence not present in consumerCollection)
+                    # Remove the not occuring category entirely
+                    self.categoriesJson.pop(category)
+                else:  # Category occurs in consumerCollection, hence is present in mapfiles,
+                    # overwrite old category module list with the ones acutally occuring in mapfiles
+                    self.categoriesJson[category] = categorisedModulesConsumerCollection[category]
 
-        for category in self.categoriesJson:  # For every category in categories.json
-            if category not in categorisedModulesConsumerCollection:
-                # If category is in categories.json but has never occured in the mapfiles (hence not present in consumerCollection)
-                # Remove the not occuring category entirely
-                self.categoriesJson.pop(category)
-            else:  # Category occurs in consumerCollection, hence is present in mapfiles,
-                # overwrite old category module list with the ones acutally occuring in mapfiles
-                self.categoriesJson[category] = categorisedModulesConsumerCollection[category]
+            # Sort self.categories case-insensitive in alphabetical order
+            for x in self.categoriesJson.keys():
+                self.categoriesJson[x].sort(key=lambda s: s.lower())
 
-        # Sort self.categories case-insensitive in alphabetical order
-        for x in self.categoriesJson.keys():
-            self.categoriesJson[x].sort(key=lambda s: s.lower())
+            shared_libs.emma_helper.writeJson(self.__categoriesFilePath, self.categoriesJson)
 
-        shared_libs.emma_helper.writeJson(self.__categoriesFilePath, self.categoriesJson)
+            return True
 
-        return True
+        else:
+            sc.warning(self.__categoriesFilePath + " not changed.")
+            if self.args.Werror:
+                sys.exit(-10)
+            return False
 
-    else:
-        sc.warning(self.__categoriesFilePath + " not changed.")
-        if self.args.Werror:
-            sys.exit(-10)
-        return False
+    def createCategoriesJson(self):
+        """
+        Updates/overwrites the present categories.json
+        :return Bool if CategoriesJson has been created
+        """
+        # FIXME: Clearer Output (FM)
+        sc.info("Merge categories.json with categorised modules from categoriesKeywords.json?\ncategories.json will be overwritten.\n`y` to accept, any other key to discard.")
+        text = input("> ") if not self.args.noprompt else sys.exit(-10)
+        if text == "y":
+            # Format moduleCategories to {Categ1: [Modulename1, Modulename2, ...], Categ2: [...]}
+            formatted = {}
+            for k, v in dict(self.categorisedFromKeywords).items():
+                formatted[v] = formatted.get(v, [])
+                formatted[v].append(k)
 
-def createCategoriesJson(self):
-    """
-    Updates/overwrites the present categories.json
-    :return Bool if CategoriesJson has been created
-    """
-    # FIXME: Clearer Output (FM)
-    sc.info("Merge categories.json with categorised modules from categoriesKeywords.json?\ncategories.json will be overwritten.\n`y` to accept, any other key to discard.")
-    text = input("> ") if not self.args.noprompt else sys.exit(-10)
-    if text == "y":
-        # Format moduleCategories to {Categ1: [Modulename1, Modulename2, ...], Categ2: [...]}
-        formatted = {}
-        for k, v in dict(self.categorisedFromKeywords).items():
-            formatted[v] = formatted.get(v, [])
-            formatted[v].append(k)
+            # Merge categories from keyword search with categories from categories.json
+            moduleCategories = {**formatted, **self.categoriesJson}
 
-        # Merge categories from keyword search with categories from categories.json
-        moduleCategories = {**formatted, **self.categoriesJson}
+            # Sort moduleCategories case-insensitive in alphabetical order
+            for x in moduleCategories.keys():
+                moduleCategories[x].sort(key=lambda s: s.lower())
 
-        # Sort moduleCategories case-insensitive in alphabetical order
-        for x in moduleCategories.keys():
-            moduleCategories[x].sort(key=lambda s: s.lower())
+            shared_libs.emma_helper.writeJson(self.__categoriesKeywordsPath, self.__categoriesKeywordsPath)
 
-        shared_libs.emma_helper.writeJson(self.__categoriesKeywordsPath, self.__categoriesKeywordsPath)
-
-        return True
-    else:
-        sc.warning(self.__categoriesFilePath + " not changed.")
-        if self.args.Werror:
-            sys.exit(-10)
-        return False
-
-
-
-
+            return True
+        else:
+            sc.warning(self.__categoriesFilePath + " not changed.")
+            if self.args.Werror:
+                sys.exit(-10)
+            return False

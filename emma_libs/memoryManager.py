@@ -18,23 +18,16 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 
 import sys
-import os
-import re
-import bisect
-import csv
 import datetime
 
 import pypiscout as sc
 
 from shared_libs.stringConstants import *
 import shared_libs.emma_helper
+import emma_libs.memoryEntry
 import emma_libs.configuration
 import emma_libs.ghsMapfileProcessor
-
-
-# Global timestamp
-# (parsed from the .csv file from ./memStats)
-timestamp = datetime.datetime.now().strftime("%Y-%m-%d - %Hh%Ms%S")
+import emma_libs.memoryMap
 
 
 class MemoryManager:
@@ -46,6 +39,10 @@ class MemoryManager:
             self.analyseDebug = args.analyse_debug
             self.verbosity = args.verbosity
             self.Werror = args.Werror
+            self.create_categories = args.create_categories
+            self.remove_unmatched = args.remove_unmatched
+            self.dir = args.dir
+            self.subDir = args.subdir
 
     def __init__(self, args):
         # Processing the command line arguments and storing it into the settings member
@@ -86,11 +83,36 @@ class MemoryManager:
 
                 # Importing the mapfile contents for the configId with the created mapfile processor
                 sectionCollection, objectCollection = mapfileProcessor.processMapfiles(self.configuration.globalConfig[configId])
-                self.memoryContent[configId]["sectionCollection"] = sectionCollection
-                self.memoryContent[configId]["objectCollection"] = objectCollection
+                self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY] = sectionCollection
+                self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY] = objectCollection
+
+                # Resolving the duplicate, containment and Overlap in the consumerCollection
+                emma_libs.memoryMap.resolveDuplicateContainmentOverlap(self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY], emma_libs.memoryEntry.SectionEntry)
+                emma_libs.memoryMap.resolveDuplicateContainmentOverlap(self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY], emma_libs.memoryEntry.ObjectEntry)
+
+                # Creating a common consumerCollection
+                self.memoryContent[configId][FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = emma_libs.memoryMap.calculateObjectsInSections(self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY],
+                                                                                                                                   self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY])
         else:
             sc.error("The configuration needs to be loaded before processing the mapfiles!")
             sys.exit(-10)
 
-    def storeResults(self):
-        pass
+    def createReports(self):
+        # The reports will be created in a normal case
+        # FIXME Implement the categorization function here (see state before redesign)
+
+        # Putting the same consumer collection types together
+        # (At this points the collections are grouped by configId then by their types)
+        consumerCollections = dict()
+        for configId in self.memoryContent.keys():
+            for collectionType in self.memoryContent[configId].keys():
+                if collectionType not in consumerCollections:
+                    consumerCollections[collectionType] = list()
+                consumerCollections[collectionType].extend(self.memoryContent[configId][collectionType])
+
+        for collectionType in consumerCollections.keys():
+            reportPath = emma_libs.memoryMap.createReportPath(self.settings.dir,
+                                                              self.settings.subDir,
+                                                              self.settings.projectName,
+                                                              collectionType)
+            emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])

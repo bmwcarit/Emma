@@ -34,7 +34,7 @@ def main(args):
     memoryManager = emma_libs.memoryManager.MemoryManager(args)
     memoryManager.readConfiguration()
     memoryManager.processMapfiles()
-    memoryManager.storeResults()
+    memoryManager.createReports()
 
 """
     # ------------------------------------------------------------------------------------------------------------------

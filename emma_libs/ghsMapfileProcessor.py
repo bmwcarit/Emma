@@ -31,33 +31,6 @@ import emma_libs.ghsMapfileRegexes
 import emma_libs.memoryEntry
 
 
-"""
-class SectionParser(MemoryManager):
-    def __init__(self, args):
-        regexData = emma_libs.mapfileRegexes.ImageSummaryPattern()                                                  # Regex Data containing the groups
-        categoriesPath = shared_libs.emma_helper.joinPath(args.project, CATEGORIES_SECTIONS_JSON)                   # The file path to categories.JSON
-        categoriesKeywordsPath = shared_libs.emma_helper.joinPath(args.project, CATEGORIES_KEYWORDS_SECTIONS_JSON)  # The file path to categoriesKeyowrds.JSON
-        fileIdentifier = FILE_IDENTIFIER_SECTION_SUMMARY
-        super().__init__(args, categoriesPath, categoriesKeywordsPath, fileIdentifier, regexData)
-
-    def resolveDuplicateContainmentOverlap(self):
-        nameGetter = lambda target: target.section
-        super().resolveDuplicateContainmentOverlap(nameGetter)
-
-class ObjectParser(MemoryManager):
-    def __init__(self, args):
-        regexData = emma_libs.mapfileRegexes.ModuleSummaryPattern()                                                 # Regex Data containing the groups
-        categoriesPath = shared_libs.emma_helper.joinPath(args.project, CATEGORIES_OBJECTS_JSON)                    # The filepath to categories.JSON
-        categoriesKeywordsPath = shared_libs.emma_helper.joinPath(args.project, CATEGORIES_KEYWORDS_OBJECTS_JSON)   # The filepath to categoriesKeyowrds.JSON
-        fileIdentifier = FILE_IDENTIFIER_OBJECT_SUMMARY
-        super().__init__(args, categoriesPath, categoriesKeywordsPath, fileIdentifier, regexData)
-
-    def resolveDuplicateContainmentOverlap(self):
-        nameGetter = lambda target: target.section + "::" + target.moduleName
-        super().resolveDuplicateContainmentOverlap(nameGetter)
-"""
-
-
 class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
     def __init__(self, configId, analyseDebug, verbosity, Werror):
         super().__init__(configId, analyseDebug, verbosity, Werror)
