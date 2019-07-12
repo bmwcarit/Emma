@@ -30,7 +30,6 @@ import emma_libs.memoryMap
 
 
 def main(args):
-
     memoryManager = emma_libs.memoryManager.MemoryManager(args)
     memoryManager.readConfiguration()
     memoryManager.processMapfiles()
@@ -183,19 +182,6 @@ def parseArgs(arguments=""):
         args = parser.parse_args()
     else:
         args = parser.parse_args(arguments)
-
-    # If an output directory was not specified then the result will be stored to the project folder
-    if args.dir is None:
-        args.dir = args.project
-    else:
-        # Get paths straight (only forward slashes)
-        args.dir = shared_libs.emma_helper.joinPath(args.dir)
-
-    if args.subdir is not None:
-        # Get paths straight (only forward slashes)
-        args.subdir = shared_libs.emma_helper.joinPath(args.subdir)
-
-    args.mapfiles = shared_libs.emma_helper.joinPath(args.mapfiles)
 
     return args
 

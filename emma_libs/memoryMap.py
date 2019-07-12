@@ -263,9 +263,3 @@ def writeReportToDisk(reportPath, consumerCollection):
                 row.addressLengthHexOriginal if ((row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
                 row.addressLengthOriginal if ((row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else ""
             ])
-
-    sc.info("Summary saved in:", os.path.abspath(reportPath))
-    sc.info("Filename:", os.path.split(reportPath)[-1])
-    print("\n")
-
-

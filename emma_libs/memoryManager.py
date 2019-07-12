@@ -17,8 +17,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 
+import os
 import sys
-import datetime
 
 import pypiscout as sc
 
@@ -41,8 +41,13 @@ class MemoryManager:
             self.Werror = args.Werror
             self.create_categories = args.create_categories
             self.remove_unmatched = args.remove_unmatched
-            self.dir = args.dir
-            self.subDir = args.subdir
+            # If an output directory was not specified then the result will be stored to the project folder
+            if args.dir is None:
+                self.dir = args.project
+            else:
+                # Get paths straight (only forward slashes)
+                self.dir = shared_libs.emma_helper.joinPath(args.dir)
+            self.subDir = shared_libs.emma_helper.joinPath(args.subdir) if args.subdir is not None else ""
 
     def __init__(self, args):
         # Processing the command line arguments and storing it into the settings member
@@ -110,9 +115,11 @@ class MemoryManager:
                     consumerCollections[collectionType] = list()
                 consumerCollections[collectionType].extend(self.memoryContent[configId][collectionType])
 
+        # Creating reports from the consumer colections
         for collectionType in consumerCollections.keys():
             reportPath = emma_libs.memoryMap.createReportPath(self.settings.dir,
                                                               self.settings.subDir,
                                                               self.settings.projectName,
                                                               collectionType)
             emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
+            sc.info("A report was stored:", os.path.abspath(reportPath))

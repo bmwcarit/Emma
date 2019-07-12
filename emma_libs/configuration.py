@@ -34,31 +34,31 @@ class Configuration:
 
         # Processing the globalConfig.json
         globalConfigPath = shared_libs.emma_helper.joinPath(configurationPath, "globalConfig.json")
-        self.globalConfig = self.readGlobalConfigJson(globalConfigPath)
-        sc.info("Imported " + str(len(self.globalConfig)) + " global config entries")
+        self.globalConfig = self.__readGlobalConfigJson(globalConfigPath)
+        sc.info("Imported " + str(len(self.globalConfig)) + " global config entries:" + str(list(self.globalConfig.keys())))
 
         # Processing the addressSpaces*.json for all the configIds
         for configId in self.globalConfig:
             if "addressSpacesPath" in self.globalConfig[configId].keys():
                 addressSpacesPath = shared_libs.emma_helper.joinPath(configurationPath, self.globalConfig[configId]["addressSpacesPath"])
-                self.globalConfig[configId]["addressSpaces"] = self.readAddressSpacesJson(addressSpacesPath)
+                self.globalConfig[configId]["addressSpaces"] = self.__readAddressSpacesJson(addressSpacesPath)
             else:
                 sc.error("The " + configId + " does not have the key: " + "addressSpacesPath")
                 sys.exit(-10)
 
         # Loading the categories config files. These files are optional, if they are not present we will store None instead.
         categoriesObjectsPath = shared_libs.emma_helper.joinPath(configurationPath, CATEGORIES_OBJECTS_JSON)
-        self.categoriesObjects = self.readCategoriesJson(categoriesObjectsPath)
+        self.categoriesObjects = self.__readCategoriesJson(categoriesObjectsPath)
         categoriesObjectsKeywordsPath = shared_libs.emma_helper.joinPath(configurationPath, CATEGORIES_KEYWORDS_OBJECTS_JSON)
-        self.categoriesObjectsKeywords = self.readCategoriesJson(categoriesObjectsKeywordsPath)
+        self.categoriesObjectsKeywords = self.__readCategoriesJson(categoriesObjectsKeywordsPath)
         categoriesSectionsPath = shared_libs.emma_helper.joinPath(configurationPath, CATEGORIES_SECTIONS_JSON)
-        self.categoriesSections = self.readCategoriesJson(categoriesSectionsPath)
+        self.categoriesSections = self.__readCategoriesJson(categoriesSectionsPath)
         categoriesSectionsKeywordsPath = shared_libs.emma_helper.joinPath(configurationPath, CATEGORIES_KEYWORDS_SECTIONS_JSON)
-        self.categoriesSectionsKeywords = self.readCategoriesJson(categoriesSectionsKeywordsPath)
+        self.categoriesSectionsKeywords = self.__readCategoriesJson(categoriesSectionsKeywordsPath)
 
         # Processing the compiler dependent parts of the configuration
         for configId in self.globalConfig:
-            sc.info("Processing configID \"" + configId + "\"")
+            sc.info("Processing the mapfiles of the configID \"" + configId + "\"")
             usedCompiler = self.globalConfig[configId]["compiler"]
             if "GreenHills" == usedCompiler:
                 emma_libs.ghsConfiguration.GhsConfiguration(configurationPath, mapfilesPath, self.globalConfig[configId])
@@ -66,7 +66,7 @@ class Configuration:
                 sc.error("The " + configId + " contains an unexpected compiler value: " + usedCompiler)
                 sys.exit(-10)
 
-    def readGlobalConfigJson(self, path):
+    def __readGlobalConfigJson(self, path):
         # Load the globalConfig file
         globalConfig = shared_libs.emma_helper.readJson(path)
 
@@ -83,12 +83,12 @@ class Configuration:
                 elif globalConfig[configId][IGNORE_CONFIG_ID] is True:
                     globalConfig.pop(configId)
 
-        if len(globalConfig):
+        if not len(globalConfig):
             sc.warning("No configID was defined or all of them were ignored.")
 
         return globalConfig
 
-    def readAddressSpacesJson(self, path):
+    def __readAddressSpacesJson(self, path):
         # Load the addressSpaces file
         addressSpaces = shared_libs.emma_helper.readJson(path)
 
@@ -104,7 +104,7 @@ class Configuration:
 
         return addressSpaces
 
-    def readCategoriesJson(self, path):
+    def __readCategoriesJson(self, path):
         if os.path.exists(path):
             categoriesJson = shared_libs.emma_helper.readJson(path)
         else:
@@ -113,6 +113,7 @@ class Configuration:
 
         return categoriesJson
 
+# FIXME solve this...
     def removeUnmatchedFromCategoriesJson(self):
         """
         Removes unused module names from categories.json.
@@ -155,6 +156,7 @@ class Configuration:
                 sys.exit(-10)
             return False
 
+# FIXME solve this...
     def createCategoriesJson(self):
         """
         Updates/overwrites the present categories.json
