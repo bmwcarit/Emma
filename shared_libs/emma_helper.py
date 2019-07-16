@@ -26,7 +26,8 @@ import json
 import hashlib
 import base64
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
+
 import markdown
 import markdown.extensions.codehilite
 import markdown.extensions.fenced_code
@@ -42,8 +43,7 @@ def checkIfFolderExists(folderName):
     :param folderName: Project to check
     """
     if not os.path.isdir(folderName):
-        sc.error("Given directory (" + os.path.abspath(folderName) + ") does not exist; exiting...")
-        sys.exit(-10)
+        sc().error("Given directory (" + os.path.abspath(folderName) + ") does not exist; exiting...")
 
 
 def checkForFile(filePath):
@@ -52,8 +52,7 @@ def checkForFile(filePath):
     :param filePath: File path to check
     """
     if not os.path.exists(filePath):
-        sc.error("Given file (" + filePath + ") does not exist; exiting...")
-        sys.exit(-10)
+        sc().error("Given file (" + filePath + ") does not exist; exiting...")
 
 
 def mkDirIfNeeded(path):
@@ -63,7 +62,7 @@ def mkDirIfNeeded(path):
     """
     if not os.path.isdir(path):
         os.makedirs(path)
-        sc.info("Directory " + path + " created since not present")
+        sc().info("Directory " + path + " created since not present")
 
 
 def readJson(jsonInFilePath):
@@ -98,7 +97,7 @@ def unifyAddress(address):
     elif type(address) == int and address is not None:
         addressHex = hex(address)
     else:
-        sc.error("Address must be either of type int or str")
+        sc().error("Address must be either of type int or str")
         raise TypeError
     return addressHex, address
 
@@ -114,7 +113,7 @@ def getTimestampFromFilename(filename):
     if match:
         return match.group()
     else:
-        sc.error("Could not match the given filename:", filename)
+        sc().error("Could not match the given filename:", filename)
 
 
 def getColourValFromString(inputString):
@@ -192,7 +191,7 @@ def changePictureLinksToEmbeddingInHtmlData(htmlData, sourceDataPath=""):
             linked_picture_path = os.path.join(os.path.dirname(sourceDataPath), linked_picture)
 
         if not os.path.exists(linked_picture_path):
-            sc.warning("The file " + linked_picture_path + " does not exist!")
+            sc().warning("The file " + linked_picture_path + " does not exist!")
             continue
 
         with open(linked_picture_path, "rb") as file_object:

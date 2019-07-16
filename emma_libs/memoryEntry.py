@@ -24,15 +24,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import sys
 import abc
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 import shared_libs.emma_helper
 
-
-# FIXME These classes need to be reworked:
-#       The MemEntry would stay as it is,
-#       but the other two classes would only be wrappers that would operate on a MemEntry object.
-#       These would have no data members themselves.
 
 class MemEntry(abc.ABC):
     def __eq__(self, other):
@@ -43,7 +38,7 @@ class MemEntry(abc.ABC):
         """
         raise NotImplementedError("Operator __eq__ not defined between " + type(self).__name__ + " objects!")
 
-    def __init__(self, tag, vasName, vasSectionName, section, moduleName, mapfileName, configID, memType, category, addressStart, addressLength=None, addressEnd=None):
+    def __init__(self, vasName, vasSectionName, section, moduleName, mapfileName, configID, addressStart, tag=None, memType=None, category=None, addressLength=None, addressEnd=None):
         """
         Class storing one memory entry + meta data
         Chose addressLength or addressEnd (one and only one of those two must be given)
@@ -71,8 +66,7 @@ class MemEntry(abc.ABC):
         self.addressStartHex, self.addressStart = shared_libs.emma_helper.unifyAddress(addressStart)
 
         if addressLength is None and addressEnd is None:
-            sc.error("Either addressLength or addressEnd must be given!")
-            sys.exit(-10)
+            sc().error("Either addressLength or addressEnd must be given!")
         elif addressLength is None:
             self.__setAddressesGivenEnd(addressEnd)
         elif addressEnd is None:
@@ -80,7 +74,7 @@ class MemEntry(abc.ABC):
         else:
             # TODO: Add verbose output here (MSc)
             # TODO: if self.args.verbosity <= 1:
-            sc.warning("MemEntry: addressLength AND addressEnd were both given. The addressLength will be used and the addressEnd will be recalculated based on it.")
+            sc().warning("MemEntry: addressLength AND addressEnd were both given. The addressLength will be used and the addressEnd will be recalculated based on it.")
             self.__setAddressesGivenLength(addressLength)
 
         self.memTypeTag = tag  # Differentiate in more detail between memory sections/types

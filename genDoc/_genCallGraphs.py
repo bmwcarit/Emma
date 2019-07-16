@@ -23,7 +23,7 @@ import argparse
 import pstats
 import subprocess
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 import gprof2dot                          # Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
 
 from shared_libs.stringConstants import *
@@ -147,36 +147,36 @@ class ProfilerFilter:
 
 
 def generateCallGraph(profile_file, execution_string, verbose):
-    sc.info("Generating call graphs for: " + execution_string)
-    sc.info("The results will be stored in: " + shared_libs.emma_helper.joinPath(os.getcwd(), README_CALL_GRAPH_AND_UML_FOLDER_NAME))
+    sc().info("Generating call graphs for: " + execution_string)
+    sc().info("The results will be stored in: " + shared_libs.emma_helper.joinPath(os.getcwd(), README_CALL_GRAPH_AND_UML_FOLDER_NAME))
 
-    sc.info("Analyzing the program and creating the .profile file...")
+    sc().info("Analyzing the program and creating the .profile file...")
     subprocess.run("python -m cProfile -o " + profile_file + " " + execution_string)
 
     profiler_data = pstats.Stats(profile_file)
     profiler_data.sort_stats(pstats.SortKey.CUMULATIVE)
     if verbose:
-        sc.info("The content of the profile file:")
+        sc().info("The content of the profile file:")
         profiler_data.print_stats()
 
-    sc.info("Filtering the profiler data...")
+    sc().info("Filtering the profiler data...")
     profiler_filter = ProfilerFilter(EmmaRootFolderRelative)
     profiler_filter.filterProfilerData(profiler_data.stats)
 
     filtered_profile_file = os.path.splitext(profile_file)[0] + FilteredProfileSuffix
-    sc.info("Storing the filtered profile file to:", filtered_profile_file)
+    sc().info("Storing the filtered profile file to:", filtered_profile_file)
     profiler_data.dump_stats(filtered_profile_file)
 
-    sc.info("Creating the .dot file from the .profile file...")
+    sc().info("Creating the .dot file from the .profile file...")
     subprocess.run("gprof2dot -f pstats " + profile_file + " -o " + profile_file + ".dot")
 
-    sc.info("Creating the .dot file from the filtered .profile file...")
+    sc().info("Creating the .dot file from the filtered .profile file...")
     subprocess.run("gprof2dot -f pstats " + filtered_profile_file + " -o " + filtered_profile_file + ".dot")
 
-    sc.info("Creating the .png file from the .dot file...")
+    sc().info("Creating the .png file from the .dot file...")
     subprocess.run("dot -T" + README_PICTURE_FORMAT + " -Gdpi=" + str(DPI_DOCUMENTATION) + " " + profile_file + ".dot -o" + profile_file + "." + README_PICTURE_FORMAT)
 
-    sc.info("Creating the .png file from the filtered .dot file...")
+    sc().info("Creating the .png file from the filtered .dot file...")
     subprocess.run("dot -T" + README_PICTURE_FORMAT + " -Gdpi=" + str(DPI_DOCUMENTATION) + " " + filtered_profile_file + ".dot -o" + filtered_profile_file + "." + README_PICTURE_FORMAT)
 
     print("")
@@ -195,7 +195,7 @@ def main(arguments):
         generateCallGraph(EmmaVisualiserProfileFile, EmmaVisualiserExecutionString, arguments.verbose)
 
     except Exception as e:
-        sc.error("An exception was caught:", e)
+        sc().error("An exception was caught:", e)
 
     # Get back initial path config
     os.environ["PATH"] = path_old_value
@@ -204,6 +204,6 @@ def main(arguments):
 if __name__ == "__main__":
     arguments = ParseArguments()
     if not os.path.isdir(README_CALL_GRAPH_AND_UML_FOLDER_NAME):
-        sc.info("The folder \"" + README_CALL_GRAPH_AND_UML_FOLDER_NAME + "\" was created because it did not exist...")
+        sc().info("The folder \"" + README_CALL_GRAPH_AND_UML_FOLDER_NAME + "\" was created because it did not exist...")
         os.makedirs(README_CALL_GRAPH_AND_UML_FOLDER_NAME)
     main(arguments)

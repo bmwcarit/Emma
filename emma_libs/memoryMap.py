@@ -17,13 +17,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 
-import os
 import csv
 import bisect
 import copy
 import datetime
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *
 import shared_libs.emma_helper
@@ -213,11 +212,10 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
     return objectsInSections
 
 
-def createReportPath(rootdir, subdir, projectName, reportName):
-    memStatsRootPath = shared_libs.emma_helper.joinPath(rootdir, subdir, OUTPUT_DIR)
-    shared_libs.emma_helper.mkDirIfNeeded(memStatsRootPath)
+def createReportPath(outputPath, projectName, reportName):
+    shared_libs.emma_helper.mkDirIfNeeded(outputPath)
     memStatsFileName = projectName + "_" + reportName + "_" + timestamp + ".csv"
-    return shared_libs.emma_helper.joinPath(memStatsRootPath, memStatsFileName)
+    return shared_libs.emma_helper.joinPath(outputPath, memStatsFileName)
 
 
 def writeReportToDisk(reportPath, consumerCollection):

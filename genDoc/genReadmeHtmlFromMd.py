@@ -21,7 +21,7 @@ import sys
 import os
 import argparse
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 import gprof2dot            # Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
 
 sys.path.append("../")
@@ -61,14 +61,18 @@ def ParseArguments():
 
 
 def main(arguments):
-    sc.header("Generating the Readme documents", symbol="/")
+    def exitProgram():
+        sys.exit(-10)
+
+    sc(-1, exitProgram, exitProgram)
+    sc().header("Generating the Readme documents", symbol="/")
 
     # Give a hint on python sys-call
-    sc.info("A `python` system call is going to happen. If any errors occur please check the following first:")
+    sc().info("A `python` system call is going to happen. If any errors occur please check the following first:")
     if sys.platform == "win32":
-        sc.info("Windows OS detected. Make sure `python` refers to the Python3 version targeted for this application (-> dependencies; e.g. WSL comes with its own Python).")
+        sc().info("Windows OS detected. Make sure `python` refers to the Python3 version targeted for this application (-> dependencies; e.g. WSL comes with its own Python).")
     else:
-        sc.info("Make sure `python` refers to a Python 3 installation.")
+        sc().info("Make sure `python` refers to a Python 3 installation.")
 
     # Store original path variables
     path_old_value = os.environ["PATH"]
@@ -78,8 +82,7 @@ def main(arguments):
             # Add to path
             os.environ["PATH"] += (graphviz_bin_abspath + ";")
         else:
-            sc.error("The \"graphviz_bin_folder\" was not found in PATH nor was given in the argument --graphviz_bin_folder")
-            sys.exit(-1)
+            sc().error("The \"graphviz_bin_folder\" was not found in PATH nor was given in the argument --graphviz_bin_folder")
 
     try:
         if not os.path.isdir(README_CALL_GRAPH_AND_UML_FOLDER_NAME):
@@ -91,34 +94,34 @@ def main(arguments):
             genDoc._genUmlDiagrams.main(arguments)
 
         print("")
-        sc.info("Storing Emma readme as a .html file...")
+        sc().info("Storing Emma readme as a .html file...")
         markdown_file_path = r"../doc/readme.md"
         shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdown_file_path, (os.path.splitext(markdown_file_path)[0] + ".html"))
-        sc.info("Done.")
+        sc().info("Done.")
 
         print("")
-        sc.info("Storing Emma Visualiser readme as a .html file...")
+        sc().info("Storing Emma Visualiser readme as a .html file...")
         markdown_file_path = r"../doc/readme-vis.md"
         shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdown_file_path, (os.path.splitext(markdown_file_path)[0] + ".html"))
-        sc.info("Done.")
+        sc().info("Done.")
 
         print("")
-        sc.info("Storing the test_project readme as a .html file...")
+        sc().info("Storing the test_project readme as a .html file...")
         markdown_file_path = r"../doc/test_project/readme/readme.md"
         shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdown_file_path, (os.path.splitext(markdown_file_path)[0] + ".html"))
-        sc.info("Done.")
+        sc().info("Done.")
         
         print("")
-        sc.info("Storing the top level README as a .html file...")
+        sc().info("Storing the top level README as a .html file...")
         # Change the working directory; otherwise we get errors about the relative image import paths in emma_helper.changePictureLinksToEmbeddingInHtmlData()
         os.chdir("..")
         markdown_file_path = r"README.md"
         shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdown_file_path, (os.path.splitext(markdown_file_path)[0] + ".html"))
-        sc.info("Done.")
+        sc().info("Done.")
         os.chdir("doc")     # Change working directory back
 
     except Exception as e:
-        sc.error("An exception was caught:", e)
+        sc().error("An exception was caught:", e)
 
     # Get back initial path config
     os.environ["PATH"] = path_old_value

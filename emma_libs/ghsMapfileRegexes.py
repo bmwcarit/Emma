@@ -24,7 +24,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import re
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 
 class Groups:

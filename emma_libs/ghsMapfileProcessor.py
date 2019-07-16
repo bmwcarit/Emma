@@ -22,7 +22,7 @@ import sys
 import re
 import bisect
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *
 import shared_libs.emma_helper
@@ -32,26 +32,26 @@ import emma_libs.memoryEntry
 
 
 class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
-    def __init__(self, configId, analyseDebug, verbosity, Werror):
-        super().__init__(configId, analyseDebug, verbosity, Werror)
-        self.configId = configId
-        self.analyseDebug = analyseDebug
-        self.verbosity = verbosity
-        self.Werror = Werror
+    def __init__(self):
+        super().__init__()
+        self.analyseDebug = None
 
-    def processMapfiles(self, configuration):
-        sectionCollection = self.__importData(configuration, emma_libs.ghsMapfileRegexes.ImageSummaryPattern())
-        objectCollection = self.__importData(configuration, emma_libs.ghsMapfileRegexes.ModuleSummaryPattern())
+    def processMapfiles(self, configId, configuration, analyseDebug):
+        self.analyseDebug = analyseDebug
+
+        sectionCollection = self.__importData(configId, configuration, emma_libs.ghsMapfileRegexes.ImageSummaryPattern())
+        objectCollection = self.__importData(configId, configuration, emma_libs.ghsMapfileRegexes.ModuleSummaryPattern())
 
         return sectionCollection, objectCollection
 
-    def __importData(self, configuration, defaultRegexPattern):
+    def __importData(self, configId, configuration, defaultRegexPattern):
         """
         Processes all input data and adds it to our container (`consumerCollection`)
         :return: number of configIDs
         """
 
         result = []
+        memoryRegionsToExcludeFromMapfiles = {}
 
         # Reading the hexadecimal offset value from the addresSpaces*.json. This value is optional, in case it is not defined, we will assume that it is 0.
         offset = int(configuration["addressSpaces"]["offset"], 16) if "offset" in configuration["addressSpaces"].keys() else 0
@@ -63,6 +63,15 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
             # Opening the mapfile and reading in its content
             with open(configuration["patterns"]["mapfiles"][mapfile]["associatedFilename"], "r") as mapfile_file_object:
                 mapfileContent = mapfile_file_object.readlines()
+
+            # Storing the name of the mapfile
+            mapfileName = os.path.split(configuration["patterns"]["mapfiles"][mapfile]["associatedFilename"])[-1]
+
+            # Storing the list of ignored memory areas to this mapfile
+            # This will be a necessary parameter for the MapfileProcessor::fillOutMemoryRegionsAndMemoryTypes()
+            if "memRegionExcludes" in configuration["patterns"]["mapfiles"][mapfile]:
+                memoryRegionsToExcludeFromMapfiles[mapfileName] = configuration["patterns"]["mapfiles"][mapfile]["memRegionExcludes"]
+
             # If there is a VAS defined for the mapfile, then the addresses found in it are virtual addresses, otherwise they are physical addresses
             mapfileContainsVirtualAddresses = True if "VAS" in configuration["patterns"]["mapfiles"][mapfile] else False
             # Loading the regex pattern that will be used for this mapfile
@@ -96,79 +105,39 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
                                                                                   monolithFileContent)
                         # Check whether the address translation was successful
                         if physicalAddress is None:
-                            if self.verbosity <= 2:
                                 warning_section_name = lineComponents.group(regexPatternData.Groups.section).rstrip()
                                 warning_object_name = ("::" + lineComponents.group(regexPatternData.Groups.module).rstrip()) if hasattr(regexPatternData.Groups, "module") else ""
-                                sc.warning("The address translation failed for the element: \"" + mapfile + "(line " + str(lineNumber) + ")::" +
-                                              warning_section_name + warning_object_name + " (size: " + str(int(lineComponents.group(regexPatternData.Groups.size), 16)) + " B)\" of the configID \"" +
-                                              self.configId + "\"!")
-                            if self.Werror:
-                                sys.exit(-10)
-                            continue
+                                sc().warning("The address translation failed for the element: \"" + mapfile + "(line " + str(lineNumber) + ")::" +
+                                             warning_section_name + warning_object_name + " (size: " + str(int(lineComponents.group(regexPatternData.Groups.size), 16)) + " B)\" of the configID \"" +
+                                             configId + "\"!")
+                        continue
                     # In case the mapfile contains phyisical addresses, no translation is needed, we are just reading the address that is in the mapfile
                     else:
                         physicalAddress = int(lineComponents.group(regexPatternData.Groups.origin), 16) - offset
 
-                    # Finding the memory region and memory type this element belongs to
-                    memoryRegion, memType = super().evalMemRegion(physicalAddress, configuration["addressSpaces"]["memory"])
+                    # Determining the addressLength
+                    addressLength = int(lineComponents.group(regexPatternData.Groups.size), 16)
+                    # Check whether the address is valid
+                    if 0 > addressLength:
+                        sc().warning("Negative addressLength found.")
 
-                    # If a memory region was NOT found, we will continue with the next line
-                    if memoryRegion is not None:
-                        # FIXME The categorization needs to be changed. This belongs probably to the configuration class.
-                        #       We could register a callback that would be called here.
-                        #       It would return the category value, and in the inside it would do the category file creation. (AGK)
-                        # Finding the category this element belongs to
-                        #category = self.evalCategory(lineComponents.group(regexPatternData.Groups.name))
-                        category = "FIXME!!! ghsMapfileProcessor.py::__importData()"
-                        # Skip memTypes to exclude
-                        # TODO : We could write a function to replace this often executed code to make the program to be readable (AGK)
-                        # TODO :    def checkAndGetStuffFromDictionary(stuff, dictionary):
-                        # TODO :        result = None
-                        # TODO :        if stuff in dictionary.keys():
-                        # TODO :            result = dictionary[stuff]
-                        # TODO :        return result
-                        memoryRegionsToExclude = []
-                        if MEM_REGION_TO_EXCLUDE in configuration["patterns"]["mapfiles"][mapfile].keys():
-                            # If a memory types should be excluded on a mapfile basis
-                            memoryRegionsToExclude = configuration["patterns"]["mapfiles"][mapfile][MEM_REGION_TO_EXCLUDE]
-                        if memoryRegion in memoryRegionsToExclude:
-                            continue
+                    # Creating a MemEntry object from the data that we got from the mapfile
+                    memEntry = emma_libs.memoryEntry.MemEntry(vasName=vasName if mapfileContainsVirtualAddresses else None,
+                                                              vasSectionName=vasSectionName if mapfileContainsVirtualAddresses else None,
+                                                              section=lineComponents.group(regexPatternData.Groups.section).rstrip(),
+                                                              moduleName=regexPatternData.getModuleName(lineComponents),
+                                                              mapfileName=mapfileName,
+                                                              configID=configId,
+                                                              addressStart=physicalAddress,
+                                                              addressLength=addressLength)
+                    # Finding the index, where we need to insert the memEntry
+                    index = bisect.bisect_right(result, memEntry)
+                    # Inserts at index, elements to right will be pushed "one index up"
+                    result.insert(index, memEntry)
 
-                        # Determining the addressLength
-                        addressLength = int(lineComponents.group(regexPatternData.Groups.size), 16)
-                        # Check whether the address is valid
-                        if 0 > addressLength:
-                            if self.verbosity <= 2:
-                                sc.warning("Negative addressLength found.")
-                            if self.Werror:
-                                sys.exit(-10)
+            # Filling out the memory regions and memory types and ignoring the entries that did not have a match
+            super().fillOutMemoryRegionsAndMemoryTypes(result, configuration, True, memoryRegionsToExcludeFromMapfiles)
 
-                        # Creating a MemEntry object from the data that we got from the mapfile
-                        memEntry = emma_libs.memoryEntry.MemEntry(tag=memoryRegion,
-                                                                  vasName=vasName if mapfileContainsVirtualAddresses else None,
-                                                                  vasSectionName=vasSectionName if mapfileContainsVirtualAddresses else None,
-                                                                  section=lineComponents.group(regexPatternData.Groups.section).rstrip(),
-                                                                  moduleName=regexPatternData.getModuleName(lineComponents),
-                                                                  mapfileName=os.path.split(configuration["patterns"]["mapfiles"][mapfile]["associatedFilename"])[-1],
-                                                                  configID=self.configId,
-                                                                  memType=memType,
-                                                                  category=category,
-                                                                  addressStart=physicalAddress,
-                                                                  addressLength=addressLength)
-                        # Finding the index, where we need to insert the memEntry
-                        index = bisect.bisect_right(result, memEntry)
-                        # Inserts at index, elements to right will be pushed "one index up"
-                        result.insert(index, memEntry)
-                    else:
-                        if self.verbosity <= 1:
-                            warning_section_name = lineComponents.group(regexPatternData.Groups.section).rstrip()
-                            warning_object_name = ("::" + lineComponents.group(regexPatternData.Groups.module).rstrip()) if hasattr(regexPatternData.Groups, "module") else ""
-                            sc.warning("The element: \"" + mapfile + "(line " + str(lineNumber) + ")::" + warning_section_name + warning_object_name +
-                                       " (size: " + str(int(lineComponents.group(regexPatternData.Groups.size), 16)) + " B)\" of the configID \"" +
-                                       self.configId + "\" does not belong to any of the memory regions!")
-                        if self.Werror:
-                            sys.exit(-1)
-                        continue
         return result
 
     def __getRegexPattern(self, defaultPattern: emma_libs.ghsMapfileRegexes.RegexPatternBase, mapfileEntry):
@@ -193,8 +162,7 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
                 objectPattern.pattern = mapfileEntry[UNIQUE_PATTERN_OBJECTS]    # Overwrite default pattern with unique one
                 regexPattern = objectPattern
         else:
-            sc.error("Unexpected default regex pattern (" + type(defaultPattern).__name__ + ")!")
-            sys.exit(-10)
+            sc().error("Unexpected default regex pattern (" + type(defaultPattern).__name__ + ")!")
 
         return regexPattern
 

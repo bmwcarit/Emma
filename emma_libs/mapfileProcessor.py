@@ -17,10 +17,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 
-import re
 import abc
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *
 import shared_libs.emma_helper
@@ -28,95 +27,47 @@ import shared_libs.emma_helper
 
 class MapfileProcessor(abc.ABC):
     @abc.abstractmethod
-    def __init__(self, configId, analyseDebug, verbosity, Werror):
+    def processMapfiles(self, configId, configuration, analyseDebug, verbosity, wError):
         pass
 
-    @abc.abstractmethod
-    def processMapfiles(self, configuration):
-        pass
-
-    def evalMemRegion(self, physAddr, memoryCandidates):
+    @staticmethod
+    def fillOutMemoryRegionsAndMemoryTypes(listOfMemEntryObjects, configuration, removeElementsWithoutMemoryRegionOrType, memoryRegionsToExcludeFromMapfiles = None):
         """
         Search within the memory regions to find the address given from a line
         :param configID: Configuration ID from globalConfig.json (referenced in patterns.json)
         :param physAddr: input address in hex or dec
         :return: None if nothing was found; otherwise the unique name of the memory region defined in addressSpaces*.json (DDR, ...)
         """
-        address = shared_libs.emma_helper.unifyAddress(physAddr)[1]  # we only want dec >> [1]
-        memRegion = None
-        memType = None
+        def printElementRemovalWarning(element):
+            object_name = ("::" + element.moduleName) if hasattr(element, "module") else ""
+            sc().warning("The element: \"" + element.mapfile + "::" + element.section + object_name +
+                         " (@" + element.addressStartHex + ", size: " + str(element.addressLength) + " B)\" of the configID \"" +
+                         element.configID + "\" does not belong to any of the memory regions!")
 
-        # Find the address in the memory map and set its type (int, ext RAM/ROM)
-        for currAddrSpace in memoryCandidates:
-            # TODO : This is wrong here, because it does not take into account that we have a size as well.
-            # TODO : This means that it can be that the start of the element is inside of the memory region but it reaches trough it´s borders.
-            # TODO : This could mean an error in either in the config or the mapfiles. Because of this info needs to be noted. (AGK)
-            if int(memoryCandidates[currAddrSpace]["start"], 16) <= address <= int(memoryCandidates[currAddrSpace]["end"], 16):
-                memRegion = currAddrSpace
-                memType = memoryCandidates[currAddrSpace]["type"]
-                # TODO : Maybe we should break here to improve performance. (AGK)
-        # TODO: Do we want to save mapfile entrys which don't fit into the pre-configured adresses from addressSpaces*.json? If so add the needed code here (FM)
+        listOfElementsToKeep = []
+        memoryCandidates = configuration["addressSpaces"]["memory"]
 
-        # # Debug Print
-        # if memRegion is None:
-        #     if address != 0:
-        #         print("<<<<memReg=None<<<<<<", physAddr, hex(physAddr))
-        #         print(int(memoryCandidates[currAddrSpace]["start"], 16) <= address <= int(memoryCandidates[currAddrSpace]["end"], 16), ">>>>>",
-        #               currAddrSpace, ">>>>>", memoryCandidates[currAddrSpace]["start"], "<=", hex(address), "<=", memoryCandidates[currAddrSpace]["end"])
-        return memRegion, memType
+        for element in listOfMemEntryObjects:
+            _, addressStart = shared_libs.emma_helper.unifyAddress(element.addressStart)
+            _, addressEnd = shared_libs.emma_helper.unifyAddress(element.addressEnd)
 
-    # FIXME This might probably belong to the Configuration class
-    #       See ghsMapfileProcessor.py::__importData()
-    def evalCategory(self, nameString):
-        """
-        Returns the category of a module. This function calls __categoriseModuleByKeyword()
-        and __searchCategoriesJson() to evaluate a matching category.
-        :param nameString: The name string of the module/section to categorise.
-        :return: Category string
-        """
-        category = self.__searchCategoriesJson(nameString)
-
-        if category is None:
-            # If there is no match check for keyword specified in categoriesKeywordsJson
-            category = self.__categoriseByKeyword(nameString)			# FIXME: add a training parameter; seems very dangerous for me having wildcards as a fallback option (MSc)
-
-        if category is None:
-            # If there is still no match
-            category = "<unspecified>"
-            # Add all unmatched module names so they can be appended to categories.json under "<unspecified>"
-            self.categorisedFromKeywords.append((nameString, category))
-
-        return category
-
-    def __categoriseByKeyword(self, nameString):
-        """
-        Categorise a nameString by a keyword specified in categoriesKeywords.json
-        :param nameString: The name-string of the module to categorise
-        :return: The category string, None if no matching keyword found or the categoriesKeywords.json was not loaded
-        """
-        if self.categorisedKeywordsJson is not None:
-            for category in self.categorisedKeywordsJson:
-                for keyword in range(len(self.categorisedKeywordsJson[category])):
-                    pattern = r"""\w*""" + self.categorisedKeywordsJson[category][keyword] + r"""\w*"""     # Search module name for substring specified in categoriesKeywords.json
-                    if re.search(pattern, nameString) is not None:                                          # Check for first occurence
-                        self.categorisedFromKeywords.append((nameString, category))                         # Append categorised module, is list of tuples because dict doesn't support duplicate keys
-                        return category
-        return None
-
-    def __searchCategoriesJson(self, nameString):
-        if self.categoriesJson is not None:
-            categoryEval = []
-            for category in self.categoriesJson:  # Iterate through keys
-                for i in range(len(self.categoriesJson[category])):  # Look through category array
-                    if nameString == self.categoriesJson[category][i]:  # If there is a match append the category
-                        categoryEval.append(category)
-
-            if categoryEval:
-                categoryEval.sort()
-                return ", ".join(categoryEval)
+            for memoryRegion in memoryCandidates:
+                if (int(memoryCandidates[memoryRegion]["start"], 16) <= addressStart) and (addressEnd <= int(memoryCandidates[memoryRegion]["end"], 16)):
+                    element.Tag = memoryRegion
+                    element.memType = memoryCandidates[memoryRegion]["type"]
+                    elementFoundInMemoryRegionsToExcludeFromMapfiles = False
+                    if memoryRegionsToExcludeFromMapfiles is not None:
+                        if element.mapfile in memoryRegionsToExcludeFromMapfiles.keys():
+                            if element.Tag in memoryRegionsToExcludeFromMapfiles[element.mapfile]:
+                                # Here we do not need to print the warning because they are ignored with purpose
+                                elementFoundInMemoryRegionsToExcludeFromMapfiles = True
+                    if not elementFoundInMemoryRegionsToExcludeFromMapfiles:
+                        listOfElementsToKeep.append(element)
+                    break
             else:
-                return None
-        else:
-            return None
-
-
+                if not removeElementsWithoutMemoryRegionOrType:
+                    element.Tag = UNKNOWN_MEM_REGION
+                    element.memType = UNKNOWN_MEM_TYPE
+                    listOfElementsToKeep.append(element)
+                else:
+                    printElementRemovalWarning(element)

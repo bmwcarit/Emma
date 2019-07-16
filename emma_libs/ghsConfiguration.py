@@ -21,21 +21,25 @@ import os
 import sys
 import re
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *
 import shared_libs.emma_helper
+import emma_libs.specificConfiguration
 import emma_libs.ghsMapfileRegexes
 
 
-class GhsConfiguration:
-    def __init__(self, configurationPath, mapfilesPath, configuration):
+class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
+    def __init__(self):
+        super().__init__()
+
+    def readConfiguration(self, configurationPath, mapfilesPath, configId, configuration) -> None:
         # Loading the patterns*.json
         if "patternsPath" in configuration:
             patternsPath = shared_libs.emma_helper.joinPath(configurationPath, configuration["patternsPath"])
             configuration["patterns"] = shared_libs.emma_helper.readJson(patternsPath)
         else:
-            sc.error("Missing patternsPath definition in the globalConfig,json!")
+            sc().error("Missing patternsPath definition in the globalConfig,json!")
             sys.exit(-10)
 
         # Loading the virtualSections*.json if the file is present (only needed in case of VAS-es)
@@ -53,14 +57,13 @@ class GhsConfiguration:
         configuration["sortMonolithTabularised"] = False
         self.__addMonolithsToConfiguration(mapfilesPath, configuration)
 
-        # FIXME This needs to be solved, bc with the current design we can not remove configurations, at least not here...
-        #       There could be a design that the configuration calls this check after the GhsConfiguration run,
-        #       and then if the check would say that it needs to be removed, then Configuration would remove it...
-        #       For the time being, I have commented this call out... (AGK)
-        #self.__validateConfigIDs(configuration)
-
-        self.checkMonolithSections(configuration)
-
+    # FIXME This needs to be solved, bc with the current design we can not remove configurations, at least not here...
+    #       There could be a design that the configuration calls this check after the GhsConfiguration run,
+    #       and then if the check would say that it needs to be removed, then Configuration would remove it...
+    #       For the time being, I have commented this call out... (AGK)
+    def validateConfiguration(self, configId, configuration) -> bool:
+        self.__validateConfigIDs(configuration)
+        self.__checkMonolithSections(configuration)
 
     def __addFilesToConfiguration(self, path, configuration, fileType):
         """
@@ -94,7 +97,7 @@ class GhsConfiguration:
         # We need to convert the keys into a temporary list in order to avoid iterating on the original which may be changed during the loop, that causes a runtime error
         for entry in list(configuration["patterns"][fileType]):
             if "associatedFilename" not in configuration["patterns"][fileType][entry]:
-                sc.warning("No file found for ", str(entry).ljust(20), "(pattern:", ''.join(configuration["patterns"][fileType][entry]["regex"]) + " );", "skipping...")
+                sc().warning("No file found for ", str(entry).ljust(20), "(pattern:", ''.join(configuration["patterns"][fileType][entry]["regex"]) + " );", "skipping...")
                 if self.args.Werror:
                     sys.exit(-10)
                 del configuration["patterns"][fileType][entry]
@@ -102,7 +105,7 @@ class GhsConfiguration:
 
     def __addMapfilesToConfiguration(self, mapfilesPath, configuration):
         numMapfiles = self.__addFilesToConfiguration(mapfilesPath, configuration, "mapfiles")
-        sc.info(str(numMapfiles) + " mapfiles found")
+        sc().info(str(numMapfiles) + " mapfiles found")
 
     def __addMonolithsToConfiguration(self, mapfilesPath, configuration):
 
@@ -122,12 +125,9 @@ class GhsConfiguration:
         if ifAnyNonDMA(configuration):
             numMonolithMapFiles = self.__addFilesToConfiguration(mapfilesPath, configuration, "monoliths")
             if numMonolithMapFiles > 1:
-                sc.warning("More than one monolith file found; Result may be non-deterministic")
-                if self.args.Werror:
-                    sys.exit(-10)
+                sc().warning("More than one monolith file found; Result may be non-deterministic")
             elif numMonolithMapFiles < 1:
-                sc.error("No monolith files was detected but some mapfiles require address translation (VASes used)")
-                sys.exit(-10)
+                sc().error("No monolith files was detected but some mapfiles require address translation (VASes used)")
             self.__addTabularisedMonoliths(configuration)
 
     def __addTabularisedMonoliths(self, configuration):
@@ -153,21 +153,17 @@ class GhsConfiguration:
                     keyMonolithMapping.update({str(key): configuration["patterns"]["monoliths"][monolith]["associatedFilename"]})
 
                 if numMonolithFiles > 1:
-                    sc.info("More than one monolith file detected. Which to chose (1, 2, ...)?")
+                    sc().info("More than one monolith file detected. Which to chose (1, 2, ...)?")
                     # Display files
                     for key, monolith in keyMonolithMapping.items():
                         print(" ", key.ljust(10), monolith)
                     # Ask for index which file to chose
                     mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx() if not self.args.noprompt else sys.exit(-10)
                     while not (0 <= mapfileIndexChosen < numMonolithFiles):
-                        sc.warning("Invalid value; try again:")
-                        if self.args.Werror:
-                            sys.exit(-10)
-                        mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx() if not self.args.noprompt else sys.exit(
-                            -10)
+                        sc().warning("Invalid value; try again:")
+                        mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx() if not self.args.noprompt else sys.exit(-10)
                 elif numMonolithFiles < 1:
-                    sc.error("No monolith file found but needed for processing")
-                    sys.exit(-10)
+                    sc().error("No monolith file found but needed for processing")
 
                 # Finally load the file
                 configuration["monolithLoaded"] = True
@@ -203,7 +199,7 @@ class GhsConfiguration:
         if not configuration["sortMonolithTabularised"]:
             configuration["sortMonolithTabularised"] = tabulariseAndSortOnce(monolithContent, configuration)
 
-    def checkMonolithSections(self, configuration):
+    def __checkMonolithSections(self, configuration):
         """
         The function collects the VAS sections from the monolith files and from the global config and from the monolith mapfile
         :return: nothing
@@ -230,9 +226,9 @@ class GhsConfiguration:
             # Compare sections from configID with found in monolith file
             sectionsNotInConfigID = set(foundInMonolith) - set(foundInConfigID)
             if sectionsNotInConfigID:
-                sc.warning("Monolith File has the following sections. You might want to add it to the respective VAS in " + configuration["virtualSectionsPath"] + "!")
+                sc().warning("Monolith File has the following sections. You might want to add it them the respective VAS in " + configuration["virtualSectionsPath"] + "!")
                 print(sectionsNotInConfigID)
-                sc.warning("Still continue? (y/n)") if not self.args.Werror else sys.exit(-10)
+                sc().warning("Still continue? (y/n)")
                 text = input("> ") if not self.args.noprompt else sys.exit(-10)
                 if text != "y":
                     sys.exit(-10)
@@ -244,11 +240,7 @@ class GhsConfiguration:
         # Search for invalid configIDs
         numMapfiles = len(configuration["patterns"]["mapfiles"])
         if numMapfiles < 1:
-            if self.args.Werror:
-                sc.error("No mapfiles found for configID: '" + configID + "'")
-                sys.exit(-10)
-            else:
-                sc.warning("No mapfiles found for configID: '" + configID + "', skipping...")
+            sc.warning("No mapfiles found for configID: '" + configID + "', skipping...")
             configIDsToDelete.append(configID)
 
         # Remove invalid configIDs separately (for those where no mapfiles were found)
@@ -256,8 +248,7 @@ class GhsConfiguration:
         for invalidConfigID in configIDsToDelete:
             del self.globalConfig[invalidConfigID]
             if self.args.verbosity <= 2:
-                sc.warning("Removing the configID " + invalidConfigID + " because no mapfiles were found for it...")
+                sc().warning("Removing the configID " + invalidConfigID + " because no mapfiles were found for it...")
         else:
             if 0 == len(self.globalConfig):
-                sc.error("No mapfiles were found for any of the configIDs...")
-                sys.exit(-10)
+                sc().error("No mapfiles were found for any of the configIDs...")

@@ -20,87 +20,103 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import os
 import sys
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *
 import shared_libs.emma_helper
 import emma_libs.memoryEntry
 import emma_libs.configuration
-import emma_libs.ghsMapfileProcessor
+import emma_libs.mapfileProcessorFactory
 import emma_libs.memoryMap
+import emma_libs.categorisation
 
 
 class MemoryManager:
     class Settings:
-        def __init__(self, args):
-            self.projectName = shared_libs.emma_helper.projectNameFromPath(shared_libs.emma_helper.joinPath(args.project))
-            self.configurationPath = args.project
-            self.mapfilesPath = shared_libs.emma_helper.joinPath(args.mapfiles)
-            self.analyseDebug = args.analyse_debug
-            self.verbosity = args.verbosity
-            self.Werror = args.Werror
-            self.create_categories = args.create_categories
-            self.remove_unmatched = args.remove_unmatched
-            # If an output directory was not specified then the result will be stored to the project folder
-            if args.dir is None:
-                self.dir = args.project
-            else:
-                # Get paths straight (only forward slashes)
-                self.dir = shared_libs.emma_helper.joinPath(args.dir)
-            self.subDir = shared_libs.emma_helper.joinPath(args.subdir) if args.subdir is not None else ""
+        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt):
+            self.projectName = projectName
+            self.configurationPath = configurationPath
+            self.mapfilesPath = mapfilesPath
+            self.outputPath = outputPath
+            self.analyseDebug = analyseDebug
+            self.createCategories = createCategories
+            self.removeUnmatched = removeUnmatched
+            self.noPrompt = noPrompt
 
-    def __init__(self, args):
+    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt):
         # Processing the command line arguments and storing it into the settings member
-        self.settings = MemoryManager.Settings(args)
+        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt)
         # Check whether the configuration and the mapfiles folders exist
         shared_libs.emma_helper.checkIfFolderExists(self.settings.mapfilesPath)
         # The configuration is empty at this moment, it can be read in with another method
         self.configuration = None
         # The memory content is empty at this moment, it can be loaded with another method
         self.memoryContent = None
+        # The categorisation object does not exist yet, it can be created after reading in the configuration
+        self.categorisation = None
 
     def readConfiguration(self):
         # Reading in the configuration
-        self.configuration = emma_libs.configuration.Configuration(self.settings.configurationPath, self.settings.mapfilesPath)
+        self.configuration = emma_libs.configuration.Configuration()
+        self.configuration.readConfiguration(self.settings.configurationPath, self.settings.mapfilesPath)
+
+        # Creating the categorisation object based on the configuration
+        self.categorisation = emma_libs.categorisation.Categorisation(self.configuration.categoriesObjects,
+                                                                      self.configuration.categoriesObjectsKeywords,
+                                                                      self.configuration.categoriesSections,
+                                                                      self.configuration.categoriesSectionsKeywords,
+                                                                      self.settings.noPrompt)
 
     def processMapfiles(self):
         # If the configuration was already loaded
         if self.configuration is not None:
 
             # We will create an empty memory content that will be filled now
-            self.memoryContent = dict()
+            self.memoryContent = {}
 
             # Processing the mapfiles for every configId
             for configId in self.configuration.globalConfig:
 
                 # Creating the configId in the memory content
-                self.memoryContent[configId] = dict()
+                self.memoryContent[configId] = {}
 
-                sc.info("Importing Data for \"" + configId + "\", this may take some time...")
+                sc().info("Importing Data for \"" + configId + "\", this may take some time...")
 
                 # Creating a mapfile processor based on the compiler that was defined for the configId
                 usedCompiler = self.configuration.globalConfig[configId]["compiler"]
-                if "GreenHills" == usedCompiler:
-                    mapfileProcessor = emma_libs.ghsMapfileProcessor.GhsMapfileProcessor(configId, self.settings.analyseDebug, self.settings.verbosity, self.settings.Werror)
-                else:
-                    sc.error("The " + configId + " contains an unexpected compiler value: " + usedCompiler)
-                    sys.exit(-10)
+                mapfileProcessor = emma_libs.mapfileProcessorFactory.createSpecificMapfileProcesor(usedCompiler)
 
                 # Importing the mapfile contents for the configId with the created mapfile processor
-                sectionCollection, objectCollection = mapfileProcessor.processMapfiles(self.configuration.globalConfig[configId])
+                sectionCollection, objectCollection = mapfileProcessor.processMapfiles(configId, self.configuration.globalConfig[configId], self.settings.analyseDebug)
+
+                # Resolving the duplicate, containment and Overlap in the consumerCollections
+                emma_libs.memoryMap.resolveDuplicateContainmentOverlap(sectionCollection, emma_libs.memoryEntry.SectionEntry)
+                emma_libs.memoryMap.resolveDuplicateContainmentOverlap(objectCollection, emma_libs.memoryEntry.ObjectEntry)
+
+                # Filling out the categories in the consumerCollections
+                self.categorisation.fillSectionCategories(sectionCollection)
+                self.categorisation.fillOutObjectCategories(objectCollection)
+
+                # Storing the consumer collections
                 self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY] = sectionCollection
                 self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY] = objectCollection
-
-                # Resolving the duplicate, containment and Overlap in the consumerCollection
-                emma_libs.memoryMap.resolveDuplicateContainmentOverlap(self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY], emma_libs.memoryEntry.SectionEntry)
-                emma_libs.memoryMap.resolveDuplicateContainmentOverlap(self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY], emma_libs.memoryEntry.ObjectEntry)
 
                 # Creating a common consumerCollection
                 self.memoryContent[configId][FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = emma_libs.memoryMap.calculateObjectsInSections(self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY],
                                                                                                                                    self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY])
+                assert False, "Continue from here"
+                # FIXME This is the categorisation part from the old Emma.py, implement this correctly (AGK)
+                # Do we need to create the categorisation config files from the categorisation keywords?
+                if self.settings.createCategories:
+                    fileChanged = self.categorisation.createCategoriesJson()
+                    # Re-read Data if file has changed
+                    if fileChanged:
+                        objectSummary.importData()
+                # Do we need to remove the unmatched?
+                elif self.settings.removeUnmatched:
+                    self.categorisation.removeUnmatchedFromCategoriesJson()
         else:
-            sc.error("The configuration needs to be loaded before processing the mapfiles!")
-            sys.exit(-10)
+            sc().error("The configuration needs to be loaded before processing the mapfiles!")
 
     def createReports(self):
         # The reports will be created in a normal case
@@ -108,18 +124,15 @@ class MemoryManager:
 
         # Putting the same consumer collection types together
         # (At this points the collections are grouped by configId then by their types)
-        consumerCollections = dict()
+        consumerCollections = {}
         for configId in self.memoryContent.keys():
             for collectionType in self.memoryContent[configId].keys():
                 if collectionType not in consumerCollections:
-                    consumerCollections[collectionType] = list()
+                    consumerCollections[collectionType] = []
                 consumerCollections[collectionType].extend(self.memoryContent[configId][collectionType])
 
         # Creating reports from the consumer colections
         for collectionType in consumerCollections.keys():
-            reportPath = emma_libs.memoryMap.createReportPath(self.settings.dir,
-                                                              self.settings.subDir,
-                                                              self.settings.projectName,
-                                                              collectionType)
+            reportPath = emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType)
             emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
-            sc.info("A report was stored:", os.path.abspath(reportPath))
+            sc().info("A report was stored:", os.path.abspath(reportPath))

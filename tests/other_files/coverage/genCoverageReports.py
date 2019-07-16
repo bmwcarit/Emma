@@ -22,7 +22,7 @@ import sys
 import subprocess
 import datetime
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 
 def main():
@@ -37,7 +37,12 @@ def main():
     If the report folder (or its sub-folder) exists then script will break with an error, in order not to overwrite the previous report.
     """
 
-    sc.header("Generating Unit Test Coverage Report")
+    def exitProgram():
+        sys.exit(-10)
+
+    sc(-1, exitProgram, exitProgram)
+
+    sc().header("Generating Unit Test Coverage Report")
 
     # Setting up the variables (folder and file names...etc.)
     reports_folder = os.path.join(sys.path[0], "reports")
@@ -53,22 +58,20 @@ def main():
         if not os.path.isdir(actual_report_source_folder):
             os.mkdir(actual_report_source_folder)
         else:
-            sc.error("Error! The folder " + actual_report_source_folder + " already exists!")
-            sys.exit(-10)
+            sc().error("Error! The folder " + actual_report_source_folder + " already exists!")
     else:
-        sc.error("Error! The folder " + actual_report_folder + " already exists!")
-        sys.exit(-10)
+        sc().error("Error! The folder " + actual_report_folder + " already exists!")
 
     # Switching to the unit tests folder and running the tests
     os.chdir(unit_test_folder)
-    sc.info("Running the unit tests...")
+    sc().info("Running the unit tests...")
     subprocess.run(["coverage", "run", "-m", "unittest", "discover", "-v"])
 
     # Moving the .coverage file to the source folder of the report and switching to that folder
     os.rename(os.path.join(unit_test_folder, source_file_name), os.path.join(actual_report_source_folder, source_file_name))
     os.chdir(actual_report_source_folder)
 
-    sc.info("Creating the .html report...")
+    sc().info("Creating the .html report...")
     subprocess.run(["coverage", "html", str("--directory=" + actual_report_folder)])
 
 

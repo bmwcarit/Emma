@@ -98,6 +98,9 @@ README_CALL_GRAPH_AND_UML_FOLDER_NAME = "call_graph_uml"
 README_PICTURE_FORMAT = "png"
 OBJECTS_IN_SECTIONS_SECTION_ENTRY = "<Emma_SectionEntry>"
 OBJECTS_IN_SECTIONS_SECTION_RESERVE = "<Emma_SectionReserve>"
+UNKNOWN_MEM_REGION = "<Emma_UnknownMemRegion>"
+UNKNOWN_MEM_TYPE = "<Emma_UnknownMemType>"
+UNKNOWN_CATEGORY = "<Emma_UnknownCategory>"
 
 # The HTML Template that will be used during the conversion of .md files to .html
 # The CSS in the header has two parts:

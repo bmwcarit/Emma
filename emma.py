@@ -17,20 +17,20 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 
+import sys
 import timeit
 import datetime
 import argparse
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *
 import shared_libs.emma_helper
 import emma_libs.memoryManager
-import emma_libs.memoryMap
 
 
 def main(args):
-    memoryManager = emma_libs.memoryManager.MemoryManager(args)
+    memoryManager = emma_libs.memoryManager.MemoryManager(*processArguments(args))
     memoryManager.readConfiguration()
     memoryManager.processMapfiles()
     memoryManager.createReports()
@@ -186,19 +186,49 @@ def parseArgs(arguments=""):
     return args
 
 
+def processArguments(args):
+    projectName = shared_libs.emma_helper.projectNameFromPath(shared_libs.emma_helper.joinPath(args.project))
+    configurationPath = shared_libs.emma_helper.joinPath(args.project)
+    mapfilesPath = shared_libs.emma_helper.joinPath(args.mapfiles)
+
+    # If an output directory was not specified then the result will be stored to the project folder
+    if args.dir is None:
+        dir = args.project
+    else:
+        # Get paths straight (only forward slashes)
+        dir = shared_libs.emma_helper.joinPath(args.dir)
+    # Get paths straight (only forward slashes) or set it to empty if it was empty
+    subDir = shared_libs.emma_helper.joinPath(args.subdir) if args.subdir is not None else ""
+
+    outputPath = shared_libs.emma_helper.joinPath(dir, subDir, OUTPUT_DIR)
+    analyseDebug = args.analyse_debug
+    create_categories = args.create_categories
+    remove_unmatched = args.remove_unmatched
+    noprompt = args.noprompt
+
+    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, create_categories, remove_unmatched, noprompt
+
+
 if __name__ == "__main__":
     # Parsing the arguments
     args = parseArgs()
 
-    sc.header("Emma Memory and Mapfile Analyser", symbol="/")
+    def exitProgram():
+        sys.exit(-10)
+
+    actionWarning = exitProgram if args.Werror is not None else None
+    actionError = exitProgram
+    sc(-1, actionWarning=actionWarning, actionError=actionError)
+
+    sc().header("Emma Memory and Mapfile Analyser", symbol="/")
 
     # Starting the time measurement of Emma
     timeStart = timeit.default_timer()
-    sc.info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
+    sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
 
     # Executing Emma
     main(args)
 
     # Stopping the time measurement of Emma
     timeEnd = timeit.default_timer()
-    sc.info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " "{0:.2f}".format(timeEnd - timeStart) + "s)")
+    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " "{0:.2f}".format(timeEnd - timeStart) + "s)")
