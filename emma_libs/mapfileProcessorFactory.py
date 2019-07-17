@@ -17,8 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 
-import sys
-
 from pypiscout.SCout_Logger import Logger as sc
 
 import emma_libs.ghsMapfileProcessor

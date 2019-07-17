@@ -23,15 +23,12 @@ import re
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from shared_libs.stringConstants import *
 import shared_libs.emma_helper
 import emma_libs.specificConfiguration
 import emma_libs.ghsMapfileRegexes
 
 
 class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
-    def __init__(self):
-        super().__init__()
 
     def readConfiguration(self, configurationPath, mapfilesPath, configId, configuration) -> None:
         # Loading the patterns*.json
@@ -57,13 +54,12 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         configuration["sortMonolithTabularised"] = False
         self.__addMonolithsToConfiguration(mapfilesPath, configuration)
 
-    # FIXME This needs to be solved, bc with the current design we can not remove configurations, at least not here...
-    #       There could be a design that the configuration calls this check after the GhsConfiguration run,
-    #       and then if the check would say that it needs to be removed, then Configuration would remove it...
-    #       For the time being, I have commented this call out... (AGK)
-    def validateConfiguration(self, configId, configuration) -> bool:
-        self.__validateConfigIDs(configuration)
-        self.__checkMonolithSections(configuration)
+    def validateConfiguration(self, configId, configuration, noPrompt) -> bool:
+        result = False
+        if self.__checkNumberOfFoundMapfiles(configId, configuration):
+            if self.__checkMonolithSections(configId, configuration, noPrompt):
+                result = True
+        return result
 
     def __addFilesToConfiguration(self, path, configuration, fileType):
         """
@@ -89,17 +85,12 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                     print("\t\t\t Found " + fileType + ": ", foundFiles[0])
                     if len(foundFiles) > 1:
                         sc.warning("Ambiguous regex pattern in '" + configuration["patternsPath"] + "'. Selected '" + foundFiles[0] + "'. Regex matched: " + "".join(foundFiles))
-                        # TODO : we could have a logging class that could handle this exit if all warnings are errors thing. (AGK)
-                        if self.args.Werror:
-                            sys.exit(-10)
 
         # Check for found files in patterns and do some clean-up
         # We need to convert the keys into a temporary list in order to avoid iterating on the original which may be changed during the loop, that causes a runtime error
         for entry in list(configuration["patterns"][fileType]):
             if "associatedFilename" not in configuration["patterns"][fileType][entry]:
                 sc().warning("No file found for ", str(entry).ljust(20), "(pattern:", ''.join(configuration["patterns"][fileType][entry]["regex"]) + " );", "skipping...")
-                if self.args.Werror:
-                    sys.exit(-10)
                 del configuration["patterns"][fileType][entry]
         return len(configuration["patterns"][fileType])
 
@@ -137,7 +128,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         :return: nothing
         """
 
-        def loadMonolithMapfileOnce(configuration):
+        def loadMonolithMapfileOnce(configuration, noPrompt):
             """
             Load monolith mapfile (only once)
             :return: Monolith file content
@@ -158,10 +149,10 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                     for key, monolith in keyMonolithMapping.items():
                         print(" ", key.ljust(10), monolith)
                     # Ask for index which file to chose
-                    mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx() if not self.args.noprompt else sys.exit(-10)
+                    mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx() if not noPrompt else sys.exit(-10)
                     while not (0 <= mapfileIndexChosen < numMonolithFiles):
                         sc().warning("Invalid value; try again:")
-                        mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx() if not self.args.noprompt else sys.exit(-10)
+                        mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx() if not noPrompt else sys.exit(-10)
                 elif numMonolithFiles < 1:
                     sc().error("No monolith file found but needed for processing")
 
@@ -199,11 +190,22 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         if not configuration["sortMonolithTabularised"]:
             configuration["sortMonolithTabularised"] = tabulariseAndSortOnce(monolithContent, configuration)
 
-    def __checkMonolithSections(self, configuration):
+    def __checkNumberOfFoundMapfiles(self, configId, configuration):
+        result = False
+        # Checking the number of the mapfiles that were found with the regexes
+        if 0 < len(configuration["patterns"]["mapfiles"]):
+            # If there is at least one, then the check was passed
+            result = True
+        else:
+            sc().warning("No mapfiles found for configID: \"" + configId + "\"!")
+        return result
+
+    def __checkMonolithSections(self, configId, configuration, noPrompt):
         """
         The function collects the VAS sections from the monolith files and from the global config and from the monolith mapfile
         :return: nothing
         """
+        result = False
         foundInConfigID = []
         foundInMonolith = []
 
@@ -211,7 +213,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         monolithPattern = emma_libs.ghsMapfileRegexes.UpperMonolithPattern()
 
         # Check if a monolith was loaded to this configID that can be checked
-        if configuration["monolithLoaded"]:
+        if configuration[configId]["monolithLoaded"]:
             for entry in configuration["patterns"]["monoliths"]:
                 with open(configuration["patterns"]["monoliths"][entry]["associatedFilename"], "r") as monolithFile:
                     monolithContent = monolithFile.readlines()
@@ -229,26 +231,10 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                 sc().warning("Monolith File has the following sections. You might want to add it them the respective VAS in " + configuration["virtualSectionsPath"] + "!")
                 print(sectionsNotInConfigID)
                 sc().warning("Still continue? (y/n)")
-                text = input("> ") if not self.args.noprompt else sys.exit(-10)
+                text = input("> ") if not noPrompt else sys.exit(-10)
                 if text != "y":
                     sys.exit(-10)
-        return
+            else:
+                result = True
 
-    def __validateConfigIDs(self, configuration):
-        configIDsToDelete = []
-
-        # Search for invalid configIDs
-        numMapfiles = len(configuration["patterns"]["mapfiles"])
-        if numMapfiles < 1:
-            sc.warning("No mapfiles found for configID: '" + configID + "', skipping...")
-            configIDsToDelete.append(configID)
-
-        # Remove invalid configIDs separately (for those where no mapfiles were found)
-        # Do this in a separate loop since we cannot modify and iterate in the same loop
-        for invalidConfigID in configIDsToDelete:
-            del self.globalConfig[invalidConfigID]
-            if self.args.verbosity <= 2:
-                sc().warning("Removing the configID " + invalidConfigID + " because no mapfiles were found for it...")
-        else:
-            if 0 == len(self.globalConfig):
-                sc().error("No mapfiles were found for any of the configIDs...")
+        return result

@@ -58,6 +58,11 @@ class Configuration:
             # Processing the compiler dependent parts of the configuration
             sc().info("Processing the mapfiles of the configID \"" + configId + "\"")
             self.specificConfigurations[configId].readConfiguration(configurationPath, mapfilesPath, configId, self.globalConfig[configId])
+            # Validating the the configuration
+            if not self.specificConfigurations[configId].validateConfiguration(configId, self.globalConfig[configId]):
+                sc().warning("The specificConfiguration object of the configId \"" +
+                             configId + "\" reported that the configuration is invalid!\n" +
+                             "The configId \"" + configId + "\" will not be analysed!")
 
     def __readGlobalConfigJson(self, path):
         # Load the globalConfig file

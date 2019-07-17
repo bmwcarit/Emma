@@ -22,13 +22,9 @@ import abc
 
 class SpecificConfiguration(abc.ABC):
     @abc.abstractmethod
-    def __init__(self):
-        pass
-
-    @abc.abstractmethod
     def readConfiguration(self, configurationPath, mapfilesPath, configId, configuration) -> None:
         pass
 
     @abc.abstractmethod
-    def validateConfiguration(self, configuration) -> bool:
+    def validateConfiguration(self, configId, configuration) -> bool:
         pass

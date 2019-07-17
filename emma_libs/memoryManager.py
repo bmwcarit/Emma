@@ -58,7 +58,6 @@ class MemoryManager:
         # Reading in the configuration
         self.configuration = emma_libs.configuration.Configuration()
         self.configuration.readConfiguration(self.settings.configurationPath, self.settings.mapfilesPath)
-
         # Creating the categorisation object
         self.categorisation = emma_libs.categorisation.Categorisation(shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_OBJECTS_JSON),
                                                                       shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_KEYWORDS_OBJECTS_JSON),
@@ -89,22 +88,10 @@ class MemoryManager:
                 sectionCollection, objectCollection = mapfileProcessor.processMapfiles(configId, self.configuration.globalConfig[configId], self.settings.analyseDebug)
 
                 # Filling out the categories in the consumerCollections
-                self.categorisation.fillOutSectionCategories(sectionCollection)
-                self.categorisation.fillOutObjectCategories(objectCollection)
+                self.categorisation.fillOutCategories(sectionCollection, objectCollection)
 
-                # Updating the categorisation files from the categorisation keywords if requested
-                # And we will re-categorize the consumer collections if the categorisation files have been changed
-                if self.settings.createCategories:
-                    sectionCategoriesWereUpdated = self.categorisation.updateCategoriesSectionsJsonFromKeywordMatches()
-                    if sectionCategoriesWereUpdated:
-                        self.categorisation.fillOutSectionCategories(sectionCollection)
-                    objectCategoriesWereUpdated = self.categorisation.updateCategoriesObjectsJsonFromKeywordMatches()
-                    if objectCategoriesWereUpdated:
-                        self.categorisation.fillOutObjectCategories(sectionCollection)
-                # Do we need to remove the unmatched categories?
-                elif self.settings.removeUnmatched:
-                    self.categorisation.removeUnmatchedFromCategoriesSectionsJson()
-                    self.categorisation.removeUnmatchedFromCategoriesObjectsJson()
+                # Updating the categorisation files from the categorisation keywords and remove the unmatched one based on the settings
+                self.categorisation.manageCategoriesFiles(self.settings.createCategories, self.settings.removeUnmatched, sectionCollection, objectCollection)
 
                 # Resolving the duplicate, containment and Overlap in the consumerCollections
                 emma_libs.memoryMap.resolveDuplicateContainmentOverlap(sectionCollection, emma_libs.memoryEntry.SectionEntry)

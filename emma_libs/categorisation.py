@@ -45,31 +45,51 @@ class Categorisation:
         self.categoriesSections = self.__readCategoriesJson(self.categoriesSectionsPath)
         self.categoriesSectionsKeywords = self.__readCategoriesJson(self.categoriesSectionsKeywordsPath)
 
-    def fillOutSectionCategories(self, consumerCollection):
-        for consumer in consumerCollection:
+    def fillOutCategories(self, sectionCollection, objectCollection):
+        self.__fillOutSectionCategories(sectionCollection)
+        self.__fillOutObjectCategories(objectCollection)
+
+    def manageCategoriesFiles(self, updateCategoriesFromKeywordMatches, removeUnmatchedCategories, sectionCollection, objectCollection):
+        self.__manageSectionCategoriesFiles(updateCategoriesFromKeywordMatches, removeUnmatchedCategories, sectionCollection)
+        self.__manageObjectCategoriesFiles(updateCategoriesFromKeywordMatches, removeUnmatchedCategories, objectCollection)
+
+    def __manageSectionCategoriesFiles(self, updateCategoriesFromKeywordMatches, removeUnmatchedCategories, sectionCollection):
+        if updateCategoriesFromKeywordMatches:
+            # Updating the section categorisation file
+            sc().info("Merge categoriesSections.json with categorised modules from categoriesSectionsKeywords.json?\ncategoriesSections.json will be overwritten.\n`y` to accept, any other key to discard.")
+            sectionCategoriesWereUpdated = self.__updateCategoriesJson(self.noPrompt, self.categoriesSections, self.keywordCategorisedSections, self.categoriesSectionsPath)
+            # Re-categorize sections if the categorisation file have been changed
+            if sectionCategoriesWereUpdated:
+                self.__fillOutSectionCategories(sectionCollection)
+        # Do we need to remove the unmatched categories?
+        if removeUnmatchedCategories:
+            sc().info("Remove unmatched modules from categoriesSections.json?\ncategoriesSections.json will be overwritten.\n `y` to accept, any other key to discard.")
+            self.__removeUnmatchedFromCategoriesJson(self.noPrompt, self.categoriesSections, sectionCollection, emma_libs.memoryEntry.SectionEntry, self.categoriesSectionsPath)
+
+    def __manageObjectCategoriesFiles(self, updateCategoriesFromKeywordMatches, removeUnmatchedCategories, objectCollection):
+        if updateCategoriesFromKeywordMatches:
+            # Updating the object categorisation file
+            sc().info("Merge categoriesObjects.json with categorised modules from categoriesObjectsKeywords.json?\ncategoriesObjects.json will be overwritten.\n`y` to accept, any other key to discard.")
+            objectCategoriesWereUpdated = self.__updateCategoriesJson(self.noPrompt, self.categoriesObjects, self.keywordCategorisedObjects, self.categoriesObjectsPath)
+            # Re-categorize objects if the categorisation file have been changed
+            if objectCategoriesWereUpdated:
+                self.__fillOutObjectCategories(objectCollection)
+        # Do we need to remove the unmatched categories?
+        if removeUnmatchedCategories:
+            sc().info("Remove unmatched modules from categoriesObjects.json?\ncategoriesObjects.json will be overwritten.\n `y` to accept, any other key to discard.")
+            self.__removeUnmatchedFromCategoriesJson(self.noPrompt, self.categoriesObjects, objectCollection, emma_libs.memoryEntry.ObjectEntry, self.categoriesObjectsPath)
+
+    def __fillOutSectionCategories(self, sectionCollection):
+        # Filling out sections
+        for consumer in sectionCollection:
             consumerName = consumer.section
             consumer.category = self.__evalCategoryOfAnElement(consumerName, self.categoriesSections, self.categoriesSectionsKeywords, self.keywordCategorisedSections)
 
-    def fillOutObjectCategories(self, consumerCollection):
-        for consumer in consumerCollection:
+    def __fillOutObjectCategories(self, objectCollection):
+        # Filling out objects
+        for consumer in objectCollection:
             consumerName = consumer.moduleName
             consumer.category = self.__evalCategoryOfAnElement(consumerName, self.categoriesObjects, self.categoriesObjectsKeywords, self.keywordCategorisedObjects)
-
-    def updateCategoriesSectionsJsonFromKeywordMatches(self):
-        sc().info("Merge categoriesSections.json with categorised modules from categoriesSectionsKeywords.json?\ncategoriesSections.json will be overwritten.\n`y` to accept, any other key to discard.")
-        self.__updateCategoriesJson(self.noPrompt, self.categoriesSections, self.keywordCategorisedSections, self.categoriesSectionsPath)
-
-    def updateCategoriesObjectsJsonFromKeywordMatches(self):
-        sc().info("Merge categoriesObjects.json with categorised modules from categoriesObjectsKeywords.json?\ncategoriesObjects.json will be overwritten.\n`y` to accept, any other key to discard.")
-        self.__updateCategoriesJson(self.noPrompt, self.categoriesObjects, self.keywordCategorisedObjects, self.categoriesObjectsPath)
-
-    def removeUnmatchedFromCategoriesSectionsJson(self, consumerCollection):
-        sc().info("Remove unmatched modules from categoriesSections.json?\ncategoriesSections.json will be overwritten.\n `y` to accept, any other key to discard.")
-        self.__removeUnmatchedFromCategoriesJson(self.noPrompt, self.categoriesSections, consumerCollection, emma_libs.memoryEntry.SectionEntry, self.categoriesSectionsPath)
-
-    def removeUnmatchedFromCategoriesObjectsJson(self, consumerCollection):
-        sc().info("Remove unmatched modules from categoriesObjects.json?\ncategoriesObjects.json will be overwritten.\n `y` to accept, any other key to discard.")
-        self.__removeUnmatchedFromCategoriesJson(self.noPrompt, self.categoriesObjects, consumerCollection, emma_libs.memoryEntry.ObjectEntry, self.categoriesObjectsPath)
 
     def __readCategoriesJson(self, path):
         if os.path.exists(path):

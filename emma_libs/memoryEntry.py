@@ -28,7 +28,7 @@ from pypiscout.SCout_Logger import Logger as sc
 import shared_libs.emma_helper
 
 
-class MemEntry(abc.ABC):
+class MemEntry:
     def __eq__(self, other):
         """
         This is not implemented because we shall compare MemEntry objects trough the SectionEntry and ObjectEntry wrappers.

@@ -33,7 +33,6 @@ import emma_libs.memoryEntry
 
 class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
     def __init__(self):
-        super().__init__()
         self.analyseDebug = None
 
     def processMapfiles(self, configId, configuration, analyseDebug):
