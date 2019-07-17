@@ -21,7 +21,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 # The MemoryManager class handles parsing, categorisation and overlap/containment flagging.
 
 
-import sys
 import abc
 
 from pypiscout.SCout_Logger import Logger as sc
@@ -157,7 +156,6 @@ class MemEntryWrapper(abc.ABC):
         pass
 
 
-# FIXME This needs to be reworked, see the FIXME in the top of the file.
 class SectionEntry(MemEntryWrapper):
     @staticmethod
     def __eq__(first, second):
@@ -180,7 +178,6 @@ class SectionEntry(MemEntryWrapper):
         return memEntry.section
 
 
-# FIXME This needs to be reworked, see the FIXME in the top of the file.
 class ObjectEntry(MemEntryWrapper):
     @staticmethod
     def __eq__(first, second):

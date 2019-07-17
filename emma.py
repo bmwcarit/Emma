@@ -35,60 +35,6 @@ def main(args):
     memoryManager.processMapfiles()
     memoryManager.createReports()
 
-"""
-    # ------------------------------------------------------------------------------------------------------------------
-    # --- Image Summary ------------------------------------------------------------------------------------------------
-    # ------------------------------------------------------------------------------------------------------------------
-    sc.header("Preparing image summary", symbol=".")
-
-    # Create MemoryManager instance with Variables for image summary
-    sectionSummary = emma_libs.memoryManager.SectionParser(args)                            # String identifier for outfilenames
-
-    # FIXME: Something before importData() takes quite a lot of processing time (MSc)
-    numAnalyzedConfigIDs = sectionSummary.importData()                                      # Read Data
-
-    if numAnalyzedConfigIDs >= 1:
-        sectionSummary.resolveDuplicateContainmentOverlap()
-
-        if not args.create_categories and not args.remove_unmatched:
-            # Normal run; write csv report
-            sectionSummary.writeSummary()
-        else:
-            # Categorisation-only run: do not write a csv report
-            pass
-
-    # ------------------------------------------------------------------------------------------------------------------
-    # --- Module Summary -----------------------------------------------------------------------------------------------
-    # ------------------------------------------------------------------------------------------------------------------
-    sc.header("Preparing module summary", symbol=".")
-
-    # Create MemoryManager instance with Variables for module summary
-    objectSummary = emma_libs.memoryManager.ObjectParser(args)                              # String identifier for outfilenames
-
-    # FIXME: Something before importData() takes quite a lot of processing time (MSc)
-    numAnalyzedConfigIDs = objectSummary.importData()                                       # Read Data
-
-    if numAnalyzedConfigIDs >= 1:
-        objectSummary.resolveDuplicateContainmentOverlap()
-
-        if args.create_categories:
-            fileChanged = objectSummary.createCategoriesJson()                              # Create categories.json from keywords
-            if fileChanged:
-                objectSummary.importData()                                                  # Re-read Data
-        elif args.remove_unmatched:
-            objectSummary.removeUnmatchedFromCategoriesJson()
-        else:
-            objectSummary.writeSummary()
-
-    # ------------------------------------------------------------------------------------------------------------------
-    # --- Objects in Sections ------------------------------------------------------------------------------------------
-    # ------------------------------------------------------------------------------------------------------------------
-    sc.header("Preparing objects in sections summary", symbol=".")
-
-    objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionSummary.consumerCollection, objectSummary.consumerCollection)
-    emma_libs.memoryMap.memoryMapToCSV(args.dir, args.subdir, args.project, objectsInSections)
-"""
-
 
 def parseArgs(arguments=""):
     """

@@ -32,10 +32,6 @@ class Configuration:
     def __init__(self):
         self.specificConfigurations = dict()
         self.globalConfig = None
-        self.categoriesObjects = None
-        self.categoriesObjectsKeywords = None
-        self.categoriesSections = None
-        self.categoriesSectionsKeywords = None
         pass
 
     def readConfiguration(self, configurationPath, mapfilesPath) -> None:
@@ -54,16 +50,6 @@ class Configuration:
                 self.globalConfig[configId]["addressSpaces"] = self.__readAddressSpacesJson(addressSpacesPath)
             else:
                 sc().error("The " + configId + " does not have the key: " + "addressSpacesPath")
-
-        # Loading the categories config files. These files are optional, if they are not present we will store None instead.
-        categoriesObjectsPath = shared_libs.emma_helper.joinPath(configurationPath, CATEGORIES_OBJECTS_JSON)
-        self.categoriesObjects = self.__readCategoriesJson(categoriesObjectsPath)
-        categoriesObjectsKeywordsPath = shared_libs.emma_helper.joinPath(configurationPath, CATEGORIES_KEYWORDS_OBJECTS_JSON)
-        self.categoriesObjectsKeywords = self.__readCategoriesJson(categoriesObjectsKeywordsPath)
-        categoriesSectionsPath = shared_libs.emma_helper.joinPath(configurationPath, CATEGORIES_SECTIONS_JSON)
-        self.categoriesSections = self.__readCategoriesJson(categoriesSectionsPath)
-        categoriesSectionsKeywordsPath = shared_libs.emma_helper.joinPath(configurationPath, CATEGORIES_KEYWORDS_SECTIONS_JSON)
-        self.categoriesSectionsKeywords = self.__readCategoriesJson(categoriesSectionsKeywordsPath)
 
         # Creating the SpecificConfiguration objects
         for configId in self.globalConfig:
@@ -108,12 +94,3 @@ class Configuration:
                     sc().error("The key " + memoryToIgnore + " which is in the ignore list, does not exist in the memory object of " + path)
 
         return addressSpaces
-
-    def __readCategoriesJson(self, path):
-        if os.path.exists(path):
-            categoriesJson = shared_libs.emma_helper.readJson(path)
-        else:
-            categoriesJson = None
-            sc().warning("There was no " + os.path.basename(path) + " file found, the categorization based on this will be skipped.")
-
-        return categoriesJson

@@ -18,7 +18,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 
 import os
-import sys
 
 from pypiscout.SCout_Logger import Logger as sc
 
@@ -60,11 +59,11 @@ class MemoryManager:
         self.configuration = emma_libs.configuration.Configuration()
         self.configuration.readConfiguration(self.settings.configurationPath, self.settings.mapfilesPath)
 
-        # Creating the categorisation object based on the configuration
-        self.categorisation = emma_libs.categorisation.Categorisation(self.configuration.categoriesObjects,
-                                                                      self.configuration.categoriesObjectsKeywords,
-                                                                      self.configuration.categoriesSections,
-                                                                      self.configuration.categoriesSectionsKeywords,
+        # Creating the categorisation object
+        self.categorisation = emma_libs.categorisation.Categorisation(shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_OBJECTS_JSON),
+                                                                      shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_KEYWORDS_OBJECTS_JSON),
+                                                                      shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_SECTIONS_JSON),
+                                                                      shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_KEYWORDS_SECTIONS_JSON),
                                                                       self.settings.noPrompt)
 
     def processMapfiles(self):
@@ -89,13 +88,27 @@ class MemoryManager:
                 # Importing the mapfile contents for the configId with the created mapfile processor
                 sectionCollection, objectCollection = mapfileProcessor.processMapfiles(configId, self.configuration.globalConfig[configId], self.settings.analyseDebug)
 
+                # Filling out the categories in the consumerCollections
+                self.categorisation.fillOutSectionCategories(sectionCollection)
+                self.categorisation.fillOutObjectCategories(objectCollection)
+
+                # Updating the categorisation files from the categorisation keywords if requested
+                # And we will re-categorize the consumer collections if the categorisation files have been changed
+                if self.settings.createCategories:
+                    sectionCategoriesWereUpdated = self.categorisation.updateCategoriesSectionsJsonFromKeywordMatches()
+                    if sectionCategoriesWereUpdated:
+                        self.categorisation.fillOutSectionCategories(sectionCollection)
+                    objectCategoriesWereUpdated = self.categorisation.updateCategoriesObjectsJsonFromKeywordMatches()
+                    if objectCategoriesWereUpdated:
+                        self.categorisation.fillOutObjectCategories(sectionCollection)
+                # Do we need to remove the unmatched categories?
+                elif self.settings.removeUnmatched:
+                    self.categorisation.removeUnmatchedFromCategoriesSectionsJson()
+                    self.categorisation.removeUnmatchedFromCategoriesObjectsJson()
+
                 # Resolving the duplicate, containment and Overlap in the consumerCollections
                 emma_libs.memoryMap.resolveDuplicateContainmentOverlap(sectionCollection, emma_libs.memoryEntry.SectionEntry)
                 emma_libs.memoryMap.resolveDuplicateContainmentOverlap(objectCollection, emma_libs.memoryEntry.ObjectEntry)
-
-                # Filling out the categories in the consumerCollections
-                self.categorisation.fillSectionCategories(sectionCollection)
-                self.categorisation.fillOutObjectCategories(objectCollection)
 
                 # Storing the consumer collections
                 self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY] = sectionCollection
@@ -104,24 +117,10 @@ class MemoryManager:
                 # Creating a common consumerCollection
                 self.memoryContent[configId][FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = emma_libs.memoryMap.calculateObjectsInSections(self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY],
                                                                                                                                    self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY])
-                assert False, "Continue from here"
-                # FIXME This is the categorisation part from the old Emma.py, implement this correctly (AGK)
-                # Do we need to create the categorisation config files from the categorisation keywords?
-                if self.settings.createCategories:
-                    fileChanged = self.categorisation.createCategoriesJson()
-                    # Re-read Data if file has changed
-                    if fileChanged:
-                        objectSummary.importData()
-                # Do we need to remove the unmatched?
-                elif self.settings.removeUnmatched:
-                    self.categorisation.removeUnmatchedFromCategoriesJson()
         else:
             sc().error("The configuration needs to be loaded before processing the mapfiles!")
 
     def createReports(self):
-        # The reports will be created in a normal case
-        # FIXME Implement the categorization function here (see state before redesign)
-
         # Putting the same consumer collection types together
         # (At this points the collections are grouped by configId then by their types)
         consumerCollections = {}
