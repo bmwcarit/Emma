@@ -151,12 +151,13 @@ class MemEntry:
         elif self.addressStart == addressEnd:
             self.addressLength = 0
         else:
-            sc().warning("MemEntry: The addressEnd (" + addressEnd + ") is smaller than the addressStart (" + self.addressStart + ")!")
+            sc().error("MemEntry: The addressEnd (" + str(addressEnd) + ") is smaller than the addressStart (" + str(self.addressStart) + ")!")
 
     def setAddressesGivenLength(self, addressLength):
-        _, self.addressLength = shared_libs.emma_helper.unifyAddress(addressLength)
-        if 0 > self.addressLength:
-            sc().warning("MemEntry: The addressLength (" + self.addressLength + ") is negative!")
+        if 0 <= addressLength:
+            _, self.addressLength = shared_libs.emma_helper.unifyAddress(addressLength)
+        else:
+            sc().error("MemEntry: The addressLength (" + str(addressLength) + ") is negative!")
 
     @staticmethod
     def __calculateAddressEnd(addressStart, addressLength):

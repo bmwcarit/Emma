@@ -76,10 +76,11 @@ class MemEntryTestCase(unittest.TestCase):
         self.assertEqual(basicEntry.containingOthersFlag, None)
         self.assertEqual(basicEntry.overlappingOthersFlag, None)
         self.assertEqual(basicEntry.addressStartOriginal, self.addressStart)
-        self.assertEqual(basicEntry.addressStartHexOriginal(), hex(self.addressStart))
         self.assertEqual(basicEntry.addressLengthOriginal, self.addressLength)
-        self.assertEqual(basicEntry.addressLengthHexOriginal(), hex(self.addressLength))
         self.assertEqual(basicEntry.addressEndOriginal(), self.addressEnd)
+        self.assertEqual(basicEntry.addressStartHexOriginal(), hex(self.addressStart))
+        self.assertEqual(basicEntry.addressLengthHexOriginal(), hex(self.addressLength))
+        self.assertEqual(basicEntry.addressEndHexOriginal(), hex(self.addressEnd))
 
     def test_constructorAddressLengthAndAddressEnd(self):
         # Modifying the self.addressEnd to make sure it is wrong
@@ -193,6 +194,60 @@ class MemEntryTestCase(unittest.TestCase):
         self.assertEqual(entryFirst > entrySecond, False)
         self.assertEqual(entrySecond < entryFirst, False)
         self.assertEqual(entrySecond > entryFirst, True)
+
+    def test___calculateAddressEnd(self):
+        self.assertEqual(emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, self.addressLength), self.addressEnd)
+        self.assertEqual(emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, 0), self.addressStart)
+
+    def test___eq__(self):
+        memEntry = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
+                                                  section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
+                                                  configID=self.configID, memType=self.memType, category=self.category,
+                                                  addressStart=self.addressStart, addressLength=self.addressLength, addressEnd=None)
+        with self.assertRaises(NotImplementedError):
+            self.assertEqual(memEntry, memEntry)
+
+    def test_setAddressesGivenEnd(self):
+        # Basic case
+        memEntry = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
+                                                  section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
+                                                  configID=self.configID, memType=self.memType, category=self.category,
+                                                  addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd)
+        self.assertEqual(memEntry.addressStart, self.addressStart)
+        self.assertEqual(memEntry.addressLength, self.addressLength)
+
+        # End == Start
+        memEntry.setAddressesGivenEnd(self.addressStart)
+        self.assertEqual(memEntry.addressStart, self.addressStart)
+        self.assertEqual(memEntry.addressLength, 0)
+
+        # Going back to the basic case
+        memEntry.setAddressesGivenEnd(self.addressEnd)
+        self.assertEqual(memEntry.addressStart, self.addressStart)
+        self.assertEqual(memEntry.addressLength, self.addressLength)
+
+        # End < Start (We expect no change!)
+        with self.assertRaises(SystemExit) as contextManager:
+            memEntry.setAddressesGivenEnd(self.addressStart - 1)
+        self.assertEqual(contextManager.exception.code, -10)
+        self.assertEqual(memEntry.addressStart, self.addressStart)
+        self.assertEqual(memEntry.addressLength, self.addressLength)
+
+    def test_setAddressGivenLength(self):
+        # Basic case
+        memEntry = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
+                                                  section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
+                                                  configID=self.configID, memType=self.memType, category=self.category,
+                                                  addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd)
+        self.assertEqual(memEntry.addressStart, self.addressStart)
+        self.assertEqual(memEntry.addressLength, self.addressLength)
+
+        # Negative length (We expect no change!)
+        with self.assertRaises(SystemExit) as contextManager:
+            memEntry.setAddressesGivenLength(-1)
+        self.assertEqual(contextManager.exception.code, -10)
+        self.assertEqual(memEntry.addressStart, self.addressStart)
+        self.assertEqual(memEntry.addressLength, self.addressLength)
 
 # FIXME The code that is tested by this part has changed
 """
