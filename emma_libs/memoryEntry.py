@@ -115,6 +115,9 @@ class MemEntry:
     def addressEndHex(self):
         return hex(self.addressEnd())
 
+    def addressStartHexOriginal(self):
+        return hex(self.addressStartOriginal)
+
     def addressLengthHexOriginal(self):
         return hex(self.addressLengthOriginal)
 

@@ -53,20 +53,20 @@ def createMemEntryObjects(sectionDataContainer, objectDataContainer):
 
     sectionContainer = []
     for element in sectionDataContainer:
-        sectionContainer.append(emma_libs.memoryEntry.SectionEntry(tag="", vasName="", section=".text", moduleName="",
-                                                                   mapfileName="", configID="MCU", memType="INT_FLASH",
-                                                                   category="<Unspecified>", vasSectionName=None,
-                                                                   addressStart=element.addressStart,
-                                                                   addressLength=0 if element.addressEnd is None else None,
-                                                                   addressEnd=element.addressEnd))
+        sectionContainer.append(emma_libs.memoryEntry.MemEntry(tag="", vasName="", section=".text", moduleName="",
+                                                               mapfileName="", configID="MCU", memType="INT_FLASH",
+                                                               category="<Unspecified>", vasSectionName=None,
+                                                               addressStart=element.addressStart,
+                                                               addressLength=0 if element.addressEnd is None else None,
+                                                               addressEnd=element.addressEnd))
     objectContainer = []
     for element in objectDataContainer:
-        objectContainer.append(emma_libs.memoryEntry.ObjectEntry(tag="", vasName="", section=".text", moduleName=".object",
-                                                                 mapfileName="", configID="MCU", memType="INT_FLASH",
-                                                                 category="<Unspecified>", vasSectionName=None,
-                                                                 addressStart=element.addressStart,
-                                                                 addressLength=0 if element.addressEnd is None else None,
-                                                                 addressEnd=element.addressEnd))
+        objectContainer.append(emma_libs.memoryEntry.MemEntry(tag="", vasName="", section=".text", moduleName=".object",
+                                                              mapfileName="", configID="MCU", memType="INT_FLASH",
+                                                              category="<Unspecified>", vasSectionName=None,
+                                                              addressStart=element.addressStart,
+                                                              addressLength=0 if element.addressEnd is None else None,
+                                                              addressEnd=element.addressEnd))
     return sectionContainer, objectContainer
 
 
@@ -94,8 +94,8 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         self.assertEqual(sectionToCheck.overlappingOthersFlag, sourceSection.overlappingOthersFlag)
         self.assertEqual(sectionToCheck.addressStartOriginal, sourceSection.addressStartOriginal)
         self.assertEqual(sectionToCheck.addressLengthOriginal, sourceSection.addressLengthOriginal)
-        self.assertEqual(sectionToCheck.addressLengthHexOriginal, sourceSection.addressLengthHexOriginal)
-        self.assertEqual(sectionToCheck.addressEndOriginal, sourceSection.addressEndOriginal)
+        self.assertEqual(sectionToCheck.addressLengthHexOriginal(), sourceSection.addressLengthHexOriginal())
+        self.assertEqual(sectionToCheck.addressEndOriginal(), sourceSection.addressEndOriginal())
 
     def checkSectionEntry(self, sectionEntry, sourceSection):
         """
@@ -107,10 +107,10 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         self.checkSectionNonChangingData(sectionEntry, sourceSection)
         self.assertEqual(sectionEntry.addressStart, sourceSection.addressStart)
         self.assertEqual(sectionEntry.addressLength, 0)
-        self.assertEqual(sectionEntry.addressEnd, sourceSection.addressEnd)
-        self.assertEqual(sectionEntry.addressStartHex, hex(sourceSection.addressStart))
-        self.assertEqual(sectionEntry.addressLengthHex, hex(0))
-        self.assertEqual(sectionEntry.addressEndHex, hex(sourceSection.addressEnd))
+        self.assertEqual(sectionEntry.addressEnd(), sourceSection.addressStart)
+        self.assertEqual(sectionEntry.addressStartHex(), hex(sourceSection.addressStart))
+        self.assertEqual(sectionEntry.addressLengthHex(), hex(0))
+        self.assertEqual(sectionEntry.addressEndHex(), hex(sourceSection.addressStart))
         self.assertEqual(sectionEntry.moduleName, OBJECTS_IN_SECTIONS_SECTION_ENTRY)
 
     def checkSectionReserve(self, sectionReserve, sourceSection, expectedAddressStart, expectedAddressEnd):
@@ -125,11 +125,17 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         self.checkSectionNonChangingData(sectionReserve, sourceSection)
         self.assertEqual(sectionReserve.addressStart, expectedAddressStart)
         self.assertEqual(sectionReserve.addressLength, (expectedAddressEnd - expectedAddressStart + 1))
-        self.assertEqual(sectionReserve.addressEnd, expectedAddressEnd)
-        self.assertEqual(sectionReserve.addressStartHex, hex(expectedAddressStart))
-        self.assertEqual(sectionReserve.addressLengthHex, hex((expectedAddressEnd - expectedAddressStart + 1)))
-        self.assertEqual(sectionReserve.addressEndHex, hex(expectedAddressEnd))
+        self.assertEqual(sectionReserve.addressEnd(), expectedAddressEnd)
+        self.assertEqual(sectionReserve.addressStartHex(), hex(expectedAddressStart))
+        self.assertEqual(sectionReserve.addressLengthHex(), hex((expectedAddressEnd - expectedAddressStart + 1)))
+        self.assertEqual(sectionReserve.addressEndHex(), hex(expectedAddressEnd))
         self.assertEqual(sectionReserve.moduleName, OBJECTS_IN_SECTIONS_SECTION_RESERVE)
+
+    def assertEqualSections(self, firstSection, secondSection):
+        self.assertTrue(emma_libs.memoryEntry.SectionEntry.isEqual(firstSection, secondSection))
+
+    def assertEqualObjects(self, firstObject, secondObject):
+        self.assertTrue(emma_libs.memoryEntry.ObjectEntry.isEqual(firstObject, secondObject))
 
     def test_singleSection(self):
         """
@@ -181,19 +187,19 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         #                                       fifthObject
         self.assertEqual(len(objectsInSections), 7)
         # Check whether the firstObject was created properly
-        self.assertEqual(objectsInSections[0], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[0], objectContainer[0])
         # Check whether the sectionEntry was created properly
         self.checkSectionEntry(objectsInSections[1], sectionContainer[0])
         # Check whether the sectionReserve was created properly
         self.checkSectionReserve(objectsInSections[2], sectionContainer[0], SECTION_ADDRESS_START, SECTION_ADDRESS_END)
         # Check whether the secondObject was created properly
-        self.assertEqual(objectsInSections[3], objectContainer[1])
+        self.assertEqualObjects(objectsInSections[3], objectContainer[1])
         # Check whether the thirdObject was created properly
-        self.assertEqual(objectsInSections[4], objectContainer[2])
+        self.assertEqualObjects(objectsInSections[4], objectContainer[2])
         # Check whether the fourthObject was created properly
-        self.assertEqual(objectsInSections[5], objectContainer[3])
+        self.assertEqualObjects(objectsInSections[5], objectContainer[3])
         # Check whether the fifthObject was created properly
-        self.assertEqual(objectsInSections[6], objectContainer[4])
+        self.assertEqualObjects(objectsInSections[6], objectContainer[4])
 
     def test_multipleSectionsAndObjectsWithZeroLengths(self):
         """
@@ -231,17 +237,17 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         #                                       fifthSectionEntry
         self.assertEqual(len(objectsInSections), 8)
         # Check whether the firstObject was created properly
-        self.assertEqual(objectsInSections[0], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[0], objectContainer[0])
         # Check whether the firstSectionEntry was created properly
         self.checkSectionEntry(objectsInSections[1], sectionContainer[0])
         # Check whether the secondSectionEntry was created properly
         self.checkSectionEntry(objectsInSections[2], sectionContainer[1])
         # Check whether the secondObject was created properly
-        self.assertEqual(objectsInSections[3], objectContainer[1])
+        self.assertEqualObjects(objectsInSections[3], objectContainer[1])
         # Check whether the thirdSectionEntry was created properly
         self.checkSectionEntry(objectsInSections[4], sectionContainer[2])
         # Check whether the thirdObject was created properly
-        self.assertEqual(objectsInSections[5], objectContainer[2])
+        self.assertEqualObjects(objectsInSections[5], objectContainer[2])
         # Check whether the fourthSectionEntry was created properly
         self.checkSectionEntry(objectsInSections[6], sectionContainer[3])
         # Check whether the fifthSectionEntry was created properly
@@ -275,7 +281,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         # Check whether the firstSectionEntry was created properly
         self.checkSectionEntry(objectsInSections[0], sectionContainer[0])
         # Check whether the object was created properly
-        self.assertEqual(objectsInSections[1], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[1], objectContainer[0])
         # Check whether the secondSectionEntry was created properly
         self.checkSectionEntry(objectsInSections[2], sectionContainer[1])
 
@@ -298,7 +304,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         # Check whether the sectionEntry was created properly
         self.checkSectionEntry(objectsInSections[0], sectionContainer[0])
         # Check whether the object was created properly
-        self.assertEqual(objectsInSections[1], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[1], objectContainer[0])
 
     def test_sectionFullWithTwoObjects(self):
         """
@@ -322,9 +328,9 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         # Check whether the sectionEntry was created properly
         self.checkSectionEntry(objectsInSections[0], sectionContainer[0])
         # Check whether the firstObject was created properly
-        self.assertEqual(objectsInSections[1], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[1], objectContainer[0])
         # Check whether the secondObject was created properly
-        self.assertEqual(objectsInSections[2], objectContainer[1])
+        self.assertEqualObjects(objectsInSections[2], objectContainer[1])
 
     def test_sectionFullWithOverlappingSingleObjectAtStart(self):
         """
@@ -343,7 +349,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         # Check the number of created elements: object + sectionEntry
         self.assertEqual(len(objectsInSections), 2)
         # Check whether the object was created properly
-        self.assertEqual(objectsInSections[0], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[0], objectContainer[0])
         # Check whether the sectionEntry was created properly
         self.checkSectionEntry(objectsInSections[1], sectionContainer[0])
 
@@ -366,7 +372,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         # Check whether the sectionEntry was created properly
         self.checkSectionEntry(objectsInSections[0], sectionContainer[0])
         # Check whether the object was created properly
-        self.assertEqual(objectsInSections[1], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[1], objectContainer[0])
 
     def test_sectionFullWithOverlappingSingleObjectAtStartAndEnd(self):
         """
@@ -385,7 +391,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         # Check the number of created elements: object + sectionEntry
         self.assertEqual(len(objectsInSections), 2)
         # Check whether the object was created properly
-        self.assertEqual(objectsInSections[0], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[0], objectContainer[0])
         # Check whether the sectionEntry was created properly
         self.checkSectionEntry(objectsInSections[1], sectionContainer[0])
 
@@ -408,7 +414,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         # Check whether the sectionEntry was created properly
         self.checkSectionEntry(objectsInSections[0], sectionContainer[0])
         # Check whether the object was created properly
-        self.assertEqual(objectsInSections[1], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[1], objectContainer[0])
         # Check whether the sectionReserve was created properly
         self.checkSectionReserve(objectsInSections[2], sectionContainer[0], (OBJECT_ADDRESS_END + 1), SECTION_ADDRESS_END)
 
@@ -433,7 +439,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         # Check whether the sectionReserve was created properly
         self.checkSectionReserve(objectsInSections[1], sectionContainer[0], SECTION_ADDRESS_START, (OBJECT_ADDRESS_START - 1))
         # Check whether the object was created properly
-        self.assertEqual(objectsInSections[2], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[2], objectContainer[0])
 
     def test_sectionNotFullWithSingleObjectAtMiddle(self):
         """
@@ -456,7 +462,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         # Check whether the sectionReserve was created properly
         self.checkSectionReserve(objectsInSections[1], sectionContainer[0], SECTION_ADDRESS_START, (OBJECT_ADDRESS_START - 1))
         # Check whether the object was created properly
-        self.assertEqual(objectsInSections[2], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[2], objectContainer[0])
         # Check whether the sectionReserve was created properly
         self.checkSectionReserve(objectsInSections[3], sectionContainer[0], (OBJECT_ADDRESS_END + 1), SECTION_ADDRESS_END)
 
@@ -477,7 +483,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         # Check the number of created elements: object + sectionEntry + sectionReserve
         self.assertEqual(len(objectsInSections), 3)
         # Check whether the object was created properly
-        self.assertEqual(objectsInSections[0], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[0], objectContainer[0])
         # Check whether the sectionEntry was created properly
         self.checkSectionEntry(objectsInSections[1], sectionContainer[0])
         # Check whether the sectionReserve was created properly
@@ -504,7 +510,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         # Check whether the sectionReserve was created properly
         self.checkSectionReserve(objectsInSections[1], sectionContainer[0], SECTION_ADDRESS_START, SECTION_ADDRESS_END)
         # Check whether the object was created properly
-        self.assertEqual(objectsInSections[2], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[2], objectContainer[0])
 
     def test_sectionNotFullWithOverlappingSingleObjectBeforeStart(self):
         """
@@ -523,7 +529,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         # Check the number of created elements: object + sectionEntry + sectionReserve
         self.assertEqual(len(objectsInSections), 3)
         # Check whether the object was created properly
-        self.assertEqual(objectsInSections[0], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[0], objectContainer[0])
         # Check whether the sectionEntry was created properly
         self.checkSectionEntry(objectsInSections[1], sectionContainer[0])
         # Check whether the sectionReserve was created properly
@@ -550,7 +556,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         # Check whether the sectionReserve was created properly
         self.checkSectionReserve(objectsInSections[1], sectionContainer[0], SECTION_ADDRESS_START, (OBJECT_ADDRESS_START - 1))
         # Check whether the object was created properly
-        self.assertEqual(objectsInSections[2], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[2], objectContainer[0])
 
     def test_sectionNotFullWithMultipleObjects(self):
         """
@@ -587,23 +593,23 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         #                                       fifthObject
         self.assertEqual(len(objectsInSections), 9)
         # Check whether the firstObject was created properly
-        self.assertEqual(objectsInSections[0], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[0], objectContainer[0])
         # Check whether the secondObject was created properly
-        self.assertEqual(objectsInSections[1], objectContainer[1])
+        self.assertEqualObjects(objectsInSections[1], objectContainer[1])
         # Check whether the sectionEntry was created properly
         self.checkSectionEntry(objectsInSections[2], sectionContainer[0])
         # Check whether the firstSectionReserve was created properly
         self.checkSectionReserve(objectsInSections[3], sectionContainer[0], (SECOND_OBJECT_ADDRESS_END + 1), (THIRD_OBJECT_ADDRESS_START - 1))
         # Check whether the thirdObject was created properly
-        self.assertEqual(objectsInSections[4], objectContainer[2])
+        self.assertEqualObjects(objectsInSections[4], objectContainer[2])
         # Check whether the secondSectionReserve was created properly
         self.checkSectionReserve(objectsInSections[5], sectionContainer[0], (THIRD_OBJECT_ADDRESS_END + 1), (FOURTH_OBJECT_ADDRESS_START - 1))
         # Check whether the fourthObject was created properly
-        self.assertEqual(objectsInSections[6], objectContainer[3])
+        self.assertEqualObjects(objectsInSections[6], objectContainer[3])
         # Check whether the thirdSectionReserve was created properly
         self.checkSectionReserve(objectsInSections[7], sectionContainer[0], (FOURTH_OBJECT_ADDRESS_END + 1), SECTION_ADDRESS_END)
         # Check whether the fifthObject was created properly
-        self.assertEqual(objectsInSections[8], objectContainer[4])
+        self.assertEqualObjects(objectsInSections[8], objectContainer[4])
 
     def test_multipleSectionsWithMultipleObjects(self):
         """
@@ -652,11 +658,11 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         #                                       fourthSectionEntry + fourthSectionReserve
         self.assertEqual(len(objectsInSections), 14)
         # Check whether the firstObject was created properly
-        self.assertEqual(objectsInSections[0], objectContainer[0])
+        self.assertEqualObjects(objectsInSections[0], objectContainer[0])
         # Check whether the firstSectionEntry was created properly
         self.checkSectionEntry(objectsInSections[1], sectionContainer[0])
         # Check whether the secondObject was created properly
-        self.assertEqual(objectsInSections[2], objectContainer[1])
+        self.assertEqualObjects(objectsInSections[2], objectContainer[1])
         # Check whether the firstSectionReserve was created properly
         self.checkSectionReserve(objectsInSections[3], sectionContainer[0], (SECOND_OBJECT_ADDRESS_END + 1), FIRST_SECTION_ADDRESS_END)
         # Check whether the secondSectionEntry was created properly
@@ -664,17 +670,17 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         # Check whether the secondSectionReserve was created properly
         self.checkSectionReserve(objectsInSections[5], sectionContainer[1], SECOND_SECTION_ADDRESS_START, (THIRD_OBJECT_ADDRESS_START - 1))
         # Check whether the thirdObject was created properly
-        self.assertEqual(objectsInSections[6], objectContainer[2])
+        self.assertEqualObjects(objectsInSections[6], objectContainer[2])
         # Check whether the thirdSectionEntry was created properly
         self.checkSectionEntry(objectsInSections[7], sectionContainer[2])
         # Check whether the thirdSectionReserve was created properly
         self.checkSectionReserve(objectsInSections[8], sectionContainer[2], THIRD_SECTION_ADDRESS_START, (FOURTH_OBJECT_ADDRESS_START - 1))
         # Check whether the fourthObject was created properly
-        self.assertEqual(objectsInSections[9], objectContainer[3])
+        self.assertEqualObjects(objectsInSections[9], objectContainer[3])
         # Check whether the thirdSectionReserve was created properly
         self.checkSectionReserve(objectsInSections[10], sectionContainer[2], (FOURTH_OBJECT_ADDRESS_END + 1), THIRD_SECTION_ADDRESS_END)
         # Check whether the fifthObject was created properly
-        self.assertEqual(objectsInSections[11], objectContainer[4])
+        self.assertEqualObjects(objectsInSections[11], objectContainer[4])
         # Check whether the fourthSectionEntry was created properly
         self.checkSectionEntry(objectsInSections[12], sectionContainer[3])
         # Check whether the fourthSectionReserve was created properly
