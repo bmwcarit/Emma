@@ -139,14 +139,14 @@ def processArguments(args):
 
     # If an output directory was not specified then the result will be stored to the project folder
     if args.dir is None:
-        dir = args.project
+        directory = args.project
     else:
         # Get paths straight (only forward slashes)
-        dir = shared_libs.emma_helper.joinPath(args.dir)
+        directory = shared_libs.emma_helper.joinPath(args.dir)
     # Get paths straight (only forward slashes) or set it to empty if it was empty
     subDir = shared_libs.emma_helper.joinPath(args.subdir) if args.subdir is not None else ""
 
-    outputPath = shared_libs.emma_helper.joinPath(dir, subDir, OUTPUT_DIR)
+    outputPath = shared_libs.emma_helper.joinPath(directory, subDir, OUTPUT_DIR)
     analyseDebug = args.analyse_debug
     create_categories = args.create_categories
     remove_unmatched = args.remove_unmatched

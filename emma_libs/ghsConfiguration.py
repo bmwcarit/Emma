@@ -29,6 +29,9 @@ import emma_libs.ghsMapfileRegexes
 
 
 class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
+    def __init__(self, noPrompt):
+        super().__init__(noPrompt)
+        self.noPrompt = noPrompt
 
     def readConfiguration(self, configurationPath, mapfilesPath, configId, configuration) -> None:
         # Loading the patterns*.json
@@ -54,10 +57,10 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         configuration["sortMonolithTabularised"] = False
         self.__addMonolithsToConfiguration(mapfilesPath, configuration)
 
-    def validateConfiguration(self, configId, configuration, noPrompt) -> bool:
+    def validateConfiguration(self, configId, configuration) -> bool:
         result = False
         if self.__checkNumberOfFoundMapfiles(configId, configuration):
-            if self.__checkMonolithSections(configId, configuration, noPrompt):
+            if self.__checkMonolithSections(configuration, self.noPrompt):
                 result = True
         return result
 
@@ -133,7 +136,6 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             Load monolith mapfile (only once)
             :return: Monolith file content
             """
-
             if not configuration["monolithLoaded"]:
                 mapfileIndexChosen = 0  # Take the first monolith file in list (default case)
                 numMonolithFiles = len(configuration["patterns"]["monoliths"])
@@ -186,7 +188,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             return table
 
         # Load and register Monoliths
-        monolithContent = loadMonolithMapfileOnce(configuration)
+        monolithContent = loadMonolithMapfileOnce(configuration, self.noPrompt)
         if not configuration["sortMonolithTabularised"]:
             configuration["sortMonolithTabularised"] = tabulariseAndSortOnce(monolithContent, configuration)
 
@@ -200,7 +202,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             sc().warning("No mapfiles found for configID: \"" + configId + "\"!")
         return result
 
-    def __checkMonolithSections(self, configId, configuration, noPrompt):
+    def __checkMonolithSections(self, configuration, noPrompt):
         """
         The function collects the VAS sections from the monolith files and from the global config and from the monolith mapfile
         :return: nothing
@@ -213,7 +215,8 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         monolithPattern = emma_libs.ghsMapfileRegexes.UpperMonolithPattern()
 
         # Check if a monolith was loaded to this configID that can be checked
-        if configuration[configId]["monolithLoaded"]:
+        # In case there was no monolith loaded, the configuration does not need it so the check is passed
+        if configuration["monolithLoaded"]:
             for entry in configuration["patterns"]["monoliths"]:
                 with open(configuration["patterns"]["monoliths"][entry]["associatedFilename"], "r") as monolithFile:
                     monolithContent = monolithFile.readlines()
@@ -236,5 +239,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                     sys.exit(-10)
             else:
                 result = True
+        else:
+            result = True
 
         return result

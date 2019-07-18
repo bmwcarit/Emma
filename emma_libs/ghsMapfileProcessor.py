@@ -18,7 +18,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 
 import os
-import sys
 import re
 import bisect
 
@@ -102,14 +101,15 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
                                                                                   lineComponents.group(regexPatternData.Groups.size),
                                                                                   virtualSectionsOfThisMapfile,
                                                                                   monolithFileContent)
-                        # Check whether the address translation was successful
+                        # Check whether the address translation failed
                         if physicalAddress is None:
-                                warning_section_name = lineComponents.group(regexPatternData.Groups.section).rstrip()
-                                warning_object_name = ("::" + lineComponents.group(regexPatternData.Groups.module).rstrip()) if hasattr(regexPatternData.Groups, "module") else ""
-                                sc().warning("The address translation failed for the element: \"" + mapfile + "(line " + str(lineNumber) + ")::" +
-                                             warning_section_name + warning_object_name + " (size: " + str(int(lineComponents.group(regexPatternData.Groups.size), 16)) + " B)\" of the configID \"" +
-                                             configId + "\"!")
-                        continue
+                            warning_section_name = lineComponents.group(regexPatternData.Groups.section).rstrip()
+                            warning_object_name = ("::" + lineComponents.group(regexPatternData.Groups.module).rstrip()) if hasattr(regexPatternData.Groups, "module") else ""
+                            sc().warning("The address translation failed for the element: \"" + mapfile + "(line " + str(lineNumber) + ")::" +
+                                         warning_section_name + warning_object_name + " (size: " + str(int(lineComponents.group(regexPatternData.Groups.size), 16)) + " B)\" of the configID \"" +
+                                         configId + "\"!")
+                            # We will not store this element and continue with the next one
+                            continue
                     # In case the mapfile contains phyisical addresses, no translation is needed, we are just reading the address that is in the mapfile
                     else:
                         physicalAddress = int(lineComponents.group(regexPatternData.Groups.origin), 16) - offset
@@ -134,8 +134,8 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
                     # Inserts at index, elements to right will be pushed "one index up"
                     result.insert(index, memEntry)
 
-            # Filling out the memory regions and memory types and ignoring the entries that did not have a match
-            super().fillOutMemoryRegionsAndMemoryTypes(result, configuration, True, memoryRegionsToExcludeFromMapfiles)
+        # Filling out the memory regions and memory types and ignoring the entries that did not have a match
+        super().fillOutMemoryRegionsAndMemoryTypes(result, configuration, True, memoryRegionsToExcludeFromMapfiles)
 
         return result
 

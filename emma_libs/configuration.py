@@ -34,7 +34,7 @@ class Configuration:
         self.globalConfig = None
         pass
 
-    def readConfiguration(self, configurationPath, mapfilesPath) -> None:
+    def readConfiguration(self, configurationPath, mapfilesPath, noPrompt) -> None:
         # Check whether the configurationPath exists
         shared_libs.emma_helper.checkIfFolderExists(configurationPath)
 
@@ -54,7 +54,7 @@ class Configuration:
         # Creating the SpecificConfiguration objects
         for configId in self.globalConfig:
             usedCompiler = self.globalConfig[configId]["compiler"]
-            self.specificConfigurations[configId] = emma_libs.specificConfigurationFactory.createSpecificConfiguration(usedCompiler)
+            self.specificConfigurations[configId] = emma_libs.specificConfigurationFactory.createSpecificConfiguration(usedCompiler, noPrompt)
             # Processing the compiler dependent parts of the configuration
             sc().info("Processing the mapfiles of the configID \"" + configId + "\"")
             self.specificConfigurations[configId].readConfiguration(configurationPath, mapfilesPath, configId, self.globalConfig[configId])

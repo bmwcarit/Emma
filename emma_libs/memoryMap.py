@@ -95,7 +95,7 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryWrapper):
                                         actualElement.addressLengthHex = hex(actualElement.addressLength)
                                     # Case X: SW error, unhandled case...
                                     else:
-                                        sc.error("MemoryManager::resolveOverlap(): Case X: SW error, unhandled case...")
+                                        sc().error("MemoryManager::resolveOverlap(): Case X: SW error, unhandled case...")
 
 
 def calculateObjectsInSections(sectionContainer, objectContainer):

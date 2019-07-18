@@ -143,7 +143,7 @@ class LowerMonolithPattern(RegexPatternBase):
         self.Groups.origin = "address"  # address is equvialent to base Address
         self.Groups.size = "size"
 
-        sc.info("Preparing lower monolith summary...")
+        sc().info("Preparing lower monolith summary...")
 
     def getModuleName(self, lineComponents):
         """
