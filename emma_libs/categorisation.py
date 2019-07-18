@@ -175,7 +175,7 @@ class Categorisation:
             sc().info(text + " was entered, aborting the update. The " + outputPath + " was not changed.")
         return result
 
-    def __removeUnmatchedFromCategoriesJson(self, noPrompt, categoriesToRemoveFrom, consumerCollection, memEntryWrapper, outputPath):
+    def __removeUnmatchedFromCategoriesJson(self, noPrompt, categoriesToRemoveFrom, consumerCollection, memEntryHandler, outputPath):
         """
         Removes unused module names from categories.json.
         The function prompts the user to confirm the overwriting of categories.json
@@ -184,7 +184,7 @@ class Categorisation:
         text = input("> ") if not noPrompt else sys.exit(-10)
         if text == "y":
             # Make a dict of {name : category} from consumerCollection
-            rawCategorisedConsumerCollection = {memEntryWrapper.getName(memEntry): memEntry.category for memEntry in consumerCollection}
+            rawCategorisedConsumerCollection = {memEntryHandler.getName(memEntry): memEntry.category for memEntry in consumerCollection}
 
             # Format rawCategorisedModulesConsumerCollection to {Categ1: [Modulename1, Modulename2, ...], Categ2: [...]}
             categorisedElements = {}

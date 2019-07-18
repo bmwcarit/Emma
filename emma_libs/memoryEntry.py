@@ -62,19 +62,19 @@ class MemEntry:
 
         # Check if we got hex or dec addresses and decide how to convert those
         # Start address
-        self.addressStartHex, self.addressStart = shared_libs.emma_helper.unifyAddress(addressStart)
+        _, self.addressStart = shared_libs.emma_helper.unifyAddress(addressStart)
+        # Initializing the length to None. This will be later overwritten, but the member has to be created in __init__()
+        self.addressLength = None
 
         if addressLength is None and addressEnd is None:
             sc().error("Either addressLength or addressEnd must be given!")
         elif addressLength is None:
-            self.__setAddressesGivenEnd(addressEnd)
+            self.setAddressesGivenEnd(addressEnd)
         elif addressEnd is None:
-            self.__setAddressesGivenLength(addressLength)
+            self.setAddressesGivenLength(addressLength)
         else:
-            # TODO: Add verbose output here (MSc)
-            # TODO: if self.args.verbosity <= 1:
-            sc().warning("MemEntry: addressLength AND addressEnd were both given. The addressLength will be used and the addressEnd will be recalculated based on it.")
-            self.__setAddressesGivenLength(addressLength)
+            sc().warning("MemEntry: addressLength AND addressEnd were both given. The addressLength will be used.")
+            self.setAddressesGivenLength(addressLength)
 
         self.memTypeTag = tag  # Differentiate in more detail between memory sections/types
         self.vasName = vasName
@@ -99,26 +99,30 @@ class MemEntry:
         self.containingOthersFlag = None
         self.overlappingOthersFlag = None
 
-        # TODO Rename the members addressStartOriginal and addressEndOriginal to addressStartHexOriginal and addressEndHexOriginal respectively (AGK)
         # Original values. These are stored in case the element is moved later. Then the original values will be still accessible.
-        self.addressStartOriginal = self.addressStartHex
+        self.addressStartOriginal = self.addressStart
         self.addressLengthOriginal = self.addressLength
-        self.addressLengthHexOriginal = self.addressLengthHex
-        self.addressEndOriginal = self.addressEndHex
 
-    def __setAddressesGivenEnd(self, addressEnd):
-        # Set addressEnd and addressEndHex
-        self.addressEndHex, self.addressEnd = shared_libs.emma_helper.unifyAddress(addressEnd)
-        # Calculate addressLength
-        self.addressLength = self.addressEnd - self.addressStart + 1
-        self.addressLengthHex = hex(self.addressLength)
+    def addressStartHex(self):
+        return hex(self.addressStart)
 
-    def __setAddressesGivenLength(self, addressLength):
-        # Set addressLength
-        self.addressLengthHex, self.addressLength = shared_libs.emma_helper.unifyAddress(addressLength)
-        # Calculate addressEnd
-        self.addressEnd = (self.addressStart + self.addressLength - 1) if 0 < self.addressLength else self.addressStart
-        self.addressEndHex = hex(self.addressEnd)
+    def addressLengthHex(self):
+        return hex(self.addressLength)
+
+    def addressEnd(self):
+        return self.__calculateAddressEnd(self.addressStart, self.addressLength)
+
+    def addressEndHex(self):
+        return hex(self.addressEnd())
+
+    def addressLengthHexOriginal(self):
+        return hex(self.addressLengthOriginal)
+
+    def addressEndOriginal(self):
+        return self.__calculateAddressEnd(self.addressStartOriginal, self.addressLengthOriginal)
+
+    def addressEndHexOriginal(self):
+        return hex(self.addressEndOriginal())
 
     def equalConfigID(self, other):
         """
@@ -138,16 +142,37 @@ class MemEntry:
         # TODO: Do we want to compare the length (shortest first) when address ist the same? (MSc)
         return self.addressStart < other.addressStart
 
+    def setAddressesGivenEnd(self, addressEnd):
+        if self.addressStart < addressEnd:
+            self.addressLength = addressEnd - self.addressStart + 1
+        elif self.addressStart == addressEnd:
+            self.addressLength = 0
+        else:
+            sc().warning("MemEntry: The addressEnd (" + addressEnd + ") is smaller than the addressStart (" + self.addressStart + ")!")
 
-class MemEntryWrapper(abc.ABC):
+    def setAddressesGivenLength(self, addressLength):
+        _, self.addressLength = shared_libs.emma_helper.unifyAddress(addressLength)
+        if 0 > self.addressLength:
+            sc().warning("MemEntry: The addressLength (" + self.addressLength + ") is negative!")
+
+    @staticmethod
+    def __calculateAddressEnd(addressStart, addressLength):
+        # Is this a non-zero length memEntry object?
+        if 0 < addressLength:
+            result = addressStart + addressLength - 1
+        # Else the addressEnd is the addressStart
+        else:
+            result = addressStart
+        return result
+
+
+class MemEntryHandler(abc.ABC):
+    def __eq__(self, other):
+        raise NotImplementedError("This member shall not be used, use the isEqual() instead!")
+
     @staticmethod
     @abc.abstractmethod
-    def __eq__(first, second):
-        pass
-
-    @staticmethod
-    @abc.abstractmethod
-    def __hash__(memEntry):
+    def isEqual(first, second):
         pass
 
     @staticmethod
@@ -156,34 +181,30 @@ class MemEntryWrapper(abc.ABC):
         pass
 
 
-class SectionEntry(MemEntryWrapper):
+class SectionEntry(MemEntryHandler):
     @staticmethod
-    def __eq__(first, second):
+    def isEqual(first, second):
         if isinstance(first, MemEntry) and isinstance(second, MemEntry):
             return ((first.addressStart == second.addressStart) and
-                    (first.addressEnd == second.addressEnd)     and
+                    (first.addressEnd() == second.addressEnd()) and
                     (first.section == second.section)           and
                     (first.configID == second.configID)         and
                     (first.mapfile == second.mapfile)           and
                     (first.vasName == second.vasName))
         else:
-            raise NotImplementedError("Operator __eq__ not defined between " + type(first).__name__ + " and " + type(second).__name__)
-
-    @staticmethod
-    def __hash__(memEntry):
-        return hash((memEntry.addressStart, memEntry.addressEnd, memEntry.section, memEntry.configID, memEntry.mapfile, memEntry.vasName))
+            raise NotImplementedError("Function isEqual() not defined between " + type(first).__name__ + " and " + type(second).__name__)
 
     @staticmethod
     def getName(memEntry):
         return memEntry.section
 
 
-class ObjectEntry(MemEntryWrapper):
+class ObjectEntry(MemEntryHandler):
     @staticmethod
-    def __eq__(first, second):
+    def isEqual(first, second):
         if isinstance(first, MemEntry) and isinstance(second, MemEntry):
             return ((first.addressStart == second.addressStart)      and
-                    (first.addressEnd == second.addressEnd)          and
+                    (first.addressEnd() == second.addressEnd())      and
                     (first.section == second.section)                and
                     (first.moduleName == second.moduleName)          and
                     (first.configID == second.configID)              and
@@ -191,12 +212,7 @@ class ObjectEntry(MemEntryWrapper):
                     (first.vasName == second.vasName)                and
                     (first.vasSectionName == second.vasSectionName))
         else:
-            raise NotImplementedError("Operator __eq__ not defined between " + type(first).__name__ + " and " + type(second).__name__)
-
-    @staticmethod
-    def __hash__(memEntry):
-        return hash((memEntry.addressStart, memEntry.addressEnd, memEntry.section, memEntry.moduleName, memEntry.configID,
-                     memEntry.mapfile, memEntry.vasName, memEntry.vasSectionName))
+            raise NotImplementedError("Function isEqual() not defined between " + type(first).__name__ + " and " + type(second).__name__)
 
     @staticmethod
     def getName(memEntry):

@@ -97,7 +97,7 @@ def unifyAddress(address):
     elif type(address) == int and address is not None:
         addressHex = hex(address)
     else:
-        sc().error("Address must be either of type int or str")
+        sc().error("unifyAddress(): Address must be either of type int or str!")
         raise TypeError
     return addressHex, address
 

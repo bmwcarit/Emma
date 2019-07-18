@@ -30,5 +30,5 @@ class SpecificConfiguration(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def validateConfiguration(self, configId, configuration) -> bool:
+    def checkConfiguration(self, configId, configuration) -> bool:
         pass

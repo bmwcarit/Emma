@@ -38,18 +38,20 @@ class MapfileProcessor(abc.ABC):
         :param physAddr: input address in hex or dec
         :return: None if nothing was found; otherwise the unique name of the memory region defined in addressSpaces*.json (DDR, ...)
         """
-        def printElementRemovalWarning(element):
-            object_name = ("::" + element.moduleName) if hasattr(element, "module") else ""
-            sc().warning("The element: \"" + element.mapfile + "::" + element.section + object_name +
-                         " (@" + element.addressStartHex + ", size: " + str(element.addressLength) + " B)\" of the configID \"" +
-                         element.configID + "\" does not belong to any of the memory regions!")
+        def printElementRemovalMessage(memEntry, loggerLevel, reason):
+            object_name = ("::" + memEntry.moduleName) if hasattr(memEntry, "module") else ""
+            loggerLevel("The element: \"" + memEntry.mapfile + "::" + memEntry.section + object_name +
+                        " (@" + memEntry.addressStartHex() + ", size: " + str(memEntry.addressLength) + " B)\" of the configID \"" +
+                        memEntry.configID + "\" was removed. Reason: " + reason)
 
-        def isElementInTheFromMapfileExcludedRegions(memoryRegionsToExcludeFromMapfiles, element):
+        def isElementMarkedAsExcluded(excludedMemoryRegionsFromMapfiles, memEntry):
             result = False
-            if memoryRegionsToExcludeFromMapfiles is not None:
-                if element.mapfile in memoryRegionsToExcludeFromMapfiles.keys():
-                    if element.memTypeTag in memoryRegionsToExcludeFromMapfiles[element.mapfile]:
-                        # Here we do not need to print the warning because they are ignored with purpose
+            # If there is an exclusion list for memory regions per mapfiles
+            if excludedMemoryRegionsFromMapfiles is not None:
+                # If there is an excluded memory region for the mapfile of the memory entry
+                if memEntry.mapfile in excludedMemoryRegionsFromMapfiles.keys():
+                    # If the memory region of the mem entry is excluded
+                    if memEntry.memTypeTag in excludedMemoryRegionsFromMapfiles[memEntry.mapfile]:
                         result = True
             return result
 
@@ -58,20 +60,18 @@ class MapfileProcessor(abc.ABC):
 
         # For every memEntryObject
         for element in listOfMemEntryObjects:
-            # Store the addresses of the element
-            _, addressStart = shared_libs.emma_helper.unifyAddress(element.addressStart)
-            _, addressEnd = shared_libs.emma_helper.unifyAddress(element.addressEnd)
-
             # For every defined memory region
             for memoryRegion in memoryCandidates:
                 # If the element is in this memoryRegion
-                if (int(memoryCandidates[memoryRegion]["start"], 16) <= addressStart) and (addressEnd <= int(memoryCandidates[memoryRegion]["end"], 16)):
+                if (int(memoryCandidates[memoryRegion]["start"], 16) <= element.addressStart) and (element.addressEnd() <= int(memoryCandidates[memoryRegion]["end"], 16)):
                     # Then we store the memoryRegion data in the element
                     element.memTypeTag = memoryRegion
                     element.memType = memoryCandidates[memoryRegion]["type"]
                     # If this region is not excluded for the mapfile the element belongs to then we will keep it
-                    if not isElementInTheFromMapfileExcludedRegions(memoryRegionsToExcludeFromMapfiles, element):
+                    if not isElementMarkedAsExcluded(memoryRegionsToExcludeFromMapfiles, element):
                         listOfElementsToKeep.append(element)
+                    else:
+                        printElementRemovalMessage(element, sc().debug, "Its memory region was excluded for this mapfile!")
                     break
             # If we have reached this point, then we did not find a memory region
             else:
@@ -82,6 +82,6 @@ class MapfileProcessor(abc.ABC):
                     listOfElementsToKeep.append(element)
                 # If we have to remove it, then we will print a report
                 else:
-                    printElementRemovalWarning(element)
+                    printElementRemovalMessage(element, sc().warning, "It does not belong to any of the memory regions!")
         # Overwriting the content of the list of memory entry objects with the elements that we will keep
         listOfMemEntryObjects[:] = listOfElementsToKeep

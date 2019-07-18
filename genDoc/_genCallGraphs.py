@@ -202,8 +202,8 @@ def main(arguments):
 
 
 if __name__ == "__main__":
-    readArguments = ParseArguments()
+    commandLineArguments = ParseArguments()
     if not os.path.isdir(README_CALL_GRAPH_AND_UML_FOLDER_NAME):
         sc().info("The folder \"" + README_CALL_GRAPH_AND_UML_FOLDER_NAME + "\" was created because it did not exist...")
         os.makedirs(README_CALL_GRAPH_AND_UML_FOLDER_NAME)
-    main(readArguments)
+    main(commandLineArguments)

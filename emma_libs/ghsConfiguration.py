@@ -57,7 +57,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         configuration["sortMonolithTabularised"] = False
         self.__addMonolithsToConfiguration(mapfilesPath, configuration)
 
-    def validateConfiguration(self, configId, configuration) -> bool:
+    def checkConfiguration(self, configId, configuration) -> bool:
         result = False
         if self.__checkNumberOfFoundMapfiles(configId, configuration):
             if self.__checkMonolithSections(configuration, self.noPrompt):
