@@ -38,36 +38,230 @@ class MemEntryData:
     The MemEntry objects can be generated with the createMemEntryObjects() function from these objects.
     """
 
-    def __init__(self, addressStart, addressEnd):
+    def __init__(self, addressStart, addressEnd, configId=None, section=None, moduleName=None):
         self.addressStart = addressStart
         self.addressEnd = addressEnd
+        self.configId = configId
+        self.section = section
+        self.moduleName = moduleName
 
 
-def createMemEntryObjects(sectionDataContainer, objectDataContainer):
-    """
-    Function to create a two list as input for the testing of the caluclateObjectsInSections() function.
-    :param sectionDataContainer: List of MemEntry objects from which the sectionContainer elements will be created.
-    :param objectDataContainer: List of MemEntry objects from which the objectContainer elements will be created.
-    :return: sectionContainer, objectContainer lists that can be processed with the caluclateObjectsInSections() function.
-    """
+def createMemEntryObjects(sectionDataContainer=None, objectDataContainer=None):
+    def createMemEntryObject(memEntryData):
+        return emma_libs.memoryEntry.MemEntry(tag="",
+                                              vasName="",
+                                              section=".text" if memEntryData.section is None else memEntryData.section,
+                                              moduleName="" if memEntryData.moduleName is None else memEntryData.moduleName,
+                                              mapfileName="",
+                                              configID="MCU" if memEntryData.configId is None else memEntryData.configId,
+                                              memType="INT_FLASH",
+                                              category="<Unspecified>",
+                                              vasSectionName=None,
+                                              addressStart=memEntryData.addressStart,
+                                              addressLength=0 if memEntryData.addressEnd is None else None,
+                                              addressEnd=memEntryData.addressEnd)
 
     sectionContainer = []
-    for element in sectionDataContainer:
-        sectionContainer.append(emma_libs.memoryEntry.MemEntry(tag="", vasName="", section=".text", moduleName="",
-                                                               mapfileName="", configID="MCU", memType="INT_FLASH",
-                                                               category="<Unspecified>", vasSectionName=None,
-                                                               addressStart=element.addressStart,
-                                                               addressLength=0 if element.addressEnd is None else None,
-                                                               addressEnd=element.addressEnd))
+    if sectionDataContainer is not None:
+        for element in sectionDataContainer:
+            sectionContainer.append(createMemEntryObject(element))
+
     objectContainer = []
-    for element in objectDataContainer:
-        objectContainer.append(emma_libs.memoryEntry.MemEntry(tag="", vasName="", section=".text", moduleName=".object",
-                                                              mapfileName="", configID="MCU", memType="INT_FLASH",
-                                                              category="<Unspecified>", vasSectionName=None,
-                                                              addressStart=element.addressStart,
-                                                              addressLength=0 if element.addressEnd is None else None,
-                                                              addressEnd=element.addressEnd))
-    return sectionContainer, objectContainer
+    if objectDataContainer is not None:
+        for element in objectDataContainer:
+            objectContainer.append(createMemEntryObject(element))
+
+    if sectionDataContainer is not None and objectDataContainer is not None:
+        return sectionContainer, objectContainer
+    elif sectionDataContainer is not None:
+        return sectionContainer
+    elif objectDataContainer is not None:
+        return objectContainer
+    else:
+        return None
+
+
+class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
+    def assertEqualSections(self, firstSection, secondSection):
+        self.assertTrue(emma_libs.memoryEntry.SectionEntry.isEqual(firstSection, secondSection))
+
+    def assertEqualObjects(self, firstObject, secondObject):
+        self.assertTrue(emma_libs.memoryEntry.ObjectEntry.isEqual(firstObject, secondObject))
+
+    def checkFlags(self, memEntry, memEntryHandler,
+                   expectedDuplicate=None,
+                   expectedContainingOthers=None, expectedContainedBy=None,
+                   expectedOverlappingOthers=None, expectedOverlappedBy=None):
+        if expectedDuplicate is not None:
+            self.assertEqual(memEntry.duplicateFlag, "Duplicate of (" + memEntryHandler.getName(expectedDuplicate) + ", " + expectedDuplicate.configID + ", " + expectedDuplicate.mapfile + ")")
+        if expectedContainingOthers is not None:
+            self.assertEqual(memEntry.containingOthersFlag, expectedContainingOthers)
+        if expectedContainedBy is not None:
+            self.assertEqual(memEntry.containmentFlag, "Contained by (" + memEntryHandler.getName(expectedContainedBy) + ", " + expectedContainedBy.configID + ", " + expectedContainedBy.mapfile + ")" )
+        if expectedOverlappingOthers is not None:
+            self.assertEqual(memEntry.overlappingOthersFlag, expectedOverlappingOthers)
+        if expectedOverlappedBy is not None:
+            self.assertEqual(memEntry.overlapFlag, "Overlapped by (" + memEntryHandler.getName(expectedOverlappedBy) + ", " + expectedOverlappedBy.configID + ", " + expectedOverlappedBy.mapfile + ")" )
+
+    def checkAddressChanges(self, resolvedMemEntry, originalMemEntry, expectedAddressStart=None, expectedAddressLength=None, expectedAddressEnd=None):
+        # If we have expect an address change
+        if expectedAddressStart is not None or expectedAddressLength is not None or expectedAddressEnd is not None:
+            # Then we will check it with the expected values
+            self.assertEqual(resolvedMemEntry.addressStart, expectedAddressStart)
+            if expectedAddressLength is not None and expectedAddressEnd is None:
+                self.assertEqual(resolvedMemEntry.addressLength, expectedAddressLength)
+            elif expectedAddressEnd is not None and expectedAddressLength is None:
+                self.assertEqual(resolvedMemEntry.addressEnd(), expectedAddressEnd)
+            else:
+                assert(False, "Only one of these variables shall be provided!")
+        else:
+            # Otherwise the addresses should be the same as in the original
+            self.assertEqual(resolvedMemEntry.addressStart, originalMemEntry.addressStart)
+            self.assertEqual(resolvedMemEntry.addressLength, originalMemEntry.addressLength)
+        # Also check, whether the original values were stored correctly
+        self.assertEqual(resolvedMemEntry.addressStartOriginal, originalMemEntry.addressStart)
+        self.assertEqual(resolvedMemEntry.addressLengthOriginal, originalMemEntry.addressLength)
+
+    def test__singleSection(self):
+        """
+        S  |---|
+        """
+        # Creating the sections and objects for the test
+        ADDRESS_START = 0x0100
+        ADDRESS_END = 0x01FF
+        listOfMemEntryData = [MemEntryData(ADDRESS_START, ADDRESS_END)]
+        memEntryHandler = emma_libs.memoryEntry.SectionEntry
+        originalSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        resolvedSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        # Running the resolveDuplicateContainmentOverlap list
+        emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
+
+        # Check the number of elements: no elements shall be removed or added to the container
+        self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
+        # Check whether the section stayed the same
+        self.assertEqualSections(resolvedSectionContainer[0], originalSectionContainer[0])
+        # Check whether the flags were set properly
+        self.checkFlags(resolvedSectionContainer[0], memEntryHandler)
+        # Check whether the addresses were set properly
+        self.checkAddressChanges(resolvedSectionContainer[0], originalSectionContainer[0])
+
+    def test__separateSections(self):
+        """
+        S       |---|
+        S  |---|
+        """
+        # Creating the sections and objects for the test
+        FIRST_SECTION_ADDRESS_START = 0x0100
+        FIRST_SECTION_ADDRESS_END = 0x01FF
+        SECOND_SECTION_ADDRESS_START = 0x0200
+        SECOND_SECTION_ADDRESS_END = 0x02FF
+        listOfMemEntryData = [MemEntryData(FIRST_SECTION_ADDRESS_START, FIRST_SECTION_ADDRESS_END, section="first"),
+                              MemEntryData(SECOND_SECTION_ADDRESS_START, SECOND_SECTION_ADDRESS_END, section="second")]
+        memEntryHandler = emma_libs.memoryEntry.SectionEntry
+        originalSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        resolvedSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        # Running the resolveDuplicateContainmentOverlap list
+        emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
+
+        # Check the number of elements: no elements shall be removed or added to the container
+        self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
+
+        # Check the non changed parts
+        for i in range(len(originalSectionContainer)):
+            # Check whether the sections stayed the same
+            self.assertEqualSections(resolvedSectionContainer[i], originalSectionContainer[i])
+            # Check whether the flags were set properly
+            self.checkFlags(resolvedSectionContainer[i], memEntryHandler)
+            # Check whether the addresses were set properly
+            self.checkAddressChanges(resolvedSectionContainer[i], originalSectionContainer[i])
+
+    def test__duplicateSections(self):
+        """
+        S  |---|
+        S  |---|
+        """
+        # Creating the sections and objects for the test
+        FIRST_SECTION_ADDRESS_START = 0x0100
+        FIRST_SECTION_ADDRESS_END = 0x01FF
+        SECOND_SECTION_ADDRESS_START = 0x0100
+        SECOND_SECTION_ADDRESS_END = 0x01FF
+        listOfMemEntryData = [MemEntryData(FIRST_SECTION_ADDRESS_START, FIRST_SECTION_ADDRESS_END, section="first"),
+                              MemEntryData(SECOND_SECTION_ADDRESS_START, SECOND_SECTION_ADDRESS_END, section="second")]
+        memEntryHandler = emma_libs.memoryEntry.SectionEntry
+        originalSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        resolvedSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        # Running the resolveDuplicateContainmentOverlap list
+        emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
+
+        # Check the number of elements: no elements shall be removed or added to the container
+        self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
+
+        # Check whether the addresses were set properly (it shall be the second section that loses it´s length)
+        self.checkAddressChanges(resolvedSectionContainer[0], originalSectionContainer[0])
+        self.checkAddressChanges(resolvedSectionContainer[1], originalSectionContainer[1], originalSectionContainer[1].addressStart, 0x00)
+        # Check whether the flags were set properly
+        self.checkFlags(resolvedSectionContainer[0], memEntryHandler, expectedDuplicate=resolvedSectionContainer[1])
+        self.checkFlags(resolvedSectionContainer[1], memEntryHandler, expectedDuplicate=resolvedSectionContainer[0])
+
+    def test__containmentSections(self):
+        """
+        S  |-----|
+        S    |-|
+        """
+        # Creating the sections and objects for the test
+        FIRST_SECTION_ADDRESS_START = 0x0000
+        FIRST_SECTION_ADDRESS_END = 0x02FF
+        SECOND_SECTION_ADDRESS_START = 0x0100
+        SECOND_SECTION_ADDRESS_END = 0x01FF
+        listOfMemEntryData = [MemEntryData(FIRST_SECTION_ADDRESS_START, FIRST_SECTION_ADDRESS_END, section="first"),
+                              MemEntryData(SECOND_SECTION_ADDRESS_START, SECOND_SECTION_ADDRESS_END, section="second")]
+        memEntryHandler = emma_libs.memoryEntry.SectionEntry
+        originalSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        resolvedSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        # Running the resolveDuplicateContainmentOverlap list
+        emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
+
+        # Check the number of elements: no elements shall be removed or added to the container
+        self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
+
+        # Check whether the addresses were set properly (it shall be the second section that loses it´s length)
+        self.checkAddressChanges(resolvedSectionContainer[0], originalSectionContainer[0])
+        self.checkAddressChanges(resolvedSectionContainer[1], originalSectionContainer[1], originalSectionContainer[1].addressStart, 0x00)
+        # Check whether the flags were set properly
+        self.checkFlags(resolvedSectionContainer[0], memEntryHandler, expectedContainingOthers=True)
+        self.checkFlags(resolvedSectionContainer[1], memEntryHandler, expectedContainedBy=resolvedSectionContainer[0])
+
+    def test__overlapSections(self):
+        """
+        S  |---|
+        S    |---|
+        """
+        # Creating the sections and objects for the test
+        FIRST_SECTION_ADDRESS_START = 0x0100
+        FIRST_SECTION_ADDRESS_END = 0x01FF
+        SECOND_SECTION_ADDRESS_START = 0x0180
+        SECOND_SECTION_ADDRESS_END = 0x027F
+        listOfMemEntryData = [MemEntryData(FIRST_SECTION_ADDRESS_START, FIRST_SECTION_ADDRESS_END, section="first"),
+                              MemEntryData(SECOND_SECTION_ADDRESS_START, SECOND_SECTION_ADDRESS_END, section="second")]
+        memEntryHandler = emma_libs.memoryEntry.SectionEntry
+        originalSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        resolvedSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        # Running the resolveDuplicateContainmentOverlap list
+        emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
+
+        # Check the number of elements: no elements shall be removed or added to the container
+        self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
+
+        # Check whether the addresses were set properly (the first section shall lose its end and the second its beginning)
+        self.checkAddressChanges(resolvedSectionContainer[0], originalSectionContainer[0],
+                                 expectedAddressStart=originalSectionContainer[0].addressStart,
+                                 expectedAddressEnd=originalSectionContainer[0].addressEnd())
+        self.checkAddressChanges(resolvedSectionContainer[1], originalSectionContainer[1],
+                                 expectedAddressStart=(originalSectionContainer[0].addressEnd() + 1),
+                                 expectedAddressEnd=originalSectionContainer[1].addressEnd())
+        # Check whether the flags were set properly
+        self.checkFlags(resolvedSectionContainer[0], memEntryHandler, expectedOverlappingOthers=True)
+        self.checkFlags(resolvedSectionContainer[1], memEntryHandler, expectedOverlappedBy=originalSectionContainer[0])
 
 
 class CalculateObjectsInSectionsTestCase(unittest.TestCase):

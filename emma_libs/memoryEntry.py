@@ -189,11 +189,11 @@ class SectionEntry(MemEntryHandler):
     @staticmethod
     def isEqual(first, second):
         if isinstance(first, MemEntry) and isinstance(second, MemEntry):
-            return ((first.addressStart == second.addressStart) and
-                    (first.addressEnd() == second.addressEnd()) and
-                    (first.section == second.section)           and
-                    (first.configID == second.configID)         and
-                    (first.mapfile == second.mapfile)           and
+            return ((first.addressStart == second.addressStart)   and
+                    (first.addressLength == second.addressLength) and
+                    (first.section == second.section)             and
+                    (first.configID == second.configID)           and
+                    (first.mapfile == second.mapfile)             and
                     (first.vasName == second.vasName))
         else:
             raise NotImplementedError("Function isEqual() not defined between " + type(first).__name__ + " and " + type(second).__name__)
@@ -208,7 +208,7 @@ class ObjectEntry(MemEntryHandler):
     def isEqual(first, second):
         if isinstance(first, MemEntry) and isinstance(second, MemEntry):
             return ((first.addressStart == second.addressStart)      and
-                    (first.addressEnd() == second.addressEnd())      and
+                    (first.addressLength == second.addressLength)    and
                     (first.section == second.section)                and
                     (first.moduleName == second.moduleName)          and
                     (first.configID == second.configID)              and

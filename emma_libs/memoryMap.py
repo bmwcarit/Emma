@@ -87,8 +87,10 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
                                     if actualElement.addressStart > otherElement.addressStart and actualElement.addressEnd() > otherElement.addressEnd():
                                         actualElement.overlapFlag = "Overlapped by (" + memEntryHandler.getName(otherElement) + ", " + otherElement.configID + ", " + otherElement.mapfile + ")"
                                         # Adjusting the addresses and length of the actualElement: reducing its size by the overlapping part
-                                        actualElement.addressStart = otherElement.addressEnd() + 1
-                                        actualElement.addressLength = actualElement.addressEnd() - actualElement.addressStart + 1
+                                        newAddressStart = otherElement.addressEnd() + 1
+                                        sizeOfOverlappingPart = newAddressStart - actualElement.addressStart
+                                        actualElement.addressStart = newAddressStart
+                                        actualElement.addressLength -= sizeOfOverlappingPart
                                     # Case X: SW error, unhandled case...
                                     else:
                                         sc().error("MemoryManager::resolveOverlap(): Case X: SW error, unhandled case...")
