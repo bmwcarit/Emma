@@ -21,7 +21,7 @@ import os
 import sys
 import unittest
 
-sys.path.append(os.path.join(sys.path[0], "..", ".."))
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from shared_libs.stringConstants import *
 import emma_libs.memoryEntry

@@ -278,7 +278,7 @@ https://github.com/TeamFlowerPower/kb/wiki/humanReadable
 
 def toHumanReadable(num, suffix='B'):
     """
-    Converts a number into a human readable format: humanReadableSize(168963795964) -> '157.4 GiB'
+    Converts a number into a human readable format: humanReadableSize(168963795964) -> ' 157.36 GiB'
     Note: we use binary prefixes (-> 1kiB = 1024 Byte)
     :param num: Number to convert
     :param suffix: The suffix that will be added to the quantifier

@@ -23,7 +23,7 @@ import unittest
 
 from pypiscout.SCout_Logger import Logger as sc
 
-sys.path.append(os.path.join(sys.path[0], "..", ".."))
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 import emma_libs.memoryEntry
 
@@ -31,9 +31,9 @@ import emma_libs.memoryEntry
 class MemEntryTestCase(unittest.TestCase):
     def setUp(self):
         # Setting up the logger
-        def exitProgam():
-            sys.exit(-10)
-        sc(4, None, exitProgam)
+        # This syntax will default init it and then change the settings with the __call__()
+        # This is needed so that the unit tests can have different settings and not interfere with each other
+        sc()(4, actionWarning=None, actionError=self.exitProgam)
 
         self.tag = "Tag"
         self.vasName = "Vas"
@@ -47,6 +47,9 @@ class MemEntryTestCase(unittest.TestCase):
         self.addressStart = 0x1000
         self.addressLength = 0x100
         self.addressEnd = 0x1000 + 0x100 - 0x01
+
+    def exitProgam(self):
+        sys.exit(-10)
 
     def test_constructorBasicCase(self):
         # Do not use named parameters here so that the order of parameters are also checked
