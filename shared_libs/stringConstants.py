@@ -288,3 +288,5 @@ SECTIONS_TO_EXCLUDE = DWARF_SECTIONS.union(frozenset(
         ".mr_rw_NandFlashDataBuffer"
     }
 ))
+
+COMPILER_NAME_GHS = "GreenHillsCompiler"

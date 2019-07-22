@@ -1,11 +1,11 @@
 {
 	"MCU": {
-        "compiler": "GreenHills",
+        "compiler": "GreenHillsCompiler",
 		"addressSpacesPath": "addressSpaces_MCU.json",
 		"patternsPath": "patterns_MCU.json"
 	},
 	"SOC": {
-        "compiler": "GreenHills",
+        "compiler": "GreenHillsCompiler",
 		"addressSpacesPath": "addressSpaces_SOC.json",
 		"patternsPath": "patterns_SOC.json",
 		"virtualSectionsPath": "virtualSections_SOC.json"

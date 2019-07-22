@@ -26,6 +26,7 @@ from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *
 import shared_libs.emma_helper
+import emma_libs.memoryEntry
 
 
 # Timestamp for the report file names
@@ -34,16 +35,15 @@ timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%Hh%Ms%S")
 
 def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
     """
-    Goes trough the consumerCollection and checks all the elements for the following situations:
+    Goes trough the consumerCollection and checks  and resolves all the elements for the following situations:
         1 - Duplicate
         2 - Containment
         3 - Overlap
 
-    Assumptions:
-        - The consumerCollection is a list of MemEntry objects:
-            - It is ordered based on the startAddress attribute
-
-    :param nameGetter: A function to get the name of the element. This is solved in this abstract way so it can work for section and object resolving as well.
+    :param consumerCollection: A list of MemEntry objects. It must be ordered increasingly based on the startAddress attribute of the elements.
+                               The elements of the list will be changed during the processing.
+    :param memEntryHandler: A subclass of the MemEntryHandler class.
+    :return: None
     """
     for actualElement in consumerCollection:
         for otherElement in consumerCollection:
@@ -98,13 +98,17 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
 
 def calculateObjectsInSections(sectionContainer, objectContainer):
     """
-        Assumptions:
-            - The sectionCollection is a list of MemEntry objects:
-                - It is ordered based on the startAddress attribute
-                - The overlapping sections are already edited and the addresses corrected
-            - The objectCollection is a list of MemEntry objects
-                - It is ordered based on the startAddress attribute
-                - The overlapping objects are already edited and the addresses corrected
+    Creating a list of MemEntry objects from two lists of MemEntry objects that are representing the sections and objects.
+    These two lists will merged together.
+    From sections, new elements will be created:
+        - Section entry: A MemEntry object that describes the section but does not use memory space.
+        - Section reserce: A MemEntry object that describes the unused part of a section that was not filled up with objects.
+
+    :param sectionContainer: A list of MemEntry objects. It must be ordered increasingly based on the startAddress attribute of the elements.
+                             The overlapping, containing, duplicate sections must be are already edited and the addresses and lengths corrected.
+    :param objectContainer: A list of MemEntry objects. It must be ordered increasingly based on the startAddress attribute of the elements.
+                            The overlapping, containing, duplicate sections must be are already edited and the addresses and lengths corrected.
+    :return: A list of MemEntry objects that contains all the elements of the sectionContainer and the objectContainer.
     """
     objectsInSections = []
 
@@ -219,9 +223,9 @@ def createReportPath(outputPath, projectName, reportName):
 
 def writeReportToDisk(reportPath, consumerCollection):
     """
-    Writes the consumerCollection containig MemoryEntrys to CSV
-    :param filepath: Absolute path to the csv file
-    :param consumerCollection: List containing memEntrys
+    Writes the consumerCollection containing MemEntry objects to a CSV file.
+    :param reportPath: A path of the CSV that needs to be created.
+    :param consumerCollection: A list of MemEntry objects.
     """
     with open(reportPath, "w") as fp:
         writer = csv.writer(fp, delimiter=";", lineterminator="\n")

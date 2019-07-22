@@ -31,7 +31,13 @@ import emma_libs.categorisation
 
 
 class MemoryManager:
+    """
+    A class to organize the processing of the configuration and the mapfiles and the storage of the created reports.
+    """
     class Settings:
+        """
+        Settings that influence the operation of the MemoryManager object.
+        """
         def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt):
             self.projectName = projectName
             self.configurationPath = configurationPath
@@ -55,6 +61,10 @@ class MemoryManager:
         self.categorisation = None
 
     def readConfiguration(self):
+        """
+        A method to read the configuration.
+        :return: None
+        """
         # Reading in the configuration
         self.configuration = emma_libs.configuration.Configuration()
         self.configuration.readConfiguration(self.settings.configurationPath, self.settings.mapfilesPath, self.settings.noPrompt)
@@ -66,6 +76,10 @@ class MemoryManager:
                                                                       self.settings.noPrompt)
 
     def processMapfiles(self):
+        """
+        A method to process the mapfiles.
+        :return: None
+        """
         # If the configuration was already loaded
         if self.configuration is not None:
 
@@ -108,17 +122,25 @@ class MemoryManager:
             sc().error("The configuration needs to be loaded before processing the mapfiles!")
 
     def createReports(self):
-        # Putting the same consumer collection types together
-        # (At this points the collections are grouped by configId then by their types)
-        consumerCollections = {}
-        for configId in self.memoryContent.keys():
-            for collectionType in self.memoryContent[configId].keys():
-                if collectionType not in consumerCollections:
-                    consumerCollections[collectionType] = []
-                consumerCollections[collectionType].extend(self.memoryContent[configId][collectionType])
+        """
+        A method to create the reports.
+        :return: None
+        """
+        # If the mapfiles were already processed
+        if self.memoryContent is not None:
+            # Putting the same consumer collection types together
+            # (At this points the collections are grouped by configId then by their types)
+            consumerCollections = {}
+            for configId in self.memoryContent.keys():
+                for collectionType in self.memoryContent[configId].keys():
+                    if collectionType not in consumerCollections:
+                        consumerCollections[collectionType] = []
+                    consumerCollections[collectionType].extend(self.memoryContent[configId][collectionType])
 
-        # Creating reports from the consumer colections
-        for collectionType in consumerCollections.keys():
-            reportPath = emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType)
-            emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
-            sc().info("A report was stored:", os.path.abspath(reportPath))
+            # Creating reports from the consumer colections
+            for collectionType in consumerCollections.keys():
+                reportPath = emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType)
+                emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
+                sc().info("A report was stored:", os.path.abspath(reportPath))
+        else:
+            sc().error("The mapfiles need to be processed before creating the reports!")
