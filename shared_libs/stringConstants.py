@@ -289,4 +289,4 @@ SECTIONS_TO_EXCLUDE = DWARF_SECTIONS.union(frozenset(
     }
 ))
 
-COMPILER_NAME_GHS = "GreenHillsCompiler"
+COMPILER_NAME_GHS = "GHS"
