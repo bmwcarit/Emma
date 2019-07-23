@@ -112,27 +112,45 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
     """
     objectsInSections = []
 
-    def createASectionEntry():
-        sectionEntry = copy.deepcopy(sectionContainerElement)
-        sectionEntry.moduleName = OBJECTS_IN_SECTIONS_SECTION_ENTRY
+    def createASectionEntry(sourceSection):
+        """
+        Function to create a sectionEntry based on the sourceSection.
+        :param sourceSection: MemEntry object to create a section entry from.
+        :return: None
+        """
+        sectionEntry = copy.deepcopy(sourceSection)
+        sectionEntry.objectName = OBJECTS_IN_SECTIONS_SECTION_ENTRY
         sectionEntry.addressLength = 0
         objectsInSections.append(sectionEntry)
 
     def createASectionReserve(sourceSection, addressEnd=None):
+        """
+        Function to create a sectionReserveEntry based on the sourceSection.
+        :param sourceSection: MemEntry object to create a section reserve from.
+        :param addressEnd: The end address that the sourceSection shall have after the reserve creation.
+                           If it is None, then the whole source section will be converted to a reserve.
+        :return: None
+        """
         # If we have received a specific addressEnd then we will use that one and recalculate the size of the section
         # In this case we need to make a deepcopy of the sourceSection because the SW will continue to work with it
         if addressEnd is not None:
             sourceSectionCopy = copy.deepcopy(sourceSection)
-            sourceSectionCopy.moduleName = OBJECTS_IN_SECTIONS_SECTION_RESERVE
+            sourceSectionCopy.objectName = OBJECTS_IN_SECTIONS_SECTION_RESERVE
             sourceSectionCopy.setAddressesGivenEnd(addressEnd)
             objectsInSections.append(sourceSectionCopy)
         # If not, then the whole sourceSection will be stored as a reserve
         # In this case no copy needed because the SW does not need it anymore
         else:
-            sourceSection.moduleName = OBJECTS_IN_SECTIONS_SECTION_RESERVE
+            sourceSection.objectName = OBJECTS_IN_SECTIONS_SECTION_RESERVE
             objectsInSections.append(sourceSection)
 
     def cutOffTheBeginningOfTheSection(sectionToCut, newAddressStart):
+        """
+        Function to cut off the beginning of a section.
+        :param sectionToCut: MemEntry object that will have its beginning cut off.
+        :param newAddressStart: The new start address value the section will have after the cut.
+        :return:
+        """
         # We need to store the addressEnd before cutting because after setting the new addressStart the addressEnd() calculation will return another value
         addressEndBeforeCutting = sectionToCut.addressEnd()
         if newAddressStart < addressEndBeforeCutting:
@@ -145,7 +163,7 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
 
     for sectionContainerElement in sectionContainer:
         # Creating a section entry
-        createASectionEntry()
+        createASectionEntry(sectionContainerElement)
 
         # We will skip the sections that are contained by other sections or have a zero length
         if sectionContainerElement.containmentFlag is not None:
@@ -216,9 +234,32 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
 
 
 def createReportPath(outputPath, projectName, reportName):
+    """
+    Function to create a string representing the path of a report.
+    :param outputPath: The folder where the report will be.
+    :param projectName: The name of the project.
+    :param reportName: The name of the report.
+    :return: The created path string.
+    """
     shared_libs.emma_helper.mkDirIfNeeded(outputPath)
     memStatsFileName = projectName + "_" + reportName + "_" + timestamp + ".csv"
     return shared_libs.emma_helper.joinPath(outputPath, memStatsFileName)
+
+
+def collectCompilerSpecificHeaders(consumerCollection):
+    """
+    Function to create a list of the headers that the compiler specific data of a consumer collection has.
+    :param consumerCollection: The consumer collection that has elements with compiler specific data.
+    :return: List of strings.
+    """
+    collectedHeaders = []
+
+    for element in consumerCollection:
+        for pair in element.compilerSpecificData:
+            if pair[0] not in collectedHeaders:
+                collectedHeaders.append(pair[0])
+
+    return collectedHeaders
 
 
 def writeReportToDisk(reportPath, consumerCollection):
@@ -227,40 +268,54 @@ def writeReportToDisk(reportPath, consumerCollection):
     :param reportPath: A path of the CSV that needs to be created.
     :param consumerCollection: A list of MemEntry objects.
     """
+
+    # Opening the file
     with open(reportPath, "w") as fp:
+        # The writer object that will be used for creating the CSV data
         writer = csv.writer(fp, delimiter=";", lineterminator="\n")
-        header = [ADDR_START_HEX, ADDR_END_HEX, SIZE_HEX, ADDR_START_DEC, ADDR_END_DEC, SIZE_DEC, SIZE_HUMAN_READABLE,
-                  SECTION_NAME, MODULE_NAME, CONFIG_ID, VAS_NAME, VAS_SECTION_NAME, MEM_TYPE, TAG, CATEGORY, DMA, MAPFILE, OVERLAP_FLAG,
-                  CONTAINMENT_FLAG, DUPLICATE_FLAG, CONTAINING_OTHERS_FLAG, ADDR_START_HEX_ORIGINAL,
-                  ADDR_END_HEX_ORIGINAL, SIZE_HEX_ORIGINAL, SIZE_DEC_ORIGINAL]
-        writer.writerow(header)
+
+        # Creating the list with the first part of the static headers
+        headers = [ADDR_START_HEX, ADDR_END_HEX, SIZE_HEX, ADDR_START_DEC, ADDR_END_DEC,
+                   SIZE_DEC, SIZE_HUMAN_READABLE, SECTION_NAME, OBJECT_NAME, CONFIG_ID]
+
+        # Extending it with the compiler specific headers
+        headers.extend(collectCompilerSpecificHeaders(consumerCollection))
+
+        # Collecting the rest of the static headers
+        headers.extend([MEM_TYPE, MEM_TYPE_TAG, CATEGORY, MAPFILE,
+                        OVERLAP_FLAG, CONTAINMENT_FLAG, DUPLICATE_FLAG, CONTAINING_OTHERS_FLAG,
+                        ADDR_START_HEX_ORIGINAL, ADDR_END_HEX_ORIGINAL, SIZE_HEX_ORIGINAL, SIZE_DEC_ORIGINAL])
+
+        # Writing the headers to the CSV file
+        writer.writerow(headers)
+
+        # Writing the data lines to the file
         for row in consumerCollection:
-            writer.writerow([
-                row.addressStartHex(),
-                row.addressEndHex(),
-                row.addressLengthHex(),
-                row.addressStart,
-                row.addressEnd(),
-                row.addressLength,
-                shared_libs.emma_helper.toHumanReadable(row.addressLength),
-                row.section,
-                row.moduleName,
-                row.configID,
-                row.vasName,
-                row.vasSectionName,
+            # Collecting the first part of the static data for the current row
+            rowData = [row.addressStartHex(), row.addressEndHex(), row.addressLengthHex(), row.addressStart, row.addressEnd(),
+                       row.addressLength, shared_libs.emma_helper.toHumanReadable(row.addressLength), row.sectionName, row.objectName, row.configID]
+
+            # Extending it with the data part of the compiler specific data pairs of this MemEntry object
+            for element in row.compilerSpecificData:
+                rowData.append(element[1])
+
+            # Collecting the rest of the static data for the current row
+            rowData.extend([
                 row.memType,
                 row.memTypeTag,
                 row.category,
-                row.dma,
                 row.mapfile,
                 row.overlapFlag,
                 row.containmentFlag,
                 row.duplicateFlag,
                 row.containingOthersFlag,
                 # Addresses are modified in case of overlapping so we will post the original values so that the changes can be seen
-                row.addressStartOriginal if (row.overlapFlag is not None) else "",
-                row.addressEndOriginal() if (row.overlapFlag is not None) else "",
+                row.addressStartHexOriginal() if (row.overlapFlag is not None) else "",
+                row.addressEndHexOriginal() if (row.overlapFlag is not None) else "",
                 # Lengths are modified in case of overlapping, containment and duplication so we will post the original values so that the changes can be seen
                 row.addressLengthHexOriginal() if ((row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
                 row.addressLengthOriginal if ((row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else ""
             ])
+
+            # Writing the data to the file
+            writer.writerow(rowData)

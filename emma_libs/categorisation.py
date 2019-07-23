@@ -82,13 +82,13 @@ class Categorisation:
     def __fillOutSectionCategories(self, sectionCollection):
         # Filling out sections
         for consumer in sectionCollection:
-            consumerName = consumer.section
+            consumerName = consumer.sectionName
             consumer.category = self.__evalCategoryOfAnElement(consumerName, self.categoriesSections, self.categoriesSectionsKeywords, self.keywordCategorisedSections)
 
     def __fillOutObjectCategories(self, objectCollection):
         # Filling out objects
         for consumer in objectCollection:
-            consumerName = consumer.moduleName
+            consumerName = consumer.objectName
             consumer.category = self.__evalCategoryOfAnElement(consumerName, self.categoriesObjects, self.categoriesObjectsKeywords, self.keywordCategorisedObjects)
 
     def __readCategoriesJson(self, path):
@@ -154,7 +154,7 @@ class Categorisation:
         text = input("> ") if not noPrompt else sys.exit(-10)
 
         if "y" == text:
-            # Format newCategories to {Categ1: [Modulename1, Modulename2, ...], Categ2: [...]}
+            # Format newCategories to {Categ1: [ObjectName1, ObjectName2, ...], Categ2: [...]}
             formattedNewCategories = {}
             for key, value in dict(newCategories).items():
                 formattedNewCategories[value] = formattedNewCategories.get(value, [])
@@ -186,7 +186,7 @@ class Categorisation:
             # Make a dict of {name : category} from consumerCollection
             rawCategorisedConsumerCollection = {memEntryHandler.getName(memEntry): memEntry.category for memEntry in consumerCollection}
 
-            # Format rawCategorisedModulesConsumerCollection to {Categ1: [Modulename1, Modulename2, ...], Categ2: [...]}
+            # Format rawCategorisedModulesConsumerCollection to {Categ1: [ObjectName1, ObjectName2, ...], Categ2: [...]}
             categorisedElements = {}
             for key, value in rawCategorisedConsumerCollection.items():
                 categorisedElements[value] = categorisedElements.get(value, [])

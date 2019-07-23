@@ -120,15 +120,19 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
                     if 0 > addressLength:
                         sc().warning("Negative addressLength found.")
 
+                    # Creating the compiler specific data that we will store in the memEntry
+                    # This will be a pair list as the MemEntry requires it (list of tuples with two element)
+                    compilerSpecificData = [("DMA", (vasName is None)), ("vasName", vasName), ("vasSectionName", vasSectionName)]
+
                     # Creating a MemEntry object from the data that we got from the mapfile
-                    memEntry = emma_libs.memoryEntry.MemEntry(vasName=vasName if mapfileContainsVirtualAddresses else None,
-                                                              vasSectionName=vasSectionName if mapfileContainsVirtualAddresses else None,
-                                                              section=lineComponents.group(regexPatternData.Groups.section).rstrip(),
-                                                              moduleName=regexPatternData.getModuleName(lineComponents),
+                    memEntry = emma_libs.memoryEntry.MemEntry(configID=configId,
                                                               mapfileName=mapfileName,
-                                                              configID=configId,
                                                               addressStart=physicalAddress,
-                                                              addressLength=addressLength)
+                                                              addressLength=addressLength,
+                                                              sectionName=lineComponents.group(regexPatternData.Groups.section).rstrip(),
+                                                              objectName=regexPatternData.getModuleName(lineComponents),
+                                                              compilerSpecificData=compilerSpecificData)
+
                     # Finding the index, where we need to insert the memEntry
                     index = bisect.bisect_right(result, memEntry)
                     # Inserts at index, elements to right will be pushed "one index up"

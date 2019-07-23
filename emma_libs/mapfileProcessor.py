@@ -39,8 +39,8 @@ class MapfileProcessor(abc.ABC):
         :return: None if nothing was found; otherwise the unique name of the memory region defined in addressSpaces*.json (DDR, ...)
         """
         def printElementRemovalMessage(memEntry, loggerLevel, reason):
-            object_name = ("::" + memEntry.moduleName) if hasattr(memEntry, "module") else ""
-            loggerLevel("The element: \"" + memEntry.mapfile + "::" + memEntry.section + object_name +
+            object_name = ("::" + memEntry.objectName) if hasattr(memEntry, "module") else ""
+            loggerLevel("The element: \"" + memEntry.mapfile + "::" + memEntry.sectionName + object_name +
                         " (@" + memEntry.addressStartHex() + ", size: " + str(memEntry.addressLength) + " B)\" of the configID \"" +
                         memEntry.configID + "\" was removed. Reason: " + reason)
 

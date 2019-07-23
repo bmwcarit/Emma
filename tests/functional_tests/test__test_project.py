@@ -85,11 +85,11 @@ class EmmaTestProject(unittest.TestCase):
 
         # Setting up the variable with the expected column values
         self.expectedColumns = [ADDR_START_HEX, ADDR_END_HEX, SIZE_HEX, ADDR_START_DEC, ADDR_END_DEC,
-                                SIZE_DEC, SIZE_HUMAN_READABLE, SECTION_NAME, MODULE_NAME, CONFIG_ID,
-                                VAS_NAME, VAS_SECTION_NAME, MEM_TYPE, TAG, CATEGORY, DMA,
-                                MAPFILE, OVERLAP_FLAG, CONTAINMENT_FLAG, DUPLICATE_FLAG,
-                                CONTAINING_OTHERS_FLAG, ADDR_START_HEX_ORIGINAL, ADDR_END_HEX_ORIGINAL,
-                                SIZE_HEX_ORIGINAL, SIZE_DEC_ORIGINAL]
+                                SIZE_DEC, SIZE_HUMAN_READABLE, SECTION_NAME, OBJECT_NAME, CONFIG_ID,
+                                DMA, VAS_NAME, VAS_SECTION_NAME,
+                                MEM_TYPE, MEM_TYPE_TAG, CATEGORY, MAPFILE,
+                                OVERLAP_FLAG, CONTAINMENT_FLAG, DUPLICATE_FLAG, CONTAINING_OTHERS_FLAG,
+                                ADDR_START_HEX_ORIGINAL, ADDR_END_HEX_ORIGINAL, SIZE_HEX_ORIGINAL, SIZE_DEC_ORIGINAL]
 
     def tearDown(self):
         """
