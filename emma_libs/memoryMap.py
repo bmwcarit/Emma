@@ -21,6 +21,7 @@ import csv
 import bisect
 import copy
 import datetime
+import collections
 
 from pypiscout.SCout_Logger import Logger as sc
 
@@ -255,9 +256,9 @@ def collectCompilerSpecificHeaders(consumerCollection):
     collectedHeaders = []
 
     for element in consumerCollection:
-        for pair in element.compilerSpecificData:
-            if pair[0] not in collectedHeaders:
-                collectedHeaders.append(pair[0])
+        for key in element.compilerSpecificData.keys():
+            if key not in collectedHeaders:
+                collectedHeaders.append(key)
 
     return collectedHeaders
 
@@ -279,7 +280,8 @@ def writeReportToDisk(reportPath, consumerCollection):
                    SIZE_DEC, SIZE_HUMAN_READABLE, SECTION_NAME, OBJECT_NAME, CONFIG_ID]
 
         # Extending it with the compiler specific headers
-        headers.extend(collectCompilerSpecificHeaders(consumerCollection))
+        compilerSpecificHeaders = collectCompilerSpecificHeaders(consumerCollection)
+        headers.extend(compilerSpecificHeaders)
 
         # Collecting the rest of the static headers
         headers.extend([MEM_TYPE, MEM_TYPE_TAG, CATEGORY, MAPFILE,
@@ -296,8 +298,8 @@ def writeReportToDisk(reportPath, consumerCollection):
                        row.addressLength, shared_libs.emma_helper.toHumanReadable(row.addressLength), row.sectionName, row.objectName, row.configID]
 
             # Extending it with the data part of the compiler specific data pairs of this MemEntry object
-            for element in row.compilerSpecificData:
-                rowData.append(element[1])
+            for compilerSpecificHeader in compilerSpecificHeaders:
+                rowData.append(row.compilerSpecificData[compilerSpecificHeader] if compilerSpecificHeader in row.compilerSpecificData else "")
 
             # Collecting the rest of the static data for the current row
             rowData.extend([

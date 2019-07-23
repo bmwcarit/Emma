@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 import abc
+import collections
 
 from pypiscout.SCout_Logger import Logger as sc
 
@@ -49,9 +50,7 @@ class MemEntry:
         :param memType: [string] The type of the memory the entry is located in. For example: INT_FLASH, EXT_FLASH, INT_RAM, EXT_RAM...
         :param memTypeTag: [string] The name of the memory area the entry is located in. This is a logical subtype of the memType value. For example: Code, DataTable...
         :param category: [string] The name of the category, the entry belongs to. This is only a logical grouping. For example: GraphicFramework, EthernetDriver, HMI
-        :param compilerSpecificData: [pair list (list of tuples with two elements)] Data that comes from the object of the MapfileProcessor subclasseses during the mapfile processing.
-                                                                                    The data type was selected based on the requirement that it has to contain elements that contain header:value pairs
-                                                                                    and these elements need to be ordered.
+        :param compilerSpecificData: [collections.OrderedDict] Data that comes from the object of the MapfileProcessor subclasseses during the mapfile processing.
         """
 
         self.configID = configID
@@ -86,7 +85,10 @@ class MemEntry:
         self.memTypeTag = memTypeTag
         self.category = category
 
-        self.compilerSpecificData = compilerSpecificData
+        if type(compilerSpecificData) is collections.OrderedDict:
+            self.compilerSpecificData = compilerSpecificData
+        else:
+            sc().error("The compilerSpecificData has to be of type " + type(collections.OrderedDict).__name__ + " instad of " + type(compilerSpecificData).__name__ + "!")
 
         # Flags for overlapping, containment and duplicate
         self.overlapFlag = None

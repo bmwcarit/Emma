@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import os
 import re
 import bisect
+import collections
 
 from pypiscout.SCout_Logger import Logger as sc
 
@@ -121,8 +122,11 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
                         sc().warning("Negative addressLength found.")
 
                     # Creating the compiler specific data that we will store in the memEntry
-                    # This will be a pair list as the MemEntry requires it (list of tuples with two element)
-                    compilerSpecificData = [("DMA", (vasName is None)), ("vasName", vasName), ("vasSectionName", vasSectionName)]
+                    # This will be a collections.OrderedDict as the MemEntry requires it
+                    compilerSpecificData = collections.OrderedDict()
+                    compilerSpecificData["DMA"] = (vasName is None)
+                    compilerSpecificData["vasName"] = vasName
+                    compilerSpecificData["vasSectionName"] = vasSectionName
 
                     # Creating a MemEntry object from the data that we got from the mapfile
                     memEntry = emma_libs.memoryEntry.MemEntry(configID=configId,
