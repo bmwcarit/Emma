@@ -96,7 +96,6 @@ class ImageSummaryPattern(RegexPatternBase):
         self.Groups.size = "sizeHex"
         self.Groups.sectionOffset = "sectionOffset"
 
-    # TODO : Why do we have this here and why dont we have a "getImageName" instead? (AGK)
     def getModuleName(self, lineComponents):
         """
         :param lineComponents: A mapfile line - here not needed (image has no module names (>> thus empty string))
