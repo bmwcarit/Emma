@@ -62,6 +62,7 @@ confidence=
 # --disable=W".
 disable=max-line-length,
         C0301,                  # Line to long
+        spelling,
         # Not applicable to Python >= 3.0
         apply-builtin,
         backtick,
@@ -375,7 +376,7 @@ max-spelling-suggestions=4
 
 # Spelling dictionary name. Available dictionaries: de_DE (myspell), en_AU
 # (myspell), en_GB (myspell), en_US (myspell), fr_FR (myspell)..
-spelling-dict='en_GB'
+spelling-dict=en_GB
 
 # List of comma separated words that should not be checked.
 spelling-ignore-words=CSS,
