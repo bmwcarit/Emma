@@ -1,0 +1,10 @@
+[run]
+concurrency = multiprocessing
+parallel = True
+
+
+[report]
+omit =
+    tests/*
+exclude_lines = 
+    if __name__ == "__main__":

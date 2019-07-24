@@ -24,7 +24,7 @@ import subprocess
 import pypiscout as sc
 import gprof2dot           # Not directly used; later we do a sys-call wich needs the library
 
-from shared_libs.stringConstants import *
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 
 
 list_of_source_file_paths = [           # "../../*" instead of "../*" since we change the working directory within the system call

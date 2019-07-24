@@ -1,0 +1,31 @@
+---
+
+sudo: false
+language: python
+
+python:
+    - 3.7-dev
+
+matrix:
+    include:
+        - os: linux
+          dist: bionic
+        # Disabled since travis does not support python on windows
+        # - os: windows
+
+install:
+    - pip install -U pylint
+    - pip install -U coveralls
+
+git:
+    submodules: false
+
+script:
+    - python -m unittest test
+    - pylint -j 0 --exit-zero ./*
+    - cd tests
+    - coverage run --branch test__cmd-line.py
+    - coverage report
+
+after_success:
+    - coveralls

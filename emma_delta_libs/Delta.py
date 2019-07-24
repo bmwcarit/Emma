@@ -22,7 +22,7 @@ import typing
 
 import pandas
 
-from shared_libs.stringConstants import *
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
 
 

@@ -21,7 +21,7 @@ import os
 import bisect
 import copy
 
-from shared_libs.stringConstants import *
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import emma_libs.memoryManager
 
 
