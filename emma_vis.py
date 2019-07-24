@@ -27,7 +27,7 @@ import pandas
 
 import pypiscout as sc
 
-from shared_libs.stringConstants import *
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import                           # pylint: disable=unused-wildcard-import
 import shared_libs.emma_helper
 import emma_vis_libs.dataVisualiserSections
 import emma_vis_libs.dataVisualiserObjects

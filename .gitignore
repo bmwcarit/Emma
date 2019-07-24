@@ -1,4 +1,6 @@
 __pycache__
+*.pyc
+.coverage
 .vscode
 .test
 .delta_config*

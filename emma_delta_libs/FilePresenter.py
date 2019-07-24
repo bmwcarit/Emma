@@ -23,7 +23,7 @@ import typing
 
 import pypiscout as sc
 
-from shared_libs.stringConstants import *
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import emma_delta_libs.FileSelector
 
 
