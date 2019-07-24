@@ -22,29 +22,57 @@ import abc
 from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *
-import shared_libs.emma_helper
 
 
 class MapfileProcessor(abc.ABC):
+    """
+    A partly abstract parent class for the compiler specific mapfile processors.
+    Defining interfaces and common functionality for subclasses that will be used for mapfile processing.
+    """
     @abc.abstractmethod
     def processMapfiles(self, configId, configuration, analyseDebug):
+        """
+        Abstract function to process mapfiles.
+        :param configId: The configId to which the configuration belongs to.
+        :param configuration: The configuration based on which the mapfiles can be processed.
+        :param analyseDebug: True if the debug sections and objects need to be analysed as well, False otherwise.
+        :return: A tuple of two lists of MemEntry objects representing the sections and objects.
+                 Illustration: (sectionCollection, objectCollection), where sectionCollection is list(MemEntry) and objectCollection is list(MemEntry).
+        """
         pass
 
     @staticmethod
     def fillOutMemoryRegionsAndMemoryTypes(listOfMemEntryObjects, configuration, removeElementsWithoutMemoryRegionOrType, memoryRegionsToExcludeFromMapfiles=None):
         """
-        Search within the memory regions to find the address given from a line
-        :param configID: Configuration ID from globalConfig.json (referenced in patterns.json)
-        :param physAddr: input address in hex or dec
-        :return: None if nothing was found; otherwise the unique name of the memory region defined in addressSpaces*.json (DDR, ...)
+        Fills out the memory type and the memory regions in a list of MemEntry objects.
+        :param listOfMemEntryObjects: The list or MemEntry objects that will be updated.
+        :param configuration: That belongs to the same configId as the MemEntry objects.
+        :param removeElementsWithoutMemoryRegionOrType: True if elements to which no memory type or region was found shall be removed, False otherwise.
+        :param memoryRegionsToExcludeFromMapfiles: Dictionary, based on which MemEntry objects can be excluded if they belong to a memory region that is ignored for the mapfile, the object was created from.
+                                                   The dictionary contains mapfile names as keys and lists of strings with memory region names as values.
+                                                   If the functionality is not needed, then it shall be set to None.
+        :return: None
         """
         def printElementRemovalMessage(memEntry, loggerLevel, reason):
+            """
+            Function to print out a message informing the user that an element will be removed.
+            :param memEntry: MemoryEntry that will be removed.
+            :param loggerLevel: Loglevel with which the message needs to be printed.
+            :param reason: Reason why the element will be removed.
+            :return: None
+            """
             object_name = ("::" + memEntry.objectName) if hasattr(memEntry, "module") else ""
             loggerLevel("The element: \"" + memEntry.mapfile + "::" + memEntry.sectionName + object_name +
                         " (@" + memEntry.addressStartHex() + ", size: " + str(memEntry.addressLength) + " B)\" of the configID \"" +
                         memEntry.configID + "\" was removed. Reason: " + reason)
 
         def isElementMarkedAsExcluded(excludedMemoryRegionsFromMapfiles, memEntry):
+            """
+            Function to check whether the element was marked as excluded.
+            :param excludedMemoryRegionsFromMapfiles: See docstring of fillOutMemoryRegionsAndMemoryTypes().
+            :param memEntry: MemEntry object for which it should be decided whether it is excluded or not.
+            :return: True if element was marked as excluded, False otherwise.
+            """
             result = False
             # If there is an exclusion list for memory regions per mapfiles
             if excludedMemoryRegionsFromMapfiles is not None:
