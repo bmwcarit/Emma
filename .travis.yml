@@ -17,7 +17,8 @@ install:
     - pip install -U pylint
     - pip install -U coveralls
     - pip install -U Pygments Markdown matplotlib pandas pypiscout
-    - apt-get install graphviz
+    - sudo apt-get update
+    - sudo apt-get install graphviz
     - pip install -U gprof2dot
 
 git:
