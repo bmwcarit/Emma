@@ -6,5 +6,6 @@ parallel = True
 [report]
 omit =
     tests/*
+    /home/travis/virtualenv/
 exclude_lines = 
     if __name__ == "__main__":
