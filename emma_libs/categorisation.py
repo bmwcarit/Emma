@@ -29,6 +29,9 @@ import emma_libs.memoryEntry
 
 
 class Categorisation:
+    """
+    Class to implement functionality that are related to categorisation of MemEntry objects.
+    """
     def __init__(self, categoriesObjectsPath, categoriesObjectsKeywordsPath, categoriesSectionsPath, categoriesSectionsKeywordsPath, noPrompt):
         self.noPrompt = noPrompt
         # These are list of sections and objects that are categorised by keywords (these will be used for updating the categories*.json files)
@@ -46,52 +49,37 @@ class Categorisation:
         self.categoriesSectionsKeywords = self.__readCategoriesJson(self.categoriesSectionsKeywordsPath)
 
     def fillOutCategories(self, sectionCollection, objectCollection):
+        """
+        Organisational function to call sub-functions that fill out categories in a sectionCollection and objectCollection.
+        :param sectionCollection: List of MemEntry objects that represent sections. The categories will be filled out in these.
+        :param objectCollection: List of MemEntry objects that represent objects. The categories will be filled out in these.
+        :return: None
+        """
         self.__fillOutSectionCategories(sectionCollection)
         self.__fillOutObjectCategories(objectCollection)
 
     def manageCategoriesFiles(self, updateCategoriesFromKeywordMatches, removeUnmatchedCategories, sectionCollection, objectCollection):
+        """
+        Organisational function to call sub-functions that updates the categoriesSections and categoriesObjects files.
+        This function needs to be called after running the collections with the fillOutCategories().
+        :param updateCategoriesFromKeywordMatches: True if the categoriesSections and categoriesObjects needs to be updated,
+                                                   from the matches found during categorisation with the categoriesSectionsKeywords
+                                                   and categoriesObjectsKeywords respectively, False otherwise.
+        :param removeUnmatchedCategories: True if the categories that did not match needs to be removed from
+                                          categoriesSections and categoriesObjects, False otherwise.
+        :param sectionCollection: List of MemEntry objects that represent sections. The categories needs to be already filled out in these by the fillOutCategories().
+        :param objectCollection: List of MemEntry objects that represent objects. The categories needs to be already filled out in these by the fillOutCategories().
+        :return: None
+        """
         self.__manageSectionCategoriesFiles(updateCategoriesFromKeywordMatches, removeUnmatchedCategories, sectionCollection)
         self.__manageObjectCategoriesFiles(updateCategoriesFromKeywordMatches, removeUnmatchedCategories, objectCollection)
 
-    def __manageSectionCategoriesFiles(self, updateCategoriesFromKeywordMatches, removeUnmatchedCategories, sectionCollection):
-        if updateCategoriesFromKeywordMatches:
-            # Updating the section categorisation file
-            sc().info("Merge categoriesSections.json with categorised modules from categoriesSectionsKeywords.json?\ncategoriesSections.json will be overwritten.\n`y` to accept, any other key to discard.")
-            sectionCategoriesWereUpdated = self.__updateCategoriesJson(self.noPrompt, self.categoriesSections, self.keywordCategorisedSections, self.categoriesSectionsPath)
-            # Re-categorize sections if the categorisation file have been changed
-            if sectionCategoriesWereUpdated:
-                self.__fillOutSectionCategories(sectionCollection)
-        # Do we need to remove the unmatched categories?
-        if removeUnmatchedCategories:
-            sc().info("Remove unmatched modules from categoriesSections.json?\ncategoriesSections.json will be overwritten.\n `y` to accept, any other key to discard.")
-            self.__removeUnmatchedFromCategoriesJson(self.noPrompt, self.categoriesSections, sectionCollection, emma_libs.memoryEntry.SectionEntry, self.categoriesSectionsPath)
-
-    def __manageObjectCategoriesFiles(self, updateCategoriesFromKeywordMatches, removeUnmatchedCategories, objectCollection):
-        if updateCategoriesFromKeywordMatches:
-            # Updating the object categorisation file
-            sc().info("Merge categoriesObjects.json with categorised modules from categoriesObjectsKeywords.json?\ncategoriesObjects.json will be overwritten.\n`y` to accept, any other key to discard.")
-            objectCategoriesWereUpdated = self.__updateCategoriesJson(self.noPrompt, self.categoriesObjects, self.keywordCategorisedObjects, self.categoriesObjectsPath)
-            # Re-categorize objects if the categorisation file have been changed
-            if objectCategoriesWereUpdated:
-                self.__fillOutObjectCategories(objectCollection)
-        # Do we need to remove the unmatched categories?
-        if removeUnmatchedCategories:
-            sc().info("Remove unmatched modules from categoriesObjects.json?\ncategoriesObjects.json will be overwritten.\n `y` to accept, any other key to discard.")
-            self.__removeUnmatchedFromCategoriesJson(self.noPrompt, self.categoriesObjects, objectCollection, emma_libs.memoryEntry.ObjectEntry, self.categoriesObjectsPath)
-
-    def __fillOutSectionCategories(self, sectionCollection):
-        # Filling out sections
-        for consumer in sectionCollection:
-            consumerName = consumer.sectionName
-            consumer.category = self.__evalCategoryOfAnElement(consumerName, self.categoriesSections, self.categoriesSectionsKeywords, self.keywordCategorisedSections)
-
-    def __fillOutObjectCategories(self, objectCollection):
-        # Filling out objects
-        for consumer in objectCollection:
-            consumerName = consumer.objectName
-            consumer.category = self.__evalCategoryOfAnElement(consumerName, self.categoriesObjects, self.categoriesObjectsKeywords, self.keywordCategorisedObjects)
-
     def __readCategoriesJson(self, path):
+        """
+        Function ro read in a categorisation json file.
+        :param path: The path of the file that needs to be read.
+        :return: Content of the json file.
+        """
         if os.path.exists(path):
             categoriesJson = shared_libs.emma_helper.readJson(path)
         else:
@@ -99,11 +87,102 @@ class Categorisation:
             sc().warning("There was no " + os.path.basename(path) + " file found, the categorization based on this will be skipped.")
         return categoriesJson
 
+    def __fillOutSectionCategories(self, sectionCollection):
+        """
+        Function to fill out the categories in a section collection.
+        :param sectionCollection: List of MemEntry objects representing sections.
+        :return: None
+        """
+        # Filling out sections
+        for consumer in sectionCollection:
+            consumerName = consumer.sectionName
+            consumer.category = self.__evalCategoryOfAnElement(consumerName, self.categoriesSections, self.categoriesSectionsKeywords, self.keywordCategorisedSections)
+
+    def __fillOutObjectCategories(self, objectCollection):
+        """
+        Function to fill out the categories in an object collection.
+        :param objectCollection: List of MemEntry objects representing objects.
+        :return: None
+        """
+        # Filling out objects
+        for consumer in objectCollection:
+            consumerName = consumer.objectName
+            consumer.category = self.__evalCategoryOfAnElement(consumerName, self.categoriesObjects, self.categoriesObjectsKeywords, self.keywordCategorisedObjects)
+
+    def __manageSectionCategoriesFiles(self, updateCategoriesFromKeywordMatches, removeUnmatchedCategories, sectionCollection):
+        """
+        Function that updates the categoriesSections file based on an already categorised section collection.
+        :param updateCategoriesFromKeywordMatches: True if the categoriesSections needs to be updated, from the matches
+                                                   found during categorisation with the categoriesSectionsKeywords,
+                                                   False otherwise.
+        :param removeUnmatchedCategories: True if the categories that did not match needs to be removed from
+                                          categoriesSections, False otherwise.
+        :param sectionCollection: List of MemEntry objects that represent sections.
+        :return: None
+        """
+        # Updating the section categorisation file
+        if updateCategoriesFromKeywordMatches:
+            # Asking the user whether a file shall be updated. If no prompt is allowed, we will exit.
+            sc().info("Merge categoriesSections.json with categorised modules from " + CATEGORIES_KEYWORDS_SECTIONS_JSON + "?\nIt will be overwritten.\n`y` to accept, any other key to discard.")
+            text = input("> ") if not self.noPrompt else sys.exit(-10)
+            # If an update is allowed
+            if "y" == text:
+                self.__updateCategoriesJson(self.categoriesSections, self.keywordCategorisedSections, self.categoriesSectionsPath)
+                # Re-categorize sections if the categorisation file have been changed
+                self.__fillOutSectionCategories(sectionCollection)
+                sc().info("The " + self.categoriesSectionsPath + " was updated.")
+            else:
+                sc().info(text + " was entered, aborting the update. The " + self.categoriesSectionsPath + " was not changed.")
+        # Do we need to remove the unmatched categories?
+        if removeUnmatchedCategories:
+            text = input("> ") if not self.noPrompt else sys.exit(-10)
+            if text == "y":
+                sc().info("Remove unmatched modules from " + CATEGORIES_SECTIONS_JSON + "?\nIt will be overwritten.\n `y` to accept, any other key to discard.")
+                self.__removeUnmatchedFromCategoriesJson(self.categoriesSections, sectionCollection, emma_libs.memoryEntry.SectionEntry, self.categoriesSectionsPath)
+            else:
+                sc().info(text + " was entered, aborting the removal. The " + self.categoriesSectionsPath + " was not changed.")
+
+    def __manageObjectCategoriesFiles(self, updateCategoriesFromKeywordMatches, removeUnmatchedCategories, objectCollection):
+        """
+        Function that updates the categoriesObjects file based on an already categorised object collection.
+        :param updateCategoriesFromKeywordMatches: True if the categoriesObjects needs to be updated, from the matches
+                                                   found during categorisation with the categoriesObjectsKeywords,
+                                                   False otherwise.
+        :param removeUnmatchedCategories: True if the categories that did not match needs to be removed from
+                                          categoriesObjects, False otherwise.
+        :param objectCollection: List of MemEntry objects that represent objects.
+        :return: None
+        """
+        if updateCategoriesFromKeywordMatches:
+            # Updating the object categorisation file
+            sc().info("Merge categoriesObjects.json with categorised modules from " + CATEGORIES_KEYWORDS_OBJECTS_JSON + "?\nIt will be overwritten.\n`y` to accept, any other key to discard.")
+            text = input("> ") if not self.noPrompt else sys.exit(-10)
+            # If an update is allowed
+            if "y" == text:
+                self.__updateCategoriesJson(self.categoriesObjects, self.keywordCategorisedObjects, self.categoriesObjectsPath)
+                sc().info("The " + self.categoriesObjectsPath + " was updated.")
+                # Re-categorize objects if the categorisation file have been changed
+                self.__fillOutObjectCategories(objectCollection)
+            else:
+                sc().info(text + " was entered, aborting the update. The " + self.categoriesObjectsPath + " was not changed.")
+        # Do we need to remove the unmatched categories?
+        if removeUnmatchedCategories:
+            text = input("> ") if not self.noPrompt else sys.exit(-10)
+            if text == "y":
+                sc().info("Remove unmatched modules from " + CATEGORIES_OBJECTS_JSON + "?\nIt will be overwritten.\n `y` to accept, any other key to discard.")
+                self.__removeUnmatchedFromCategoriesJson(self.categoriesObjects, objectCollection, emma_libs.memoryEntry.ObjectEntry, self.categoriesObjectsPath)
+            else:
+                sc().info(text + " was entered, aborting the removal. The " + self.categoriesObjectsPath + " was not changed.")
+
     def __evalCategoryOfAnElement(self, nameString, categories, categoriesKeywords, keywordCategorisedElements):
         """
-        Returns the category of a module. This function calls __categoriseModuleByKeyword()
-        and __searchCategoriesJson() to evaluate a matching category.
-        :param nameString: The name string of the module/section to categorise.
+        Function to find the category of an element. First the categorisation will be tried with the categories file,
+        and if that fails with the categoriesKeywords file. If this still fails a default value will be set for the category.
+        If the element was categorised by a keyword then the element will be added to the keywordCategorisedElements list.
+        :param nameString: The name string of the element that needs to be categorised.
+        :param categories: Content of the categories file.
+        :param categoriesKeywords: Content of the categoriesKeywords file.
+        :param keywordCategorisedElements: List of elements that were categorised by keywords.
         :return: Category string
         """
         foundCategory = self.__searchCategoriesJson(nameString, categories)
@@ -116,96 +195,110 @@ class Categorisation:
         return foundCategory
 
     def __searchCategoriesJson(self, nameString, categories):
+        """
+        Function to search categories for a name in a categories file.
+        :param nameString: String that categories needs to be searched for.
+        :param categories: File the categories needs to be searched in.
+        :return: String that contains the categories comma separated that were found for the nameString, else None.
+        """
+        result = None
+
+        # Did we get a file?
         if categories is not None:
-            categoryEval = []
-            for category in categories:  # Iterate through keys
-                for i in range(len(categories[category])):  # Look through category array
-                    if nameString == categories[category][i]:  # If there is a match append the category
-                        categoryEval.append(category)
-            if categoryEval:
-                categoryEval.sort()
-                return ", ".join(categoryEval)
-            else:
-                return None
-        else:
-            return None
+            categoriesFoundForTheName = []
+            # Iterating trough the categories
+            for category in categories:
+                # Look through elements that shall be ordered to this category
+                for categoryElementName in categories[category]:
+                    # If the element name matches the nameString then we will add this category as found
+                    if nameString == categoryElementName:
+                        categoriesFoundForTheName.append(category)
+            # If we have found categories then we will sort them and return them comma separated
+            if categoriesFoundForTheName:
+                categoriesFoundForTheName.sort()
+                result = ", ".join(categoriesFoundForTheName)
+        return result
 
     def __categoriseByKeyword(self, nameString, categoriesKeywords, keywordCategorisedElements):
         """
-        Categorise a nameString by a keyword specified in categoriesKeywords.json
-        :param nameString: The name-string of the module to categorise
-        :return: The category string, None if no matching keyword found or the categoriesKeywords.json was not loaded
+        Function to search a category for a name in a categoriesKeywords file.
+        :param nameString: String that categories needs to be searched for.
+        :param categoriesKeywords: File the categories needs to be searched in.
+        :param keywordCategorisedElements: List of pairs that contains elements that were categorised by keywords as (name, category).
+        :return: String that contains the category that was found for the nameString, else None.
         """
+        result = None
+
+        # If a categoriesKeywords file was received
         if categoriesKeywords is not None:
+            # For all the categories
             for category in categoriesKeywords:
-                for keyword in range(len(categoriesKeywords[category])):
-                    pattern = r"""\w*""" + categoriesKeywords[category][keyword] + r"""\w*"""     # Search module name for substring specified in categoriesKeywords.json
-                    if re.search(pattern, nameString) is not None:                                # Check for first occurence
-                        keywordCategorisedElements.append((nameString, category))                 # Append categorised module, is list of tuples because dict doesn't support duplicate keys
-                        return category
-        return None
-
-    def __updateCategoriesJson(self, noPrompt, categoriesToUpdate, newCategories, outputPath):
-        """
-        Updates/overwrites the present categories.json
-        :return Bool if CategoriesJson has been created
-        """
-        result = False
-        text = input("> ") if not noPrompt else sys.exit(-10)
-
-        if "y" == text:
-            # Format newCategories to {Categ1: [ObjectName1, ObjectName2, ...], Categ2: [...]}
-            formattedNewCategories = {}
-            for key, value in dict(newCategories).items():
-                formattedNewCategories[value] = formattedNewCategories.get(value, [])
-                formattedNewCategories[value].append(key)
-
-            # Merge categories from keyword search with categories from categories.json
-            mergedCategories = {**formattedNewCategories, **categoriesToUpdate}
-
-            # Sort moduleCategories case-insensitive in alphabetical order
-            for key in mergedCategories.keys():
-                mergedCategories[key].sort(key=lambda s: s.lower())
-
-            shared_libs.emma_helper.writeJson(outputPath, mergedCategories)
-            sc().info("The " + outputPath + " was updated.")
-
-            result = True
-        else:
-            sc().info(text + " was entered, aborting the update. The " + outputPath + " was not changed.")
+                # For all the keywords belonging to this category
+                for keyword in categoriesKeywords[category]:
+                    # Creating a regex pattern from the keyword
+                    pattern = r"""\w*""" + keyword + r"""\w*"""
+                    # Finding the first occurrence of the pattern in the nameString
+                    if re.search(pattern, nameString) is not None:
+                        # Adding the element to the list of elements that were keyword categorised as a pair of (name, category)
+                        keywordCategorisedElements.append((nameString, category))
+                        result = category
         return result
 
-    def __removeUnmatchedFromCategoriesJson(self, noPrompt, categoriesToRemoveFrom, consumerCollection, memEntryHandler, outputPath):
+    def __updateCategoriesJson(self, categoriesToUpdate, newCategories, outputPath):
         """
-        Removes unused module names from categories.json.
-        The function prompts the user to confirm the overwriting of categories.json
-        :return: Bool if file has been overwritten
+        Updates a categories file with new categories.
+        :param categoriesToUpdate: This is the categories file that needs to be updated.
+        :param newCategories: These are the new categories that will be added to the categories file.
+        :param outputPath: This is the path where the updated file will be written.
+        :return: None.
         """
-        text = input("> ") if not noPrompt else sys.exit(-10)
-        if text == "y":
-            # Make a dict of {name : category} from consumerCollection
-            rawCategorisedConsumerCollection = {memEntryHandler.getName(memEntry): memEntry.category for memEntry in consumerCollection}
+        # Format newCategories to {Categ1: [ObjectName1, ObjectName2, ...], Categ2: [...]}
+        formattedNewCategories = {}
+        for key, value in dict(newCategories).items():
+            formattedNewCategories[value] = formattedNewCategories.get(value, [])
+            formattedNewCategories[value].append(key)
 
-            # Format rawCategorisedModulesConsumerCollection to {Categ1: [ObjectName1, ObjectName2, ...], Categ2: [...]}
-            categorisedElements = {}
-            for key, value in rawCategorisedConsumerCollection.items():
-                categorisedElements[value] = categorisedElements.get(value, [])
-                categorisedElements[value].append(key)
+        # Merge categories from keyword search with categories from categories.json
+        mergedCategories = {**formattedNewCategories, **categoriesToUpdate}
 
-            for category in categoriesToRemoveFrom:  # For every category in categories.json
-                if category not in categorisedElements:
-                    # If category is in categories.json but has never occured in the mapfiles (hence not present in consumerCollection)
-                    # Remove the not occuring category entirely
-                    categoriesToRemoveFrom.pop(category)
-                else:
-                    # Category occurs in consumerCollection, hence is present in mapfiles,
-                    # overwrite old category module list with the ones acutally occuring in mapfiles
-                    categoriesToRemoveFrom[category] = categorisedElements[category]
+        # Sort moduleCategories case-insensitive in alphabetical order
+        for key in mergedCategories.keys():
+            mergedCategories[key].sort(key=lambda s: s.lower())
 
-            # Sort self.categories case-insensitive in alphabetical order
-            for key in categoriesToRemoveFrom.keys():
-                categoriesToRemoveFrom[key].sort(key=lambda s: s.lower())
+        # Write the data to the outputPath
+        shared_libs.emma_helper.writeJson(outputPath, mergedCategories)
 
-            shared_libs.emma_helper.writeJson(outputPath, categoriesToRemoveFrom)
-        else:
-            sc().info(text + " was entered, aborting the removal. The " + outputPath + " was not changed.")
+    def __removeUnmatchedFromCategoriesJson(self, categoriesToRemoveFrom, consumerCollection, memEntryHandler, outputPath):
+        """
+        Removes categories from the categories files the categories for those no matches were found.
+        :param categoriesToRemoveFrom: This is the categories file from which we remove the unmatched categories.
+        :param consumerCollection: This is the consumer collection based on we will decide which category has matched.
+        :param memEntryHandler: This is a subclass of the MemEntryHandler.
+        :param outputPath: This is the path where the categories file will be written to.
+        """
+
+        # Make a dict of {name : category} from consumerCollection
+        rawCategorisedConsumerCollection = {memEntryHandler.getName(memEntry): memEntry.category for memEntry in consumerCollection}
+
+        # Format rawCategorisedModulesConsumerCollection to {Categ1: [ObjectName1, ObjectName2, ...], Categ2: [...]}
+        categorisedElements = {}
+        for key, value in rawCategorisedConsumerCollection.items():
+            categorisedElements[value] = categorisedElements.get(value, [])
+            categorisedElements[value].append(key)
+
+        for category in categoriesToRemoveFrom:  # For every category in categories.json
+            if category not in categorisedElements:
+                # If category is in categories.json but has never occured in the mapfiles (hence not present in consumerCollection)
+                # Remove the not occuring category entirely
+                categoriesToRemoveFrom.pop(category)
+            else:
+                # Category occurs in consumerCollection, hence is present in mapfiles,
+                # overwrite old category module list with the ones acutally occuring in mapfiles
+                categoriesToRemoveFrom[category] = categorisedElements[category]
+
+        # Sort self.categories case-insensitive in alphabetical order
+        for key in categoriesToRemoveFrom.keys():
+            categoriesToRemoveFrom[key].sort(key=lambda s: s.lower())
+
+        # Write the data to the outputPath
+        shared_libs.emma_helper.writeJson(outputPath, categoriesToRemoveFrom)
