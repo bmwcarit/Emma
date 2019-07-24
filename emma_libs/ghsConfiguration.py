@@ -29,11 +29,22 @@ import emma_libs.ghsMapfileRegexes
 
 
 class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
+    """
+    Class to handle a GHS compiler specific configuration.
+    """
     def __init__(self, noPrompt):
         super().__init__(noPrompt)
         self.noPrompt = noPrompt
 
     def readConfiguration(self, configurationPath, mapfilesPath, configId, configuration) -> None:
+        """
+        Function to read in the GHS compiler specific part of the configuration and extend the already existing configuration with it.
+        :param configurationPath: Path of the directory where the configuration is located.
+        :param mapfilesPath: Path of the directory where the mapfiles are located.
+        :param configId: ConfigId to which the configuration belongs to.
+        :param configuration: The configuration dictionary that needs to be extended with the compiler specific data.
+        :return: None
+        """
         # Loading the patterns*.json
         if "patternsPath" in configuration:
             patternsPath = shared_libs.emma_helper.joinPath(configurationPath, configuration["patternsPath"])
@@ -58,32 +69,83 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         self.__addMonolithsToConfiguration(mapfilesPath, configuration)
 
     def checkConfiguration(self, configId, configuration) -> bool:
+        """
+        Function to check the GHS compiler specific part of the configuration.
+        :param configId: The configId the configuration belongs to.
+        :param configuration: The configuration dictionary that needs to be checked.
+        :return: True if the configuration is correct, False otherwise.
+        """
         result = False
         if self.__checkNumberOfFoundMapfiles(configId, configuration):
             if self.__checkMonolithSections(configuration, self.noPrompt):
                 result = True
         return result
 
+    def __addMapfilesToConfiguration(self, mapfilesPath, configuration):
+        """
+        Function to add the mapfiles to the configuration.
+        :param mapfilesPath: Path of the folder where the mapfiles are located.
+        :param configuration: Configuration to which the mapfiles need to be added.
+        :return: None
+        """
+        numMapfiles = self.__addFilesToConfiguration(mapfilesPath, configuration, "mapfiles")
+        sc().info(str(numMapfiles) + " mapfiles found")
+
+    def __addMonolithsToConfiguration(self, mapfilesPath, configuration):
+        """
+        Function to add monolith files to the configuration.
+        :param mapfilesPath: Path of the folder where the mapfiles (and the monolith files) are located.
+        :param configuration: Configuration to which the monolith files need to be added.
+        :return: None
+        """
+
+        def ifAnyNonDMA(configuration):
+            """
+            Function to check whether a configuration has any non-DMA mapfiles.
+            If a VAS is defined for a mapfile, then it is considered to be non-DMA.
+            :param configuration: Configuration whose mapfiles needs to be checked.
+            :return: True if any non-DMA mapfile was found, False otherwise.
+            """
+            result = False
+            for entry in configuration["patterns"]["mapfiles"]:
+                if "VAS" in configuration["patterns"]["mapfiles"][entry]:
+                    result = True
+                    break
+            return result
+
+        if ifAnyNonDMA(configuration):
+            numMonolithMapFiles = self.__addFilesToConfiguration(mapfilesPath, configuration, "monoliths")
+            if numMonolithMapFiles > 1:
+                sc().warning("More than one monolith file found; Result may be non-deterministic")
+            elif numMonolithMapFiles < 1:
+                sc().error("No monolith files was detected but some mapfiles require address translation (VASes used)")
+            self.__addTabularisedMonoliths(configuration)
+
     def __addFilesToConfiguration(self, path, configuration, fileType):
         """
-        Adds the found full absolute path of the found file as new element to `self.globalConfig[configID]["patterns"]["mapfiles"]["associatedFilename"]`
-        Deletes elements from `self.globalConfig[configID]["patterns"]["mapfiles"]` which were not found and prints a warning for each
-        :param fileType: Either "patterns" (=default) for mapfiles or "monoliths" for monolith files
-        :return: Number of files detected
+        Function to add a specific file type to the configuration.
+        :param path: Path where the files needs to be searched for.
+        :param configuration: Configuration to which the files need to be added to.
+        :param fileType: Filetype that needs to be searched for.
+        :return: Number of files found.
         """
-        # Find mapfiles
         # TODO : Would this not make more sense to execute it the other way around? (for every regex, for every file) (AGK)
         # TODO : Also, could we save time by breaking earlier and not checking all the files if we have found something? (that would remove config error detection) (AGK)
         # TODO : The function name is __addFilesPerConfigID but the search path is fixed to the self.mapfileRootPath. This is confusing. It shall be either more generic or renamed (AGK)
+        # For every file in the received path
         for file in os.listdir(path):
+            # For every entry for the received fileType
             for entry in configuration["patterns"][fileType]:
                 foundFiles = []
+                # For every regex pattern defined for this entry
                 for regex in configuration["patterns"][fileType][entry]["regex"]:
+                    # We will try to match the current file with its path and add it to the found files if it matched
                     searchCandidate = shared_libs.emma_helper.joinPath(path, file)
-                    match = re.search(regex, searchCandidate)
-                    if match:
+                    if re.search(regex, searchCandidate):
                         foundFiles.append(os.path.abspath(searchCandidate))
+                # If we have found any file for this file type
                 if foundFiles:
+                    # We will add it to the configuration and also check whether more than one file was found to this pattern
                     configuration["patterns"][fileType][entry]["associatedFilename"] = foundFiles[0]
                     print("\t\t\t Found " + fileType + ": ", foundFiles[0])
                     if len(foundFiles) > 1:
@@ -95,46 +157,22 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             if "associatedFilename" not in configuration["patterns"][fileType][entry]:
                 sc().warning("No file found for ", str(entry).ljust(20), "(pattern:", ''.join(configuration["patterns"][fileType][entry]["regex"]) + " );", "skipping...")
                 del configuration["patterns"][fileType][entry]
+
         return len(configuration["patterns"][fileType])
-
-    def __addMapfilesToConfiguration(self, mapfilesPath, configuration):
-        numMapfiles = self.__addFilesToConfiguration(mapfilesPath, configuration, "mapfiles")
-        sc().info(str(numMapfiles) + " mapfiles found")
-
-    def __addMonolithsToConfiguration(self, mapfilesPath, configuration):
-
-        def ifAnyNonDMA(configuration):
-            """
-            Checks if non-DMA files were found
-            Do not run this before mapfiles are searched (try: `findMapfiles` and evt. `findMonolithMapfiles` before)
-            :return: True if files which require address translation were found; otherwise False
-            """
-            entryFound = False
-            for entry in configuration["patterns"]["mapfiles"]:
-                if "VAS" in configuration["patterns"]["mapfiles"][entry]:
-                    entryFound = True
-                    # TODO : here, a break could improve the performance (AGK)
-            return entryFound
-
-        if ifAnyNonDMA(configuration):
-            numMonolithMapFiles = self.__addFilesToConfiguration(mapfilesPath, configuration, "monoliths")
-            if numMonolithMapFiles > 1:
-                sc().warning("More than one monolith file found; Result may be non-deterministic")
-            elif numMonolithMapFiles < 1:
-                sc().error("No monolith files was detected but some mapfiles require address translation (VASes used)")
-            self.__addTabularisedMonoliths(configuration)
 
     def __addTabularisedMonoliths(self, configuration):
         """
-        Manages Monolith selection, parsing and converting to a list
-        :param configID: configID
-        :return: nothing
+        Manages Monolith selection, parsing and converting to a list.
+        :param configuration: Configuration to which the monoliths need to be added.
+        :return: None
         """
 
         def loadMonolithMapfileOnce(configuration, noPrompt):
             """
-            Load monolith mapfile (only once)
-            :return: Monolith file content
+            Load monolith mapfile (only once).
+            :param configuration: Configuration to which the monoliths need to be added.
+            :param noPrompt: True if no user prompts shall be made, False otherwise, in which case a program exit will be made.
+            :return: Content of the monolith file.
             """
             if not configuration["monolithLoaded"]:
                 mapfileIndexChosen = 0  # Take the first monolith file in list (default case)
@@ -170,6 +208,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             table[n-th_entry][0] = virtual(int), ...[1] = physical(int), ...[2] = offset(int), ...[3] = size(int), ...[4] = section(str)
             Offset = physical - virtual
             :param monolithContent: Content from monolith as text (all lines)
+            :param configuration: Configuration the monoliths need to be added to.
             :return: list of lists
             """
             table = []  # "headers": virtual, physical, size, section
@@ -193,6 +232,12 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             configuration["sortMonolithTabularised"] = tabulariseAndSortOnce(monolithContent, configuration)
 
     def __checkNumberOfFoundMapfiles(self, configId, configuration):
+        """
+        Function to check the number of found mapfiles in a configuration.
+        :param configId: The configId the configuration belongs to.
+        :param configuration: The configuration in which the found mapfiles need to be checked.
+        :return:
+        """
         result = False
         # Checking the number of the mapfiles that were found with the regexes
         if 0 < len(configuration["patterns"]["mapfiles"]):
@@ -204,8 +249,10 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
 
     def __checkMonolithSections(self, configuration, noPrompt):
         """
-        The function collects the VAS sections from the monolith files and from the global config and from the monolith mapfile
-        :return: nothing
+        The function collects the VAS sections from the monolith files and from the global config and from the monolith mapfile.
+        :param configuration: Configuration thats monolith sections need to be checked.
+        :param noPrompt: True if no user prompts shall be made, False otherwise, in which case a program exit will be made.
+        :return: True if the monolith sections were ok, False otherwise.
         """
         result = False
         foundInConfigID = []
