@@ -17,10 +17,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 
-import os
-import sys
-import abc
-
 from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *
@@ -29,12 +25,22 @@ import emma_libs.specificConfigurationFactory
 
 
 class Configuration:
+    """
+    Class for handling the configuration reading and processing.
+    """
     def __init__(self):
         self.specificConfigurations = dict()
         self.globalConfig = None
         pass
 
-    def readConfiguration(self, configurationPath, mapfilesPath, noPrompt) -> None:
+    def readConfiguration(self, configurationPath, mapfilesPath, noPrompt):
+        """
+        Function to read in the configuration and process it´s data.
+        :param configurationPath: This is the path of the folder where the configuration files are.
+        :param mapfilesPath: This is the path of the folder where the mapfiles are.
+        :param noPrompt: True if user prompts are allowed, False otherwise, in which caseThis is the path of the folder where the configuration files are.
+        :return: None
+        """
         # Check whether the configurationPath exists
         shared_libs.emma_helper.checkIfFolderExists(configurationPath)
 
@@ -65,6 +71,11 @@ class Configuration:
                              "The configId \"" + configId + "\" will not be analysed!")
 
     def __readGlobalConfigJson(self, path):
+        """
+        Function to read in and process the globalConfig.
+        :param path: Path of the globalConfig file.
+        :return: The content of the globalConfig.
+        """
         # Load the globalConfig file
         globalConfig = shared_libs.emma_helper.readJson(path)
 
@@ -86,6 +97,11 @@ class Configuration:
         return globalConfig
 
     def __readAddressSpacesJson(self, path):
+        """
+        Function to read in and process the addressSpaces config file.
+        :param path: Path of the addressSpaces config file.
+        :return: The content of the addressSpaces config file.
+        """
         # Load the addressSpaces file
         addressSpaces = shared_libs.emma_helper.readJson(path)
 
