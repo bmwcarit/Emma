@@ -32,10 +32,20 @@ import emma_libs.memoryEntry
 
 
 class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
+    """
+    A class to handle mapfile processing for GHS specific mapfiles.
+    """
     def __init__(self):
         self.analyseDebug = None
 
     def processMapfiles(self, configId, configuration, analyseDebug):
+        """
+        Function to process mapfiles.
+        :param configId: ConfigId the configuration belongs to.
+        :param configuration: The configuration that contains the information about the mapfiles that needs to be processed.
+        :param analyseDebug: True if the debug sections and objects need to be analysed as well, False otherwise.
+        :return: A tuple of two lists containing MemEntry objects representing the sections and objects that were extracted from the mapfiles.
+        """
         self.analyseDebug = analyseDebug
 
         sectionCollection = self.__importData(configId, configuration, emma_libs.ghsMapfileRegexes.ImageSummaryPattern())
@@ -45,10 +55,12 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
 
     def __importData(self, configId, configuration, defaultRegexPattern):
         """
-        Processes all input data and adds it to our container (`consumerCollection`)
-        :return: number of configIDs
+        Function to import data from the mapfiles.
+        :param configId: A configId to which the configuration belongs to.
+        :param configuration: A configuration that contains the information about the mapfiles.
+        :param defaultRegexPattern: The default regex pattern that shall be used for the data extraction.
+        :return: A list of MemEntry objects made from the data created.
         """
-
         result = []
         memoryRegionsToExcludeFromMapfiles = {}
 
@@ -149,24 +161,28 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
 
     def __getRegexPattern(self, defaultPattern: emma_libs.ghsMapfileRegexes.RegexPatternBase, mapfileEntry):
         """
-        Method to determine if the default pattern can be used or if a unique patter is configured
-        :param configID: Needed to navigate to the correct configID entry
-        :param entry: See param configID
-        :return: regex pattern object
+        Function to determine whether the default regex patterns can be used for the mapfile processing or a unique pattern was configured in the configuration.
+        :param defaultPattern: The default regex patterns that shall be used if no unique pattern was defined for the mapfile.
+        :param mapfileEntry: The mapfile entry of the configuration that may contain unique regex patterns defined for this mapfile.
+        :return: The regex pattern that shall be used during the mapfile processing.
         """
         regexPattern = defaultPattern
 
         if isinstance(defaultPattern, emma_libs.ghsMapfileRegexes.ImageSummaryPattern):
             if UNIQUE_PATTERN_SECTIONS in mapfileEntry.keys():
-                sectionPattern = emma_libs.ghsMapfileRegexes.ImageSummaryPattern()  # Create new instance of pattern class when a unique pattern is needed
+                # Create new instance of pattern class when a unique pattern is needed
+                sectionPattern = emma_libs.ghsMapfileRegexes.ImageSummaryPattern()
                 # If a unique regex pattern is needed, e.g. when the mapfile has a different format and cannot be parsed with the default pattern
-                sectionPattern.pattern = mapfileEntry[UNIQUE_PATTERN_SECTIONS]  # Overwrite default pattern with unique one
+                # Overwrite default pattern with unique one
+                sectionPattern.pattern = mapfileEntry[UNIQUE_PATTERN_SECTIONS]
                 regexPattern = sectionPattern
         elif isinstance(defaultPattern, emma_libs.ghsMapfileRegexes.ModuleSummaryPattern):
             if UNIQUE_PATTERN_OBJECTS in mapfileEntry.keys():
-                objectPattern = emma_libs.ghsMapfileRegexes.ModuleSummaryPattern()  # Create new instance of pattern class when a unique pattern is needed
+                # Create new instance of pattern class when a unique pattern is needed
+                objectPattern = emma_libs.ghsMapfileRegexes.ModuleSummaryPattern()
                 # If a unique regex pattern is needed, e.g. when the mapfile has a different format and cannot be parsed with the default pattern
-                objectPattern.pattern = mapfileEntry[UNIQUE_PATTERN_OBJECTS]    # Overwrite default pattern with unique one
+                # Overwrite default pattern with unique one
+                objectPattern.pattern = mapfileEntry[UNIQUE_PATTERN_OBJECTS]
                 regexPattern = objectPattern
         else:
             sc().error("Unexpected default regex pattern (" + type(defaultPattern).__name__ + ")!")

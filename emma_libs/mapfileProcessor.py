@@ -45,6 +45,15 @@ class MapfileProcessor(abc.ABC):
     def fillOutMemoryRegionsAndMemoryTypes(listOfMemEntryObjects, configuration, removeElementsWithoutMemoryRegionOrType, memoryRegionsToExcludeFromMapfiles=None):
         """
         Fills out the memory type and the memory regions in a list of MemEntry objects.
+        This function needs to be called by the subclasses of this class during the mapfile processing,
+        after creating a list of MemEntry objects that have the following data filled out in them:
+            - configID
+            - mapfileName
+            - addressStart
+            - addressLength
+            - sectionName
+            - objectName
+            - compilerSpecificData
         :param listOfMemEntryObjects: The list or MemEntry objects that will be updated.
         :param configuration: That belongs to the same configId as the MemEntry objects.
         :param removeElementsWithoutMemoryRegionOrType: True if elements to which no memory type or region was found shall be removed, False otherwise.
