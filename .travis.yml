@@ -1,6 +1,6 @@
 ---
 
-sudo: false
+sudo: true
 language: python
 
 python:
@@ -17,7 +17,7 @@ install:
     - pip install -U pylint
     - pip install -U coveralls
     - pip install -U Pygments Markdown matplotlib pandas pypiscout
-    - apt-get install python3 graphviz
+    - apt-get install graphviz
     - pip install -U gprof2dot
 
 git:
