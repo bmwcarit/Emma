@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import os
 import sys
+import collections
 import unittest
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -48,18 +49,21 @@ class MemEntryData:
 
 def createMemEntryObjects(sectionDataContainer=None, objectDataContainer=None):
     def createMemEntryObject(memEntryData):
-        return emma_libs.memoryEntry.MemEntry(tag="",
-                                              vasName="",
-                                              section=".text" if memEntryData.section is None else memEntryData.section,
-                                              moduleName="" if memEntryData.moduleName is None else memEntryData.moduleName,
-                                              mapfileName="",
-                                              configID="MCU" if memEntryData.configId is None else memEntryData.configId,
-                                              memType="INT_FLASH",
-                                              category="<Unspecified>",
-                                              vasSectionName=None,
-                                              addressStart=memEntryData.addressStart,
-                                              addressLength=0 if memEntryData.addressEnd is None else None,
-                                              addressEnd=memEntryData.addressEnd)
+        compilerSpecificData = collections.OrderedDict()
+        compilerSpecificData["DMA"] = True
+        compilerSpecificData["vasName"] = ""
+        compilerSpecificData["vasSectionName"] = ""
+        return emma_libs.memoryEntry.MemEntry(configID= "MCU" if memEntryData.configId is None else memEntryData.configId,
+                                              mapfileName= "mapfile.map",
+                                              addressStart= memEntryData.addressStart,
+                                              addressLength= 0 if memEntryData.addressEnd is None else None,
+                                              addressEnd= memEntryData.addressEnd,
+                                              sectionName = ".text" if memEntryData.section is None else memEntryData.section,
+                                              objectName = "" if memEntryData.moduleName is None else memEntryData.moduleName,
+                                              memType = "INT_FLASH",
+                                              memTypeTag= "",
+                                              category= "<Unspecified>",
+                                              compilerSpecificData= compilerSpecificData)
 
     sectionContainer = []
     if sectionDataContainer is not None:
@@ -273,10 +277,8 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         :return: None
         """
         self.assertEqual(sectionToCheck.memTypeTag, sourceSection.memTypeTag)
-        self.assertEqual(sectionToCheck.vasName, sourceSection.vasName)
-        self.assertEqual(sectionToCheck.vasSectionName, sourceSection.vasSectionName)
-        self.assertEqual(sectionToCheck.dma, sourceSection.dma)
-        self.assertEqual(sectionToCheck.section, sourceSection.section)
+        self.assertEqual(sectionToCheck.compilerSpecificData, sourceSection.compilerSpecificData)
+        self.assertEqual(sectionToCheck.sectionName, sourceSection.sectionName)
         self.assertEqual(sectionToCheck.mapfile, sourceSection.mapfile)
         self.assertEqual(sectionToCheck.configID, sourceSection.configID)
         self.assertEqual(sectionToCheck.memType, sourceSection.memType)
@@ -305,7 +307,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         self.assertEqual(sectionEntry.addressStartHex(), hex(sourceSection.addressStart))
         self.assertEqual(sectionEntry.addressLengthHex(), hex(0))
         self.assertEqual(sectionEntry.addressEndHex(), hex(sourceSection.addressStart))
-        self.assertEqual(sectionEntry.moduleName, OBJECTS_IN_SECTIONS_SECTION_ENTRY)
+        self.assertEqual(sectionEntry.objectName, OBJECTS_IN_SECTIONS_SECTION_ENTRY)
 
     def checkSectionReserve(self, sectionReserve, sourceSection, expectedAddressStart, expectedAddressEnd):
         """
@@ -323,7 +325,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         self.assertEqual(sectionReserve.addressStartHex(), hex(expectedAddressStart))
         self.assertEqual(sectionReserve.addressLengthHex(), hex((expectedAddressEnd - expectedAddressStart + 1)))
         self.assertEqual(sectionReserve.addressEndHex(), hex(expectedAddressEnd))
-        self.assertEqual(sectionReserve.moduleName, OBJECTS_IN_SECTIONS_SECTION_RESERVE)
+        self.assertEqual(sectionReserve.objectName, OBJECTS_IN_SECTIONS_SECTION_RESERVE)
 
     def assertEqualSections(self, firstSection, secondSection):
         self.assertTrue(emma_libs.memoryEntry.SectionEntry.isEqual(firstSection, secondSection))

@@ -70,9 +70,9 @@ class MemEntry:
         self.addressLength = None
         if addressLength is None and addressEnd is None:
             sc().error("Either addressLength or addressEnd must be given!")
-        elif addressEnd is not None:
+        elif addressEnd is not None and addressLength is None:
             self.setAddressesGivenEnd(addressEnd)
-        elif addressLength is not None:
+        elif addressLength is not None and addressEnd is None:
             self.setAddressesGivenLength(addressLength)
         else:
             sc().warning("MemEntry: addressLength AND addressEnd were both given. The addressLength will be used.")
@@ -267,4 +267,4 @@ class ObjectEntry(MemEntryHandler):
         :param memEntry: The MemEntry object that´s name want to be get.
         :return: A string representing the name created from the MemEntry object.
         """
-        return memEntry.section + "::" + memEntry.objectName
+        return memEntry.sectionName + "::" + memEntry.objectName

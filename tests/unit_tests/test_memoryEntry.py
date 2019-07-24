@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import os
 import sys
 import unittest
+import collections
 
 from pypiscout.SCout_Logger import Logger as sc
 
@@ -28,107 +29,108 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 import emma_libs.memoryEntry
 
 
-class MemEntryTestCase(unittest.TestCase):
-    def setUp(self):
-        # Setting up the logger
-        # This syntax will default init it and then change the settings with the __call__()
-        # This is needed so that the unit tests can have different settings and not interfere with each other
-        sc()(4, actionWarning=None, actionError=self.exitProgam)
-
-        self.tag = "Tag"
-        self.vasName = "Vas"
-        self.vasSectionName = "VasSectionName"
-        self.section = "SectionName"
-        self.moduleName = "ModuleName"
-        self.mapfileName = "MapFile.map"
+class TestData():
+    def __init__(self):
         self.configID = "MCU"
-        self.memType = "INT_RAM"
-        self.category = "MyCategory"
+        self.mapfileName = "MapFile.map"
         self.addressStart = 0x1000
         self.addressLength = 0x100
         self.addressEnd = 0x1000 + 0x100 - 0x01
+        self.sectionName = "SectionName"
+        self.objectName = "ObjectName"
+        self.memType = "INT_RAM"
+        self.memTypeTag = "Tag"
+        self.category = "MyCategory"
+        self.vasName = "Vas"
+        self.vasSectionName = "VasSectionName"
 
-    def exitProgam(self):
-        sys.exit(-10)
+        self.compilerSpecificData = collections.OrderedDict()
+        self.compilerSpecificData["DMA"] = (self.vasName is None)
+        self.compilerSpecificData["vasName"] = self.vasName
+        self.compilerSpecificData["vasSectionName"] = self.vasSectionName
+
+        self.basicMemEntry = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+                                                            addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd,
+                                                            sectionName=self.sectionName, objectName=self.objectName,
+                                                            memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
+                                                            compilerSpecificData=self.compilerSpecificData)
+
+
+class MemEntryTestCase(unittest.TestCase, TestData):
+    def setUp(self):
+        TestData.__init__(self)
+
+        # Setting up the logger
+        # This syntax will default init it and then change the settings with the __call__()
+        # This is needed so that the unit tests can have different settings and not interfere with each other
+        sc()(4, actionWarning=None, actionError=self.actionError)
+        self.actionWarningWasCalled = False
+        self.actionErrorWasCalled = False
+
+    def actionWarning(self):
+        self.actionWarningWasCalled = True
+
+    def actionError(self):
+        self.actionErrorWasCalled = True
 
     def test_constructorBasicCase(self):
         # Do not use named parameters here so that the order of parameters are also checked
-        basicEntry = emma_libs.memoryEntry.MemEntry(self.vasName, self.vasSectionName, self.section,
-                                                    self.moduleName, self.mapfileName, self.configID,
-                                                    self.addressStart, self.tag, self.memType,
-                                                    self.category, self.addressLength, None)
-        self.assertEqual(basicEntry.addressStart, self.addressStart)
-        self.assertEqual(basicEntry.addressLength, self.addressLength)
-        self.assertEqual(basicEntry.addressEnd(), self.addressEnd)
-        self.assertEqual(basicEntry.addressStartHex(), hex(self.addressStart))
-        self.assertEqual(basicEntry.addressLengthHex(), hex(self.addressLength))
-        self.assertEqual(basicEntry.addressEndHex(), hex(self.addressEnd))
-        self.assertEqual(basicEntry.memTypeTag, "Tag")
-        self.assertEqual(basicEntry.vasName, self.vasName)
-        self.assertEqual(basicEntry.vasSectionName, self.vasSectionName)
-        self.assertEqual(basicEntry.dma, (self.vasName is None))
-        self.assertEqual(basicEntry.section, self.section)
-        self.assertEqual(basicEntry.moduleName, self.moduleName)
-        self.assertEqual(basicEntry.mapfile, self.mapfileName)
-        self.assertEqual(basicEntry.configID, self.configID)
-        self.assertEqual(basicEntry.memType, self.memType)
-        self.assertEqual(basicEntry.category, self.category)
-        self.assertEqual(basicEntry.overlapFlag, None)
-        self.assertEqual(basicEntry.containmentFlag, None)
-        self.assertEqual(basicEntry.duplicateFlag, None)
-        self.assertEqual(basicEntry.containingOthersFlag, None)
-        self.assertEqual(basicEntry.overlappingOthersFlag, None)
-        self.assertEqual(basicEntry.addressStartOriginal, self.addressStart)
-        self.assertEqual(basicEntry.addressLengthOriginal, self.addressLength)
-        self.assertEqual(basicEntry.addressEndOriginal(), self.addressEnd)
-        self.assertEqual(basicEntry.addressStartHexOriginal(), hex(self.addressStart))
-        self.assertEqual(basicEntry.addressLengthHexOriginal(), hex(self.addressLength))
-        self.assertEqual(basicEntry.addressEndHexOriginal(), hex(self.addressEnd))
+        self.assertEqual(self.basicMemEntry.addressStart, self.addressStart)
+        self.assertEqual(self.basicMemEntry.addressLength, self.addressLength)
+        self.assertEqual(self.basicMemEntry.addressEnd(), self.addressEnd)
+        self.assertEqual(self.basicMemEntry.addressStartHex(), hex(self.addressStart))
+        self.assertEqual(self.basicMemEntry.addressLengthHex(), hex(self.addressLength))
+        self.assertEqual(self.basicMemEntry.addressEndHex(), hex(self.addressEnd))
+        self.assertEqual(self.basicMemEntry.memTypeTag, "Tag")
+        self.assertEqual(self.basicMemEntry.compilerSpecificData["DMA"], (self.vasName is None))
+        self.assertEqual(self.basicMemEntry.compilerSpecificData["vasName"], self.vasName)
+        self.assertEqual(self.basicMemEntry.compilerSpecificData["vasSectionName"], self.vasSectionName)
+        self.assertEqual(self.basicMemEntry.sectionName, self.sectionName)
+        self.assertEqual(self.basicMemEntry.objectName, self.objectName)
+        self.assertEqual(self.basicMemEntry.mapfile, self.mapfileName)
+        self.assertEqual(self.basicMemEntry.configID, self.configID)
+        self.assertEqual(self.basicMemEntry.memType, self.memType)
+        self.assertEqual(self.basicMemEntry.category, self.category)
+        self.assertEqual(self.basicMemEntry.overlapFlag, None)
+        self.assertEqual(self.basicMemEntry.containmentFlag, None)
+        self.assertEqual(self.basicMemEntry.duplicateFlag, None)
+        self.assertEqual(self.basicMemEntry.containingOthersFlag, None)
+        self.assertEqual(self.basicMemEntry.overlappingOthersFlag, None)
+        self.assertEqual(self.basicMemEntry.addressStartOriginal, self.addressStart)
+        self.assertEqual(self.basicMemEntry.addressLengthOriginal, self.addressLength)
+        self.assertEqual(self.basicMemEntry.addressEndOriginal(), self.addressEnd)
+        self.assertEqual(self.basicMemEntry.addressStartHexOriginal(), hex(self.addressStart))
+        self.assertEqual(self.basicMemEntry.addressLengthHexOriginal(), hex(self.addressLength))
+        self.assertEqual(self.basicMemEntry.addressEndHexOriginal(), hex(self.addressEnd))
 
     def test_constructorAddressLengthAndAddressEnd(self):
         # Modifying the self.addressEnd to make sure it is wrong
         self.addressEnd = self.addressStart + self.addressLength + 0x100
-        entryWithLengthAndAddressEnd = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName,
-                                                                      vasSectionName=self.vasSectionName,
-                                                                      section=self.section,
-                                                                      moduleName=self.moduleName,
-                                                                      mapfileName=self.mapfileName,
-                                                                      configID=self.configID, memType=self.memType,
-                                                                      category=self.category,
-                                                                      addressStart=self.addressStart,
-                                                                      addressLength=self.addressLength,
-                                                                      addressEnd=self.addressEnd)
+        entryWithLengthAndAddressEnd = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+                                                                      addressStart=self.addressStart, addressLength=self.addressLength, addressEnd=self.addressEnd,
+                                                                      sectionName=self.sectionName, objectName=self.objectName,
+                                                                      memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
+                                                                      compilerSpecificData=self.compilerSpecificData)
         # We expect that only the addressLength will be used and the addressEnd will be recalculated based on this
         self.assertEqual(entryWithLengthAndAddressEnd.addressStart, self.addressStart)
         self.assertEqual(entryWithLengthAndAddressEnd.addressLength, self.addressLength)
         self.assertEqual(entryWithLengthAndAddressEnd.addressEnd(), (self.addressStart + self.addressLength - 1))
 
-    def test_constructorDmaEntry(self):
-        # Testing the creation of a DMA entry
-        entryWithDma = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=None, vasSectionName=self.vasSectionName,
-                                                      section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
-                                                      configID=self.configID, memType=self.memType, category=self.category,
-                                                      addressStart=self.addressStart, addressLength=self.addressLength,
-                                                      addressEnd=None)
-        self.assertEqual(entryWithDma.dma, True)
-
     def test_constructorNoAddressLengthNorAddressEnd(self):
-        # Testing the creation of a DMA entry
-        with self.assertRaises(SystemExit) as contextManager:
-            entryWithoutLengthAndAddressEnd = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName,
-                                                                             vasSectionName=self.vasSectionName,
-                                                                             section=self.section, moduleName=self.moduleName,
-                                                                             mapfileName=self.mapfileName,
-                                                                             configID=self.configID, memType=self.memType,
-                                                                             category=self.category, addressStart=self.addressStart,
-                                                                             addressLength=None, addressEnd=None)
-        self.assertEqual(contextManager.exception.code, -10)
+        self.assertFalse(self.actionErrorWasCalled)
+        entryWithoutLengthAndAddressEnd = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+                                                                         addressStart=self.addressStart, addressLength=None, addressEnd=None,
+                                                                         sectionName=self.sectionName, objectName=self.objectName,
+                                                                         memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
+                                                                         compilerSpecificData=self.compilerSpecificData)
+        self.assertTrue(self.actionErrorWasCalled)
 
     def test___setAddressesGivenEnd(self):
-        entry = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
-                                               section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
-                                               configID=self.configID, memType=self.memType, category=self.category,
-                                               addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd)
+        entry = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+                                               addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd,
+                                               sectionName=self.sectionName, objectName=self.objectName,
+                                               memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
+                                               compilerSpecificData=self.compilerSpecificData)
         self.assertEqual(entry.addressStart, self.addressStart)
         self.assertEqual(entry.addressLength, self.addressLength)
         self.assertEqual(entry.addressLengthHex(), hex(self.addressLength))
@@ -147,10 +149,11 @@ class MemEntryTestCase(unittest.TestCase):
         self.assertEqual(entry.addressEndHex(), hex(self.addressEnd))
 
     def test___setAddressesGivenLength(self):
-        entry = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
-                                               section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
-                                               configID=self.configID, memType=self.memType, category=self.category,
-                                               addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd)
+        entry = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+                                               addressStart=self.addressStart, addressLength=self.addressLength, addressEnd=None,
+                                               sectionName=self.sectionName, objectName=self.objectName,
+                                               memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
+                                               compilerSpecificData=self.compilerSpecificData)
         self.assertEqual(entry.addressStart, self.addressStart)
         self.assertEqual(entry.addressLength, self.addressLength)
         self.assertEqual(entry.addressLengthHex(), hex(self.addressLength))
@@ -168,89 +171,80 @@ class MemEntryTestCase(unittest.TestCase):
         self.assertEqual(entry.addressEnd(), self.addressEnd)
         self.assertEqual(entry.addressEndHex(), hex(self.addressEnd))
 
+    def test_compilerSpecificDataWrongType(self):
+        self.assertFalse(self.actionErrorWasCalled)
+        otherMemEntry = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+                                                       addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd,
+                                                       sectionName=self.sectionName, objectName=self.objectName,
+                                                       memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
+                                                       compilerSpecificData="This is obviously not a correct CompilerSpecificData here...")
+        self.assertTrue(self.actionErrorWasCalled)
+
     def test_equalConfigID(self):
-        entryFirst = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
-                                                    section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
-                                                    configID=self.configID, memType=self.memType, category=self.category,
-                                                    addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd)
-        entrySecond = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
-                                                     section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
-                                                     configID=self.configID, memType=self.memType, category=self.category,
-                                                     addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd)
-        self.assertEqual(entryFirst.equalConfigID(entrySecond), True)
-        entrySecond.configID = "ChangedConfigId"
-        self.assertEqual(entryFirst.equalConfigID(entrySecond), False)
+        otherMemEntry = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+                                                       addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd,
+                                                       sectionName=self.sectionName, objectName=self.objectName,
+                                                       memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
+                                                       compilerSpecificData=self.compilerSpecificData)
+        self.assertEqual(self.basicMemEntry.equalConfigID(otherMemEntry), True)
+        otherMemEntry.configID = "ChangedConfigId"
+        self.assertEqual(self.basicMemEntry.equalConfigID(otherMemEntry), False)
 
     def test___lt__(self):
-        entryFirst = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
-                                                    section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
-                                                    configID=self.configID, memType=self.memType, category=self.category,
-                                                    addressStart=self.addressStart, addressLength=self.addressLength, addressEnd=None)
-        entrySecond = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
-                                                     section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
-                                                     configID=self.configID, memType=self.memType, category=self.category,
-                                                     addressStart=self.addressStart, addressLength=self.addressLength, addressEnd=None)
-        self.assertEqual(entryFirst < entrySecond, False)
-        self.assertEqual(entryFirst > entrySecond, False)
-        entrySecond.addressStart += entrySecond.addressLength
-        self.assertEqual(entryFirst < entrySecond, True)
-        self.assertEqual(entryFirst > entrySecond, False)
-        self.assertEqual(entrySecond < entryFirst, False)
-        self.assertEqual(entrySecond > entryFirst, True)
+        otherMemEntry = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+                                                       addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd,
+                                                       sectionName=self.sectionName, objectName=self.objectName,
+                                                       memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
+                                                       compilerSpecificData=self.compilerSpecificData)
+        self.assertEqual(self.basicMemEntry < otherMemEntry, False)
+        self.assertEqual(self.basicMemEntry > otherMemEntry, False)
+        otherMemEntry.addressStart += otherMemEntry.addressLength
+        self.assertEqual(self.basicMemEntry < otherMemEntry, True)
+        self.assertEqual(self.basicMemEntry > otherMemEntry, False)
+        self.assertEqual(otherMemEntry < self.basicMemEntry, False)
+        self.assertEqual(otherMemEntry > self.basicMemEntry, True)
 
     def test___calculateAddressEnd(self):
         self.assertEqual(emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, self.addressLength), self.addressEnd)
         self.assertEqual(emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, 0), self.addressStart)
 
     def test___eq__(self):
-        memEntry = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
-                                                  section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
-                                                  configID=self.configID, memType=self.memType, category=self.category,
-                                                  addressStart=self.addressStart, addressLength=self.addressLength, addressEnd=None)
         with self.assertRaises(NotImplementedError):
-            self.assertEqual(memEntry, memEntry)
+            self.assertEqual(self.basicMemEntry, self.basicMemEntry)
 
     def test_setAddressesGivenEnd(self):
         # Basic case
-        memEntry = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
-                                                  section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
-                                                  configID=self.configID, memType=self.memType, category=self.category,
-                                                  addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd)
-        self.assertEqual(memEntry.addressStart, self.addressStart)
-        self.assertEqual(memEntry.addressLength, self.addressLength)
+        self.assertEqual(self.basicMemEntry.addressStart, self.addressStart)
+        self.assertEqual(self.basicMemEntry.addressLength, self.addressLength)
 
         # End == Start
-        memEntry.setAddressesGivenEnd(self.addressStart)
-        self.assertEqual(memEntry.addressStart, self.addressStart)
-        self.assertEqual(memEntry.addressLength, 0)
+        self.basicMemEntry.setAddressesGivenEnd(self.addressStart)
+        self.assertEqual(self.basicMemEntry.addressStart, self.addressStart)
+        self.assertEqual(self.basicMemEntry.addressLength, 0)
 
         # Going back to the basic case
-        memEntry.setAddressesGivenEnd(self.addressEnd)
-        self.assertEqual(memEntry.addressStart, self.addressStart)
-        self.assertEqual(memEntry.addressLength, self.addressLength)
+        self.basicMemEntry.setAddressesGivenEnd(self.addressEnd)
+        self.assertEqual(self.basicMemEntry.addressStart, self.addressStart)
+        self.assertEqual(self.basicMemEntry.addressLength, self.addressLength)
 
-        # End < Start (We expect no change!)
-        with self.assertRaises(SystemExit) as contextManager:
-            memEntry.setAddressesGivenEnd(self.addressStart - 1)
-        self.assertEqual(contextManager.exception.code, -10)
-        self.assertEqual(memEntry.addressStart, self.addressStart)
-        self.assertEqual(memEntry.addressLength, self.addressLength)
+        # End < Start (We expect no change but a call to sc().error!)
+        self.assertFalse(self.actionErrorWasCalled)
+        self.basicMemEntry.setAddressesGivenEnd(self.addressStart - 1)
+        self.assertTrue(self.actionErrorWasCalled)
+        self.assertEqual(self.basicMemEntry.addressStart, self.addressStart)
+        self.assertEqual(self.basicMemEntry.addressLength, self.addressLength)
 
     def test_setAddressGivenLength(self):
         # Basic case
-        memEntry = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
-                                                  section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
-                                                  configID=self.configID, memType=self.memType, category=self.category,
-                                                  addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd)
-        self.assertEqual(memEntry.addressStart, self.addressStart)
-        self.assertEqual(memEntry.addressLength, self.addressLength)
+        self.assertEqual(self.basicMemEntry.addressStart, self.addressStart)
+        self.assertEqual(self.basicMemEntry.addressLength, self.addressLength)
 
-        # Negative length (We expect no change!)
-        with self.assertRaises(SystemExit) as contextManager:
-            memEntry.setAddressesGivenLength(-1)
-        self.assertEqual(contextManager.exception.code, -10)
-        self.assertEqual(memEntry.addressStart, self.addressStart)
-        self.assertEqual(memEntry.addressLength, self.addressLength)
+        # Negative length (We expect no change but a call to sc().error!)
+        self.assertFalse(self.actionErrorWasCalled)
+        self.basicMemEntry.setAddressesGivenLength(-1)
+        self.assertTrue(self.actionErrorWasCalled)
+        self.assertEqual(self.basicMemEntry.addressStart, self.addressStart)
+        self.assertEqual(self.basicMemEntry.addressLength, self.addressLength)
 
 
 class MemEntryHandlerTestCase(unittest.TestCase):
@@ -265,74 +259,58 @@ class MemEntryHandlerTestCase(unittest.TestCase):
             memEntryHandler = emma_libs.memoryEntry.MemEntryHandler()
 
 
-class SectionEntryTestCase(unittest.TestCase):
+class SectionEntryTestCase(unittest.TestCase, TestData):
     def setUp(self):
+        TestData.__init__(self)
+
         # Setting up the logger
-        def exitProgam():
-            sys.exit(-10)
-        sc(4, None, exitProgam)
+        # This syntax will default init it and then change the settings with the __call__()
+        # This is needed so that the unit tests can have different settings and not interfere with each other
+        sc()(4, actionWarning=None, actionError=self.actionError)
+        self.actionWarningWasCalled = False
+        self.actionErrorWasCalled = False
 
-        self.tag = "Tag"
-        self.vasName = "Vas"
-        self.vasSectionName = "VasSectionName"
-        self.section = "SectionName"
-        self.moduleName = "ModuleName"
-        self.mapfileName = "MapFile.map"
-        self.configID = "MCU"
-        self.memType = "INT_RAM"
-        self.category = "MyCategory"
-        self.addressStart = 0x1000
-        self.addressLength = 0x100
-        self.addressEnd = 0x1000 + 0x100 - 0x01
+    def actionWarning(self):
+        self.actionWarningWasCalled = True
 
-        self.memEntry = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
-                                                       section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
-                                                       configID=self.configID, memType=self.memType, category=self.category,
-                                                       addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd)
+    def actionError(self):
+        self.actionErrorWasCalled = True
 
     def test_isEqual(self):
-        self.assertTrue(emma_libs.memoryEntry.SectionEntry.isEqual(self.memEntry, self.memEntry))
+        self.assertTrue(emma_libs.memoryEntry.SectionEntry.isEqual(self.basicMemEntry, self.basicMemEntry))
         with self.assertRaises(NotImplementedError):
-            emma_libs.memoryEntry.SectionEntry.isEqual(self.memEntry, "This is obviously not a MemEntry object!")
+            emma_libs.memoryEntry.SectionEntry.isEqual(self.basicMemEntry, "This is obviously not a MemEntry object!")
 
     def test_getName(self):
-        name = emma_libs.memoryEntry.SectionEntry.getName(self.memEntry)
-        self.assertEqual(name, self.section)
+        name = emma_libs.memoryEntry.SectionEntry.getName(self.basicMemEntry)
+        self.assertEqual(name, self.sectionName)
 
 
-class ObjectEntryTestCase(unittest.TestCase):
+class ObjectEntryTestCase(unittest.TestCase, TestData):
     def setUp(self):
+        TestData.__init__(self)
+
         # Setting up the logger
-        def exitProgam():
-            sys.exit(-10)
-        sc(4, None, exitProgam)
+        # This syntax will default init it and then change the settings with the __call__()
+        # This is needed so that the unit tests can have different settings and not interfere with each other
+        sc()(4, actionWarning=None, actionError=self.actionError)
+        self.actionWarningWasCalled = False
+        self.actionErrorWasCalled = False
 
-        self.tag = "Tag"
-        self.vasName = "Vas"
-        self.vasSectionName = "VasSectionName"
-        self.section = "SectionName"
-        self.moduleName = "ModuleName"
-        self.mapfileName = "MapFile.map"
-        self.configID = "MCU"
-        self.memType = "INT_RAM"
-        self.category = "MyCategory"
-        self.addressStart = 0x1000
-        self.addressLength = 0x100
-        self.addressEnd = 0x1000 + 0x100 - 0x01
+    def actionWarning(self):
+        self.actionWarningWasCalled = True
 
-        self.memEntry = emma_libs.memoryEntry.MemEntry(tag=self.tag, vasName=self.vasName, vasSectionName=self.vasSectionName,
-                                                       section=self.section, moduleName=self.moduleName, mapfileName=self.mapfileName,
-                                                       configID=self.configID, memType=self.memType, category=self.category,
-                                                       addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd)
+    def actionError(self):
+        self.actionErrorWasCalled = True
 
     def test_isEqual(self):
-        self.assertTrue(emma_libs.memoryEntry.ObjectEntry.isEqual(self.memEntry, self.memEntry))
+        self.assertTrue(emma_libs.memoryEntry.ObjectEntry.isEqual(self.basicMemEntry, self.basicMemEntry))
         with self.assertRaises(NotImplementedError):
-            emma_libs.memoryEntry.ObjectEntry.isEqual(self.memEntry, "This is obviously not a MemEntry object!")
+            emma_libs.memoryEntry.ObjectEntry.isEqual(self.basicMemEntry, "This is obviously not a MemEntry object!")
 
     def test_getName(self):
-        name = emma_libs.memoryEntry.ObjectEntry.getName(self.memEntry)
-        self.assertEqual(name, (self.section + "::" + self.moduleName))
+        name = emma_libs.memoryEntry.ObjectEntry.getName(self.basicMemEntry)
+        self.assertEqual(name, (self.sectionName + "::" + self.objectName))
 
 
 if "__main__" == __name__:
