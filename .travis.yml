@@ -16,6 +16,7 @@ matrix:
         # - os: windows
 
 install:
+    - sudo apt-get install tree
     - pip install -U pylint
     - sudo apt-get install myspell-de-de myspell-en-gb
     - pip install -U coveralls
@@ -29,6 +30,9 @@ git:
     submodules: false
 
 script:
+    - tree
+    - echo "------------------------------------"
+    - tree ../../
     - python -m unittest test
     - pylint -j 0 --exit-zero ./*
     - cd tests
