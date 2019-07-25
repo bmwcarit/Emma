@@ -26,17 +26,6 @@ import shared_libs.emma_helper
 
 
 class MemEntry:
-    """
-    A class representing an entry that is stored in the memory.
-    """
-    def __eq__(self, other):
-        """
-        This is not implemented because we shall compare MemEntry objects trough the subclasses of the MemEntryHandler class.
-        :param other: another MemEntry object.
-        :return: None
-        """
-        raise NotImplementedError("Operator __eq__ not defined between " + type(self).__name__ + " objects!")
-
     def __init__(self, configID, mapfileName, addressStart, addressLength=None, addressEnd=None, sectionName="", objectName="", memType="", memTypeTag="", category="", compilerSpecificData=None):
         """
         Constructor of the MemEntry class.
@@ -101,6 +90,28 @@ class MemEntry:
         self.addressStartOriginal = self.addressStart
         self.addressLengthOriginal = self.addressLength
 
+    """
+    A class representing an entry that is stored in the memory.
+    """
+    def __eq__(self, other):
+        """
+        This is not implemented because we shall compare MemEntry objects trough the subclasses of the MemEntryHandler class.
+        :param other: another MemEntry object.
+        :return: None
+        """
+        raise NotImplementedError("Operator __eq__ not defined between " + type(self).__name__ + " objects!")
+
+    def __lt__(self, other):
+        """
+        We only want the `<` operator to compare the address start element (dec); nothing else
+        Reimplementation of `<` due to bisect comparison (`.insort` uses this operator for insertions;
+        can cause errors (TypeError: '<' not supported between instances of 'dict' and 'dict') for same addresses)
+        :param other:  x<other calls x.__lt__(other)
+        :return: boolean evaluation
+        """
+        # TODO: Do we want to compare the length (shortest first) when address ist the same? (MSc)
+        return self.addressStart < other.addressStart
+
     def addressStartHex(self):
         return hex(self.addressStart)
 
@@ -127,17 +138,6 @@ class MemEntry:
 
     def equalConfigID(self, other):
         return self.configID == other.configID
-
-    def __lt__(self, other):
-        """
-        We only want the `<` operator to compare the address start element (dec); nothing else
-        Reimplementation of `<` due to bisect comparison (`.insort` uses this operator for insertions;
-        can cause errors (TypeError: '<' not supported between instances of 'dict' and 'dict') for same addresses)
-        :param other:  x<other calls x.__lt__(other)
-        :return: boolean evaluation
-        """
-        # TODO: Do we want to compare the length (shortest first) when address ist the same? (MSc)
-        return self.addressStart < other.addressStart
 
     def setAddressesGivenEnd(self, addressEnd):
         """
