@@ -1,7 +1,8 @@
 # Emma
 **Emma Memory and Mapfile Analyser**
 
-> Conduct static (i.e. worst case) memory consumption analyses based on arbitrary linker map files (Green Hills map files are the default but others - like GCC - are supported via configuration options). This tool creates a summary/overview about static memory usage in form of a comma separated values file.
+> Conduct static (i.e. worst case) memory consumption analyses based on linker map files (currently only Green Hills map files are supported).
+This tool creates a summary/overview about static memory usage in form of a comma separated values (CSV) file.
 
 ------------------------
 # Contents
@@ -50,7 +51,7 @@
 
 # Process
 Using the Mapfile Analyser is a two step process. The first step is to extract the required information from the mapfiles and save it to .csv files.
-This is done with the `emma.py` script. The second step is to visualise the data. The documentation can be found in the Emma visualiser readme document.
+This is done with the `emma.py` script. The second step is to visualise the data. This document explains the first part only, the visualisation is documented in the Emma visualiser readme document.
 
 # Limitations
 The Emma is only suitable for analyzing projects where the devices have a single linear physical address space:
@@ -186,9 +187,10 @@ For more information please refer to the Emma Visualiser's documentation.
 
 ### `globalConfig.json`
 The globalConfig.json is the starting point of the configurations.
-It defines the memory configurations of the system and defines the names of the config files that belong to these.
+It defines the used compiler, the memory configurations of the system and the names of the config files that belong to these.
 A memory configuration is describes a unit that has memory associated to it, for example an MCU, MPU or an SOC.
 During the analysis, it will be examined to which extent the memory resources that are available for these units are used.
+A compiler definition is used for determining the mapfile format.
 
 In Emma, a memory configuration is called a **configID**. For each configID the the following config files need to be defined:
 
@@ -199,6 +201,7 @@ The globalConfig.json has to have the following format:
     :::json
     {
         <CONFIG_ID>: {
+            "compiler": <COMPILER_NAME>,
             "addressSpacesPath": <CONFIG_FILE>,
             "patternsPath": <CONFIG_FILE>,
             "virtualSectionsPath": <CONFIG_FILE>,
@@ -208,6 +211,7 @@ The globalConfig.json has to have the following format:
         .
         .
         <CONFIG_ID>: {
+            "compiler": <COMPILER_NAME>,
             "addressSpacesPath": <CONFIG_FILE>,
             "patternsPath": <CONFIG_FILE>,
             "virtualSectionsPath": <CONFIG_FILE>,
@@ -219,10 +223,13 @@ The following rules apply:
 
 * The file contains a single unnamed JSON object
 * The types used in the description:
+    * `<COMPILER_NAME>` is a string
     * `<CONFIG_ID>` is a string
     * `<CONFIG_FILE>` is a string 
     * `<BOOL>` is a boolean value containing either **true** or **false**  
 * There has to be at least one **configID** defined
+* You must define a compiler for each configID by defining the **compiler** key. The possible values are:
+    * "GHS" - Green Hills Compiler
 * You must assign three config files for each configID by defining the following key, value pairs:
     * by defining **addressSpacesPath**, the config file that defines the address spaces is assigned
     * by defining **patternsPath**, the config file that defines the patterns is assigned
@@ -601,9 +608,7 @@ Execute this to generate the monolith files (you need to have the ELF file for t
 By default long names will be truncated. This can lead to inaccurate results. In order to prevent this use `-no_trunc_sec_names`.
 
 ## Class diagram Emma
-<div align="center"> <img src="../genDoc/call_graph_uml/classes_mapfileRegexes.png" width="800" /> </div>
-<div align="center"> <img src="../genDoc/call_graph_uml/classes_memoryEntry.png" width="200" /> </div>
-<div align="center"> <img src="../genDoc/call_graph_uml/classes_memoryManager.png" width="800" /> </div>
+<div align="center"> <img src="images/emmaClassDiagram.png" width="1000" /> </div>
 
 ## Calling Graph Emma
 <div align="center"> <img src="../genDoc/call_graph_uml/emma_filtered.profile.png" width="1000" /> </div>
