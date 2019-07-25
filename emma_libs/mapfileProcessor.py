@@ -114,7 +114,7 @@ class MapfileProcessor(abc.ABC):
             else:
                 # If we do not have to remove elements without a memory region then we will fill it out with the default values and keep it
                 if not removeElementsWithoutMemoryRegionOrType:
-                    element.Tag = UNKNOWN_MEM_REGION
+                    element.memTypeTag = UNKNOWN_MEM_REGION
                     element.memType = UNKNOWN_MEM_TYPE
                     listOfElementsToKeep.append(element)
                 # If we have to remove it, then we will print a report
