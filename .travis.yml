@@ -40,12 +40,11 @@ git:
 
 script:
     - tree --charset unicode ../../
-    - python -m unittest test
     #- mv .coveragerc ../.coveragerc         # Quick-fix until issue #9 is resolved
     #- mv .pylintrc ../.pylintrc             # Quick-fix until issue #9 is resolved
     - find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
-    - pylint -j 0 --exit-zero Emma
     - pushd ./tests
+    - python -m unittest test
     - coverage run --branch test__cmd-line.py
     - coverage report
     - popd
