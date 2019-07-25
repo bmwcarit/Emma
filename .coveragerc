@@ -2,7 +2,8 @@
 #concurrency = multiprocessing              # Used lib for concurrent code
 parallel = True
 branch = True
-
+source = /home/travis/build/bmwcarit/Emma/
+omit = /home/travis/virtualenv/*
 
 [report]
 exclude_lines = 
