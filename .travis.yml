@@ -6,34 +6,33 @@ language: python
 python:
     - 3.7-dev
     #- 3.7.0
+    #- 3.6.0            # = min required version for Emma
 
 matrix:
     include:
         - os: linux
           dist: bionic
-        #  dist: xenial              # myspell-en-gb is not (yet) available in bionic
         # Disabled since travis does not support python on windows
         # - os: windows
 
 install:
     - sudo apt-get install tree
     - pip install -U pylint
-    #- sudo apt-get install myspell-de-de myspell-en-gb
     - pip install -U coveralls
     - pip install -U Pygments Markdown matplotlib pandas pypiscout
-#    - sudo apt-get update
-#    - sudo apt-get install graphviz
-#    - pip install -U gprof2dot
+    #- sudo apt-get update
+    #- sudo apt-get install graphviz
+    #- pip install -U gprof2dot
     - pip list
 
 git:
     submodules: false
 
 script:
-    - tree
-    - echo "------------------------------------"
-    - tree ../../
+    - tree --charset unicode ../../
     - python -m unittest test
+    - cp .coveragerc ../.coveragerc         # Quick-fix until issue #9 is resolved
+    - cp .pylintrc ../.pylintrc             # Quick-fix until issue #9 is resolved
     - cd ..
     - pylint -j 0 --exit-zero ./Emma/*
     - cd ./Emma/tests
