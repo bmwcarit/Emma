@@ -5,8 +5,8 @@ language: python
 
 python:
     - 3.7-dev
-    #- 3.7.0
-    #- 3.6.0            # = min required version for Emma
+    - 3.7.0
+    - 3.6.0            # = min required version for Emma
 
 matrix:
     include:
@@ -19,14 +19,13 @@ matrix:
 install:
     - sudo apt-get install tree
     - pip install -U pylint
-    #- sudo apt-get install myspell-en-gb
-    #- sudo apt-get install enchant
-    - pip install pyenchant
+    - sudo apt-get install enchant          # needed for pyenchant
+    - pip install pyenchant                 # needed for pylint spell checking
     - pip install -U coveralls
     - pip install -U Pygments Markdown matplotlib pandas pypiscout
-    #- sudo apt-get update
-    #- sudo apt-get install graphviz
-    #- pip install -U gprof2dot
+    - sudo apt-get update
+    - sudo apt-get install graphviz
+    - pip install -U gprof2dot
     - pip list
 
 git:
