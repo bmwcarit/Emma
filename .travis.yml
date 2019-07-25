@@ -47,8 +47,8 @@ script:
     - cp .coveragerc ./../.coveragerc
     - python -m unittest test
     - pushd ./tests
-    - tree ../
     - coverage run --branch test__cmd-line.py
+    - tree ../
     - coverage xml
     - coverage report
 
