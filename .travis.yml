@@ -42,6 +42,8 @@ git:
 script:
     #- tree --charset unicode ../../
     #- find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
+    - cp .coveragerc ./tests/.coveragerc
+    - cp .coveragerc ./../.coveragerc
     - python -m unittest test
     - pushd ./tests
     - coverage run --branch test__cmd-line.py
