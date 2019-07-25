@@ -30,7 +30,6 @@ install:
     - sudo apt-get install enchant          # needed for pyenchant
     - pip install pyenchant                 # needed for pylint spell checking
     - pip install -U coveralls
-    - pip install -U nose
     - pip install -U Pygments Markdown matplotlib pandas pypiscout
     #- sudo apt-get update
     #- sudo apt-get install graphviz
@@ -43,12 +42,10 @@ git:
 script:
     #- tree --charset unicode ../../
     #- find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
-    - nosetests --with-coverage --cover-branches --cover-package=tests/test__cmd-line.py
-    #- pushd ./tests
-    #- python -m unittest test
-    #- coverage run --branch test__cmd-line.py
-    #- coverage report
-    #- popd
+    - python -m unittest test
+    - pushd ./tests
+    - coverage run --branch test__cmd-line.py
+    - coverage report
 
 after_success:
     - coveralls
