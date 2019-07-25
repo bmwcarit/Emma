@@ -52,4 +52,4 @@ script:
     - coverage xml
 
 after_success:
-    - if [ -z "$CODE_COV" ]; then python-codacy-coverage -r coverage.xml; else echo skip; fi
+    - if [ -n "$CODE_COV" ]; then python-codacy-coverage -r coverage.xml; else echo skip; fi
