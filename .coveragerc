@@ -1,8 +1,14 @@
 [run]
+#concurrency = multiprocessing              # Used lib for concurrent code
 parallel = True
 branch = True
+#include = */Emma/*
 
 
 [report]
+omit =
+    tests/*
+    */site-packages/*
+    */virtualenv/*
 exclude_lines = 
     if __name__ == "__main__":
