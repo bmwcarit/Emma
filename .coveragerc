@@ -3,12 +3,12 @@
 parallel = True
 branch = True
 include = */Emma/*
-omit =
-    */site-packages/*
-    */virtualenv/*
+
 
 [report]
 omit =
     tests/*
+    */site-packages/*
+    */virtualenv/*
 exclude_lines = 
     if __name__ == "__main__":
