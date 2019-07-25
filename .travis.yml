@@ -25,7 +25,7 @@ matrix:
         # - os: windows
 
 install:
-    #- sudo apt-get install tree
+    - sudo apt-get install tree
     - pip install -U pylint
     - sudo apt-get install enchant          # needed for pyenchant
     - pip install pyenchant                 # needed for pylint spell checking
@@ -47,6 +47,7 @@ script:
     - cp .coveragerc ./../.coveragerc
     - python -m unittest test
     - pushd ./tests
+    - tree ../
     - coverage run --branch test__cmd-line.py
     - coverage xml
     - coverage report
