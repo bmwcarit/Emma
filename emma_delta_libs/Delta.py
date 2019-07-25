@@ -48,8 +48,8 @@ class Delta:
         DELTA_PERCENTAGE = "Delta %"
         DELTA_HUMAN_READABLE = "Delta"
 
-        lhs = self.__lhs.reset_index().set_index([CONFIG_ID, MEM_TYPE, TAG, MAPFILE, SECTION_NAME])
-        rhs = self.__rhs.reset_index().set_index([CONFIG_ID, MEM_TYPE, TAG, MAPFILE, SECTION_NAME])
+        lhs = self.__lhs.reset_index().set_index([CONFIG_ID, MEM_TYPE, MEM_TYPE_TAG, MAPFILE, SECTION_NAME])
+        rhs = self.__rhs.reset_index().set_index([CONFIG_ID, MEM_TYPE, MEM_TYPE_TAG, MAPFILE, SECTION_NAME])
         delta = lhs.join(rhs, lsuffix=LHS_SUFFIX, rsuffix=RHS_SUFFIX)
 
         delta[DELTA_SIZE_DEC] = delta[SIZE_DEC + LHS_SUFFIX] - delta[SIZE_DEC + RHS_SUFFIX]
