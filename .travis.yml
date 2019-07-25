@@ -16,11 +16,13 @@ matrix:
 
 install:
     - pip install -U pylint
+    - sudo apt-get install myspell-de-de myspell-en-gb
     - pip install -U coveralls
     - pip install -U Pygments Markdown matplotlib pandas pypiscout
 #    - sudo apt-get update
 #    - sudo apt-get install graphviz
 #    - pip install -U gprof2dot
+    - pip list
 
 git:
     submodules: false
