@@ -40,7 +40,7 @@ The whole Emma tool suite contains command line options making it convenient to 
 1. [Contribute](#contribute)
 1. [Dependencies & Licences](#dependencies--licences)
 
-Install dependencies: `pip3 install Pygments Markdown matplotlib pandas pypiscout`
+Install dependencies: Python 3.6 or higher; `pip3 install Pygments Markdown matplotlib pandas pypiscout`
 
 
 # General Workflow
