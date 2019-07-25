@@ -376,7 +376,7 @@ max-spelling-suggestions=4
 
 # Spelling dictionary name. Available dictionaries: de_DE (myspell), en_AU
 # (myspell), en_GB (myspell), en_US (myspell), fr_FR (myspell)..
-spelling-dict=en_US
+spelling-dict=en_GB
 
 # List of comma separated words that should not be checked.
 spelling-ignore-words=CSS,

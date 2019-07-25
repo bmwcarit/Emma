@@ -10,15 +10,15 @@ python:
 matrix:
     include:
         - os: linux
-        #  dist: bionic
-          dist: xenial              # myspell-en-gb is not (yet) available in bionic
+          dist: bionic
+        #  dist: xenial              # myspell-en-gb is not (yet) available in bionic
         # Disabled since travis does not support python on windows
         # - os: windows
 
 install:
     - sudo apt-get install tree
     - pip install -U pylint
-    - sudo apt-get install myspell-de-de myspell-en-gb
+    #- sudo apt-get install myspell-de-de myspell-en-gb
     - pip install -U coveralls
     - pip install -U Pygments Markdown matplotlib pandas pypiscout
 #    - sudo apt-get update

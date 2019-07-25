@@ -2,10 +2,10 @@
 concurrency = multiprocessing
 parallel = True
 
-
 [report]
 omit =
     tests/*
     /home/travis/virtualenv/
+    */site-packages/*
 exclude_lines = 
     if __name__ == "__main__":
