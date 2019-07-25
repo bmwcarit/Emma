@@ -49,7 +49,6 @@ script:
     - pushd ./tests
     - coverage run --branch test__cmd-line.py
     - tree -a -I .git ../
-    - popd
     - coverage report
     - coverage xml
 
