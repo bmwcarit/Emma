@@ -49,8 +49,8 @@ script:
     - pushd ./tests
     - coverage run --branch test__cmd-line.py
     - tree -a -I .git ../
-    - coverage xml
     - coverage report
+    - coverage xml
 
 after_success:
     #- coveralls
