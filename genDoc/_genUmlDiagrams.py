@@ -28,10 +28,18 @@ from shared_libs.stringConstants import *                           # pylint: di
 
 
 list_of_source_file_paths = [           # "../../*" instead of "../*" since we change the working directory within the system call
-    "../../emma_libs/mapfileRegexes.py",
+    "../../emma_libs/categorisation.py",
+    "../../emma_libs/configuration.py",
+    "../../emma_libs/ghsConfiguration.py",
+    "../../emma_libs/ghsMapfileProcessor.py",
+    "../../emma_libs/ghsMapfileRegexes.py",
+    "../../emma_libs/mapfileProcessor.py",
+    "../../emma_libs/mapfileProcessorFactory.py",
     "../../emma_libs/memoryEntry.py",
     "../../emma_libs/memoryManager.py",
     "../../emma_libs/memoryMap.py",
+    "../../emma_libs/specificConfiguration.py",
+    "../../emma_libs/specificConfigurationFactory.py",
     "../../emma_delta_libs/Delta.py",
     "../../emma_delta_libs/FilePresenter.py",
     "../../emma_delta_libs/FileSelector.py",
