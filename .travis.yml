@@ -20,6 +20,7 @@ install:
     - sudo apt-get install tree
     - pip install -U pylint
     #- sudo apt-get install myspell-en-gb
+    - sudo apt-get install enchant
     - pip install -U coveralls
     - pip install -U Pygments Markdown matplotlib pandas pypiscout
     #- sudo apt-get update
