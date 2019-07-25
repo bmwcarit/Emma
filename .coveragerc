@@ -5,6 +5,7 @@ branch = True
 include = */Emma/*
 omit =
     */site-packages/*
+    */virtualenv/*
 
 [report]
 omit =
