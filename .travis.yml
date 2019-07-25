@@ -3,20 +3,21 @@
 sudo: true
 language: python
 
-#python:
-#    - 3.7-dev
-#    - 3.7.4
-#    - 3.6.0            # = min required version for Emma
-
 matrix:
+    allow_failures:
+        - python: nightly
+        - python: 3.7-dev
     include:
+        - os: linux
+          dist: bionic
+          python: nightly
         - os: linux
           dist: bionic
           python: 3.7-dev
           #dist: xenial
         - os: linux
           dist: xenial
-          python: 3.7.4
+          python: 3.7
         - os: linux
           dist: 
           python: 3.6            # = min required version for Emma

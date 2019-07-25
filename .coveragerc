@@ -1,11 +1,13 @@
 [run]
-concurrency = multiprocessing
+#concurrency = multiprocessing              # Used lib for concurrent code
 parallel = True
+branch = True
+include = */Emma/*
+omit =
+    */site-packages/*
 
 [report]
 omit =
     tests/*
-    /home/travis/virtualenv/
-    */site-packages/*
 exclude_lines = 
     if __name__ == "__main__":
