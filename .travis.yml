@@ -8,13 +8,12 @@ matrix:
         - python: nightly
         - python: 3.7-dev
     include:
-        #- os: linux
-        #  dist: bionic
-        #  python: nightly
-        #- os: linux
-        #  dist: bionic
-        #  python: 3.7-dev
-        #  #dist: xenial
+        - os: linux
+          dist: bionic
+          python: nightly
+        - os: linux
+          dist: bionic
+          python: 3.7-dev
         - os: linux
           dist: xenial
           python: 3.7
@@ -32,17 +31,17 @@ install:
     - pip install -U coveralls
     - pip install codacy-coverage
     - pip install -U Pygments Markdown matplotlib pandas pypiscout
-    #- sudo apt-get update
-    #- sudo apt-get install graphviz
-    #- pip install -U gprof2dot
+    - sudo apt-get update
+    - sudo apt-get install graphviz
+    - pip install -U gprof2dot
     - pip list
 
 git:
     submodules: false
 
 script:
-    #- tree --charset unicode ../../
-    #- find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
+    - tree --charset unicode ../../
+    - find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
     - python -m unittest test
     - pushd ./tests
     - coverage run --branch test__cmd-line.py
@@ -51,6 +50,5 @@ script:
     - coverage xml
 
 after_success:
-    #- coveralls
     - python-codacy-coverage -r coverage.xml
 
