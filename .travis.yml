@@ -8,47 +8,49 @@ matrix:
         - python: nightly
         - python: 3.7-dev
     include:
-        - os: linux
-          dist: bionic
-          python: nightly
-        - os: linux
-          dist: bionic
-          python: 3.7-dev
-          #dist: xenial
+        #- os: linux
+        #  dist: bionic
+        #  python: nightly
+        #- os: linux
+        #  dist: bionic
+        #  python: 3.7-dev
+        #  #dist: xenial
         - os: linux
           dist: xenial
           python: 3.7
-        - os: linux
-          dist: 
-          python: 3.6            # = min required version for Emma
+        #- os: linux
+        #  dist: 
+        #  python: 3.6            # = min required version for Emma
         # Disabled since travis does not support python on windows
         # - os: windows
 
 install:
-    - sudo apt-get install tree
+    #- sudo apt-get install tree
     - pip install -U pylint
     - sudo apt-get install enchant          # needed for pyenchant
     - pip install pyenchant                 # needed for pylint spell checking
     - pip install -U coveralls
+    - pip install -U nose
     - pip install -U Pygments Markdown matplotlib pandas pypiscout
-    - sudo apt-get update
-    - sudo apt-get install graphviz
-    - pip install -U gprof2dot
+    #- sudo apt-get update
+    #- sudo apt-get install graphviz
+    #- pip install -U gprof2dot
     - pip list
 
 git:
     submodules: false
 
 script:
-    - tree --charset unicode ../../
-    #- mv .coveragerc ../.coveragerc         # Quick-fix until issue #9 is resolved
-    #- mv .pylintrc ../.pylintrc             # Quick-fix until issue #9 is resolved
-    - find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
-    - pushd ./tests
-    - python -m unittest test
-    - coverage run --branch test__cmd-line.py
-    - coverage report
-    - popd
+    #- tree --charset unicode ../../
+    #- find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
+    - cd ..
+    - ls
+    - nosetests --with-coverage --cover-package=Emma
+    #- pushd ./tests
+    #- python -m unittest test
+    #- coverage run --branch test__cmd-line.py
+    #- coverage report
+    #- popd
 
 after_success:
     - coveralls
