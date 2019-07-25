@@ -48,7 +48,7 @@ script:
     - python -m unittest test
     - pushd ./tests
     - coverage run --branch test__cmd-line.py
-    - tree ../
+    - tree -a -I .git ../
     - coverage xml
     - coverage report
 
