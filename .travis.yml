@@ -11,12 +11,14 @@ matrix:
         - os: linux
           dist: bionic
           python: nightly
+          
         - os: linux
           dist: bionic
           python: 3.7-dev
         - os: linux
           dist: xenial
           python: 3.7
+          env: CODE_COV=true                # Only do code coverage once
         #- os: linux
         #  dist: 
         #  python: 3.6            # = min required version for Emma
@@ -50,5 +52,4 @@ script:
     - coverage xml
 
 after_success:
-    - python-codacy-coverage -r coverage.xml
-
+    - if [ -z "$CODE_COV" ]; then python-codacy-coverage -r coverage.xml; else echo skip; fi
