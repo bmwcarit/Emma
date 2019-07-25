@@ -45,7 +45,7 @@ script:
     #- find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
     #- cd ..
     - ls
-    - nosetests --with-coverage --cover-branches --covertests -vvv --cover-package=Emma      # add `-vvv` for extensive logs (look for `wantModule`, `wantFunction`, `wantDirectory`, ...)
+    - nosetests --with-coverage --cover-branches --cover-tests -vvv --cover-package=Emma      # add `-vvv` for extensive logs (look for `wantModule`, `wantFunction`, `wantDirectory`, ...)
     #- pushd ./tests
     #- python -m unittest test
     #- coverage run --branch test__cmd-line.py
