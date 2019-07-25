@@ -89,20 +89,20 @@ class Visualiser:
         # default header
         self.header = [                                                                 # TODO: Remove the header list and replace it with constants from stringConstants.py
             # Later indexes are used (therefore the numbers commented inline)
-            ADDR_START_HEX,         # 0
+            ADDR_START_HEX,        # 0
             ADDR_END_HEX,
             SIZE_HEX,              # 2
             ADDR_START_DEC,
             ADDR_END_DEC,
             SIZE_DEC,              # 5
-            MODULE_NAME,
+            OBJECT_NAME,
             CONFIG_ID,             # 7
             VAS_NAME,
             MEM_TYPE,
-            TAG,                  # 10
+            MEM_TYPE_TAG,          # 10
             CATEGORY,
             DMA,
-            MAPFILE               # 13
+            MAPFILE                # 13
         ]
         self.data = pandas.DataFrame(columns=self.header)
         matplotlib.style.use("ggplot")      # Pycharm might claim there is no reference 'style' in `__init__.py` (you can ignore this)(https://stackoverflow.com/a/23839976/4773274)

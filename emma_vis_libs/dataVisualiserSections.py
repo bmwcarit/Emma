@@ -99,7 +99,7 @@ class ImageConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
         groupedByMemType = groupedByMemType[[SIZE_DEC] + [self.header[i] for i in indices]]          # Get only columns we need
 
         # Grouping
-        groupedByMemTypeAcc = groupedByMemType.groupby([CONFIG_ID, TAG]).sum()
+        groupedByMemTypeAcc = groupedByMemType.groupby([CONFIG_ID, MEM_TYPE_TAG]).sum()
 
         # Set formats and cast type
         pandas.options.display.float_format = '{:14,.0f}'.format
