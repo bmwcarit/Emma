@@ -12,7 +12,13 @@ matrix:
     include:
         - os: linux
           dist: bionic
+          python: 3.7-dev
           #dist: xenial
+        - os: linux
+          dist: xenial
+          python:
+                - 3.7.4
+                - 3.6.0            # = min required version for Emma
         # Disabled since travis does not support python on windows
         # - os: windows
 
@@ -36,12 +42,8 @@ script:
     - python -m unittest test
     - mv .coveragerc ../.coveragerc         # Quick-fix until issue #9 is resolved
     - mv .pylintrc ../.pylintrc             # Quick-fix until issue #9 is resolved
-    #- touch __init__.py
-    #- cd ..
     - find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
     - pylint -j 0 --exit-zero Emma
-    #- cd ./Emma
-    #- rm __init__.py
     - cd ./tests
     - coverage run --branch test__cmd-line.py
     - coverage report
