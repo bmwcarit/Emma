@@ -44,8 +44,9 @@ script:
     #- tree --charset unicode ../../
     #- find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
     #- cd ..
+    - pushd ./tests
     - ls
-    - nosetests --with-coverage --cover-branches -vvv --cover-package=Emma
+    - nosetests --with-coverage --cover-branches -vvv --cover-package=Emma      # add `-vvv` for extensive logs (look for `wantModule`, `wantFunction`, `wantDirectory`, ...)
     #- pushd ./tests
     #- python -m unittest test
     #- coverage run --branch test__cmd-line.py
