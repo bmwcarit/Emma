@@ -30,6 +30,7 @@ install:
     - sudo apt-get install enchant          # needed for pyenchant
     - pip install pyenchant                 # needed for pylint spell checking
     - pip install -U coveralls
+    - pip install codacy-coverage
     - pip install -U Pygments Markdown matplotlib pandas pypiscout
     #- sudo apt-get update
     #- sudo apt-get install graphviz
@@ -47,7 +48,10 @@ script:
     - python -m unittest test
     - pushd ./tests
     - coverage run --branch test__cmd-line.py
+    - coverage xml
     - coverage report
 
 after_success:
-    - coveralls
+    #- coveralls
+    - python-codacy-coverage -r coverage.xml
+
