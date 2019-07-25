@@ -18,8 +18,8 @@ matrix:
           dist: xenial
           python: 3.7.4
         - os: linux
-          dist: xenial
-          python: 3.6.0            # = min required version for Emma
+          dist: 
+          python: 3.6            # = min required version for Emma
         # Disabled since travis does not support python on windows
         # - os: windows
 
