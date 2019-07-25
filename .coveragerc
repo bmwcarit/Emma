@@ -2,7 +2,7 @@
 #concurrency = multiprocessing              # Used lib for concurrent code
 parallel = True
 branch = True
-include = */Emma/*
+#include = */Emma/*
 
 
 [report]

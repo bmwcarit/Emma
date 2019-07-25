@@ -43,11 +43,13 @@ git:
 script:
     #- tree --charset unicode ../../
     #- find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
-    - pushd ./tests
+    - cd ..
+    - nosetests --with-coverage --cover-branches --cover-package=Emma
+    #- pushd ./tests
     #- python -m unittest test
-    - coverage run --branch test__cmd-line.py
-    - coverage report
-    - popd
+    #- coverage run --branch test__cmd-line.py
+    #- coverage report
+    #- popd
 
 after_success:
     - coveralls
