@@ -34,8 +34,9 @@ script:
     - echo "------------------------------------"
     - tree ../../
     - python -m unittest test
-    - pylint -j 0 --exit-zero ./*
-    - cd tests
+    - cd ..
+    - pylint -j 0 --exit-zero ./Emma/*
+    - cd ./Emma/tests
     - coverage run --branch test__cmd-line.py
     - coverage report
 
