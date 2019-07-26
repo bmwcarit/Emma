@@ -126,9 +126,9 @@ class MemEntryTestCase(unittest.TestCase):
     def test_joinPath(self):
         if "Windows" == platform.system():
             self.assertEqual(r"c:Documents\Projects\Emma", shared_libs.emma_helper.joinPath("c:", "Documents", "Projects", "Emma"))
-            self.assertEqual(r"c:Documents\Projects\Emma", shared_libs.emma_helper.joinPath("c:Documents", "Projects/Emma"))
+            self.assertEqual(r"..\..\Emma\tests\other_files", shared_libs.emma_helper.joinPath("..", "..", "Emma", "tests", "other_files"))
         elif "Linux" == platform.system():
-            self.assertEqual(r"c:/Documents/Projects/Emma", shared_libs.emma_helper.joinPath("c:", "Documents", "Projects", "Emma"))
-            self.assertEqual(r"c:/Documents/Projects/Emma", shared_libs.emma_helper.joinPath("c:Documents", "Projects/Emma"))
+            self.assertEqual(r"Documents/Projects/Emma", shared_libs.emma_helper.joinPath("Documents", "Projects", "Emma"))
+            self.assertEqual(r"../../Emma/tests/other_files", shared_libs.emma_helper.joinPath("..", "..", "Emma", "tests", "other_files"))
         else:
             raise EnvironmentError("Unexpected platform value: " + platform.system())
