@@ -20,11 +20,16 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 
 import os
+import sys
 import shutil
 import subprocess
 import unittest
 import pandas
 import datetime
+
+from pypiscout.SCout_Logger import Logger as sc
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from shared_libs.stringConstants import *
 
