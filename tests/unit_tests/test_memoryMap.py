@@ -24,7 +24,7 @@ import unittest
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from shared_libs.stringConstants import *
+from shared_libs.stringConstants import *   # pylint: disable=unused-wildcard-import,wildcard-import
 import emma_libs.memoryEntry
 import emma_libs.memoryMap
 
@@ -117,7 +117,7 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
             elif expectedAddressEnd is not None and expectedAddressLength is None:
                 self.assertEqual(resolvedMemEntry.addressEnd(), expectedAddressEnd)
             else:
-                assert(False, "Only one of these variables shall be provided!")
+                raise AttributeError("Either expectedAddressLength or expectedAddressEnd shall be provided!")
         else:
             # Otherwise the addresses should be the same as in the original
             self.assertEqual(resolvedMemEntry.addressStart, originalMemEntry.addressStart)

@@ -20,12 +20,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import os
 import sys
 import unittest
+import platform
 
 from pypiscout.SCout_Logger import Logger as sc
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from shared_libs.stringConstants import *
+from shared_libs.stringConstants import *   # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
 
 
@@ -123,5 +124,11 @@ class MemEntryTestCase(unittest.TestCase):
         self.assertEqual("MyProject", shared_libs.emma_helper.projectNameFromPath(os.path.join("C:", "GitRepos", "Emma", "MyProject")))
 
     def test_joinPath(self):
-        self.assertEqual("c:Documents\Projects\Emma", shared_libs.emma_helper.joinPath("c:", "Documents", "Projects", "Emma"))
-        self.assertEqual("c:Documents\Projects\Emma", shared_libs.emma_helper.joinPath("c:Documents", "Projects/Emma"))
+        if "Windows" == platform.system():
+            self.assertEqual(r"c:Documents\Projects\Emma", shared_libs.emma_helper.joinPath("c:", "Documents", "Projects", "Emma"))
+            self.assertEqual(r"c:Documents\Projects\Emma", shared_libs.emma_helper.joinPath("c:Documents", "Projects/Emma"))
+        elif "Linux" == platform.system():
+            self.assertEqual(r"c:/Documents/Projects/Emma", shared_libs.emma_helper.joinPath("c:", "Documents", "Projects", "Emma"))
+            self.assertEqual(r"c:/Documents/Projects/Emma", shared_libs.emma_helper.joinPath("c:Documents", "Projects/Emma"))
+        else:
+            raise EnvironmentError("Unexpected platform value: " + platform.system())
