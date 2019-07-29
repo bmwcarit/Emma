@@ -172,7 +172,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             Load monolith mapfile (only once).
             :param configuration: Configuration to which the monoliths need to be added.
             :param noPrompt: True if no user prompts shall be made, False otherwise, in which case a program exit will be made.
-            :return: Content of the monolith file.
+            :return: Content of the monolith file if it could be read, else None.
             """
             if not configuration["monolithLoaded"]:
                 mapfileIndexChosen = 0  # Take the first monolith file in list (default case)
@@ -190,7 +190,8 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                         print(" ", key.ljust(10), monolith)
                     # Ask for index which file to chose
                     mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx() if not noPrompt else sys.exit(-10)
-                    while not (0 <= mapfileIndexChosen < numMonolithFiles):
+                    # We will only accept values in range [0, numMonolithFiles)
+                    while not 0 <= mapfileIndexChosen < numMonolithFiles:
                         sc().warning("Invalid value; try again:")
                         mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx() if not noPrompt else sys.exit(-10)
                 elif numMonolithFiles < 1:
@@ -198,9 +199,10 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
 
                 # Finally load the file
                 configuration["monolithLoaded"] = True
+                result = None
                 with open(keyMonolithMapping[str(mapfileIndexChosen)], "r") as fp:
-                    content = fp.readlines()
-                return content
+                    result = fp.readlines()
+                return result
 
         def tabulariseAndSortOnce(monolithContent, configuration):
             """
@@ -240,7 +242,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         """
         result = False
         # Checking the number of the mapfiles that were found with the regexes
-        if 0 < len(configuration["patterns"]["mapfiles"]):
+        if configuration["patterns"]["mapfiles"]:
             # If there is at least one, then the check was passed
             result = True
         else:

@@ -35,7 +35,7 @@ class MemoryManager:
     A class to organize the processing of the configuration and the mapfiles and the storage of the created reports.
     """
     class Settings:
-        # pylint: disable=too-many-instance-attributes, too-many-arguments
+        # pylint: disable=too-many-instance-attributes, too-many-arguments, too-few-public-methods
         # Rationale: This class´s only purpose is to store settings, thus having too many members and parameters is not an error.
         """
         Settings that influence the operation of the MemoryManager object.
@@ -143,7 +143,7 @@ class MemoryManager:
                     consumerCollections[collectionType].extend(self.memoryContent[configId][collectionType])
 
             # Creating reports from the consumer colections
-            for collectionType in consumerCollections.keys():
+            for collectionType in consumerCollections:
                 reportPath = emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType)
                 emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
                 sc().info("A report was stored:", os.path.abspath(reportPath))

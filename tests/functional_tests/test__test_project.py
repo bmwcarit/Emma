@@ -24,21 +24,25 @@ import sys
 import shutil
 import subprocess
 import unittest
-import pandas
 import datetime
+import pandas
 
-from pypiscout.SCout_Logger import Logger as sc
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from shared_libs.stringConstants import *   # pylint: disable=unused-wildcard-import,wildcard-import
+from shared_libs.stringConstants import *   # pylint: disable=unused-wildcard-import, wildcard-import, wrong-import-order
 
 
 class EmmaTestProject(unittest.TestCase):
+    # pylint: disable=invalid-name
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+
     """
     A test case to test the Emma with the test_project.
     """
     def setUp(self):
+        # pylint: disable=too-many-locals
+        # Rationale: This is only a test file, it does not need to have production grade quality.
         """
         A function to setup the variables used in the tests and to run the Emma on the test_project.
         :return: None
@@ -86,7 +90,7 @@ class EmmaTestProject(unittest.TestCase):
             elif objectsInSectionsFileNameFixPart == file[:-(timeStampLength + reportFileExtensionLength)]:
                 self.objectsInSectionsPath = os.path.join(self.memStatsFolder, file)
             else:
-                self.assert_(False, "Unexpected file: " + os.path.join(self.memStatsFolder, file))
+                raise EnvironmentError("Unexpected file: " + os.path.join(self.memStatsFolder, file))
 
         # Setting up the variable with the expected column values
         self.expectedColumns = [ADDR_START_HEX, ADDR_END_HEX, SIZE_HEX, ADDR_START_DEC, ADDR_END_DEC,

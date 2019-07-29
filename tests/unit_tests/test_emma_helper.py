@@ -31,6 +31,9 @@ import shared_libs.emma_helper
 
 
 class MemEntryTestCase(unittest.TestCase):
+    # pylint: disable=invalid-name
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+
     def setUp(self):
 
         # Setting up the logger

@@ -32,6 +32,9 @@ import shared_libs.emma_helper
 
 
 class CmdEmma(unittest.TestCase):
+    # pylint: disable=invalid-name
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+
     def test_help(self):
         """
         Check that `--help` does not raise an exeption
@@ -75,6 +78,9 @@ class CmdEmma(unittest.TestCase):
 
 
 class CmdEmmaVis(unittest.TestCase):
+    # pylint: disable=invalid-name
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+
     def test_help(self):
         """
         Check that `--help` does not raise an exeption

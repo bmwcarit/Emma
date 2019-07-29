@@ -53,17 +53,17 @@ def createMemEntryObjects(sectionDataContainer=None, objectDataContainer=None):
         compilerSpecificData["DMA"] = True
         compilerSpecificData["vasName"] = ""
         compilerSpecificData["vasSectionName"] = ""
-        return emma_libs.memoryEntry.MemEntry(configID= "MCU" if memEntryData.configId is None else memEntryData.configId,
-                                              mapfileName= "mapfile.map",
-                                              addressStart= memEntryData.addressStart,
-                                              addressLength= 0 if memEntryData.addressEnd is None else None,
-                                              addressEnd= memEntryData.addressEnd,
-                                              sectionName = ".text" if memEntryData.section is None else memEntryData.section,
-                                              objectName = "" if memEntryData.moduleName is None else memEntryData.moduleName,
-                                              memType = "INT_FLASH",
-                                              memTypeTag= "",
-                                              category= "<Unspecified>",
-                                              compilerSpecificData= compilerSpecificData)
+        return emma_libs.memoryEntry.MemEntry(configID="MCU" if memEntryData.configId is None else memEntryData.configId,
+                                              mapfileName="mapfile.map",
+                                              addressStart=memEntryData.addressStart,
+                                              addressLength=0 if memEntryData.addressEnd is None else None,
+                                              addressEnd=memEntryData.addressEnd,
+                                              sectionName=".text" if memEntryData.section is None else memEntryData.section,
+                                              objectName="" if memEntryData.moduleName is None else memEntryData.moduleName,
+                                              memType="INT_FLASH",
+                                              memTypeTag="",
+                                              category="<Unspecified>",
+                                              compilerSpecificData=compilerSpecificData)
 
     sectionContainer = []
     if sectionDataContainer is not None:
@@ -86,6 +86,9 @@ def createMemEntryObjects(sectionDataContainer=None, objectDataContainer=None):
 
 
 class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
+    # pylint: disable=invalid-name
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+
     def assertEqualSections(self, firstSection, secondSection):
         self.assertTrue(emma_libs.memoryEntry.SectionEntry.isEqual(firstSection, secondSection))
 
@@ -269,6 +272,9 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
 
 
 class CalculateObjectsInSectionsTestCase(unittest.TestCase):
+    # pylint: disable=invalid-name
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+
     def checkSectionNonChangingData(self, sectionToCheck, sourceSection):
         """
         Checks the data of a section that shall never be changed during caluclateObjectsInSections().

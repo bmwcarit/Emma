@@ -26,13 +26,15 @@ import shared_libs.emma_helper
 
 
 class MemEntry:
+    # pylint: disable=too-many-instance-attributes
+    # Rationale: This class needs to store all the attributes of an entry.
     """
     A class to represent an entry in the memory. This is a generic class, it can represent both sections and objects.
     To handle objects of this class according to their type, please use one of the subclasses of the @ref:MemEntryHandler.
     """
     def __init__(self, configID, mapfileName, addressStart, addressLength=None, addressEnd=None, sectionName="", objectName="", memType="", memTypeTag="", category="", compilerSpecificData=None):
-        # pylint: disable=too-many-instance-attributes, disable=too-many-arguments
-        # Rationale: This class needs to store all the attributes of an entry and needs to be able to be fully setup during construction.
+        # pylint: disable=too-many-arguments
+        # Rationale: The constructor needs to be able to fully setup during construction.
 
         """
         Constructor of the MemEntry class.
@@ -163,7 +165,7 @@ class MemEntry:
         Function to set the address length value from an address length value.
         :return: None
         """
-        if 0 <= addressLength:
+        if addressLength >= 0:
             self.addressLength = addressLength
         else:
             sc().error("MemEntry: The addressLength (" + str(addressLength) + ") is negative!")
@@ -175,7 +177,7 @@ class MemEntry:
         :return: The calculated end address.
         """
         # Is this a non-zero length memEntry object?
-        if 0 < addressLength:
+        if addressLength > 0:
             result = addressStart + addressLength - 1
         # Else the addressEnd is the addressStart
         else:

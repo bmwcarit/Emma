@@ -29,10 +29,16 @@ import emma_libs.memoryEntry
 
 
 class Categorisation:
+    # pylint: disable=too-many-instance-attributes
+    # Rationale: The class needs to store the paths for the categorisation files, this leads to the amount of class members.
+
     """
     Class to implement functionality that are related to categorisation of MemEntry objects.
     """
     def __init__(self, categoriesObjectsPath, categoriesObjectsKeywordsPath, categoriesSectionsPath, categoriesSectionsKeywordsPath, noPrompt):
+        # pylint: disable=too-many-arguments
+        # Rationale: The categorisation paths and the settings needs to be set-up by this function.
+
         self.noPrompt = noPrompt
         # These are list of sections and objects that are categorised by keywords (these will be used for updating the categories*.json files)
         self.keywordCategorisedSections = []

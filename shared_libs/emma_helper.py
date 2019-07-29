@@ -203,10 +203,10 @@ def changePictureLinksToEmbeddingInHtmlData(htmlData, sourceDataPath=""):
             sc().warning("The file " + linkedPicturePath + " does not exist!")
             continue
 
-        with open(linkedPicturePath, "rb") as file_object:
-            encoded_picture_data = base64.encodebytes(file_object.read())
+        with open(linkedPicturePath, "rb") as fileObject:
+            encodedPictureData = base64.encodebytes(fileObject.read())
         linkedPictureFileExtension = os.path.splitext(linkedPicture)[1][1:]
-        replacementString = "data:image/" + linkedPictureFileExtension + ";base64," + encoded_picture_data.decode() + "\" alt=\"" + linkedPicture
+        replacementString = "data:image/" + linkedPictureFileExtension + ";base64," + encodedPictureData.decode() + "\" alt=\"" + linkedPicture
         htmlData = htmlData.replace(linkedPicture, replacementString)
 
     return htmlData
@@ -244,17 +244,17 @@ def convertMarkdownFileToHtmlFile(markdownFilePath, htmlFilePath):
         fileObject.write(htmlData)
 
 
-def findFilesInDir(search_directory, regexPattern=r".*", includingRoot=True):
+def findFilesInDir(searchDirectory, regexPattern=r".*", includingRoot=True):
     """
     It looks recursively for files in the search_directory that are matching the regex_pattern.
-    :param search_directory: The directory in which the search will be done.
+    :param searchDirectory: The directory in which the search will be done.
     :param regexPattern: The regex patterns that the files will be matched against.
     :param includingRoot: If true, the search directory will be added to the path of the search results as well.
     :return: The paths of the files found.
     :rtype: list of str
     """
     result = []
-    for (root, directories, files) in os.walk(search_directory):
+    for (root, _, files) in os.walk(searchDirectory):
         for file in files:
             if re.search(regexPattern, file) is not None:
                 if includingRoot:
@@ -274,63 +274,48 @@ def saveMatplotlibPicture(pictureData, pathToSave, savefigFormat, savefigDpi, sa
     :param savefigTransparent: This value will be forwarded to the savefig method of the Figure object. (See savefig´s description for details)
     :return: nothing
     """
-    with open(pathToSave, "wb") as file_object:
-        pictureData.savefig(file_object, format=savefigFormat, dpi=savefigDpi, transparent=savefigTransparent)
-        file_object.flush()
-
-
-"""
-MIT License toHumanReadable
-Copyright (c) 2019 Marcel Schmalzl, Steve Göring
-https://github.com/TeamFlowerPower/kb/wiki/humanReadable
-"""
+    with open(pathToSave, "wb") as fileObject:
+        pictureData.savefig(fileObject, format=savefigFormat, dpi=savefigDpi, transparent=savefigTransparent)
+        fileObject.flush()
 
 
 def toHumanReadable(num, suffix='B'):
     """
     Converts a number into a human readable format: humanReadableSize(168963795964) -> ' 157.36 GiB'
     Note: we use binary prefixes (-> 1kiB = 1024 Byte)
+
+    MIT License toHumanReadable
+    Copyright (c) 2019 Marcel Schmalzl, Steve Göring
+    https://github.com/TeamFlowerPower/kb/wiki/humanReadable
+
     :param num: Number to convert
     :param suffix: The suffix that will be added to the quantifier
     :return: Formatted string
     """
     count = 0
-    bit_10 = 10
-    num_tmp = num
+    bit10 = 10
+    numTmp = num
     for prefix in UNIT_PREFIXES:
-        if num_tmp > 1024:
-            num_tmp = num_tmp >> bit_10
+        if numTmp > 1024:
+            numTmp = numTmp >> bit10
             count += 1
         else:
-            return "{: .2f} {}{}".format(num/2**(count*bit_10), prefix, suffix)
+            return "{: .2f} {}{}".format(num/2**(count*bit10), prefix, suffix)
 
 
 class Prompt:
+    """
+    Class that contains functions that help handling of user prompts.
+    """
     @staticmethod
     def idx():
         """
-        Prompt for an index [0,inf[ and return it if in this range otherwise return `None`
-        :return:
+        Prompt for an index [0, inf) and return it if in this range.
+        :return: The index entered by the user, None otherwise.
         """
+        result = -1
         text = input("> ")
-        if text is None or text == "":
-            return -1
-        else:
-            return int(text)
+        if text is not None and text != "":
+            result = int(text)
 
-    @staticmethod
-    def txt():
-        # TODO: implement this method (Msc)
-        raise NotImplementedError
-
-
-def checkIfHelpWasCalled():
-    """
-    Checks if --help or -h is within the command line argument list
-    This is an argparse limitation
-    :return: False if it is inside; else True
-    """
-    if "--help" in sys.argv or "-h" in sys.argv:
-        return False
-    else:
-        return True
+        return result

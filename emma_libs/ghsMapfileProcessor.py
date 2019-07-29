@@ -72,8 +72,8 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
         # Importing every mapfile that was found
         for mapfile in configuration["patterns"]["mapfiles"]:
             # Opening the mapfile and reading in its content
-            with open(configuration["patterns"]["mapfiles"][mapfile]["associatedFilename"], "r") as mapfile_file_object:
-                mapfileContent = mapfile_file_object.readlines()
+            with open(configuration["patterns"]["mapfiles"][mapfile]["associatedFilename"], "r") as mapfileFileObject:
+                mapfileContent = mapfileFileObject.readlines()
 
             # Storing the name of the mapfile
             mapfileName = os.path.split(configuration["patterns"]["mapfiles"][mapfile]["associatedFilename"])[-1]
@@ -84,7 +84,7 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
                 memoryRegionsToExcludeFromMapfiles[mapfileName] = configuration["patterns"]["mapfiles"][mapfile]["memRegionExcludes"]
 
             # If there is a VAS defined for the mapfile, then the addresses found in it are virtual addresses, otherwise they are physical addresses
-            mapfileContainsVirtualAddresses = True if "VAS" in configuration["patterns"]["mapfiles"][mapfile] else False
+            mapfileContainsVirtualAddresses = ("VAS" in configuration["patterns"]["mapfiles"][mapfile])
             # Loading the regex pattern that will be used for this mapfile
             regexPatternData = self.__getRegexPattern(defaultRegexPattern, configuration["patterns"]["mapfiles"][mapfile])
 
@@ -116,10 +116,10 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
                                                                                   monolithFileContent)
                         # Check whether the address translation failed
                         if physicalAddress is None:
-                            warning_section_name = lineComponents.group(regexPatternData.Groups.section).rstrip()
-                            warning_object_name = ("::" + lineComponents.group(regexPatternData.Groups.module).rstrip()) if hasattr(regexPatternData.Groups, "module") else ""
+                            warningSectionName = lineComponents.group(regexPatternData.Groups.section).rstrip()
+                            warningObjectName = ("::" + lineComponents.group(regexPatternData.Groups.module).rstrip()) if hasattr(regexPatternData.Groups, "module") else ""
                             sc().warning("The address translation failed for the element: \"" + mapfile + "(line " + str(lineNumber) + ")::" +
-                                         warning_section_name + warning_object_name + " (size: " + str(int(lineComponents.group(regexPatternData.Groups.size), 16)) + " B)\" of the configID \"" +
+                                         warningSectionName + warningObjectName + " (size: " + str(int(lineComponents.group(regexPatternData.Groups.size), 16)) + " B)\" of the configID \"" +
                                          configId + "\"!")
                             # We will not store this element and continue with the next one
                             continue
@@ -130,7 +130,7 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
                     # Determining the addressLength
                     addressLength = int(lineComponents.group(regexPatternData.Groups.size), 16)
                     # Check whether the address is valid
-                    if 0 > addressLength:
+                    if addressLength < 0:
                         sc().warning("Negative addressLength found.")
 
                     # Creating the compiler specific data that we will store in the memEntry
@@ -223,8 +223,8 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
             if virtualSectionName in virtualSectionsOfThisMapfile:
                 # Setting up data for the translation (for the end addresses we need to be careful in case we have zero lengths)
                 virtualSectionStartAddress = entry[monolithIndexVirtual]
-                virtualSectionEndAddress = virtualSectionStartAddress + (entry[monolithIndexSize] - 1) if 0 < entry[monolithIndexSize] else virtualSectionStartAddress
-                elementVirtualEndAddress = elementVirtualStartAddress + (elementSize - 1) if 0 < elementSize else elementVirtualStartAddress
+                virtualSectionEndAddress = virtualSectionStartAddress + (entry[monolithIndexSize] - 1) if entry[monolithIndexSize] > 0 else virtualSectionStartAddress
+                elementVirtualEndAddress = elementVirtualStartAddress + (elementSize - 1) if elementSize > 0 else elementVirtualStartAddress
                 # If the element is contained by this virtual section then we will use this one for the translation
                 if virtualSectionStartAddress <= elementVirtualStartAddress <= elementVirtualEndAddress <= virtualSectionEndAddress:
                     addressTranslationOffset = entry[monolithIndexOffset]

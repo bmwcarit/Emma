@@ -57,6 +57,9 @@ class TestData():
 
 
 class MemEntryTestCase(unittest.TestCase, TestData):
+    # pylint: disable=invalid-name
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+
     def setUp(self):
         TestData.__init__(self)
 
@@ -248,6 +251,9 @@ class MemEntryTestCase(unittest.TestCase, TestData):
 
 
 class MemEntryHandlerTestCase(unittest.TestCase):
+    # pylint: disable=invalid-name
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+
     def setUp(self):
         # Setting up the logger
         def exitProgam():
@@ -260,6 +266,9 @@ class MemEntryHandlerTestCase(unittest.TestCase):
 
 
 class SectionEntryTestCase(unittest.TestCase, TestData):
+    # pylint: disable=invalid-name
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+
     def setUp(self):
         TestData.__init__(self)
 
@@ -287,6 +296,9 @@ class SectionEntryTestCase(unittest.TestCase, TestData):
 
 
 class ObjectEntryTestCase(unittest.TestCase, TestData):
+    # pylint: disable=invalid-name
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+
     def setUp(self):
         TestData.__init__(self)
 

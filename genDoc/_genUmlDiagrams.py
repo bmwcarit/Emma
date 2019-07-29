@@ -22,12 +22,13 @@ import argparse
 import subprocess
 
 import pypiscout as sc
-import gprof2dot    # pylint: disable=unused-wildcard-import,wildcard-import Rationale: Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
+import gprof2dot    # pylint: disable=unused-import
+                    # Rationale: Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 
 
-listOfSourceFilePaths = [           # "../../*" instead of "../*" since we change the working directory within the system call
+LIST_OF_SOURCE_FILE_PATHS = [           # "../../*" instead of "../*" since we change the working directory within the system call
     "../../emma_libs/categorisation.py",
     "../../emma_libs/configuration.py",
     "../../emma_libs/ghsConfiguration.py",
@@ -82,7 +83,7 @@ def ParseArguments():
 
 def main(arguments):
     sc.info("Generating UML Class diagrams from the source files...")
-    for sourceFilePath in listOfSourceFilePaths:
+    for sourceFilePath in LIST_OF_SOURCE_FILE_PATHS:
         sourceFileName = os.path.splitext(os.path.basename(sourceFilePath))[0]
         subprocess.run("pyreverse -AS -o " + README_PICTURE_FORMAT + " " + sourceFilePath + " -p " + sourceFileName, cwd=README_CALL_GRAPH_AND_UML_FOLDER_NAME, shell=True)
         # Note that pyreverse must be called via subprocess (do NOT import it as a module)
@@ -91,8 +92,8 @@ def main(arguments):
 
 
 if __name__ == "__main__":
-    commandLineArguments = ParseArguments()
+    args = ParseArguments()
     if not os.path.isdir(README_CALL_GRAPH_AND_UML_FOLDER_NAME):
         sc.info("The folder \"" + README_CALL_GRAPH_AND_UML_FOLDER_NAME + "\" was created because it did not exist...")
         os.makedirs(README_CALL_GRAPH_AND_UML_FOLDER_NAME)
-    main(commandLineArguments)
+    main(args)

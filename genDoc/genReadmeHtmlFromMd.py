@@ -22,7 +22,8 @@ import os
 import argparse
 
 from pypiscout.SCout_Logger import Logger as sc
-import gprof2dot    # pylint: disable=unused-wildcard-import,wildcard-import Rationale: Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
+import gprof2dot    # pylint: disable=unused-import
+                    # Rationale: Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
 
 sys.path.append("../")
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import

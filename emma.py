@@ -29,8 +29,8 @@ import shared_libs.emma_helper
 import emma_libs.memoryManager
 
 
-def main(args):
-    memoryManager = emma_libs.memoryManager.MemoryManager(*processArguments(args))
+def main(arguments):
+    memoryManager = emma_libs.memoryManager.MemoryManager(*processArguments(arguments))
     memoryManager.readConfiguration()
     memoryManager.processMapfiles()
     memoryManager.createReports()
@@ -125,32 +125,32 @@ def parseArgs(arguments=""):
     # We will either parse the arguments string if it is not empty,
     # or in the default case the data from sys.argv
     if arguments == "":
-        args = parser.parse_args()
+        parsedArguments = parser.parse_args()
     else:
-        args = parser.parse_args(arguments)
+        parsedArguments = parser.parse_args(arguments)
 
-    return args
+    return parsedArguments
 
 
-def processArguments(args):
-    projectName = shared_libs.emma_helper.projectNameFromPath(shared_libs.emma_helper.joinPath(args.project))
-    configurationPath = shared_libs.emma_helper.joinPath(args.project)
-    mapfilesPath = shared_libs.emma_helper.joinPath(args.mapfiles)
+def processArguments(arguments):
+    projectName = shared_libs.emma_helper.projectNameFromPath(shared_libs.emma_helper.joinPath(arguments.project))
+    configurationPath = shared_libs.emma_helper.joinPath(arguments.project)
+    mapfilesPath = shared_libs.emma_helper.joinPath(arguments.mapfiles)
 
     # If an output directory was not specified then the result will be stored to the project folder
-    if args.dir is None:
-        directory = args.project
+    if arguments.dir is None:
+        directory = arguments.project
     else:
         # Get paths straight (only forward slashes)
-        directory = shared_libs.emma_helper.joinPath(args.dir)
+        directory = shared_libs.emma_helper.joinPath(arguments.dir)
     # Get paths straight (only forward slashes) or set it to empty if it was empty
-    subDir = shared_libs.emma_helper.joinPath(args.subdir) if args.subdir is not None else ""
+    subDir = shared_libs.emma_helper.joinPath(arguments.subdir) if arguments.subdir is not None else ""
 
     outputPath = shared_libs.emma_helper.joinPath(directory, subDir, OUTPUT_DIR)
-    analyseDebug = args.analyse_debug
-    createCategories = args.create_categories
-    removeUnmatched = args.remove_unmatched
-    noPrompt = args.noprompt
+    analyseDebug = arguments.analyse_debug
+    createCategories = arguments.create_categories
+    removeUnmatched = arguments.remove_unmatched
+    noPrompt = arguments.noprompt
 
     return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt
 
