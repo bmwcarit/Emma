@@ -31,7 +31,6 @@ class Configuration:
     def __init__(self):
         self.specificConfigurations = dict()
         self.globalConfig = None
-        pass
 
     def readConfiguration(self, configurationPath, mapfilesPath, noPrompt):
         """
@@ -60,7 +59,7 @@ class Configuration:
         # Creating the SpecificConfiguration objects
         for configId in self.globalConfig:
             usedCompiler = self.globalConfig[configId]["compiler"]
-            self.specificConfigurations[configId] = emma_libs.specificConfigurationFactory.createSpecificConfiguration(usedCompiler, noPrompt)
+            self.specificConfigurations[configId] = emma_libs.specificConfigurationFactory.createSpecificConfiguration(usedCompiler, noPrompt=noPrompt)
             # Processing the compiler dependent parts of the configuration
             sc().info("Processing the mapfiles of the configID \"" + configId + "\"")
             self.specificConfigurations[configId].readConfiguration(configurationPath, mapfilesPath, configId, self.globalConfig[configId])
@@ -81,17 +80,18 @@ class Configuration:
 
         # Loading the config files of the defined configID-s
         for configId in list(globalConfig.keys()):  # List of keys required so we can remove the ignoreConfigID entrys
+            # Skip configID if ["ignoreConfigID"] is True
             if IGNORE_CONFIG_ID in globalConfig[configId].keys():
-                # Skip configID if ["ignoreConfigID"] is True
-                if type(globalConfig[configId][IGNORE_CONFIG_ID]) is not bool:
-                    # Check that flag has the correct type
+                # Check that flag has the correct type
+                if not isinstance(globalConfig[configId][IGNORE_CONFIG_ID], bool):
                     sc().error("The " + IGNORE_CONFIG_ID + " of " + configId + " has a type " +
                                str(type(globalConfig[configId][IGNORE_CONFIG_ID])) + " instead of bool. " +
                                "Please be sure to use correct JSON syntax: boolean constants are written true and false.")
                 elif globalConfig[configId][IGNORE_CONFIG_ID] is True:
                     globalConfig.pop(configId)
 
-        if not len(globalConfig):
+        # Check whether the globalConfig is empty
+        if not globalConfig:
             sc().warning("No configID was defined or all of them were ignored.")
 
         return globalConfig

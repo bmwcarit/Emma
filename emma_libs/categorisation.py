@@ -126,7 +126,7 @@ class Categorisation:
             sc().info("Merge categoriesSections.json with categorised modules from " + CATEGORIES_KEYWORDS_SECTIONS_JSON + "?\nIt will be overwritten.\n`y` to accept, any other key to discard.")
             text = input("> ") if not self.noPrompt else sys.exit(-10)
             # If an update is allowed
-            if "y" == text:
+            if text == "y":
                 self.__updateCategoriesJson(self.categoriesSections, self.keywordCategorisedSections, self.categoriesSectionsPath)
                 # Re-categorize sections if the categorisation file have been changed
                 self.__fillOutSectionCategories(sectionCollection)
@@ -158,7 +158,7 @@ class Categorisation:
             sc().info("Merge categoriesObjects.json with categorised modules from " + CATEGORIES_KEYWORDS_OBJECTS_JSON + "?\nIt will be overwritten.\n`y` to accept, any other key to discard.")
             text = input("> ") if not self.noPrompt else sys.exit(-10)
             # If an update is allowed
-            if "y" == text:
+            if text == "y":
                 self.__updateCategoriesJson(self.categoriesObjects, self.keywordCategorisedObjects, self.categoriesObjectsPath)
                 sc().info("The " + self.categoriesObjectsPath + " was updated.")
                 # Re-categorize objects if the categorisation file have been changed

@@ -35,6 +35,8 @@ class MemoryManager:
     A class to organize the processing of the configuration and the mapfiles and the storage of the created reports.
     """
     class Settings:
+        # pylint: disable=too-many-instance-attributes, too-many-arguments
+        # Rationale: This class´s only purpose is to store settings, thus having too many members and parameters is not an error.
         """
         Settings that influence the operation of the MemoryManager object.
         """
@@ -49,6 +51,9 @@ class MemoryManager:
             self.noPrompt = noPrompt
 
     def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt):
+        # pylint: disable=too-many-arguments
+        # Rationale: We need to initialize the Settings, so the number of arguments are needed.
+
         # Processing the command line arguments and storing it into the settings member
         self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt)
         # Check whether the configuration and the mapfiles folders exist
@@ -131,8 +136,8 @@ class MemoryManager:
             # Putting the same consumer collection types together
             # (At this points the collections are grouped by configId then by their types)
             consumerCollections = {}
-            for configId in self.memoryContent.keys():
-                for collectionType in self.memoryContent[configId].keys():
+            for configId in self.memoryContent:
+                for collectionType in self.memoryContent[configId]:
                     if collectionType not in consumerCollections:
                         consumerCollections[collectionType] = []
                     consumerCollections[collectionType].extend(self.memoryContent[configId][collectionType])

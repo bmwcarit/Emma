@@ -21,13 +21,11 @@ import csv
 import bisect
 import copy
 import datetime
-import collections
 
 from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *   # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
-import emma_libs.memoryEntry
 
 
 # Timestamp for the report file names

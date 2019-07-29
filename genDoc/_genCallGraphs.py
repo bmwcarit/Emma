@@ -24,7 +24,7 @@ import pstats
 import subprocess
 
 from pypiscout.SCout_Logger import Logger as sc
-import gprof2dot                          # Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
+import gprof2dot    # pylint: disable=unused-wildcard-import,wildcard-import Rationale: Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
@@ -101,59 +101,59 @@ class ProfilerFilter:
         3 - Call the filterProfilerData with the profiler data
     """
 
-    def __init__(self, root_folder, list_of_filters=None):
-        if os.path.isdir(root_folder):
-            self.root_folder = root_folder
-            self.source_file_list = []
-            if None is list_of_filters:
+    def __init__(self, rootFolder, listOfFilters=None):
+        if os.path.isdir(rootFolder):
+            self.rootFolder = rootFolder
+            self.sourceFileList = []
+            if None is listOfFilters:
                 self.__collectSourceFiles()
-            elif all(isinstance(element, str) for element in list_of_filters):
-                self.source_file_list = list_of_filters
+            elif all(isinstance(element, str) for element in listOfFilters):
+                self.sourceFileList = listOfFilters
             else:
                 raise ValueError("The list_of_filters needs to be a list of strings or set to None for a default filter based on the root_folder argument!")
         else:
             raise ValueError("The root_folder parameter must be a valid path to the project root folder!")
 
     def __collectSourceFiles(self):
-        for root, directories, files in os.walk(self.root_folder):
+        for root, directories, files in os.walk(self.rootFolder):
             for file in files:
                 if os.path.splitext(file)[1] == ".py":
-                    self.source_file_list.append(shared_libs.emma_helper.joinPath(root, file))
+                    self.sourceFileList.append(shared_libs.emma_helper.joinPath(root, file))
 
     def __isThisOurCode(self, file_name):
         result = False
-        for source_file in self.source_file_list:
-            if -1 != file_name.find(source_file):
+        for sourceFile in self.sourceFileList:
+            if -1 != file_name.find(sourceFile):
                 result = True
                 break
         return result
 
     def filterProfilerData(self, tree):
         # Initialization of variables
-        do_not_cut_this_off = False         # Reason is that we can get a tree that is empty and in that case the variable would be uninitialized
-        list_of_keys = list(tree.keys())    # This needs to be done like this because the keys() method returns an iterator not a list
-        for key in list_of_keys:
-            this_is_our_code = self.__isThisOurCode(key[0])
-            we_have_code_below_this = False
+        doNotCutThisOff = False         # Reason is that we can get a tree that is empty and in that case the variable would be uninitialized
+        listOfKeys = list(tree.keys())    # This needs to be done like this because the keys() method returns an iterator not a list
+        for key in listOfKeys:
+            thisIsOurCode = self.__isThisOurCode(key[0])
+            weHaveCodeBelowThis = False
             value = tree.get(key)
             for element in value:
                 if type(element) is dict:
                     if self.filterProfilerData(element):
-                        we_have_code_below_this |= True
-            do_not_cut_this_off = this_is_our_code or we_have_code_below_this
-            if not do_not_cut_this_off:
+                        weHaveCodeBelowThis |= True
+            doNotCutThisOff = thisIsOurCode or weHaveCodeBelowThis
+            if not doNotCutThisOff:
                 del tree[key]
-        return do_not_cut_this_off
+        return doNotCutThisOff
 
 
-def generateCallGraph(profile_file, execution_string, verbose):
-    sc().info("Generating call graphs for: " + execution_string)
+def generateCallGraph(profileFile, executionString, verbose):
+    sc().info("Generating call graphs for: " + executionString)
     sc().info("The results will be stored in: " + shared_libs.emma_helper.joinPath(os.getcwd(), README_CALL_GRAPH_AND_UML_FOLDER_NAME))
 
     sc().info("Analyzing the program and creating the .profile file...")
-    subprocess.run("python -m cProfile -o " + profile_file + " " + execution_string)
+    subprocess.run("python -m cProfile -o " + profileFile + " " + executionString)
 
-    profiler_data = pstats.Stats(profile_file)
+    profiler_data = pstats.Stats(profileFile)
     profiler_data.sort_stats(pstats.SortKey.CUMULATIVE)
     if verbose:
         sc().info("The content of the profile file:")
@@ -163,32 +163,32 @@ def generateCallGraph(profile_file, execution_string, verbose):
     profiler_filter = ProfilerFilter(EmmaRootFolderRelative)
     profiler_filter.filterProfilerData(profiler_data.stats)
 
-    filtered_profile_file = os.path.splitext(profile_file)[0] + FilteredProfileSuffix
-    sc().info("Storing the filtered profile file to:", filtered_profile_file)
-    profiler_data.dump_stats(filtered_profile_file)
+    filteredProfileFile = os.path.splitext(profileFile)[0] + FilteredProfileSuffix
+    sc().info("Storing the filtered profile file to:", filteredProfileFile)
+    profiler_data.dump_stats(filteredProfileFile)
 
     sc().info("Creating the .dot file from the .profile file...")
-    subprocess.run("gprof2dot -f pstats " + profile_file + " -o " + profile_file + ".dot")
+    subprocess.run("gprof2dot -f pstats " + profileFile + " -o " + profileFile + ".dot")
 
     sc().info("Creating the .dot file from the filtered .profile file...")
-    subprocess.run("gprof2dot -f pstats " + filtered_profile_file + " -o " + filtered_profile_file + ".dot")
+    subprocess.run("gprof2dot -f pstats " + filteredProfileFile + " -o " + filteredProfileFile + ".dot")
 
     sc().info("Creating the .png file from the .dot file...")
-    subprocess.run("dot -T" + README_PICTURE_FORMAT + " -Gdpi=" + str(DPI_DOCUMENTATION) + " " + profile_file + ".dot -o" + profile_file + "." + README_PICTURE_FORMAT)
+    subprocess.run("dot -T" + README_PICTURE_FORMAT + " -Gdpi=" + str(DPI_DOCUMENTATION) + " " + profileFile + ".dot -o" + profileFile + "." + README_PICTURE_FORMAT)
 
     sc().info("Creating the .png file from the filtered .dot file...")
-    subprocess.run("dot -T" + README_PICTURE_FORMAT + " -Gdpi=" + str(DPI_DOCUMENTATION) + " " + filtered_profile_file + ".dot -o" + filtered_profile_file + "." + README_PICTURE_FORMAT)
+    subprocess.run("dot -T" + README_PICTURE_FORMAT + " -Gdpi=" + str(DPI_DOCUMENTATION) + " " + filteredProfileFile + ".dot -o" + filteredProfileFile + "." + README_PICTURE_FORMAT)
 
     print("")
 
 
 def main(arguments):
     # Store original path variables
-    path_old_value = os.environ["PATH"]
+    pathOldValue = os.environ["PATH"]
     if not("Graphviz" in os.environ["PATH"]):
-        graphviz_bin_abspath = os.path.abspath(arguments.graphviz_bin_folder)
+        graphvizBinAbspath = os.path.abspath(arguments.graphviz_bin_folder)
         # Add to path
-        os.environ["PATH"] += (graphviz_bin_abspath + ";")
+        os.environ["PATH"] += (graphvizBinAbspath + ";")
 
     try:
         generateCallGraph(EmmaProfileFile, EmmaExecutionString, arguments.verbose)
@@ -198,7 +198,7 @@ def main(arguments):
         sc().error("An exception was caught:", e)
 
     # Get back initial path config
-    os.environ["PATH"] = path_old_value
+    os.environ["PATH"] = pathOldValue
 
 
 if __name__ == "__main__":

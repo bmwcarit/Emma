@@ -33,7 +33,6 @@ class SpecificConfiguration(abc.ABC):
                          If True, then no user prompts shall be made. It is suggested that the programs fails in case
                          they can not decide the necessary action.
         """
-        pass
 
     @abc.abstractmethod
     def readConfiguration(self, configurationPath, mapfilesPath, configId, configuration) -> None:
@@ -46,7 +45,6 @@ class SpecificConfiguration(abc.ABC):
         :param configuration: The configuration dictionary to which the configuration elements need to be added.
         :return: None
         """
-        pass
 
     @abc.abstractmethod
     def checkConfiguration(self, configId, configuration) -> bool:
@@ -58,4 +56,3 @@ class SpecificConfiguration(abc.ABC):
         :param configuration: The configuration that needs to be checked.
         :return: True if the configuration is correct, False otherwise.
         """
-        pass

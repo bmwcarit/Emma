@@ -124,7 +124,7 @@ def parseArgs(arguments=""):
 
     # We will either parse the arguments string if it is not empty,
     # or in the default case the data from sys.argv
-    if "" == arguments:
+    if arguments == "":
         args = parser.parse_args()
     else:
         args = parser.parse_args(arguments)
@@ -148,11 +148,11 @@ def processArguments(args):
 
     outputPath = shared_libs.emma_helper.joinPath(directory, subDir, OUTPUT_DIR)
     analyseDebug = args.analyse_debug
-    create_categories = args.create_categories
-    remove_unmatched = args.remove_unmatched
-    noprompt = args.noprompt
+    createCategories = args.create_categories
+    removeUnmatched = args.remove_unmatched
+    noPrompt = args.noprompt
 
-    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, create_categories, remove_unmatched, noprompt
+    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt
 
 
 if __name__ == "__main__":
@@ -162,9 +162,7 @@ if __name__ == "__main__":
     def exitProgram():
         sys.exit(-10)
 
-    actionWarning = exitProgram if args.Werror is not None else None
-    actionError = exitProgram
-    sc(-1, actionWarning=actionWarning, actionError=actionError)
+    sc(-1, actionWarning=(exitProgram if args.Werror is not None else None), actionError=exitProgram)
 
     sc().header("Emma Memory and Mapfile Analyser", symbol="/")
 

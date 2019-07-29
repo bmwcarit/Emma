@@ -91,10 +91,10 @@ def unifyAddress(address):
     :param address: hex or dec address
     :return: [addressHex, addressDec)
     """
-    if type(address) == str and address is not None:
+    if isinstance(address, str) and address is not None:
         address = int(address, 16)
         addressHex = hex(address)
-    elif type(address) == int and address is not None:
+    elif isinstance(address, int) and address is not None:
         addressHex = hex(address)
     else:
         sc().error("unifyAddress(): Address must be either of type int or str!")
@@ -104,16 +104,20 @@ def unifyAddress(address):
 
 def getTimestampFromFilename(filename):
     """
-    Get the timestamp from the summary
-    :param filename: summary filename in ./memstats
-    :return: The timestamp in string form
+    Get the timestamp from a report file name.
+    :param filename: Name of the report file.
+    :return: The timestamp in string form if found in the filename, else None.
     """
+    result = None
+
     pattern = re.compile(r"\d{4}-\d{2}-\d{2}-\d{2}h\d{2}s\d{2}")  # Matches timestamps of the following format: `2017-11-06-14h56s52`
     match = re.search(pattern, filename)
     if match:
-        return match.group()
+        result = match.group()
     else:
         sc().error("Could not match the given filename:", filename)
+
+    return result
 
 
 def getColourValFromString(inputString):
@@ -147,14 +151,18 @@ def lastModifiedFilesInDir(path, extension):
 
 def evalSummary(filename):
     """
-    Function to check whether current memStats file is image or module summary
-    :param filename: Filename to check
-    :return: "Image_Summary" or "Module_Summary"
+    Function to check whether current report file is image or module summary.
+    :param filename: Filename of a report.
+    :return: FILE_IDENTIFIER_SECTION_SUMMARY if it´s a section- or FILE_IDENTIFIER_OBJECT_SUMMARY if it´s an object report, else None.
     """
+    result = None
+
     if FILE_IDENTIFIER_SECTION_SUMMARY in filename:
-        return FILE_IDENTIFIER_SECTION_SUMMARY
+        result = FILE_IDENTIFIER_SECTION_SUMMARY
     elif FILE_IDENTIFIER_OBJECT_SUMMARY in filename:
-        return FILE_IDENTIFIER_OBJECT_SUMMARY
+        result = FILE_IDENTIFIER_OBJECT_SUMMARY
+
+    return result
 
 
 def projectNameFromPath(path):
@@ -182,23 +190,25 @@ def changePictureLinksToEmbeddingInHtmlData(htmlData, sourceDataPath=""):
     :param sourceDataPath: This is the path of the file from which the htmlData comes from. It is needed during the search for the picture files.
     :return: The modified htmlData.
     """
-    list_of_linked_pictures = re.findall(r"<img src=\"([^\"]*)", htmlData)
-    for linked_picture in list_of_linked_pictures:
-        # If the linked_picture is not an absolute path it needs to be prepended with the sourceDataPath
-        if os.path.isabs(linked_picture):
-            linked_picture_path = linked_picture
-        else:
-            linked_picture_path = os.path.join(os.path.dirname(sourceDataPath), linked_picture)
+    listOfLinkedPictures = re.findall(r"<img src=\"([^\"]*)", htmlData)
 
-        if not os.path.exists(linked_picture_path):
-            sc().warning("The file " + linked_picture_path + " does not exist!")
+    for linkedPicture in listOfLinkedPictures:
+        # If the linkedPicture is not an absolute path it needs to be prepended with the sourceDataPath
+        if os.path.isabs(linkedPicture):
+            linkedPicturePath = linkedPicture
+        else:
+            linkedPicturePath = os.path.join(os.path.dirname(sourceDataPath), linkedPicture)
+
+        if not os.path.exists(linkedPicturePath):
+            sc().warning("The file " + linkedPicturePath + " does not exist!")
             continue
 
-        with open(linked_picture_path, "rb") as file_object:
+        with open(linkedPicturePath, "rb") as file_object:
             encoded_picture_data = base64.encodebytes(file_object.read())
-        linked_picture_file_extension = os.path.splitext(linked_picture)[1][1:]
-        replacement_string = "data:image/" + linked_picture_file_extension + ";base64," + encoded_picture_data.decode() + "\" alt=\"" + linked_picture
-        htmlData = htmlData.replace(linked_picture, replacement_string)
+        linkedPictureFileExtension = os.path.splitext(linkedPicture)[1][1:]
+        replacementString = "data:image/" + linkedPictureFileExtension + ";base64," + encoded_picture_data.decode() + "\" alt=\"" + linkedPicture
+        htmlData = htmlData.replace(linkedPicture, replacementString)
+
     return htmlData
 
 
@@ -223,49 +233,49 @@ def convertMarkdownFileToHtmlFile(markdownFilePath, htmlFilePath):
     :param htmlFilePath: Path to the .html file.
     :return: nothing
     """
-    with open(markdownFilePath, "r") as file_object:
-        markdownData = file_object.read()
+    with open(markdownFilePath, "r") as fileObject:
+        markdownData = fileObject.read()
 
     htmlData = convertMarkdownDataToHtmlData(markdownData)
     htmlData = changePictureLinksToEmbeddingInHtmlData(htmlData, markdownFilePath)
     htmlData = HTML_TEMPLATE.replace(HTML_TEMPLATE_BODY_PLACEHOLDER, htmlData)
 
-    with open(htmlFilePath, "w") as file_object:
-        file_object.write(htmlData)
+    with open(htmlFilePath, "w") as fileObject:
+        fileObject.write(htmlData)
 
 
-def findFilesInDir(search_directory, regex_pattern=r".*", including_root=True):
+def findFilesInDir(search_directory, regexPattern=r".*", includingRoot=True):
     """
     It looks recursively for files in the search_directory that are matching the regex_pattern.
     :param search_directory: The directory in which the search will be done.
-    :param regex_pattern: The regex patterns that the files will be matched against.
-    :param including_root: If true, the search directory will be added to the path of the search results as well.
+    :param regexPattern: The regex patterns that the files will be matched against.
+    :param includingRoot: If true, the search directory will be added to the path of the search results as well.
     :return: The paths of the files found.
     :rtype: list of str
     """
     result = []
     for (root, directories, files) in os.walk(search_directory):
         for file in files:
-            if re.search(regex_pattern, file) is not None:
-                if including_root:
+            if re.search(regexPattern, file) is not None:
+                if includingRoot:
                     result.append(joinPath(root, file))
                 else:
                     result.append(file)
     return result
 
 
-def saveMatplotlibPicture(picture_data, path_to_save, savefig_format, savefig_dpi, savefig_transparent):
+def saveMatplotlibPicture(pictureData, pathToSave, savefigFormat, savefigDpi, savefigTransparent):
     """
     Function to save a matplotlib figure to disk. It ensures that the picture file is properly flushed.
-    :param picture_data: A matplotlib Figure object that has a savefig method.
-    :param path_to_save: The path where the picture will be saved to.
-    :param savefig_format: This value will be forwarded to the savefig method of the Figure object. (See savefig´s description for details)
-    :param savefig_dpi: This value will be forwarded to the savefig method of the Figure object. (See savefig´s description for details)
-    :param savefig_transparent: This value will be forwarded to the savefig method of the Figure object. (See savefig´s description for details)
+    :param pictureData: A matplotlib Figure object that has a savefig method.
+    :param pathToSave: The path where the picture will be saved to.
+    :param savefigFormat: This value will be forwarded to the savefig method of the Figure object. (See savefig´s description for details)
+    :param savefigDpi: This value will be forwarded to the savefig method of the Figure object. (See savefig´s description for details)
+    :param savefigTransparent: This value will be forwarded to the savefig method of the Figure object. (See savefig´s description for details)
     :return: nothing
     """
-    with open(path_to_save, "wb") as file_object:
-        picture_data.savefig(file_object, format=savefig_format, dpi=savefig_dpi, transparent=savefig_transparent)
+    with open(pathToSave, "wb") as file_object:
+        pictureData.savefig(file_object, format=savefigFormat, dpi=savefigDpi, transparent=savefigTransparent)
         file_object.flush()
 
 

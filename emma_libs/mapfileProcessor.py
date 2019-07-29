@@ -39,7 +39,6 @@ class MapfileProcessor(abc.ABC):
         :return: A tuple of two lists of MemEntry objects representing the sections and objects.
                  Illustration: (sectionCollection, objectCollection), where sectionCollection is list(MemEntry) and objectCollection is list(MemEntry).
         """
-        pass
 
     @staticmethod
     def fillOutMemoryRegionsAndMemoryTypes(listOfMemEntryObjects, configuration, removeElementsWithoutMemoryRegionOrType, memoryRegionsToExcludeFromMapfiles=None):
@@ -70,8 +69,8 @@ class MapfileProcessor(abc.ABC):
             :param reason: Reason why the element will be removed.
             :return: None
             """
-            object_name = ("::" + memEntry.objectName) if hasattr(memEntry, "module") else ""
-            loggerLevel("The element: \"" + memEntry.mapfile + "::" + memEntry.sectionName + object_name +
+            objectName = ("::" + memEntry.objectName) if hasattr(memEntry, "module") else ""
+            loggerLevel("The element: \"" + memEntry.mapfile + "::" + memEntry.sectionName + objectName +
                         " (@" + memEntry.addressStartHex() + ", size: " + str(memEntry.addressLength) + " B)\" of the configID \"" +
                         memEntry.configID + "\" was removed. Reason: " + reason)
 

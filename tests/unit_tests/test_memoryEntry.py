@@ -313,5 +313,5 @@ class ObjectEntryTestCase(unittest.TestCase, TestData):
         self.assertEqual(name, (self.sectionName + "::" + self.objectName))
 
 
-if "__main__" == __name__:
+if __name__ == "__main__":
     unittest.main()

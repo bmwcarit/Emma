@@ -26,7 +26,14 @@ import shared_libs.emma_helper
 
 
 class MemEntry:
+    """
+    A class to represent an entry in the memory. This is a generic class, it can represent both sections and objects.
+    To handle objects of this class according to their type, please use one of the subclasses of the @ref:MemEntryHandler.
+    """
     def __init__(self, configID, mapfileName, addressStart, addressLength=None, addressEnd=None, sectionName="", objectName="", memType="", memTypeTag="", category="", compilerSpecificData=None):
+        # pylint: disable=too-many-instance-attributes, disable=too-many-arguments
+        # Rationale: This class needs to store all the attributes of an entry and needs to be able to be fully setup during construction.
+
         """
         Constructor of the MemEntry class.
         :param configID: [string] The configId the entry belongs to.
@@ -74,7 +81,7 @@ class MemEntry:
         self.memTypeTag = memTypeTag
         self.category = category
 
-        if type(compilerSpecificData) is collections.OrderedDict:
+        if isinstance(compilerSpecificData, collections.OrderedDict):
             self.compilerSpecificData = compilerSpecificData
         else:
             sc().error("The compilerSpecificData has to be of type " + type(collections.OrderedDict).__name__ + " instad of " + type(compilerSpecificData).__name__ + "!")
@@ -192,7 +199,6 @@ class MemEntryHandler(abc.ABC):
         :param second: MemEntry object.
         :return: True if the first and second objects are equal, false otherwise.
         """
-        pass
 
     @staticmethod
     @abc.abstractmethod
@@ -202,7 +208,6 @@ class MemEntryHandler(abc.ABC):
         :param memEntry: The MemEntry object that´s name want to be get.
         :return: A string representing the name created from the MemEntry object.
         """
-        pass
 
 
 class SectionEntry(MemEntryHandler):

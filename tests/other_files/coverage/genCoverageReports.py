@@ -45,34 +45,34 @@ def main():
     sc().header("Generating Unit Test Coverage Report")
 
     # Setting up the variables (folder and file names...etc.)
-    reports_folder = os.path.join(sys.path[0], "reports")
-    unit_test_folder = os.path.join(sys.path[0], "..", "..", "unit_tests")
+    reportsFolder = os.path.join(sys.path[0], "reports")
+    unitTestFolder = os.path.join(sys.path[0], "..", "..", "unit_tests")
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%Hh%Ms%S")
-    actual_report_folder = os.path.join(reports_folder, timestamp)
-    actual_report_source_folder = os.path.join(reports_folder, timestamp, "source")
-    source_file_name = ".coverage"
+    actualReportFolder = os.path.join(reportsFolder, timestamp)
+    actualReportSourceFolder = os.path.join(reportsFolder, timestamp, "source")
+    sourceFileName = ".coverage"
 
     # Checking whether the output folders exist
-    if not os.path.isdir(actual_report_folder):
-        os.mkdir(actual_report_folder)
-        if not os.path.isdir(actual_report_source_folder):
-            os.mkdir(actual_report_source_folder)
+    if not os.path.isdir(actualReportFolder):
+        os.mkdir(actualReportFolder)
+        if not os.path.isdir(actualReportSourceFolder):
+            os.mkdir(actualReportSourceFolder)
         else:
-            sc().error("Error! The folder " + actual_report_source_folder + " already exists!")
+            sc().error("Error! The folder " + actualReportSourceFolder + " already exists!")
     else:
-        sc().error("Error! The folder " + actual_report_folder + " already exists!")
+        sc().error("Error! The folder " + actualReportFolder + " already exists!")
 
     # Switching to the unit tests folder and running the tests
-    os.chdir(unit_test_folder)
+    os.chdir(unitTestFolder)
     sc().info("Running the unit tests...")
     subprocess.run(["coverage", "run", "-m", "unittest", "discover", "-v"])
 
     # Moving the .coverage file to the source folder of the report and switching to that folder
-    os.rename(os.path.join(unit_test_folder, source_file_name), os.path.join(actual_report_source_folder, source_file_name))
-    os.chdir(actual_report_source_folder)
+    os.rename(os.path.join(unitTestFolder, sourceFileName), os.path.join(actualReportSourceFolder, sourceFileName))
+    os.chdir(actualReportSourceFolder)
 
     sc().info("Creating the .html report...")
-    subprocess.run(["coverage", "html", str("--directory=" + actual_report_folder)])
+    subprocess.run(["coverage", "html", str("--directory=" + actualReportFolder)])
 
 
 if __name__ == '__main__':

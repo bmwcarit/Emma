@@ -263,5 +263,5 @@ class EmmaTestProject(unittest.TestCase):
         self.checkReport(reportData, expectedReportData)
 
 
-if "__main__" == __name__:
+if __name__ == "__main__":
     unittest.main()

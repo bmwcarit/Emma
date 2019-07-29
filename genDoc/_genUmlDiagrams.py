@@ -22,12 +22,12 @@ import argparse
 import subprocess
 
 import pypiscout as sc
-import gprof2dot           # Not directly used; later we do a sys-call wich needs the library
+import gprof2dot    # pylint: disable=unused-wildcard-import,wildcard-import Rationale: Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 
 
-list_of_source_file_paths = [           # "../../*" instead of "../*" since we change the working directory within the system call
+listOfSourceFilePaths = [           # "../../*" instead of "../*" since we change the working directory within the system call
     "../../emma_libs/categorisation.py",
     "../../emma_libs/configuration.py",
     "../../emma_libs/ghsConfiguration.py",
@@ -82,9 +82,9 @@ def ParseArguments():
 
 def main(arguments):
     sc.info("Generating UML Class diagrams from the source files...")
-    for source_file_path in list_of_source_file_paths:
-        source_file_name = os.path.splitext(os.path.basename(source_file_path))[0]
-        subprocess.run("pyreverse -AS -o " + README_PICTURE_FORMAT + " " + source_file_path + " -p " + source_file_name, cwd=README_CALL_GRAPH_AND_UML_FOLDER_NAME, shell=True)
+    for sourceFilePath in listOfSourceFilePaths:
+        sourceFileName = os.path.splitext(os.path.basename(sourceFilePath))[0]
+        subprocess.run("pyreverse -AS -o " + README_PICTURE_FORMAT + " " + sourceFilePath + " -p " + sourceFileName, cwd=README_CALL_GRAPH_AND_UML_FOLDER_NAME, shell=True)
         # Note that pyreverse must be called via subprocess (do NOT import it as a module)
         # The main reason are licencing issues (GPLv2 is incompatible with GPLv3) (https://softwareengineering.stackexchange.com/questions/110380/call-gpl-software-from-non-gpl-software)
         # See also: https://github.com/TeamFlowerPower/kb/wiki/callGraphsUMLdiagrams

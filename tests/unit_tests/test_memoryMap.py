@@ -883,5 +883,5 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         self.checkSectionReserve(objectsInSections[13], sectionContainer[3], FOURTH_SECTION_ADDRESS_START, FOURTH_SECTION_ADDRESS_END)
 
 
-if "__main__" == __name__:
+if __name__ == "__main__":
     unittest.main()

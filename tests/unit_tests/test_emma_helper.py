@@ -95,8 +95,10 @@ class MemEntryTestCase(unittest.TestCase):
         hexResult, decResult = shared_libs.emma_helper.unifyAddress(22)
         self.assertEqual(hexResult, "0x16")
         self.assertEqual(decResult, 22)
+        with self.assertRaises(ValueError) as contextManager:
+            hexResult, decResult = shared_libs.emma_helper.unifyAddress("Obviously not a number...")
         with self.assertRaises(SystemExit) as contextManager:
-            hexResult, decResult = shared_libs.emma_helper.unifyAddress(True)
+            hexResult, decResult = shared_libs.emma_helper.unifyAddress(0.123)
         self.assertEqual(contextManager.exception.code, "error")
 
     def test_getTimestampFromFilename(self):

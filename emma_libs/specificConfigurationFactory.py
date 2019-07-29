@@ -23,18 +23,18 @@ from shared_libs.stringConstants import *   # pylint: disable=unused-wildcard-im
 import emma_libs.ghsConfiguration
 
 
-def createSpecificConfiguration(compiler, *args):
+def createSpecificConfiguration(compiler, **kwargs):
     """
     A factory for creating an object of one of the subclasses of the SpecificConfiguration class.
     The concrete subclass is selected based on the received compiler name.
     :param compiler: The compiler name.
-    :param args: The arguments that will be forwarded to the constructor during the object creation.
+    :param kwargs: The arguments that will be forwarded to the constructor during the object creation.
     :return: An object of the selected subclass of the SpecificConfiguration.
     """
 
     configuration = None
     if COMPILER_NAME_GHS == compiler:
-        configuration = emma_libs.ghsConfiguration.GhsConfiguration(*args)
+        configuration = emma_libs.ghsConfiguration.GhsConfiguration(**kwargs)
     else:
         sc().error("Unexpected compiler value: " + compiler)
 
