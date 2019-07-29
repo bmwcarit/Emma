@@ -88,7 +88,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         :param configuration: Configuration to which the mapfiles need to be added.
         :return: None
         """
-        numMapfiles = self.__addFilesToConfiguration(mapfilesPath, configuration, "mapfiles")
+        numMapfiles = GhsConfiguration.__addFilesToConfiguration(mapfilesPath, configuration, "mapfiles")
         sc().info(str(numMapfiles) + " mapfiles found")
 
     def __addMonolithsToConfiguration(self, mapfilesPath, configuration):
@@ -114,14 +114,15 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             return result
 
         if ifAnyNonDMA(configuration):
-            numMonolithMapFiles = self.__addFilesToConfiguration(mapfilesPath, configuration, "monoliths")
+            numMonolithMapFiles = GhsConfiguration.__addFilesToConfiguration(mapfilesPath, configuration, "monoliths")
             if numMonolithMapFiles > 1:
                 sc().warning("More than one monolith file found; Result may be non-deterministic")
             elif numMonolithMapFiles < 1:
                 sc().error("No monolith files was detected but some mapfiles require address translation (VASes used)")
             self.__addTabularisedMonoliths(configuration)
 
-    def __addFilesToConfiguration(self, path, configuration, fileType):
+    @staticmethod
+    def __addFilesToConfiguration(path, configuration, fileType):
         """
         Function to add a specific file type to the configuration.
         :param path: Path where the files needs to be searched for.

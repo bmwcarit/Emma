@@ -54,6 +54,9 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
         return sectionCollection, objectCollection
 
     def __importData(self, configId, configuration, defaultRegexPattern):
+        # pylint: disable=too-many-locals
+        # Rationale: This is legacy code, it will not be changed.
+
         """
         Function to import data from the mapfiles.
         :param configId: A configId to which the configuration belongs to.
@@ -159,7 +162,8 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
 
         return result
 
-    def __getRegexPattern(self, defaultPattern: emma_libs.ghsMapfileRegexes.RegexPatternBase, mapfileEntry):
+    @staticmethod
+    def __getRegexPattern(defaultPattern: emma_libs.ghsMapfileRegexes.RegexPatternBase, mapfileEntry):
         """
         Function to determine whether the default regex patterns can be used for the mapfile processing or a unique pattern was configured in the configuration.
         :param defaultPattern: The default regex patterns that shall be used if no unique pattern was defined for the mapfile.
@@ -189,7 +193,11 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
 
         return regexPattern
 
-    def __translateAddress(self, elementVirtualStartAddress, elementSize, virtualSectionsOfThisMapfile, monolithFileContent):
+    @staticmethod
+    def __translateAddress(elementVirtualStartAddress, elementSize, virtualSectionsOfThisMapfile, monolithFileContent):
+        # pylint: disable=too-many-locals
+        # Rationale: This is legacy code, it will not be changed.
+
         """
         Calculates the physical address for an element (= section or object).
         The patterns config file can assign a VAS to a mapfile. Every VAS has VAS sections that are defined in the

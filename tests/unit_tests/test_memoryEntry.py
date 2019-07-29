@@ -287,7 +287,7 @@ class SectionEntryTestCase(unittest.TestCase, TestData):
 
     def test_isEqual(self):
         self.assertTrue(emma_libs.memoryEntry.SectionEntry.isEqual(self.basicMemEntry, self.basicMemEntry))
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             emma_libs.memoryEntry.SectionEntry.isEqual(self.basicMemEntry, "This is obviously not a MemEntry object!")
 
     def test_getName(self):
@@ -317,7 +317,7 @@ class ObjectEntryTestCase(unittest.TestCase, TestData):
 
     def test_isEqual(self):
         self.assertTrue(emma_libs.memoryEntry.ObjectEntry.isEqual(self.basicMemEntry, self.basicMemEntry))
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(TypeError):
             emma_libs.memoryEntry.ObjectEntry.isEqual(self.basicMemEntry, "This is obviously not a MemEntry object!")
 
     def test_getName(self):

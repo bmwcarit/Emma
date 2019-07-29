@@ -19,7 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 # Emma Memory and Mapfile Analyser - helpers
 
 
-import sys
 import os
 import re
 import json
@@ -293,17 +292,19 @@ def toHumanReadable(num, suffix='B'):
     :return: Formatted string
     """
     count = 0
-    bit10 = 10
-    numTmp = num
+    bit_10 = 10
+    num_tmp = num
     for prefix in UNIT_PREFIXES:
-        if numTmp > 1024:
-            numTmp = numTmp >> bit10
+        if num_tmp > 1024:
+            num_tmp = num_tmp >> bit_10
             count += 1
         else:
-            return "{: .2f} {}{}".format(num/2**(count*bit10), prefix, suffix)
+            return "{: .2f} {}{}".format(num/2**(count*bit_10), prefix, suffix)
 
 
 class Prompt:
+    # pylint: disable=too-few-public-methods
+    # Rationale: This is legacy code, changing it into a function would require too changes in other code parts.
     """
     Class that contains functions that help handling of user prompts.
     """

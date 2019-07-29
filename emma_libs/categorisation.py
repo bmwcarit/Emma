@@ -49,10 +49,10 @@ class Categorisation:
         self.categoriesSectionsPath = categoriesSectionsPath
         self.categoriesSectionsKeywordsPath = categoriesSectionsKeywordsPath
         # Loading the categories files. These files are optional, if they are not present we will store None instead.
-        self.categoriesObjects = self.__readCategoriesJson(self.categoriesObjectsPath)
-        self.categoriesObjectsKeywords = self.__readCategoriesJson(self.categoriesObjectsKeywordsPath)
-        self.categoriesSections = self.__readCategoriesJson(self.categoriesSectionsPath)
-        self.categoriesSectionsKeywords = self.__readCategoriesJson(self.categoriesSectionsKeywordsPath)
+        self.categoriesObjects = Categorisation.__readCategoriesJson(self.categoriesObjectsPath)
+        self.categoriesObjectsKeywords = Categorisation.__readCategoriesJson(self.categoriesObjectsKeywordsPath)
+        self.categoriesSections = Categorisation.__readCategoriesJson(self.categoriesSectionsPath)
+        self.categoriesSectionsKeywords = Categorisation.__readCategoriesJson(self.categoriesSectionsKeywordsPath)
 
     def fillOutCategories(self, sectionCollection, objectCollection):
         """
@@ -80,7 +80,8 @@ class Categorisation:
         self.__manageSectionCategoriesFiles(updateCategoriesFromKeywordMatches, removeUnmatchedCategories, sectionCollection)
         self.__manageObjectCategoriesFiles(updateCategoriesFromKeywordMatches, removeUnmatchedCategories, objectCollection)
 
-    def __readCategoriesJson(self, path):
+    @staticmethod
+    def __readCategoriesJson(path):
         """
         Function ro read in a categorisation json file.
         :param path: The path of the file that needs to be read.
@@ -133,7 +134,7 @@ class Categorisation:
             text = input("> ") if not self.noPrompt else sys.exit(-10)
             # If an update is allowed
             if text == "y":
-                self.__updateCategoriesJson(self.categoriesSections, self.keywordCategorisedSections, self.categoriesSectionsPath)
+                Categorisation.__updateCategoriesJson(self.categoriesSections, self.keywordCategorisedSections, self.categoriesSectionsPath)
                 # Re-categorize sections if the categorisation file have been changed
                 self.__fillOutSectionCategories(sectionCollection)
                 sc().info("The " + self.categoriesSectionsPath + " was updated.")
@@ -144,7 +145,7 @@ class Categorisation:
             text = input("> ") if not self.noPrompt else sys.exit(-10)
             if text == "y":
                 sc().info("Remove unmatched modules from " + CATEGORIES_SECTIONS_JSON + "?\nIt will be overwritten.\n `y` to accept, any other key to discard.")
-                self.__removeUnmatchedFromCategoriesJson(self.categoriesSections, sectionCollection, emma_libs.memoryEntry.SectionEntry, self.categoriesSectionsPath)
+                Categorisation.__removeUnmatchedFromCategoriesJson(self.categoriesSections, sectionCollection, emma_libs.memoryEntry.SectionEntry, self.categoriesSectionsPath)
             else:
                 sc().info(text + " was entered, aborting the removal. The " + self.categoriesSectionsPath + " was not changed.")
 
@@ -165,7 +166,7 @@ class Categorisation:
             text = input("> ") if not self.noPrompt else sys.exit(-10)
             # If an update is allowed
             if text == "y":
-                self.__updateCategoriesJson(self.categoriesObjects, self.keywordCategorisedObjects, self.categoriesObjectsPath)
+                Categorisation.__updateCategoriesJson(self.categoriesObjects, self.keywordCategorisedObjects, self.categoriesObjectsPath)
                 sc().info("The " + self.categoriesObjectsPath + " was updated.")
                 # Re-categorize objects if the categorisation file have been changed
                 self.__fillOutObjectCategories(objectCollection)
@@ -176,7 +177,7 @@ class Categorisation:
             text = input("> ") if not self.noPrompt else sys.exit(-10)
             if text == "y":
                 sc().info("Remove unmatched modules from " + CATEGORIES_OBJECTS_JSON + "?\nIt will be overwritten.\n `y` to accept, any other key to discard.")
-                self.__removeUnmatchedFromCategoriesJson(self.categoriesObjects, objectCollection, emma_libs.memoryEntry.ObjectEntry, self.categoriesObjectsPath)
+                Categorisation.__removeUnmatchedFromCategoriesJson(self.categoriesObjects, objectCollection, emma_libs.memoryEntry.ObjectEntry, self.categoriesObjectsPath)
             else:
                 sc().info(text + " was entered, aborting the removal. The " + self.categoriesObjectsPath + " was not changed.")
 
@@ -191,16 +192,17 @@ class Categorisation:
         :param keywordCategorisedElements: List of elements that were categorised by keywords.
         :return: Category string
         """
-        foundCategory = self.__searchCategoriesJson(nameString, categories)
+        foundCategory = Categorisation.__searchCategoriesJson(nameString, categories)
         if foundCategory is None:
             # If there is no match check for keyword specified in categoriesKeywordsJson
-            foundCategory = self.__categoriseByKeyword(nameString, categoriesKeywords, keywordCategorisedElements)
+            foundCategory = Categorisation.__categoriseByKeyword(nameString, categoriesKeywords, keywordCategorisedElements)
         if foundCategory is None:
             # If there is still no match then we will assign the default constant
             foundCategory = UNKNOWN_CATEGORY
         return foundCategory
 
-    def __searchCategoriesJson(self, nameString, categories):
+    @staticmethod
+    def __searchCategoriesJson(nameString, categories):
         """
         Function to search categories for a name in a categories file.
         :param nameString: String that categories needs to be searched for.
@@ -225,7 +227,8 @@ class Categorisation:
                 result = ", ".join(categoriesFoundForTheName)
         return result
 
-    def __categoriseByKeyword(self, nameString, categoriesKeywords, keywordCategorisedElements):
+    @staticmethod
+    def __categoriseByKeyword(nameString, categoriesKeywords, keywordCategorisedElements):
         """
         Function to search a category for a name in a categoriesKeywords file.
         :param nameString: String that categories needs to be searched for.
@@ -250,7 +253,8 @@ class Categorisation:
                         result = category
         return result
 
-    def __updateCategoriesJson(self, categoriesToUpdate, newCategories, outputPath):
+    @staticmethod
+    def __updateCategoriesJson(categoriesToUpdate, newCategories, outputPath):
         """
         Updates a categories file with new categories.
         :param categoriesToUpdate: This is the categories file that needs to be updated.
@@ -274,7 +278,8 @@ class Categorisation:
         # Write the data to the outputPath
         shared_libs.emma_helper.writeJson(outputPath, mergedCategories)
 
-    def __removeUnmatchedFromCategoriesJson(self, categoriesToRemoveFrom, consumerCollection, memEntryHandler, outputPath):
+    @staticmethod
+    def __removeUnmatchedFromCategoriesJson(categoriesToRemoveFrom, consumerCollection, memEntryHandler, outputPath):
         """
         Removes categories from the categories files the categories for those no matches were found.
         :param categoriesToRemoveFrom: This is the categories file from which we remove the unmatched categories.

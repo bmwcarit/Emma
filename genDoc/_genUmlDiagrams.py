@@ -58,30 +58,7 @@ LIST_OF_SOURCE_FILE_PATHS = [           # "../../*" instead of "../*" since we c
 ]
 
 
-def ParseArguments():
-    """
-    Argument parser
-    :return: argparse object containing the parsed options
-    """
-    parser = argparse.ArgumentParser(
-        prog="Emma - Call graph generator",
-        description="Script to generate call graphs that can be used in the documentation or to examine the run of Emma and the Emma visualiser.",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument(
-        "--graphviz_bin_folder",
-        help=r"The bin subfolder of the Graphviz software. Example: c:\Program Files (x86)\Graphviz2.38\bin",
-        required=True
-    )
-    parser.add_argument(
-        "--verbose",
-        help="Prints out more info during run.",
-        default=False
-    )
-    return parser.parse_args()
-
-
-def main(arguments):
+def main():
     sc.info("Generating UML Class diagrams from the source files...")
     for sourceFilePath in LIST_OF_SOURCE_FILE_PATHS:
         sourceFileName = os.path.splitext(os.path.basename(sourceFilePath))[0]
@@ -89,11 +66,3 @@ def main(arguments):
         # Note that pyreverse must be called via subprocess (do NOT import it as a module)
         # The main reason are licencing issues (GPLv2 is incompatible with GPLv3) (https://softwareengineering.stackexchange.com/questions/110380/call-gpl-software-from-non-gpl-software)
         # See also: https://github.com/TeamFlowerPower/kb/wiki/callGraphsUMLdiagrams
-
-
-if __name__ == "__main__":
-    args = ParseArguments()
-    if not os.path.isdir(README_CALL_GRAPH_AND_UML_FOLDER_NAME):
-        sc.info("The folder \"" + README_CALL_GRAPH_AND_UML_FOLDER_NAME + "\" was created because it did not exist...")
-        os.makedirs(README_CALL_GRAPH_AND_UML_FOLDER_NAME)
-    main(args)

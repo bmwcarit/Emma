@@ -104,11 +104,11 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         if expectedContainingOthers is not None:
             self.assertEqual(memEntry.containingOthersFlag, expectedContainingOthers)
         if expectedContainedBy is not None:
-            self.assertEqual(memEntry.containmentFlag, "Contained by (" + memEntryHandler.getName(expectedContainedBy) + ", " + expectedContainedBy.configID + ", " + expectedContainedBy.mapfile + ")" )
+            self.assertEqual(memEntry.containmentFlag, "Contained by (" + memEntryHandler.getName(expectedContainedBy) + ", " + expectedContainedBy.configID + ", " + expectedContainedBy.mapfile + ")")
         if expectedOverlappingOthers is not None:
             self.assertEqual(memEntry.overlappingOthersFlag, expectedOverlappingOthers)
         if expectedOverlappedBy is not None:
-            self.assertEqual(memEntry.overlapFlag, "Overlapped by (" + memEntryHandler.getName(expectedOverlappedBy) + ", " + expectedOverlappedBy.configID + ", " + expectedOverlappedBy.mapfile + ")" )
+            self.assertEqual(memEntry.overlapFlag, "Overlapped by (" + memEntryHandler.getName(expectedOverlappedBy) + ", " + expectedOverlappedBy.configID + ", " + expectedOverlappedBy.mapfile + ")")
 
     def checkAddressChanges(self, resolvedMemEntry, originalMemEntry, expectedAddressStart=None, expectedAddressLength=None, expectedAddressEnd=None):
         # If we have expect an address change

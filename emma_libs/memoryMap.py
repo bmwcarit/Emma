@@ -29,10 +29,13 @@ import shared_libs.emma_helper
 
 
 # Timestamp for the report file names
-timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%Hh%Ms%S")
+TIMESTAMP = datetime.datetime.now().strftime("%Y-%m-%d-%Hh%Ms%S")
 
 
 def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
+    # pylint: disable=too-many-nested-blocks, too-many-branches
+    # Rationale: Because of the complexity of the task this function implements, reducing the number of nested blocks and branches is not possible.
+
     """
     Goes trough the consumerCollection and checks  and resolves all the elements for the following situations:
         1 - Duplicate
@@ -241,7 +244,7 @@ def createReportPath(outputPath, projectName, reportName):
     :return: The created path string.
     """
     shared_libs.emma_helper.mkDirIfNeeded(outputPath)
-    memStatsFileName = projectName + "_" + reportName + "_" + timestamp + ".csv"
+    memStatsFileName = projectName + "_" + reportName + "_" + TIMESTAMP + ".csv"
     return shared_libs.emma_helper.joinPath(outputPath, memStatsFileName)
 
 

@@ -48,14 +48,14 @@ class Configuration:
 
         # Processing the globalConfig.json
         globalConfigPath = shared_libs.emma_helper.joinPath(configurationPath, "globalConfig.json")
-        self.globalConfig = _readGlobalConfigJson(globalConfigPath)
+        self.globalConfig = Configuration.__readGlobalConfigJson(globalConfigPath)
         sc().info("Imported " + str(len(self.globalConfig)) + " global config entries:" + str(list(self.globalConfig.keys())))
 
         # Processing the addressSpaces*.json for all the configIds
         for configId in self.globalConfig:
             if "addressSpacesPath" in self.globalConfig[configId].keys():
                 addressSpacesPath = shared_libs.emma_helper.joinPath(configurationPath, self.globalConfig[configId]["addressSpacesPath"])
-                self.globalConfig[configId]["addressSpaces"] = _readAddressSpacesJson(addressSpacesPath)
+                self.globalConfig[configId]["addressSpaces"] = Configuration.__readAddressSpacesJson(addressSpacesPath)
             else:
                 sc().error("The " + configId + " does not have the key: " + "addressSpacesPath")
 
@@ -73,50 +73,51 @@ class Configuration:
                              "The configId \"" + configId + "\" will not be analysed!")
 
 
-def _readGlobalConfigJson(path):
-    """
-    Function to read in and process the globalConfig.
-    :param path: Path of the globalConfig file.
-    :return: The content of the globalConfig.
-    """
-    # Load the globalConfig file
-    globalConfig = shared_libs.emma_helper.readJson(path)
+    @staticmethod
+    def __readGlobalConfigJson(path):
+        """
+        Function to read in and process the globalConfig.
+        :param path: Path of the globalConfig file.
+        :return: The content of the globalConfig.
+        """
+        # Load the globalConfig file
+        globalConfig = shared_libs.emma_helper.readJson(path)
 
-    # Loading the config files of the defined configID-s
-    for configId in list(globalConfig.keys()):  # List of keys required so we can remove the ignoreConfigID entrys
-        # Skip configID if ["ignoreConfigID"] is True
-        if IGNORE_CONFIG_ID in globalConfig[configId].keys():
-            # Check that flag has the correct type
-            if not isinstance(globalConfig[configId][IGNORE_CONFIG_ID], bool):
-                sc().error("The " + IGNORE_CONFIG_ID + " of " + configId + " has a type " +
-                           str(type(globalConfig[configId][IGNORE_CONFIG_ID])) + " instead of bool. " +
-                           "Please be sure to use correct JSON syntax: boolean constants are written true and false.")
-            elif globalConfig[configId][IGNORE_CONFIG_ID] is True:
-                globalConfig.pop(configId)
+        # Loading the config files of the defined configID-s
+        for configId in list(globalConfig.keys()):  # List of keys required so we can remove the ignoreConfigID entrys
+            # Skip configID if ["ignoreConfigID"] is True
+            if IGNORE_CONFIG_ID in globalConfig[configId].keys():
+                # Check that flag has the correct type
+                if not isinstance(globalConfig[configId][IGNORE_CONFIG_ID], bool):
+                    sc().error("The " + IGNORE_CONFIG_ID + " of " + configId + " has a type " +
+                               str(type(globalConfig[configId][IGNORE_CONFIG_ID])) + " instead of bool. " +
+                               "Please be sure to use correct JSON syntax: boolean constants are written true and false.")
+                elif globalConfig[configId][IGNORE_CONFIG_ID] is True:
+                    globalConfig.pop(configId)
 
-    # Check whether the globalConfig is empty
-    if not globalConfig:
-        sc().warning("No configID was defined or all of them were ignored.")
+        # Check whether the globalConfig is empty
+        if not globalConfig:
+            sc().warning("No configID was defined or all of them were ignored.")
 
-    return globalConfig
+        return globalConfig
 
+    @staticmethod
+    def __readAddressSpacesJson(path):
+        """
+        Function to read in and process the addressSpaces config file.
+        :param path: Path of the addressSpaces config file.
+        :return: The content of the addressSpaces config file.
+        """
+        # Load the addressSpaces file
+        addressSpaces = shared_libs.emma_helper.readJson(path)
 
-def _readAddressSpacesJson(path):
-    """
-    Function to read in and process the addressSpaces config file.
-    :param path: Path of the addressSpaces config file.
-    :return: The content of the addressSpaces config file.
-    """
-    # Load the addressSpaces file
-    addressSpaces = shared_libs.emma_helper.readJson(path)
+        # Removing the imported memory entries if they are listed in the IGNORE_MEMORY
+        if IGNORE_MEMORY in addressSpaces.keys():
+            for memoryToIgnore in addressSpaces[IGNORE_MEMORY]:
+                if addressSpaces["memory"][memoryToIgnore]:
+                    addressSpaces["memory"].pop(memoryToIgnore)
+                    sc().info("The memory entry \"" + memoryToIgnore + "\" of the \"" + path + "\" is marked to be ignored...")
+                else:
+                    sc().error("The key " + memoryToIgnore + " which is in the ignore list, does not exist in the memory object of " + path)
 
-    # Removing the imported memory entries if they are listed in the IGNORE_MEMORY
-    if IGNORE_MEMORY in addressSpaces.keys():
-        for memoryToIgnore in addressSpaces[IGNORE_MEMORY]:
-            if addressSpaces["memory"][memoryToIgnore]:
-                addressSpaces["memory"].pop(memoryToIgnore)
-                sc().info("The memory entry \"" + memoryToIgnore + "\" of the \"" + path + "\" is marked to be ignored...")
-            else:
-                sc().error("The key " + memoryToIgnore + " which is in the ignore list, does not exist in the memory object of " + path)
-
-    return addressSpaces
+        return addressSpaces

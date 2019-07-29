@@ -26,7 +26,7 @@ import gprof2dot    # pylint: disable=unused-import
                     # Rationale: Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
 
 sys.path.append("../")
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import, wildcard-import, wrong-import-position
 import shared_libs.emma_helper
 import genDoc._genCallGraphs
 import genDoc._genUmlDiagrams
@@ -99,7 +99,7 @@ def main(arguments):
             # pylint: disable=protected-access
             # Rationale: These modules are private so that the users will not use them directly. They are meant to be used trough this script.
             genDoc._genCallGraphs.main(arguments)
-            genDoc._genUmlDiagrams.main(arguments)
+            genDoc._genUmlDiagrams.main()
 
         print("")
         sc().info("Storing Emma readme as a .html file...")

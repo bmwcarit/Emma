@@ -30,10 +30,13 @@ from shared_libs.stringConstants import *   # pylint: disable=unused-wildcard-im
 import shared_libs.emma_helper
 
 
-class MemEntryTestCase(unittest.TestCase):
-    # pylint: disable=invalid-name
-    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+class EmmaHelperTestCase(unittest.TestCase):
+    # pylint: disable=invalid-name, missing-docstring
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>(). It is not necessary to add a docstring for every unit test.
 
+    """
+    Unit tests for the emma_helper module.
+    """
     def setUp(self):
 
         # Setting up the logger
@@ -129,10 +132,10 @@ class MemEntryTestCase(unittest.TestCase):
         self.assertEqual("MyProject", shared_libs.emma_helper.projectNameFromPath(os.path.join("C:", "GitRepos", "Emma", "MyProject")))
 
     def test_joinPath(self):
-        if "Windows" == platform.system():
+        if platform.system() == "Windows":
             self.assertEqual(r"c:Documents\Projects\Emma", shared_libs.emma_helper.joinPath("c:", "Documents", "Projects", "Emma"))
             self.assertEqual(r"..\..\Emma\tests\other_files", shared_libs.emma_helper.joinPath("..", "..", "Emma", "tests", "other_files"))
-        elif "Linux" == platform.system():
+        elif platform.system() == "Linux":
             self.assertEqual(r"Documents/Projects/Emma", shared_libs.emma_helper.joinPath("Documents", "Projects", "Emma"))
             self.assertEqual(r"../../Emma/tests/other_files", shared_libs.emma_helper.joinPath("..", "..", "Emma", "tests", "other_files"))
         else:

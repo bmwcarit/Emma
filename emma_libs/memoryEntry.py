@@ -99,9 +99,6 @@ class MemEntry:
         self.addressStartOriginal = self.addressStart
         self.addressLengthOriginal = self.addressLength
 
-    """
-    A class representing an entry that is stored in the memory.
-    """
     def __eq__(self, other):
         """
         This is not implemented because we shall compare MemEntry objects trough the subclasses of the MemEntryHandler class.
@@ -216,6 +213,9 @@ class SectionEntry(MemEntryHandler):
     """
     A MemEntryHandler for handling MemEntries that represents sections.
     """
+    def __eq__(self, other):
+        raise NotImplementedError("This member shall not be used, use the isEqual() instead!")
+
     @staticmethod
     def isEqual(first, second):
         """
@@ -224,15 +224,15 @@ class SectionEntry(MemEntryHandler):
         :param second: MemEntry object representing a section.
         :return: True if the object first and second are equal, False otherwise.
         """
-        if isinstance(first, MemEntry) and isinstance(second, MemEntry):
-            return ((first.addressStart == second.addressStart)                     and
-                    (first.addressLength == second.addressLength)                   and
-                    (first.sectionName == second.sectionName)                       and
-                    (first.configID == second.configID)                             and
-                    (first.mapfile == second.mapfile)                               and
-                    (first.compilerSpecificData == second.compilerSpecificData))
-        else:
-            raise NotImplementedError("Function isEqual() not defined between " + type(first).__name__ + " and " + type(second).__name__)
+        if not isinstance(first, MemEntry) or not isinstance(second, MemEntry):
+            raise TypeError("The argument needs to be of a type MemEntry.")
+
+        return ((first.addressStart == second.addressStart)                     and
+                (first.addressLength == second.addressLength)                   and
+                (first.sectionName == second.sectionName)                       and
+                (first.configID == second.configID)                             and
+                (first.mapfile == second.mapfile)                               and
+                (first.compilerSpecificData == second.compilerSpecificData))
 
     @staticmethod
     def getName(memEntry):
@@ -248,6 +248,9 @@ class ObjectEntry(MemEntryHandler):
     """
     A MemEntryHandler for handling MemEntries that represents objects.
     """
+    def __eq__(self, other):
+        raise NotImplementedError("This member shall not be used, use the isEqual() instead!")
+
     @staticmethod
     def isEqual(first, second):
         """
@@ -256,16 +259,16 @@ class ObjectEntry(MemEntryHandler):
         :param second: MemEntry object representing an object.
         :return: True if the object first and second are equal, False otherwise.
         """
-        if isinstance(first, MemEntry) and isinstance(second, MemEntry):
-            return ((first.addressStart == second.addressStart)                     and
-                    (first.addressLength == second.addressLength)                   and
-                    (first.sectionName == second.sectionName)                       and
-                    (first.objectName == second.objectName)                         and
-                    (first.configID == second.configID)                             and
-                    (first.mapfile == second.mapfile)                               and
-                    (first.compilerSpecificData == second.compilerSpecificData))
-        else:
-            raise NotImplementedError("Function isEqual() not defined between " + type(first).__name__ + " and " + type(second).__name__)
+        if not isinstance(first, MemEntry) or not isinstance(second, MemEntry):
+            raise TypeError("The argument needs to be of a type MemEntry.")
+
+        return ((first.addressStart == second.addressStart)                     and
+                (first.addressLength == second.addressLength)                   and
+                (first.sectionName == second.sectionName)                       and
+                (first.objectName == second.objectName)                         and
+                (first.configID == second.configID)                             and
+                (first.mapfile == second.mapfile)                               and
+                (first.compilerSpecificData == second.compilerSpecificData))
 
     @staticmethod
     def getName(memEntry):

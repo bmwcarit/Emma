@@ -133,6 +133,11 @@ def parseArgs(arguments=""):
 
 
 def processArguments(arguments):
+    """
+    Function to extract the settings values from the command line arguments.
+    :param arguments: The command line arguments, that is the result of the parser.parse_args().
+    :return: The setting values.
+    """
     projectName = shared_libs.emma_helper.projectNameFromPath(shared_libs.emma_helper.joinPath(arguments.project))
     configurationPath = shared_libs.emma_helper.joinPath(arguments.project)
     mapfilesPath = shared_libs.emma_helper.joinPath(arguments.mapfiles)
@@ -157,22 +162,22 @@ def processArguments(arguments):
 
 if __name__ == "__main__":
     # Parsing the arguments
-    args = parseArgs()
+    ARGS = parseArgs()
 
     def exitProgram():
         sys.exit(-10)
 
-    sc(-1, actionWarning=(exitProgram if args.Werror is not None else None), actionError=exitProgram)
+    sc(-1, actionWarning=(exitProgram if ARGS.Werror is not None else None), actionError=exitProgram)
 
     sc().header("Emma Memory and Mapfile Analyser", symbol="/")
 
     # Starting the time measurement of Emma
-    timeStart = timeit.default_timer()
+    TIME_START = timeit.default_timer()
     sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
 
     # Executing Emma
-    main(args)
+    main(ARGS)
 
     # Stopping the time measurement of Emma
-    timeEnd = timeit.default_timer()
-    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " "{0:.2f}".format(timeEnd - timeStart) + "s)")
+    TIME_END = timeit.default_timer()
+    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " "{0:.2f}".format(TIME_END - TIME_START) + "s)")
