@@ -107,9 +107,15 @@ class ProfilerFilter:
         return result
 
     def filterProfilerData(self, tree):
-        # Initialization of variables
+        """
+        Function to filter the profile data so that it contains only code that is ours or it is called by our code.
+        This function is recursive it´s return value does not have any meaning for the caller.
+        :param tree: Profile tree that needs to be filtered.
+        :return: True if this element shall not be cut off, False otherwise.
+        """
         doNotCutThisOff = False         # Reason is that we can get a tree that is empty and in that case the variable would be uninitialized
-        listOfKeys = list(tree.keys())    # This needs to be done like this because the keys() method returns an iterator not a list
+        listOfKeys = list(tree.keys())  # This needs to be done like this because the keys() method returns an iterator not a list
+
         for key in listOfKeys:
             thisIsOurCode = self.__isThisOurCode(key[0])
             weHaveCodeBelowThis = False
@@ -121,6 +127,7 @@ class ProfilerFilter:
             doNotCutThisOff = thisIsOurCode or weHaveCodeBelowThis
             if not doNotCutThisOff:
                 del tree[key]
+
         return doNotCutThisOff
 
 

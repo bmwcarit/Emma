@@ -103,7 +103,7 @@ class Categorisation:
         # Filling out sections
         for consumer in sectionCollection:
             consumerName = consumer.sectionName
-            consumer.category = self.__evalCategoryOfAnElement(consumerName, self.categoriesSections, self.categoriesSectionsKeywords, self.keywordCategorisedSections)
+            consumer.category = Categorisation.__evalCategoryOfAnElement(consumerName, self.categoriesSections, self.categoriesSectionsKeywords, self.keywordCategorisedSections)
 
     def __fillOutObjectCategories(self, objectCollection):
         """
@@ -114,7 +114,7 @@ class Categorisation:
         # Filling out objects
         for consumer in objectCollection:
             consumerName = consumer.objectName
-            consumer.category = self.__evalCategoryOfAnElement(consumerName, self.categoriesObjects, self.categoriesObjectsKeywords, self.keywordCategorisedObjects)
+            consumer.category = Categorisation.__evalCategoryOfAnElement(consumerName, self.categoriesObjects, self.categoriesObjectsKeywords, self.keywordCategorisedObjects)
 
     def __manageSectionCategoriesFiles(self, updateCategoriesFromKeywordMatches, removeUnmatchedCategories, sectionCollection):
         """
@@ -181,7 +181,8 @@ class Categorisation:
             else:
                 sc().info(text + " was entered, aborting the removal. The " + self.categoriesObjectsPath + " was not changed.")
 
-    def __evalCategoryOfAnElement(self, nameString, categories, categoriesKeywords, keywordCategorisedElements):
+    @staticmethod
+    def __evalCategoryOfAnElement(nameString, categories, categoriesKeywords, keywordCategorisedElements):
         """
         Function to find the category of an element. First the categorisation will be tried with the categories file,
         and if that fails with the categoriesKeywords file. If this still fails a default value will be set for the category.

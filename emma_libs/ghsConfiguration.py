@@ -59,7 +59,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             configuration["virtualSections"] = shared_libs.emma_helper.readJson(virtualSectionsPath)
 
         # Loading the mapfiles
-        self.__addMapfilesToConfiguration(mapfilesPath, configuration)
+        GhsConfiguration.__addMapfilesToConfiguration(mapfilesPath, configuration)
 
         # Loading the monolith file
         # Flag to load a monolith file only once; we don't do it here since we might work with DMA only
@@ -81,7 +81,8 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                 result = True
         return result
 
-    def __addMapfilesToConfiguration(self, mapfilesPath, configuration):
+    @staticmethod
+    def __addMapfilesToConfiguration(mapfilesPath, configuration):
         """
         Function to add the mapfiles to the configuration.
         :param mapfilesPath: Path of the folder where the mapfiles are located.
@@ -168,50 +169,49 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         :return: None
         """
 
-        def loadMonolithMapfileOnce(configuration, noPrompt):
+        def loadMonolithFile(configuration, noPrompt):
             """
-            Load monolith mapfile (only once).
+            Function to Load monolith file.
             :param configuration: Configuration to which the monoliths need to be added.
             :param noPrompt: True if no user prompts shall be made, False otherwise, in which case a program exit will be made.
             :return: Content of the monolith file if it could be read, else None.
             """
-            if not configuration["monolithLoaded"]:
-                mapfileIndexChosen = 0  # Take the first monolith file in list (default case)
-                numMonolithFiles = len(configuration["patterns"]["monoliths"])
-                keyMonolithMapping = {}
+            result = None
+            mapfileIndexChosen = 0  # Take the first monolith file in list (default case)
+            numMonolithFiles = len(configuration["patterns"]["monoliths"])
+            keyMonolithMapping = {}
 
-                # Update globalConfig with all monolith filenames
-                for key, monolith in enumerate(configuration["patterns"]["monoliths"]):
-                    keyMonolithMapping.update({str(key): configuration["patterns"]["monoliths"][monolith]["associatedFilename"]})
+            # Update globalConfig with all monolith filenames
+            for key, monolith in enumerate(configuration["patterns"]["monoliths"]):
+                keyMonolithMapping.update({str(key): configuration["patterns"]["monoliths"][monolith]["associatedFilename"]})
 
-                if numMonolithFiles > 1:
-                    sc().info("More than one monolith file detected. Which to chose (1, 2, ...)?")
-                    # Display files
-                    for key, monolith in keyMonolithMapping.items():
-                        print(" ", key.ljust(10), monolith)
-                    # Ask for index which file to chose
+            if numMonolithFiles > 1:
+                sc().info("More than one monolith file detected. Which to chose (1, 2, ...)?")
+                # Display files
+                for key, monolith in keyMonolithMapping.items():
+                    print(" ", key.ljust(10), monolith)
+                # Ask for index which file to chose
+                mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx() if not noPrompt else sys.exit(-10)
+                # We will only accept values in range [0, numMonolithFiles)
+                while not 0 <= mapfileIndexChosen < numMonolithFiles:
+                    sc().warning("Invalid value; try again:")
                     mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx() if not noPrompt else sys.exit(-10)
-                    # We will only accept values in range [0, numMonolithFiles)
-                    while not 0 <= mapfileIndexChosen < numMonolithFiles:
-                        sc().warning("Invalid value; try again:")
-                        mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx() if not noPrompt else sys.exit(-10)
-                elif numMonolithFiles < 1:
-                    sc().error("No monolith file found but needed for processing")
+            elif numMonolithFiles < 1:
+                sc().error("No monolith file found but needed for processing")
 
-                # Finally load the file
-                configuration["monolithLoaded"] = True
-                result = None
-                with open(keyMonolithMapping[str(mapfileIndexChosen)], "r") as fp:
-                    result = fp.readlines()
-                return result
+            # Finally load the file
+            configuration["monolithLoaded"] = True
+            with open(keyMonolithMapping[str(mapfileIndexChosen)], "r") as fp:
+                result = fp.readlines()
 
-        def tabulariseAndSortOnce(monolithContent, configuration):
+            return result
+
+        def tabulariseAndSortMonolithContent(monolithContent):
             """
             Parses the monolith file and returns a "table" (addresses are int's) of the following structure:
             table[n-th_entry][0] = virtual(int), ...[1] = physical(int), ...[2] = offset(int), ...[3] = size(int), ...[4] = section(str)
             Offset = physical - virtual
             :param monolithContent: Content from monolith as text (all lines)
-            :param configuration: Configuration the monoliths need to be added to.
             :return: list of lists
             """
             table = []  # "headers": virtual, physical, size, section
@@ -226,13 +226,11 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                         int(match.group(monolithPattern.Groups.size), 16),
                         match.group(monolithPattern.Groups.section)
                     ])
-            configuration["sortMonolithTabularised"] = True
             return table
 
         # Load and register Monoliths
-        monolithContent = loadMonolithMapfileOnce(configuration, self.noPrompt)
-        if not configuration["sortMonolithTabularised"]:
-            configuration["sortMonolithTabularised"] = tabulariseAndSortOnce(monolithContent, configuration)
+        monolithContent = loadMonolithFile(configuration, self.noPrompt)
+        configuration["sortMonolithTabularised"] = tabulariseAndSortMonolithContent(monolithContent)
 
     def __checkNumberOfFoundMapfiles(self, configId, configuration):
         """
