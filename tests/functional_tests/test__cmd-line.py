@@ -25,6 +25,9 @@ import os
 import shutil
 
 sys.path.append("../")
+# pylint: disable=wrong-import-position
+# Rationale: This module needs to access modules that are above them in the folder structure.
+
 import emma
 import emma_vis
 

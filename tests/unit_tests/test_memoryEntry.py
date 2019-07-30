@@ -25,11 +25,19 @@ import collections
 from pypiscout.SCout_Logger import Logger as sc
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
+# pylint: disable=wrong-import-position
+# Rationale: This module needs to access modules that are above them in the folder structure.
 
 import emma_libs.memoryEntry
 
 
 class TestData:
+    # pylint: disable=too-many-instance-attributes, too-few-public-methods
+    # Rationale: This class needs to contain all the data needed for the tests as attributes and it does not need to have any methods.
+
+    """
+    Class to define data for the MemEntry unit tests.
+    """
     def __init__(self):
         self.configID = "MCU"
         self.mapfileName = "MapFile.map"
@@ -208,6 +216,9 @@ class MemEntryTestCase(unittest.TestCase, TestData):
         self.assertEqual(otherMemEntry > self.basicMemEntry, True)
 
     def test___calculateAddressEnd(self):
+        # pylint: disable=protected-access
+        # Rationale: This test was specificly written to access this private method.
+
         self.assertEqual(emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, self.addressLength), self.addressEnd)
         self.assertEqual(emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, 0), self.addressStart)
 
@@ -261,6 +272,9 @@ class MemEntryHandlerTestCase(unittest.TestCase):
         sc(4, None, exitProgam)
 
     def test_abstractness(self):
+        # pylint: disable=abstract-class-instantiated, unused-variable
+        # Rationale: This test was specificly written to test whether it is possible to instantiate the MemEntryHandler class. Since it shall fail, it will not be tried to be used.
+
         with self.assertRaises(TypeError):
             memEntryHandler = emma_libs.memoryEntry.MemEntryHandler()
 

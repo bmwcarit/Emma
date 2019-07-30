@@ -26,7 +26,10 @@ import gprof2dot    # pylint: disable=unused-import
                     # Rationale: Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
 
 sys.path.append("../")
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import, wildcard-import, wrong-import-position
+# pylint: disable=wrong-import-position
+# Rationale: This module needs to access modules that are above them in the folder structure.
+
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import, wildcard-import
 import shared_libs.emma_helper
 import genDoc._genCallGraphs
 import genDoc._genUmlDiagrams

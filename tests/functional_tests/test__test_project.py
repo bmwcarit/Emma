@@ -29,6 +29,8 @@ import pandas
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
+# pylint: disable=wrong-import-position
+# Rationale: This module needs to access modules that are above them in the folder structure.
 
 from shared_libs.stringConstants import *   # pylint: disable=unused-wildcard-import, wildcard-import, wrong-import-order
 
