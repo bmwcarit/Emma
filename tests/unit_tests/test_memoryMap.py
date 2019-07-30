@@ -48,6 +48,9 @@ class MemEntryData:
 
 
 def createMemEntryObjects(sectionDataContainer=None, objectDataContainer=None):
+    # pylint: disable=invalid-name, missing-docstring
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>(). It is not necessary to add a docstring for every unit test.
+
     def createMemEntryObject(memEntryData):
         compilerSpecificData = collections.OrderedDict()
         compilerSpecificData["DMA"] = True
@@ -86,8 +89,8 @@ def createMemEntryObjects(sectionDataContainer=None, objectDataContainer=None):
 
 
 class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
-    # pylint: disable=invalid-name
-    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+    # pylint: disable=invalid-name, missing-docstring
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>(). It is not necessary to add a docstring for every unit test.
 
     def assertEqualSections(self, firstSection, secondSection):
         self.assertTrue(emma_libs.memoryEntry.SectionEntry.isEqual(firstSection, secondSection))
@@ -272,8 +275,8 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
 
 
 class CalculateObjectsInSectionsTestCase(unittest.TestCase):
-    # pylint: disable=invalid-name
-    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+    # pylint: disable=invalid-name, missing-docstring
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>(). It is not necessary to add a docstring for every unit test.
 
     def checkSectionNonChangingData(self, sectionToCheck, sourceSection):
         """

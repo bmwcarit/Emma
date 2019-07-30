@@ -29,7 +29,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 import emma_libs.memoryEntry
 
 
-class TestData():
+class TestData:
     def __init__(self):
         self.configID = "MCU"
         self.mapfileName = "MapFile.map"
@@ -57,8 +57,8 @@ class TestData():
 
 
 class MemEntryTestCase(unittest.TestCase, TestData):
-    # pylint: disable=invalid-name
-    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+    # pylint: disable=invalid-name, missing-docstring
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>(). It is not necessary to add a docstring for every unit test.
 
     def setUp(self):
         TestData.__init__(self)
@@ -251,8 +251,8 @@ class MemEntryTestCase(unittest.TestCase, TestData):
 
 
 class MemEntryHandlerTestCase(unittest.TestCase):
-    # pylint: disable=invalid-name
-    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+    # pylint: disable=invalid-name, missing-docstring
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>(). It is not necessary to add a docstring for every unit test.
 
     def setUp(self):
         # Setting up the logger
@@ -266,8 +266,8 @@ class MemEntryHandlerTestCase(unittest.TestCase):
 
 
 class SectionEntryTestCase(unittest.TestCase, TestData):
-    # pylint: disable=invalid-name
-    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+    # pylint: disable=invalid-name, missing-docstring
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>(). It is not necessary to add a docstring for every unit test.
 
     def setUp(self):
         TestData.__init__(self)
@@ -296,8 +296,8 @@ class SectionEntryTestCase(unittest.TestCase, TestData):
 
 
 class ObjectEntryTestCase(unittest.TestCase, TestData):
-    # pylint: disable=invalid-name
-    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
+    # pylint: disable=invalid-name, missing-docstring
+    # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>(). It is not necessary to add a docstring for every unit test.
 
     def setUp(self):
         TestData.__init__(self)
