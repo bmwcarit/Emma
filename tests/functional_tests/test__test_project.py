@@ -33,7 +33,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 # Rationale: This module needs to access modules that are above them in the folder structure.
 
 from shared_libs.stringConstants import *   # pylint: disable=unused-wildcard-import, wildcard-import, wrong-import-order
-
+import emma
 
 class EmmaTestProject(unittest.TestCase):
     # pylint: disable=invalid-name
@@ -67,7 +67,8 @@ class EmmaTestProject(unittest.TestCase):
         os.mkdir(self.resultsFolder)
 
         # Running the test_project to create the CSV tables
-        subprocess.run(["python", emmaPath, "--project", testProjectFolder, "--mapfile", mapfilesFolder, "--dir", self.resultsFolder])
+        arguments = emma.parseArgs(["--project", testProjectFolder, "--mapfile", mapfilesFolder, "--dir", self.resultsFolder])
+        emma.main(arguments)
 
         for _, directories, files in os.walk(self.memStatsFolder):
             # The result folder shall have 0 subdirectories and three summary files
