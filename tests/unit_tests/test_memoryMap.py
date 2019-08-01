@@ -32,6 +32,9 @@ import emma_libs.memoryMap
 
 
 class MemEntryData:
+    # pylint: disable=too-many-instance-attributes, too-few-public-methods
+    # Rationale: This class needs to contain all the data needed for the creation of MemEntry objects as attributes and it does not need to have any methods.
+
     """
     The purpose of this class is that from its objects we can generate MemEntry Objects that
     only differ from each other by the address and length values.
@@ -42,6 +45,8 @@ class MemEntryData:
     """
 
     def __init__(self, addressStart, addressEnd, configId=None, section=None, moduleName=None):
+        # pylint: disable=too-many-arguments
+        # Rationale: The objects needs to be able to fully set up with data during construction.
         self.addressStart = addressStart
         self.addressEnd = addressEnd
         self.configId = configId
@@ -80,14 +85,7 @@ def createMemEntryObjects(sectionDataContainer=None, objectDataContainer=None):
         for element in objectDataContainer:
             objectContainer.append(createMemEntryObject(element))
 
-    if sectionDataContainer is not None and objectDataContainer is not None:
-        return sectionContainer, objectContainer
-    elif sectionDataContainer is not None:
-        return sectionContainer
-    elif objectDataContainer is not None:
-        return objectContainer
-    else:
-        return None
+    return sectionContainer, objectContainer
 
 
 class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
@@ -100,10 +98,8 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
     def assertEqualObjects(self, firstObject, secondObject):
         self.assertTrue(emma_libs.memoryEntry.ObjectEntry.isEqual(firstObject, secondObject))
 
-    def checkFlags(self, memEntry, memEntryHandler,
-                   expectedDuplicate=None,
-                   expectedContainingOthers=None, expectedContainedBy=None,
-                   expectedOverlappingOthers=None, expectedOverlappedBy=None):
+    def checkFlags(self, memEntry, memEntryHandler, expectedDuplicate=None, expectedContainingOthers=None, expectedContainedBy=None, expectedOverlappingOthers=None, expectedOverlappedBy=None):  # pylint: disable=too-many-arguments
+                                                                                                                                                                                                  # Rationale: This function needs to be able to check all kinds of flags, this is why these arguments needed.
         if expectedDuplicate is not None:
             self.assertEqual(memEntry.duplicateFlag, "Duplicate of (" + memEntryHandler.getName(expectedDuplicate) + ", " + expectedDuplicate.configID + ", " + expectedDuplicate.mapfile + ")")
         if expectedContainingOthers is not None:
@@ -115,7 +111,8 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         if expectedOverlappedBy is not None:
             self.assertEqual(memEntry.overlapFlag, "Overlapped by (" + memEntryHandler.getName(expectedOverlappedBy) + ", " + expectedOverlappedBy.configID + ", " + expectedOverlappedBy.mapfile + ")")
 
-    def checkAddressChanges(self, resolvedMemEntry, originalMemEntry, expectedAddressStart=None, expectedAddressLength=None, expectedAddressEnd=None):
+    def checkAddressChanges(self, resolvedMemEntry, originalMemEntry, expectedAddressStart=None, expectedAddressLength=None, expectedAddressEnd=None):  # pylint: disable=too-many-arguments
+                                                                                                                                                        # Rationale: This function needs to be able to check all kinds of address related data, this is why these arguments needed.
         # If we have expect an address change
         if expectedAddressStart is not None or expectedAddressLength is not None or expectedAddressEnd is not None:
             # Then we will check it with the expected values
@@ -143,8 +140,8 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         ADDRESS_END = 0x01FF
         listOfMemEntryData = [MemEntryData(ADDRESS_START, ADDRESS_END)]
         memEntryHandler = emma_libs.memoryEntry.SectionEntry
-        originalSectionContainer = createMemEntryObjects(listOfMemEntryData)
-        resolvedSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        originalSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
+        resolvedSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         # Running the resolveDuplicateContainmentOverlap list
         emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
 
@@ -170,8 +167,8 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         listOfMemEntryData = [MemEntryData(FIRST_SECTION_ADDRESS_START, FIRST_SECTION_ADDRESS_END, section="first"),
                               MemEntryData(SECOND_SECTION_ADDRESS_START, SECOND_SECTION_ADDRESS_END, section="second")]
         memEntryHandler = emma_libs.memoryEntry.SectionEntry
-        originalSectionContainer = createMemEntryObjects(listOfMemEntryData)
-        resolvedSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        originalSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
+        resolvedSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         # Running the resolveDuplicateContainmentOverlap list
         emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
 
@@ -179,7 +176,7 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
 
         # Check the non changed parts
-        for i in range(len(originalSectionContainer)):
+        for i, _ in enumerate(originalSectionContainer):
             # Check whether the sections stayed the same
             self.assertEqualSections(resolvedSectionContainer[i], originalSectionContainer[i])
             # Check whether the flags were set properly
@@ -200,8 +197,8 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         listOfMemEntryData = [MemEntryData(FIRST_SECTION_ADDRESS_START, FIRST_SECTION_ADDRESS_END, section="first"),
                               MemEntryData(SECOND_SECTION_ADDRESS_START, SECOND_SECTION_ADDRESS_END, section="second")]
         memEntryHandler = emma_libs.memoryEntry.SectionEntry
-        originalSectionContainer = createMemEntryObjects(listOfMemEntryData)
-        resolvedSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        originalSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
+        resolvedSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         # Running the resolveDuplicateContainmentOverlap list
         emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
 
@@ -228,8 +225,8 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         listOfMemEntryData = [MemEntryData(FIRST_SECTION_ADDRESS_START, FIRST_SECTION_ADDRESS_END, section="first"),
                               MemEntryData(SECOND_SECTION_ADDRESS_START, SECOND_SECTION_ADDRESS_END, section="second")]
         memEntryHandler = emma_libs.memoryEntry.SectionEntry
-        originalSectionContainer = createMemEntryObjects(listOfMemEntryData)
-        resolvedSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        originalSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
+        resolvedSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         # Running the resolveDuplicateContainmentOverlap list
         emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
 
@@ -256,8 +253,8 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         listOfMemEntryData = [MemEntryData(FIRST_SECTION_ADDRESS_START, FIRST_SECTION_ADDRESS_END, section="first"),
                               MemEntryData(SECOND_SECTION_ADDRESS_START, SECOND_SECTION_ADDRESS_END, section="second")]
         memEntryHandler = emma_libs.memoryEntry.SectionEntry
-        originalSectionContainer = createMemEntryObjects(listOfMemEntryData)
-        resolvedSectionContainer = createMemEntryObjects(listOfMemEntryData)
+        originalSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
+        resolvedSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         # Running the resolveDuplicateContainmentOverlap list
         emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
 
@@ -279,6 +276,8 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
 class CalculateObjectsInSectionsTestCase(unittest.TestCase):
     # pylint: disable=invalid-name, missing-docstring
     # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>(). It is not necessary to add a docstring for every unit test.
+    # pylint: disable=too-many-public-methods
+    # Rationale: The tests have many repetitive checks that were grouped into these functions.
 
     def checkSectionNonChangingData(self, sectionToCheck, sourceSection):
         """
@@ -766,6 +765,9 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         self.assertEqualObjects(objectsInSections[2], objectContainer[0])
 
     def test_sectionNotFullWithMultipleObjects(self):
+        # pylint: disable=too-many-locals
+        # Rationale: These constants are needed to set up the used sections and objects.
+
         """
         S         |-------------|
         O   |-| |---| |--| |--|   |--|
@@ -819,6 +821,9 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         self.assertEqualObjects(objectsInSections[8], objectContainer[4])
 
     def test_multipleSectionsWithMultipleObjects(self):
+        # pylint: disable=too-many-locals
+        # Rationale: These constants are needed to set up the used sections and objects.
+
         """
         S       |--|---| |------|    |--|
         O   |-| |-|  |---| |--| |--|

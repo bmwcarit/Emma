@@ -136,16 +136,23 @@ def lastModifiedFilesInDir(path, extension):
     :param extension: Only files with a specified extension are included
     :return: Sorted list of modified files
     """
-    directory = os.listdir(path)
-    fileTimestamps = []
+    result = []
 
-    for file in directory:
-        file = joinPath(path, file)
-        if os.path.isfile(file) and file.endswith(extension):
-            time = os.path.getmtime(file)
-            fileTimestamps.append([time, file])
+    if os.path.isdir(path):
+        directory = os.listdir(path)
+        fileTimestamps = []
 
-    return [item[1] for item in sorted(fileTimestamps)]       # python sorts always by first element for nested lists; we only need the last element (last change) and only its filename (>> [1])
+        for file in directory:
+            file = joinPath(path, file)
+
+            if os.path.isfile(file) and file.endswith(extension):
+                time = os.path.getmtime(file)
+                fileTimestamps.append([time, file])
+
+            # python sorts always by first element for nested lists; we only need the last element (last change) and only its filename (>> [1])
+            result = [item[1] for item in sorted(fileTimestamps)]
+
+    return result
 
 
 def evalSummary(filename):

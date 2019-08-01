@@ -27,6 +27,8 @@ import pandas
 import matplotlib
 import matplotlib.style
 
+from pypiscout.SCout_Logger import Logger as sc
+
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
 
@@ -118,11 +120,17 @@ class Visualiser:
         Reads the budgets.json file
         :return: nothing
         """
-        filepath = shared_libs.emma_helper.joinPath(self.projectPath, "budgets.json")
-        with open(filepath, "r") as fp:
-            budgets = json.load(fp)
-        self.budgets = budgets["Budgets"]
-        self.projectThreshold = budgets["Project Threshold in %"]
+        self.budgets = None
+        self.projectThreshold = None
+
+        try:
+            filepath = shared_libs.emma_helper.joinPath(self.projectPath, "budgets.json")
+            with open(filepath, "r") as fp:
+                budgets = json.load(fp)
+                self.budgets = budgets["Budgets"]
+                self.projectThreshold = budgets["Project Threshold in %"]
+        except FileNotFoundError:
+            sc().error("The budgets.json file was not found in the project folder (" + self.projectPath + ")!")
 
     def __readMemStatsFile(self):
         """

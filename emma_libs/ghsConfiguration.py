@@ -50,7 +50,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             patternsPath = shared_libs.emma_helper.joinPath(configurationPath, configuration["patternsPath"])
             configuration["patterns"] = shared_libs.emma_helper.readJson(patternsPath)
         else:
-            sc().error("Missing patternsPath definition in the globalConfig,json!")
+            sc().error("Missing patternsPath definition in the globalConfig,json for the configId: " + configId + "!")
             sys.exit(-10)
 
         # Loading the virtualSections*.json if the file is present (only needed in case of VAS-es)
@@ -89,8 +89,11 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         :param configuration: Configuration to which the mapfiles need to be added.
         :return: None
         """
-        numMapfiles = GhsConfiguration.__addFilesToConfiguration(mapfilesPath, configuration, "mapfiles")
-        sc().info(str(numMapfiles) + " mapfiles found")
+        if os.path.isdir(mapfilesPath):
+            numMapfiles = GhsConfiguration.__addFilesToConfiguration(mapfilesPath, configuration, "mapfiles")
+            sc().info(str(numMapfiles) + " mapfiles found")
+        else:
+            sc().error("The mapfiles folder (\"" + mapfilesPath + "\") does not exist!")
 
     def __addMonolithsToConfiguration(self, mapfilesPath, configuration):
         """
@@ -114,13 +117,16 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                     break
             return result
 
-        if ifAnyNonDMA(configuration):
-            numMonolithMapFiles = GhsConfiguration.__addFilesToConfiguration(mapfilesPath, configuration, "monoliths")
-            if numMonolithMapFiles > 1:
-                sc().warning("More than one monolith file found; Result may be non-deterministic")
-            elif numMonolithMapFiles < 1:
-                sc().error("No monolith files was detected but some mapfiles require address translation (VASes used)")
-            self.__addTabularisedMonoliths(configuration)
+        if os.path.isdir(mapfilesPath):
+            if ifAnyNonDMA(configuration):
+                numMonolithMapFiles = GhsConfiguration.__addFilesToConfiguration(mapfilesPath, configuration, "monoliths")
+                if numMonolithMapFiles > 1:
+                    sc().warning("More than one monolith file found; Result may be non-deterministic")
+                elif numMonolithMapFiles < 1:
+                    sc().error("No monolith files was detected but some mapfiles require address translation (VASes used)")
+                self.__addTabularisedMonoliths(configuration)
+        else:
+            sc().error("The mapfiles folder (\"" + mapfilesPath + "\") does not exist!")
 
     @staticmethod
     def __addFilesToConfiguration(path, configuration, fileType):

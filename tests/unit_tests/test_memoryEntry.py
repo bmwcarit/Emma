@@ -135,6 +135,7 @@ class MemEntryTestCase(unittest.TestCase, TestData):
                                                                          memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
                                                                          compilerSpecificData=self.compilerSpecificData)
         self.assertTrue(self.actionErrorWasCalled)
+        self.assertIsNone(entryWithoutLengthAndAddressEnd.addressLength)
 
     def test___setAddressesGivenEnd(self):
         entry = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
@@ -190,6 +191,7 @@ class MemEntryTestCase(unittest.TestCase, TestData):
                                                        memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
                                                        compilerSpecificData="This is obviously not a correct CompilerSpecificData here...")
         self.assertTrue(self.actionErrorWasCalled)
+        self.assertIsNone(otherMemEntry.compilerSpecificData)
 
     def test_equalConfigID(self):
         otherMemEntry = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,

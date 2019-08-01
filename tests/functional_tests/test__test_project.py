@@ -112,6 +112,9 @@ class EmmaTestProject(unittest.TestCase):
             shutil.rmtree(self.resultsFolder)
 
     class ExpectedDataTypeData:
+        # pylint: disable=too-few-public-methods
+        # Rationale: This class does not need methods, only data members to contain the expected data.
+
         """
         A class that contains the expected data of a data type.
         """
@@ -121,6 +124,9 @@ class EmmaTestProject(unittest.TestCase):
             self.totalSizeDec = totalSizeDec
 
     class ExpectedConfigIdData:
+        # pylint: disable=too-few-public-methods
+        # Rationale: This class does not need methods, only data members to contain the expected data.
+
         """
         A class that contains the expected data of a configId.
         """
@@ -130,6 +136,9 @@ class EmmaTestProject(unittest.TestCase):
             self.listOfDataTypeData = listOfDataTypeData
 
     class ExpectedReportData:
+        # pylint: disable=too-few-public-methods
+        # Rationale: This class does not need methods, only data members to contain the expected data.
+
         """
         A class that contains the expected data of a report.
         """

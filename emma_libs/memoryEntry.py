@@ -83,6 +83,7 @@ class MemEntry:
         self.memTypeTag = memTypeTag
         self.category = category
 
+        self.compilerSpecificData = None
         if isinstance(compilerSpecificData, collections.OrderedDict):
             self.compilerSpecificData = compilerSpecificData
         else:

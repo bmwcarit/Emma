@@ -44,20 +44,23 @@ class EmmaHelperTestCase(unittest.TestCase):
         # Setting up the logger
         # This syntax will default init it and then change the settings with the __call__()
         # This is needed so that the unit tests can have different settings and not interfere with each other
-        sc()(4, actionWarning=self.warningAction, actionError=self.errorAction)
+        sc()(4, actionWarning=EmmaHelperTestCase.warningAction, actionError=EmmaHelperTestCase.errorAction)
 
     # A warning action that will be registered in the logger
-    def warningAction(self):
+    @staticmethod
+    def warningAction():
         sys.exit("warning")
 
     # An error action that will be registered in the logger
-    def errorAction(self):
+    @staticmethod
+    def errorAction():
         sys.exit("error")
 
     def test_checkIfFolderExists(self):
         try:
             shared_libs.emma_helper.checkIfFolderExists(os.path.abspath(os.path.join("..", "unit_tests")))
-        except Exception:
+        except Exception:   # pylint: disable=broad-except
+                            # Rationale: The goal here is to catch any exception types.
             self.fail("Unexpected exception!")
         with self.assertRaises(SystemExit) as contextManager:
             shared_libs.emma_helper.checkIfFolderExists("DefinitelyNonExistingFolder")
@@ -66,7 +69,8 @@ class EmmaHelperTestCase(unittest.TestCase):
     def test_checkForFile(self):
         try:
             shared_libs.emma_helper.checkForFile(os.path.join("..", "unit_tests", "test_emma_helper.py"))
-        except Exception:
+        except Exception:   # pylint: disable=broad-except
+                            # Rationale: The goal here is to catch any exception types.
             self.fail("Unexpected exception!")
         with self.assertRaises(SystemExit) as contextManager:
             shared_libs.emma_helper.checkForFile("DefinitelyNonExisting.file")
