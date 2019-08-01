@@ -131,13 +131,14 @@ def main(arguments):
         sc().info("Done.")
         os.chdir("doc")     # Change working directory back
 
-    except Exception as e:
-        sc().error("An exception was caught:", e)
+    except Exception as exception:  # pylint: disable=broad-except
+                                    # Rationale: We are not trying to catch a specific exception type here.
+                                    # The purpose of this is, that the PATH environment variable will be set back in case of an error.
+        sc().error("An exception was caught:", exception)
 
     # Get back initial path config
     os.environ["PATH"] = pathOldValue
 
 
 if __name__ == "__main__":
-    args = ParseArguments()
-    main(args)
+    main(ParseArguments())

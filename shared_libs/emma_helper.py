@@ -285,9 +285,11 @@ def saveMatplotlibPicture(pictureData, pathToSave, savefigFormat, savefigDpi, sa
         fileObject.flush()
 
 
-def toHumanReadable(num, suffix='B'):
-    # pylint: disable=invalid-name, inconsistent-return-statements
+def toHumanReadable(num, suffix='B'):     # pylint: disable=inconsistent-return-statements
+                                          # Rationale: This code was copied from the source below, it will not be changed to keep it aligned with the original.
+    # pylint: disable=invalid-name
     # Rationale: This code was copied from the source below, it will not be changed to keep it aligned with the original.
+
     """
     Converts a number into a human readable format: humanReadableSize(168963795964) -> ' 157.36 GiB'
     Note: we use binary prefixes (-> 1kiB = 1024 Byte)

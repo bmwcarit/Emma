@@ -41,6 +41,14 @@ class TestHelper(unittest.TestCase):
     This also ensures that all the tests can work on a clean test_project state.
     """
     def init(self, testCaseName):
+        # pylint: disable=attribute-defined-outside-init
+        # Rationale: This class does not have an __init__() member so the member variables will be created here.
+
+        """
+        Creating the environment of the test.
+        :param testCaseName: The name of the test case. This will be used to create the output folder with the name of the test case.
+        :return: None
+        """
         # Setting up the logger
         # This syntax will default init it and then change the settings with the __call__()
         # This is needed so that the unit tests can have different settings and not interfere with each other
@@ -82,11 +90,15 @@ class TestHelper(unittest.TestCase):
         sys.exit(-10)
 
     def deInit(self):
+        """
+        Clearing up the environment of the test.
+        :return: None
+        """
         # Checking whether the non existing Path exists. If it does then it was created by the software, which is an error. We will delete it so it does not influence the other tests.
         nonExistingPathErrorDetected = os.path.isdir(self.nonExistingPath)
         # Deleting the output folder of this test case
         shutil.rmtree(self.cmdLineTestRootFolder)
-        self.assertFalse(nonExistingPathErrorDetected, "The non-existing path (\"" + self.nonExistingPath + "\") exists at tearDown! This path shall never be created by the software. To avoid effects on other tests, it was now deleted.")
+        self.assertFalse(nonExistingPathErrorDetected, "\nThe path (\"" + self.nonExistingPath + "\") that is used to simulate a non-existing path given as a command line argument exists at tearDown!\nThis means that this path was somehow created during the test execution by the software.\nThe path was now deleted by the TestHelper::deInit() to avoid effects on other tests.")
 
 
 class CmdEmma(TestHelper):
@@ -109,7 +121,8 @@ class CmdEmma(TestHelper):
         try:
             args = emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--dir", self.cmdLineTestOutputFolder])
             emma.main(args)
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
+                                # Rationale: The purpose here is to catch any exception.
             self.fail("Unexpected exception: " + str(e))
 
     def test_help(self):
@@ -144,7 +157,7 @@ class CmdEmma(TestHelper):
         Check run with non-existing mapfile folder
         """
         with self.assertRaises(SystemExit) as context:
-            args = emma.parseArgs(["--project",  self.cmdLineTestProjectFolder, "--mapfiles", self.nonExistingPath, "--dir", self.cmdLineTestOutputFolder])
+            args = emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.nonExistingPath, "--dir", self.cmdLineTestOutputFolder])
             emma.main(args)
         self.assertEqual(context.exception.code, -10)
 
@@ -155,7 +168,8 @@ class CmdEmma(TestHelper):
         try:
             args = emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder])
             emma.main(args)
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
+                                # Rationale: The purpose here is to catch any exception.
             self.fail("Unexpected exception: " + str(e))
 
 
@@ -175,6 +189,11 @@ class CmdEmmaVis(TestHelper):
         self.deInit()
 
     def runEmma(self, outputFolder=None):
+        """
+        Function to run the Emma.
+        :param outputFolder: The output folder that will be given as the --dir parameter. If it is None, the --dir parameter will not be given to Emma.
+        :return: None
+        """
         if outputFolder is not None:
             args = emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--dir", outputFolder, "--noprompt"])
         else:
@@ -188,7 +207,8 @@ class CmdEmmaVis(TestHelper):
         try:
             args = emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "--overview", "--dir", self.cmdLineTestOutputFolder, "--noprompt", "--quiet"])
             emma_vis.main(args)
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
+                                # Rationale: The purpose here is to catch any exception.
             self.fail("Unexpected exception: " + str(e))
 
     def test_help(self):
@@ -237,7 +257,8 @@ class CmdEmmaVis(TestHelper):
             self.runEmma()
             args = emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "--overview", "--noprompt", "--quiet"])
             emma_vis.main(args)
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
+                                # Rationale: The purpose here is to catch any exception.
             self.fail("Unexpected exception: " + str(e))
 
 

@@ -76,8 +76,8 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         :return: True if the configuration is correct, False otherwise.
         """
         result = False
-        if self.__checkNumberOfFoundMapfiles(configId, configuration):
-            if self.__checkMonolithSections(configuration, self.noPrompt):
+        if GhsConfiguration.__checkNumberOfFoundMapfiles(configId, configuration):
+            if GhsConfiguration.__checkMonolithSections(configuration, self.noPrompt):
                 result = True
         return result
 
@@ -238,7 +238,8 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         monolithContent = loadMonolithFile(configuration, self.noPrompt)
         configuration["sortMonolithTabularised"] = tabulariseAndSortMonolithContent(monolithContent)
 
-    def __checkNumberOfFoundMapfiles(self, configId, configuration):
+    @staticmethod
+    def __checkNumberOfFoundMapfiles(configId, configuration):
         """
         Function to check the number of found mapfiles in a configuration.
         :param configId: The configId the configuration belongs to.
@@ -254,7 +255,8 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             sc().warning("No mapfiles found for configID: \"" + configId + "\"!")
         return result
 
-    def __checkMonolithSections(self, configuration, noPrompt):
+    @staticmethod
+    def __checkMonolithSections(configuration, noPrompt):
         """
         The function collects the VAS sections from the monolith files and from the global config and from the monolith mapfile.
         :param configuration: Configuration thats monolith sections need to be checked.

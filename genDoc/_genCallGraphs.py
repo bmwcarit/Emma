@@ -19,7 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import sys
 import os
-import argparse
 import pstats
 import subprocess
 
@@ -41,7 +40,9 @@ EMMA_VIS_EXECUTION_STRING = r"..\emma_vis.py --project ..\doc\test_project --dir
 EMMA_VIS_PROFILE_FILE_PATH = README_CALL_GRAPH_AND_UML_FOLDER_NAME + r"\emma_vis.profile"
 
 
-class ProfilerFilter:
+class ProfilerFilter:   # pylint: disable=too-few-public-methods
+                        # Rationale: There is no other functionality that shall be realized by this class. There is no need for more public methods.
+
     """
     This is a filtering class for the profiler data of the Lib/pstats.py library. The typical use case is when a after
     profiling a python code (with the Lib/profile.py library) the output data contains a lot of calls from our code to
@@ -132,6 +133,14 @@ class ProfilerFilter:
 
 
 def generateCallGraph(profileFile, executionString, verbose):
+    """
+    Function to generate callgraphs for an executable.
+    :param profileFile: This is the path where the profile file will be stored.
+    :param executionString: This is the string that will be given to subprocess.run to be executed.
+    :param verbose: If True, then more info will be printed during execution.
+    :return: None
+    """
+
     sc().info("Generating call graphs for: " + executionString)
     sc().info("The results will be stored in: " + shared_libs.emma_helper.joinPath(os.getcwd(), README_CALL_GRAPH_AND_UML_FOLDER_NAME))
 
@@ -168,6 +177,13 @@ def generateCallGraph(profileFile, executionString, verbose):
 
 
 def main(arguments):
+    """
+    Main function of the script.
+    :param arguments: Dictionary that contains the arguments that influence the execution.
+                      Currently avalaible arguments:
+                        - verbose : Extra info will be printed during execution.
+    :return: None
+    """
     # Store original path variables
     pathOldValue = os.environ["PATH"]
     if "Graphviz" not in os.environ["PATH"]:
@@ -179,8 +195,10 @@ def main(arguments):
         generateCallGraph(EMMA_PROFILE_FILE_PATH, EMMA_EXECUTION_STRING, arguments.verbose)
         generateCallGraph(EMMA_VIS_PROFILE_FILE_PATH, EMMA_VIS_EXECUTION_STRING, arguments.verbose)
 
-    except Exception as e:
-        sc().error("An exception was caught:", e)
+    except Exception as exception:  # pylint: disable=broad-except
+                                    # Rationale: We are not trying to catch a specific exception type here.
+                                    # The purpose of this is, that the PATH environment variable will be set back in case of an error.
+        sc().error("An exception was caught:", exception)
 
     # Get back initial path config
     os.environ["PATH"] = pathOldValue
