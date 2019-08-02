@@ -50,7 +50,7 @@ script:
     - coverage run -m unittest -v
     - tree -a -I .git ../
     - coverage report
-    - coverage xml -o ../coverage.xml
+    - coverage xml
 
 after_success:
     - if [ -n "$CODE_COV" ]; then python-codacy-coverage -r coverage.xml; else echo skip; fi
