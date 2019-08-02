@@ -19,8 +19,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import os
 import sys
-import subprocess
+import shutil
+import unittest
 import datetime
+import coverage
 
 from pypiscout.SCout_Logger import Logger as sc
 
@@ -40,17 +42,18 @@ def main():
     def exitProgram():
         sys.exit(-10)
 
-    sc(-1, exitProgram, exitProgram)
+    sc()(-1, actionWarning=None, actionError=exitProgram)
 
     sc().header("Generating Unit Test Coverage Report")
 
     # Setting up the variables (folder and file names...etc.)
-    reportsFolder = os.path.join(sys.path[0], "reports")
-    unitTestFolder = os.path.join(sys.path[0], "..", "..", "unit_tests")
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%Hh%Ms%S")
+    coverageDataFileName = ".coverage"
+    reportsFolder = os.path.join(os.path.dirname(__file__), "reports")
+    unitTestFolder = os.path.join(os.path.dirname(__file__), "..", "..", "unit_tests")
+    # These are the folders that will belong to this specific run
     actualReportFolder = os.path.join(reportsFolder, timestamp)
     actualReportSourceFolder = os.path.join(reportsFolder, timestamp, "source")
-    sourceFileName = ".coverage"
 
     # Checking whether the output folders exist
     if not os.path.isdir(actualReportFolder):
@@ -62,17 +65,37 @@ def main():
     else:
         sc().error("Error! The folder " + actualReportFolder + " already exists!")
 
-    # Switching to the unit tests folder and running the tests
-    os.chdir(unitTestFolder)
+    # Switching to the folder where this script is and setting up the objects needed for the unit tests and coverage reports
     sc().info("Running the unit tests...")
-    subprocess.run(["coverage", "run", "-m", "unittest", "discover", "-v"], shell=True)
+    os.chdir(os.path.dirname(__file__))
+    testLoader = unittest.TestLoader()
+    testSuite = testLoader.discover(unitTestFolder)
+    testRunner = unittest.TextTestRunner()
+    coverageTool = coverage.Coverage()
 
-    # Moving the .coverage file to the source folder of the report and switching to that folder
-    os.rename(os.path.join(unitTestFolder, sourceFileName), os.path.join(actualReportSourceFolder, sourceFileName))
-    os.chdir(actualReportSourceFolder)
+    # Starting the coverage measurement
+    coverageTool.start()
 
-    sc().info("Creating the .html report...")
-    subprocess.run(["coverage", "html", str("--directory=" + actualReportFolder)], shell=True)
+    # Running the unit tests and storing whether every test passed
+    testReults = testRunner.run(testSuite)
+    atLeastOneTestFailed = False
+    if testReults.failures or testReults.errors:
+        atLeastOneTestFailed = True
+
+    # Stopping the coverage measurement
+    coverageTool.stop()
+
+    # Re-initializing the logger since it could have been used in the unittest and that would override our settings
+    sc()(-1, actionWarning=None, actionError=exitProgram)
+
+    # We will only generate a html report if all the unit tests passed
+    if atLeastOneTestFailed:
+        sc().error("Could not generate coverage report because one of the tests have failed!")
+    else:
+        sc().info("Creating the .html report...")
+        coverageTool.save()
+        coverageTool.html_report(directory=actualReportFolder)
+        shutil.move(coverageDataFileName, actualReportSourceFolder)
 
 
 if __name__ == '__main__':

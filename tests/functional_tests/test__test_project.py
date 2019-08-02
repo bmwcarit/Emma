@@ -22,7 +22,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import os
 import sys
 import shutil
-import subprocess
 import unittest
 import datetime
 import pandas
@@ -54,7 +53,6 @@ class EmmaTestProject(unittest.TestCase):
 
         # Setting up the variables
         emmaRootFolder = os.path.join("..", "..")
-        emmaPath = os.path.join(emmaRootFolder, "emma.py")
         testProjectFolder = os.path.join(emmaRootFolder, "doc", "test_project")
         mapfilesFolder = os.path.join(testProjectFolder, "mapfiles")
         self.resultsFolder = os.path.join("..", "other_files", "test__test_project")

@@ -58,7 +58,7 @@ class EmmaHelperTestCase(unittest.TestCase):
 
     def test_checkIfFolderExists(self):
         try:
-            shared_libs.emma_helper.checkIfFolderExists(os.path.abspath(os.path.join("..", "unit_tests")))
+            shared_libs.emma_helper.checkIfFolderExists(os.path.dirname(__file__))
         except Exception:   # pylint: disable=broad-except
                             # Rationale: The goal here is to catch any exception types.
             self.fail("Unexpected exception!")
@@ -68,7 +68,7 @@ class EmmaHelperTestCase(unittest.TestCase):
 
     def test_checkForFile(self):
         try:
-            shared_libs.emma_helper.checkForFile(os.path.join("..", "unit_tests", "test_emma_helper.py"))
+            shared_libs.emma_helper.checkForFile(__file__)
         except Exception:   # pylint: disable=broad-except
                             # Rationale: The goal here is to catch any exception types.
             self.fail("Unexpected exception!")
@@ -84,7 +84,7 @@ class EmmaHelperTestCase(unittest.TestCase):
         os.rmdir(directoryName)
 
     def test_readJsonWriteJson(self):
-        jsonTestFilePath = os.path.join("..", "other_files", "testJson.json")
+        jsonTestFilePath = os.path.join(os.path.dirname(__file__), "..", "other_files", "testJson.json")
         self.assertFalse(os.path.exists(jsonTestFilePath))
 
         jsonContentToWrite = {"TestDictionary": {}}
