@@ -49,7 +49,7 @@ script:
     - cd ../unit_tests
     - coverage run -m unittest -v
     - tree -a -I .git ../
-    - coverage report --omit="/home/travis/virtualenv/*", "/home/travis/build/bmwcarit/Emma/tests/*"
+    - coverage report --omit="/home/travis/virtualenv/*","/home/travis/build/bmwcarit/Emma/tests/*"
     - coverage xml
 
 after_success:
