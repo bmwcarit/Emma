@@ -42,7 +42,7 @@ git:
     submodules: false
 
 script:
-    - tree --charset unicode ../../
+    - tree -a -I .git ../
     - find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
     - cd tests/functional_tests
     - python -m unittest -v
