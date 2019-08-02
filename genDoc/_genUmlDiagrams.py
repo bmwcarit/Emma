@@ -62,6 +62,6 @@ def main():
     for sourceFilePath in LIST_OF_SOURCE_FILE_PATHS:
         sourceFileName = os.path.splitext(os.path.basename(sourceFilePath))[0]
         subprocess.run("pyreverse -AS -o " + README_PICTURE_FORMAT + " " + sourceFilePath + " -p " + sourceFileName, cwd=README_CALL_GRAPH_AND_UML_FOLDER_NAME, shell=True)
-        # Note that pyreverse must be called via subprocess (do NOT import it as a module)
+        # Note that pyreverse MUST be called via subprocess (do NOT import it as a module)
         # The main reason are licencing issues (GPLv2 is incompatible with GPLv3) (https://softwareengineering.stackexchange.com/questions/110380/call-gpl-software-from-non-gpl-software)
         # See also: https://github.com/TeamFlowerPower/kb/wiki/callGraphsUMLdiagrams

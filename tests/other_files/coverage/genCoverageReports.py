@@ -65,14 +65,14 @@ def main():
     # Switching to the unit tests folder and running the tests
     os.chdir(unitTestFolder)
     sc().info("Running the unit tests...")
-    subprocess.run(["coverage", "run", "-m", "unittest", "discover", "-v"])
+    subprocess.run(["coverage", "run", "-m", "unittest", "discover", "-v"], shell=True)
 
     # Moving the .coverage file to the source folder of the report and switching to that folder
     os.rename(os.path.join(unitTestFolder, sourceFileName), os.path.join(actualReportSourceFolder, sourceFileName))
     os.chdir(actualReportSourceFolder)
 
     sc().info("Creating the .html report...")
-    subprocess.run(["coverage", "html", str("--directory=" + actualReportFolder)])
+    subprocess.run(["coverage", "html", str("--directory=" + actualReportFolder)], shell=True)
 
 
 if __name__ == '__main__':

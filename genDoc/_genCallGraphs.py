@@ -162,16 +162,16 @@ def generateCallGraph(profileFile, executionString, verbose):
     profilerData.dump_stats(filteredProfileFile)
 
     sc().info("Creating the .dot file from the .profile file...")
-    subprocess.run("gprof2dot -f pstats " + profileFile + " -o " + profileFile + ".dot")
+    subprocess.run("gprof2dot -f pstats " + profileFile + " -o " + profileFile + ".dot", shell=True)
 
     sc().info("Creating the .dot file from the filtered .profile file...")
-    subprocess.run("gprof2dot -f pstats " + filteredProfileFile + " -o " + filteredProfileFile + ".dot")
+    subprocess.run("gprof2dot -f pstats " + filteredProfileFile + " -o " + filteredProfileFile + ".dot", shell=True)
 
     sc().info("Creating the .png file from the .dot file...")
-    subprocess.run("dot -T" + README_PICTURE_FORMAT + " -Gdpi=" + str(DPI_DOCUMENTATION) + " " + profileFile + ".dot -o" + profileFile + "." + README_PICTURE_FORMAT)
+    subprocess.run("dot -T" + README_PICTURE_FORMAT + " -Gdpi=" + str(DPI_DOCUMENTATION) + " " + profileFile + ".dot -o" + profileFile + "." + README_PICTURE_FORMAT, shell=True)
 
     sc().info("Creating the .png file from the filtered .dot file...")
-    subprocess.run("dot -T" + README_PICTURE_FORMAT + " -Gdpi=" + str(DPI_DOCUMENTATION) + " " + filteredProfileFile + ".dot -o" + filteredProfileFile + "." + README_PICTURE_FORMAT)
+    subprocess.run("dot -T" + README_PICTURE_FORMAT + " -Gdpi=" + str(DPI_DOCUMENTATION) + " " + filteredProfileFile + ".dot -o" + filteredProfileFile + "." + README_PICTURE_FORMAT, shell=True)
 
     print("")
 
