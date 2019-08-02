@@ -145,7 +145,7 @@ def generateCallGraph(profileFile, executionString, verbose):
     sc().info("The results will be stored in: " + shared_libs.emma_helper.joinPath(os.getcwd(), README_CALL_GRAPH_AND_UML_FOLDER_NAME))
 
     sc().info("Analyzing the program and creating the .profile file...")
-    subprocess.run("python -m cProfile -o " + profileFile + " " + executionString)
+    subprocess.run("python -m cProfile -o " + profileFile + " " + executionString, shell=True)
 
     profilerData = pstats.Stats(profileFile)
     profilerData.sort_stats(pstats.SortKey.CUMULATIVE)
