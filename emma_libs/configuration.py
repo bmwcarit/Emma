@@ -61,17 +61,19 @@ class Configuration:
 
         # Creating the SpecificConfiguration objects
         for configId in self.globalConfig:
-            usedCompiler = self.globalConfig[configId]["compiler"]
-            self.specificConfigurations[configId] = emma_libs.specificConfigurationFactory.createSpecificConfiguration(usedCompiler, noPrompt=noPrompt)
-            # Processing the compiler dependent parts of the configuration
-            sc().info("Processing the mapfiles of the configID \"" + configId + "\"")
-            self.specificConfigurations[configId].readConfiguration(configurationPath, mapfilesPath, configId, self.globalConfig[configId])
-            # Validating the the configuration
-            if not self.specificConfigurations[configId].checkConfiguration(configId, self.globalConfig[configId]):
-                sc().warning("The specificConfiguration object of the configId \"" +
-                             configId + "\" reported that the configuration is invalid!\n" +
-                             "The configId \"" + configId + "\" will not be analysed!")
-
+            if "compiler" in self.globalConfig[configId]:
+                usedCompiler = self.globalConfig[configId]["compiler"]
+                self.specificConfigurations[configId] = emma_libs.specificConfigurationFactory.createSpecificConfiguration(usedCompiler, noPrompt=noPrompt)
+                # Processing the compiler dependent parts of the configuration
+                sc().info("Processing the mapfiles of the configID \"" + configId + "\"")
+                self.specificConfigurations[configId].readConfiguration(configurationPath, mapfilesPath, configId, self.globalConfig[configId])
+                # Validating the the configuration
+                if not self.specificConfigurations[configId].checkConfiguration(configId, self.globalConfig[configId]):
+                    sc().warning("The specificConfiguration object of the configId \"" +
+                                 configId + "\" reported that the configuration is invalid!\n" +
+                                 "The configId \"" + configId + "\" will not be analysed!")
+            else:
+                sc().error("The configuration of the configID \"" + configId + "\" does not contain a \"compiler\" key!")
 
     @staticmethod
     def __readGlobalConfigJson(path):
