@@ -144,14 +144,14 @@ def parseArgs(arguments=""):
         default=False
     )
     parser.add_argument(
-        "--inputDir",
+        "--inOutDir",
         "-i",
         help="Path containing the memStats directory (-> Emma output). If not given the `project` directory will be used.",
         default=None
     )
     parser.add_argument(
         "--subDir",
-        help="Sub-directory of `inputDir` where the Emma Visualiser results will be stored. If not given results will be stored in `inputDir`.",
+        help="Sub-directory of `inOutDir` where the Emma Visualiser results will be stored. If not given results will be stored in `inOutDir`.",
         default=None
     )
     parser.add_argument(
@@ -194,25 +194,25 @@ def parseArgs(arguments=""):
         shared_libs.emma_helper.checkIfFolderExists(parsedArguments.projectDir)
 
         parsedArguments.inOutPath = parsedArguments.projectDir
-    if parsedArguments.inputDir is None:
-        parsedArguments.inputDir = parsedArguments.projectDir
+    if parsedArguments.inOutDir is None:
+        parsedArguments.inOutDir = parsedArguments.projectDir
     else:
-        parsedArguments.inputDir = shared_libs.emma_helper.joinPath(parsedArguments.inputDir)               # Unify path
-        shared_libs.emma_helper.checkIfFolderExists(parsedArguments.inputDir)
+        parsedArguments.inOutDir = shared_libs.emma_helper.joinPath(parsedArguments.inOutDir)               # Unify path
+        shared_libs.emma_helper.checkIfFolderExists(parsedArguments.inOutDir)
 
-        parsedArguments.inOutPath = parsedArguments.inputDir
+        parsedArguments.inOutPath = parsedArguments.inOutDir
         if parsedArguments.subDir is None:
             parsedArguments.subDir = ""
         else:
             parsedArguments.subDir = shared_libs.emma_helper.joinPath(parsedArguments.subDir)               # Unify path
 
-            joinedInputPath = shared_libs.emma_helper.joinPath(parsedArguments.inputDir, parsedArguments.subDir)
+            joinedInputPath = shared_libs.emma_helper.joinPath(parsedArguments.inOutDir, parsedArguments.subDir)
             shared_libs.emma_helper.checkIfFolderExists(joinedInputPath)
             parsedArguments.inOutPath = joinedInputPath
 
     # Clean-up paths
     del parsedArguments.subDir
-    del parsedArguments.inputDir
+    del parsedArguments.inOutDir
 
     return parsedArguments
 
