@@ -261,7 +261,7 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         # Check the number of elements: no elements shall be removed or added to the container
         self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
 
-        # Check whether the addresses were set properly (the first section shall lose its end and the second its beginning)
+        # Check whether the addresses were set properly (the second section shall lose its beginning)
         self.checkAddressChanges(resolvedSectionContainer[0], originalSectionContainer[0],
                                  expectedAddressStart=originalSectionContainer[0].addressStart,
                                  expectedAddressEnd=originalSectionContainer[0].addressEnd())
@@ -313,10 +313,10 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         self.checkSectionNonChangingData(sectionEntry, sourceSection)
         self.assertEqual(sectionEntry.addressStart, sourceSection.addressStart)
         self.assertEqual(sectionEntry.addressLength, 0)
-        self.assertEqual(sectionEntry.addressEnd(), sourceSection.addressStart)
+        self.assertIsNone(sectionEntry.addressEnd())
         self.assertEqual(sectionEntry.addressStartHex(), hex(sourceSection.addressStart))
         self.assertEqual(sectionEntry.addressLengthHex(), hex(0))
-        self.assertEqual(sectionEntry.addressEndHex(), hex(sourceSection.addressStart))
+        self.assertEqual(sectionEntry.addressEndHex(), "")
         self.assertEqual(sectionEntry.objectName, OBJECTS_IN_SECTIONS_SECTION_ENTRY)
 
     def checkSectionReserve(self, sectionReserve, sourceSection, expectedAddressStart, expectedAddressEnd):

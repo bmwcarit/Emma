@@ -53,13 +53,13 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
             # Don't compare element with itself and only compare the same configID
             if actualElement.equalConfigID(otherElement) and not memEntryHandler.isEqual(actualElement, otherElement):
 
-                # Case 0: actualElement and otherElement are completely separated
-                if actualElement.addressEnd() < otherElement.addressStart or actualElement.addressStart > otherElement.addressEnd():
+                # Case 0: actualElement and otherElement are completely separated : the otherElement begins only after the actualElement or the actualElement begins only after the otherElement
+                if (actualElement.addressStart + actualElement.addressLength) <= otherElement.addressStart or actualElement.addressStart >= (otherElement.addressStart + otherElement.addressLength):
                     # There is not much to do here...
                     pass
                 else:
                     # Case 1: actualElement and otherElement are duplicates
-                    if actualElement.addressStart == otherElement.addressStart and actualElement.addressEnd() == otherElement.addressEnd():
+                    if actualElement.addressStart == otherElement.addressStart and actualElement.addressLength == otherElement.addressLength:
                         # Setting the actualElement´s duplicateFlag if it was not already set
                         if actualElement.duplicateFlag is None:
                             actualElement.duplicateFlag = "Duplicate of (" + memEntryHandler.getName(otherElement) + ", " + otherElement.configID + ", " + otherElement.mapfile + ")"
@@ -69,11 +69,11 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
                             actualElement.addressLength = 0
                     else:
                         # Case 2: actualElement contains otherElement
-                        if actualElement.addressStart <= otherElement.addressStart and actualElement.addressEnd() >= otherElement.addressEnd():
+                        if actualElement.addressStart <= otherElement.addressStart and (actualElement.addressStart + actualElement.addressLength) >= (otherElement.addressStart + otherElement.addressLength):
                             actualElement.containingOthersFlag = True
                         else:
                             # Case 3: actualElement is contained by otherElement
-                            if actualElement.addressStart >= otherElement.addressStart and actualElement.addressEnd() <= otherElement.addressEnd():
+                            if actualElement.addressStart >= otherElement.addressStart and (actualElement.addressStart + actualElement.addressLength) <= (otherElement.addressStart + otherElement.addressLength):
                                 # Setting the actualElement´s containmentFlag if it was not already set
                                 if actualElement.containmentFlag is None:
                                     actualElement.containmentFlag = "Contained by (" + memEntryHandler.getName(otherElement) + ", " + otherElement.configID + ", " + otherElement.mapfile + ")"
@@ -82,14 +82,14 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
                                     actualElement.addressLength = 0
                             else:
                                 # Case 4: actualElement overlaps otherElement: otherElement starts inside and ends outside actualElement
-                                if actualElement.addressStart < otherElement.addressStart and actualElement.addressEnd() < otherElement.addressEnd():
+                                if actualElement.addressStart < otherElement.addressStart and (actualElement.addressStart + actualElement.addressLength) < (otherElement.addressStart + otherElement.addressLength):
                                     actualElement.overlappingOthersFlag = True
                                 else:
                                     # Case 5: actualElement is overlapped by otherElement: otherElement starts before and ends inside actualElement
-                                    if actualElement.addressStart > otherElement.addressStart and actualElement.addressEnd() > otherElement.addressEnd():
+                                    if actualElement.addressStart > otherElement.addressStart and (actualElement.addressStart + actualElement.addressLength) > (otherElement.addressStart + otherElement.addressLength):
                                         actualElement.overlapFlag = "Overlapped by (" + memEntryHandler.getName(otherElement) + ", " + otherElement.configID + ", " + otherElement.mapfile + ")"
                                         # Adjusting the addresses and length of the actualElement: reducing its size by the overlapping part
-                                        newAddressStart = otherElement.addressEnd() + 1
+                                        newAddressStart = otherElement.addressStart + otherElement.addressLength
                                         sizeOfOverlappingPart = newAddressStart - actualElement.addressStart
                                         actualElement.addressStart = newAddressStart
                                         actualElement.addressLength -= sizeOfOverlappingPart
@@ -153,15 +153,15 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
         :param newAddressStart: The new start address value the section will have after the cut.
         :return:
         """
-        # We need to store the addressEnd before cutting because after setting the new addressStart the addressEnd() calculation will return another value
-        addressEndBeforeCutting = sectionToCut.addressEnd()
-        if newAddressStart < addressEndBeforeCutting:
+        # We need to make sure that the newAddressStart does not cause a cut more than the available length
+        lengthThatWillBeCutOff = newAddressStart - sectionToCut.addressStart
+        if lengthThatWillBeCutOff <= sectionToCut.addressLength:
             sectionToCut.addressStart = newAddressStart
-            sectionToCut.addressLength = addressEndBeforeCutting - sectionToCut.addressStart + 1
+            sectionToCut.addressLength -= lengthThatWillBeCutOff
         else:
             sc().error("memoryMap.py::calculateObjectsInSections::cutOffTheBeginningOfTheSection(): " +
-                       sectionToCut.configID + "::" + sectionToCut.section + ": The new newAddressStart(" +
-                       newAddressStart + ") is after the addressEnd(" + addressEndBeforeCutting + ")!")
+                       sectionToCut.configID + "::" + sectionToCut.sectionName + ": The new newAddressStart(" +
+                       str(newAddressStart) + ") would cause a cut that is bigger than the addressLength! (" + str(lengthThatWillBeCutOff) + "vs " + str(sectionToCut.addressLengthing) + ")")
 
     for sectionContainerElement in sectionContainer:
         # Creating a section entry
@@ -182,11 +182,11 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
             #   - is not belonging to the same configID as the section
             #   - or have a zero length or
             #   - if it ends before this section, because it means that this object is outside the section.
-            if sectionCopy.configID != objectContainerElement.configID or objectContainerElement.addressLength == 0 or sectionCopy.addressStart > objectContainerElement.addressEnd():
+            if sectionCopy.configID != objectContainerElement.configID or objectContainerElement.addressLength == 0 or sectionCopy.addressStart >= (objectContainerElement.addressStart + objectContainerElement.addressLength):
                 continue
 
             # Case 0: The object is completely overlapping the section
-            if objectContainerElement.addressStart <= sectionCopy.addressStart and sectionCopy.addressEnd() <= objectContainerElement.addressEnd():
+            if objectContainerElement.addressStart <= sectionCopy.addressStart and (sectionCopy.addressStart + sectionCopy.addressLength) <= (objectContainerElement.addressStart + objectContainerElement.addressLength):
                 # This object is overlapping the section completely. This means that all the following objects will be
                 # outside the section, so we can continue with the next section.
                 # We also need to mark that the section is fully loaded with the object
@@ -194,19 +194,21 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
                 break
 
             # Case 1: The object is overlapping the beginning of the section
-            elif objectContainerElement.addressStart <= sectionCopy.addressStart and objectContainerElement.addressEnd() < sectionCopy.addressEnd():
+            elif objectContainerElement.addressStart <= sectionCopy.addressStart and (objectContainerElement.addressStart + objectContainerElement.addressLength) < (sectionCopy.addressStart + sectionCopy.addressLength):
                 # Cutting off the beginning of the section
-                cutOffTheBeginningOfTheSection(sectionCopy, objectContainerElement.addressEnd() + 1)
+                newSectionAddressStart = objectContainerElement.addressStart + objectContainerElement.addressLength
+                cutOffTheBeginningOfTheSection(sectionCopy, newSectionAddressStart)
 
             # Case 2: The object is overlapping a part in the middle of the section
-            elif sectionCopy.addressStart < objectContainerElement.addressStart and objectContainerElement.addressEnd() < sectionCopy.addressEnd():
+            elif sectionCopy.addressStart < objectContainerElement.addressStart and (objectContainerElement.addressStart + objectContainerElement.addressLength) < (sectionCopy.addressStart + sectionCopy.addressLength):
                 # Creating a sectionReserve
                 createASectionReserve(sectionCopy, objectContainerElement.addressStart - 1)
-                # Setting up the remaining section part
-                cutOffTheBeginningOfTheSection(sectionCopy, objectContainerElement.addressEnd() + 1)
+                # Setting up the remaining section part: the section will start after tge object
+                newSectionAddressStart = objectContainerElement.addressStart + objectContainerElement.addressLength
+                cutOffTheBeginningOfTheSection(sectionCopy, newSectionAddressStart)
 
             # Case 3: The object is overlapping the end of the section
-            elif sectionCopy.addressStart < objectContainerElement.addressStart <= sectionCopy.addressEnd() <= objectContainerElement.addressEnd():
+            elif sectionCopy.addressStart < objectContainerElement.addressStart <= (sectionCopy.addressStart + sectionCopy.addressLength) <= (objectContainerElement.addressStart + objectContainerElement.addressLength):
                 # Creating the sectionReserve
                 createASectionReserve(sectionCopy, objectContainerElement.addressStart - 1)
                 # This object is overlapping the end of the section. This means that all the following objects will be
@@ -217,7 +219,7 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
 
             # Case 4: The object is only starting after this section, it means that the following objects will also be outside the section.
             # So we have to create a reserve for the remaining part of the section and we can exit the object loop now and continue with the next section.
-            elif sectionCopy.addressEnd() < objectContainerElement.addressStart:
+            elif (sectionCopy.addressStart + sectionCopy.addressLength) <= objectContainerElement.addressStart:
                 # There is not much to do here, the reserve will be created after the object loop
                 break
 

@@ -143,9 +143,9 @@ class MemEntry:
     def addressEndHex(self):
         """
         Function to get the addressEnd in hex.
-        :return: The addressEnd in hex if addressLength is not 0, None otherwise.
+        :return: The addressEnd in hex as string if addressLength is not 0, "" otherwise.
         """
-        return hex(self.addressEnd())
+        return hex(self.addressEnd()) if self.addressEnd() is not None else ""
 
     def addressStartHexOriginal(self):
         """
@@ -169,7 +169,11 @@ class MemEntry:
         return self.__calculateAddressEnd(self.addressStartOriginal, self.addressLengthOriginal)
 
     def addressEndHexOriginal(self):
-        return hex(self.addressEndOriginal())
+        """
+        Function to get the original addressEnd in hex.
+        :return: The addressEndOriginal in hex as string if addressLength is not 0, "" otherwise.
+        """
+        return hex(self.addressEndOriginal()) if self.addressEndOriginal() is not None else ""
 
     def equalConfigID(self, other):
         """
