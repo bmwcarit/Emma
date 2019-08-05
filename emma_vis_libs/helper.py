@@ -27,19 +27,20 @@ import shared_libs.emma_helper
 import shared_libs.stringConstants
 
 
-# TODO: Update the Docstring and rename the function to give it a name that explains the functionality more (AGK)
-def getLastModFileOrPrompt(subStringIdentifier, args):
+def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool, append: bool, noprompt: bool) -> str:
     """
-    If args.quiet: Evaluates the file to use listing all files in "<projectPath>/MemStats", then matching
+    If quiet: Evaluates the file to use listing all files in "<projectPath>/MemStats", then matching
     the substring given in summaryTypes and returns the newest file matching the substring
-    :param subStringIdentifier: Substring the list of files in the memStats directory is mnatched
-    :param args: Command line arguments
+    :param subStringIdentifier: Substring the list of files in the memStats directory is matched
+    :param inOutPath: [string]
+    :param quiet: [bool]
+    :param append: [bool]
+    :param noprompt: [bool]
     :return: file name to use
     """
-
     fileToUse = None
-    path = shared_libs.emma_helper.joinPath(args.dir, args.subdir, shared_libs.stringConstants.OUTPUT_DIR)
-    lastModifiedFiles = shared_libs.emma_helper.lastModifiedFilesInDir(path, ".csv")  # Latest file is last element
+    path = shared_libs.emma_helper.joinPath(inOutPath, shared_libs.stringConstants.OUTPUT_DIR)
+    lastModifiedFiles = shared_libs.emma_helper.lastModifiedFilesInDir(path, ".csv")            # Newest file is last element
 
     # Check if no files were found
     if len(lastModifiedFiles) < 1:
@@ -55,16 +56,16 @@ def getLastModFileOrPrompt(subStringIdentifier, args):
             # Exit in first match which is the newest file as we are backwards iterating
             break
 
-    if args.quiet:
+    if quiet:
         # Just use the last found file (we did this before)
         pass
-    elif not args.append:
+    elif not append:
         # If nothing specified AND append mode is OFF ask which file to use
         sc.info("Last modified file:")
         print("\t" + fileToUse)
         sc.info("`y` to accept; otherwise specify an absolute path (without quotes)")
         while True:
-            text = input("> ") if not args.noprompt else sys.exit(-10)
+            text = input("> ") if not noprompt else sys.exit(-10)
             if text == "y":
                 break
             if text is not None and text != "" and os.path.isfile(text) and text.endswith(".csv"):

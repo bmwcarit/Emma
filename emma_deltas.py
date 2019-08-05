@@ -33,7 +33,12 @@ import emma_delta_libs.FileSelector
 import emma_delta_libs.RootSelector
 
 
-def parseArgs():
+def parseArgs(arguments=""):
+    """
+    Argument parser
+    :param arguments: List of strings specifying the arguments to be parsed (default: "" (-> meaning that arguments from the command line should be parsed)
+    :return: Argparse object
+    """
     # Argument parser
     parser = argparse.ArgumentParser(
         prog="Emma Delta Analyser",
@@ -72,7 +77,15 @@ def parseArgs():
         action="store_true"
     )
 
-    return parser.parse_args()
+    # We will either parse the arguments string if it is not empty,
+    # or (in the default case) the data from sys.argv
+    if "" == arguments:
+        parsedArguments = parser.parse_args()
+    else:
+        # Arguments were passed to this function (e.g. for unit testing)
+        parsedArguments = parser.parse_args(arguments)
+
+    return parsedArguments
 
 
 def main(args):

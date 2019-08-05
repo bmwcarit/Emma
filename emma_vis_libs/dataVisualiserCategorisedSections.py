@@ -58,7 +58,6 @@ class CategorisedImageConsumptionList:
         module is stored in the memory units.
         :return: A grouped dataframe containing the grouped image and modules
         """
-
         # Prepare image summary data
         self.imageData.reset_index()
         self.imageData = self.imageData.drop([CATEGORY, ADDR_START_HEX, ADDR_END_HEX, SIZE_HEX, ADDR_END_DEC, VAS_NAME, DMA, MAPFILE, OBJECT_NAME], 1)
@@ -198,15 +197,13 @@ class CategorisedImageConsumptionList:
         :return: nothing
         """
 
-        myfigure = self.displayUsedByModulesInImage()
+        myFigure = self.displayUsedByModulesInImage()
         filename = self.project + MEMORY_ESTIMATION_BY_MODULES_PICTURE_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION
 
-        shared_libs.emma_helper.saveMatplotlibPicture(myfigure, shared_libs.emma_helper.joinPath(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
+        shared_libs.emma_helper.saveMatplotlibPicture(myFigure, shared_libs.emma_helper.joinPath(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
 
         if plotShow:
             matplotlib.pyplot.show()  # Show plots after results in console output are shown
-
-        return
 
     def categorisedImagetoCSV(self):
         """

@@ -85,12 +85,6 @@ def parseArgs(arguments=""):
         help="User defined subdirectory name in the --dir folder.",
         default=None
     )
-    # parser.add_argument(      # TODO: Currently not implemented (useful?) (MSc)
-    #     "--verbose",
-    #     "-v",
-    #     help="Generate verbose output",
-    #     action="count"        # See: https://docs.python.org/3/library/argparse.html#action
-    # )
     parser.add_argument(
         "--analyse_debug",
         help="Include DWARF debug sections in analysis",
@@ -123,10 +117,11 @@ def parseArgs(arguments=""):
     )
 
     # We will either parse the arguments string if it is not empty,
-    # or in the default case the data from sys.argv
-    if arguments == "":
+    # or (in the default case) the data from sys.argv
+    if "" == arguments:
         parsedArguments = parser.parse_args()
     else:
+        # Arguments were passed to this function (e.g. for unit testing)
         parsedArguments = parser.parse_args(arguments)
 
     return parsedArguments

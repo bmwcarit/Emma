@@ -118,7 +118,7 @@ def main(arguments):
 
         print("")
         sc().info("Storing the test_project readme as a .html file...")
-        markdownFilePath = r"../doc/test_project/readme/readme.md"
+        markdownFilePath = r"../doc/test_project/readme.md"
         shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdownFilePath, (os.path.splitext(markdownFilePath)[0] + ".html"))
         sc().info("Done.")
 

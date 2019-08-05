@@ -181,10 +181,14 @@ def projectNameFromPath(path):
 
 
 def joinPath(*paths):
+    """
+    Join paths together maintaining one slash direction. This is especially important when using multiple operating systems (use forward slashes only).
+    :param paths: [List(string)] List of paths which are going to be joined together
+    :return: [string] The joined path
+    """
     # Removing the elements that are None because these can be optional path elements and they would cause an exception
     listOfReceivedPaths = [i for i in paths if i is not None]
-    # FIXME : Docstring or comment pls, and what about the commented out code?
-    return os.path.normpath(os.path.join(*listOfReceivedPaths))  # .replace("\\", "/")
+    return os.path.normpath(os.path.join(*listOfReceivedPaths))
 
 
 def changePictureLinksToEmbeddingInHtmlData(htmlData, sourceDataPath=""):
@@ -302,7 +306,6 @@ def toHumanReadable(num, suffix='B'):     # pylint: disable=inconsistent-return-
     :param suffix: The suffix that will be added to the quantifier
     :return: Formatted string
     """
-
     count = 0
     bit_10 = 10
     num_tmp = num
@@ -316,7 +319,7 @@ def toHumanReadable(num, suffix='B'):     # pylint: disable=inconsistent-return-
 
 class Prompt:
     # pylint: disable=too-few-public-methods
-    # Rationale: This is legacy code, changing it into a function would require too changes in other code parts.
+    # Rationale: This is legacy code, changing it into a function would require changes in other code parts.
     """
     Class that contains functions that help handling of user prompts.
     """
