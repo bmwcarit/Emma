@@ -99,16 +99,18 @@ class MapfileProcessor(abc.ABC):
             # For every defined memory region
             for memoryRegion in memoryCandidates:
                 # If the element is in this memoryRegion
-                if (int(memoryCandidates[memoryRegion]["start"], 16) <= element.addressStart) and (element.addressEnd() <= int(memoryCandidates[memoryRegion]["end"], 16)):
-                    # Then we store the memoryRegion data in the element
-                    element.memTypeTag = memoryRegion
-                    element.memType = memoryCandidates[memoryRegion]["type"]
-                    # If this region is not excluded for the mapfile the element belongs to then we will keep it
-                    if not isElementMarkedAsExcluded(memoryRegionsToExcludeFromMapfiles, element):
-                        listOfElementsToKeep.append(element)
-                    else:
-                        printElementRemovalMessage(element, sc().debug, "Its memory region was excluded for this mapfile!")
-                    break
+                # For elements that do not have addressEnd the addressStart comparison is enough
+                if int(memoryCandidates[memoryRegion]["start"], 16) <= element.addressStart:
+                    if element.addressEnd() is None or (element.addressEnd() <= int(memoryCandidates[memoryRegion]["end"], 16)):
+                        # Then we store the memoryRegion data in the element
+                        element.memTypeTag = memoryRegion
+                        element.memType = memoryCandidates[memoryRegion]["type"]
+                        # If this region is not excluded for the mapfile the element belongs to then we will keep it
+                        if not isElementMarkedAsExcluded(memoryRegionsToExcludeFromMapfiles, element):
+                            listOfElementsToKeep.append(element)
+                        else:
+                            printElementRemovalMessage(element, sc().debug, "Its memory region was excluded for this mapfile!")
+                        break
             # If we have reached this point, then we did not find a memory region
             else:
                 # If we do not have to remove elements without a memory region then we will fill it out with the default values and keep it

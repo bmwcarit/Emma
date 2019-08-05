@@ -120,41 +120,76 @@ class MemEntry:
         return self.addressStart < other.addressStart
 
     def addressStartHex(self):
+        """
+        Function to get the addressStart in hex.
+        """
         return hex(self.addressStart)
 
     def addressLengthHex(self):
+        """
+        Function to get the addressLength in hex.
+        """
         return hex(self.addressLength)
 
     def addressEnd(self):
+        """
+        Function to get the addressEnd. This is the end address of the MemEntry object.
+        By definition the end address is the addressStart + addressLength - 1.
+        Objects that have 0 addressLength do not have end addresses by definition.
+        :return: The addressEnd if addressLength is not 0, None otherwise.
+        """
         return self.__calculateAddressEnd(self.addressStart, self.addressLength)
 
     def addressEndHex(self):
-        return hex(self.addressEnd())
+        """
+        Function to get the addressEnd in hex.
+        :return: The addressEnd in hex as string if addressLength is not 0, "" otherwise.
+        """
+        return hex(self.addressEnd()) if self.addressEnd() is not None else ""
 
     def addressStartHexOriginal(self):
+        """
+        Function to get the original addressStart in hex.
+        This means the addressStart value that was given to the object at construction.
+        """
         return hex(self.addressStartOriginal)
 
     def addressLengthHexOriginal(self):
+        """
+        Function to get the original addressLength in hex.
+        This means the addressLength value that was given to (or calculated) the object at construction.
+        """
         return hex(self.addressLengthOriginal)
 
     def addressEndOriginal(self):
+        """
+        Function to get the original addressEnd.
+        This means the addressEnd value calculated from the addressStart and addressLength that was given to (or calculated) the object at construction.
+        """
         return self.__calculateAddressEnd(self.addressStartOriginal, self.addressLengthOriginal)
 
     def addressEndHexOriginal(self):
-        return hex(self.addressEndOriginal())
+        """
+        Function to get the original addressEnd in hex.
+        :return: The addressEndOriginal in hex as string if addressLength is not 0, "" otherwise.
+        """
+        return hex(self.addressEndOriginal()) if self.addressEndOriginal() is not None else ""
 
     def equalConfigID(self, other):
+        """
+        Function to decide whether two MemEntry objects have the same configIDs.
+        :param other: Another MemEntry object.
+        :return: True if the two MemEntry objects have the same configID, False otherwise.
+        """
         return self.configID == other.configID
 
     def setAddressesGivenEnd(self, addressEnd):
         """
-        Function to calculate the address length value from an address end value.
+        Function to set the address length value from an address end value.
         :return: None
         """
-        if self.addressStart < addressEnd:
+        if self.addressStart <= addressEnd:
             self.addressLength = addressEnd - self.addressStart + 1
-        elif self.addressStart == addressEnd:
-            self.addressLength = 0
         else:
             sc().error("MemEntry: The addressEnd (" + str(addressEnd) + ") is smaller than the addressStart (" + str(self.addressStart) + ")!")
 
@@ -172,14 +207,13 @@ class MemEntry:
     def __calculateAddressEnd(addressStart, addressLength):
         """
         Function to calculate the end address from a start address and a length.
-        :return: The calculated end address.
+        :return: The calculated end address if that exists (the object has addressLenght > 0), None otherwise.
         """
+        result = None
         # Is this a non-zero length memEntry object?
         if addressLength > 0:
             result = addressStart + addressLength - 1
-        # Else the addressEnd is the addressStart
-        else:
-            result = addressStart
+
         return result
 
 

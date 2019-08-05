@@ -222,7 +222,8 @@ class MemEntryTestCase(unittest.TestCase, TestData):
         # Rationale: This test was specificly written to access this private method.
 
         self.assertEqual(emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, self.addressLength), self.addressEnd)
-        self.assertEqual(emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, 0), self.addressStart)
+        self.assertEqual(emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, 1), self.addressStart)
+        self.assertIsNone(emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, 0), self.addressStart)
 
     def test___eq__(self):
         with self.assertRaises(NotImplementedError):
@@ -236,7 +237,7 @@ class MemEntryTestCase(unittest.TestCase, TestData):
         # End == Start
         self.basicMemEntry.setAddressesGivenEnd(self.addressStart)
         self.assertEqual(self.basicMemEntry.addressStart, self.addressStart)
-        self.assertEqual(self.basicMemEntry.addressLength, 0)
+        self.assertEqual(self.basicMemEntry.addressLength, 1)
 
         # Going back to the basic case
         self.basicMemEntry.setAddressesGivenEnd(self.addressEnd)
