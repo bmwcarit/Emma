@@ -94,7 +94,7 @@ code { background-color: #F6F8FA; }
 </head>
 <body>
 
-<p><a href="https://www.codacy.com/app/holzkohlengrill/Emma?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bmwcarit/Emma&amp;utm_campaign=Badge_Grade"><img alt="Codacy Badge" src="https://api.codacy.com/project/badge/Grade/8c6208f6f0bf4d429b13e2fa701aa780" /></a> <a href="https://coveralls.io/github/bmwcarit/Emma?branch=master"><img alt="Coverage Status" src="https://coveralls.io/repos/github/bmwcarit/Emma/badge.svg?branch=master" /></a> <a href="https://travis-ci.org/bmwcarit/Emma"><img alt="Build Status" src="https://travis-ci.org/bmwcarit/Emma.svg?branch=master" /></a> <a href="https://www.gnu.org/licenses/gpl-3.0"><img alt="License: GPL v3" src="https://img.shields.io/badge/License-GPLv3-blue.svg" /></a></p>
+<p><a href="https://www.codacy.com/app/holzkohlengrill/Emma?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bmwcarit/Emma&amp;utm_campaign=Badge_Grade"><img alt="Codacy Badge" src="https://api.codacy.com/project/badge/Grade/8c6208f6f0bf4d429b13e2fa701aa780" /></a> <a href="https://www.codacy.com/app/holzkohlengrill/Emma?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bmwcarit/Emma&amp;utm_campaign=Badge_Coverage"><img alt="Codacy Badge" src="https://api.codacy.com/project/badge/Coverage/8c6208f6f0bf4d429b13e2fa701aa780" /></a> <a href="https://travis-ci.org/bmwcarit/Emma"><img alt="Build Status" src="https://travis-ci.org/bmwcarit/Emma.svg?branch=master" /></a> <a href="https://www.gnu.org/licenses/gpl-3.0"><img alt="License: GPL v3" src="https://img.shields.io/badge/License-GPLv3-blue.svg" /></a></p>
 <h1 id="emma">Emma</h1>
 <p><strong>Emma Memory and Mapfile Analyser (Emma)</strong></p>
 <blockquote>
@@ -5428,7 +5428,7 @@ AAAAC3IzAAAAAAAAAAAAALAgNwMAAAAAAAAAAAAACwGJNIh2JeNUTgAAAABJRU5ErkJggg==
 <li><a href="#contribute">Contribute</a></li>
 <li><a href="#dependencies--licences">Dependencies &amp; Licences</a></li>
 </ol>
-<p>Install dependencies: <code>pip3 install Pygments Markdown matplotlib pandas pypiscout</code></p>
+<p>Install dependencies: Python 3.6 or higher; <code>pip3 install Pygments Markdown matplotlib pandas pypiscout</code></p>
 <h1 id="general-workflow">General Workflow</h1>
 <p>The following figure shows a possible workflow using Emma:</p>
 <div align="center"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABz4AAANNCAYAAADmpNg1AAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
@@ -7660,15 +7660,13 @@ AAAASUVORK5CYII=
 <ol>
 <li>Create intermediate <code>.csv</code> from mapfiles with Emma:</li>
 </ol>
-<div class="codehilite"><pre><span></span>python emma.py -p .<span class="se">\M</span>yProjectFolder --map .<span class="se">\M</span>yProjectFolder<span class="se">\m</span>apfiles --dir .<span class="se">\M</span>yProjectFolder<span class="se">\a</span>nalysis --subdir Analysis_1
-</pre></div>
+<pre class="codehilite"><code class="language-bash">python emma.py -p .\MyProjectFolder --map .\MyProjectFolder\mapfiles --dir .\MyProjectFolder\analysis --subdir Analysis_1</code></pre>
 
 
 <ol>
 <li>Generate reports and graphs with Emma Visualiser:</li>
 </ol>
-<div class="codehilite"><pre><span></span>python emma_vis.py -p .<span class="se">\M</span>yProjectFolder --dir .<span class="se">\M</span>yProjectFolder<span class="se">\a</span>nalysis --subdir Analysis_1 -q 
-</pre></div>
+<pre class="codehilite"><code class="language-bash">python emma_vis.py -p .\MyProjectFolder --dir .\MyProjectFolder\analysis --subdir Analysis_1 -q </code></pre>
 
 
 <h2 id="project-files-that-have-to-be-created">Project files that have to be created</h2>
@@ -8589,14 +8587,13 @@ AAAAABLrP/H5J1QKIFe6AAAAAElFTkSuQmCC
 " alt="./doc/images/globalConfigScheme.png" width="60%" /> </div>
 
 <p>A <code>globalConfig.json</code> could look like this:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;configID1&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;addressSpacesPath&quot;</span><span class="p">:</span> <span class="s2">&quot;addressSpaces.json&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;sectionsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;sections.json&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;patternsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;patterns.json&quot;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
+<pre class="codehilite"><code class="language-json">{
+    &quot;configID1&quot;: {
+        &quot;addressSpacesPath&quot;: &quot;addressSpaces.json&quot;,
+        &quot;sectionsPath&quot;: &quot;sections.json&quot;,
+        &quot;patternsPath&quot;: &quot;patterns.json&quot;
+    }
+}</code></pre>
 
 
 <h1 id="full-documentation">Full documentation</h1>

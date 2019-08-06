@@ -103,50 +103,43 @@ This tool creates a summary/overview about static memory usage in form of a comm
 <hr />
 <h1 id="contents">Contents</h1>
 <ol>
+<li><a href="#emma">Emma</a></li>
+<li><a href="#contents">Contents</a></li>
 <li><a href="#requirements">Requirements</a></li>
 <li><a href="#process">Process</a></li>
 <li><a href="#limitations">Limitations</a></li>
 <li><a href="#usage">Usage</a></li>
-<li><a href="#arguments">Arguments</a><ol>
+<li><a href="#arguments">Arguments</a></li>
 <li><a href="#required-arguments">Required Arguments</a></li>
 <li><a href="#optional-arguments">Optional Arguments</a></li>
-</ol>
-</li>
-<li><a href="#project-configuration">Project Configuration</a><ol>
+<li><a href="#project-configuration">Project Configuration</a></li>
 <li><a href="#formal-definition">Formal Definition</a><ol>
 <li><a href="#project"><code>[&lt;PROJECT&gt;]</code></a></li>
 <li><a href="#supplement"><code>[supplement]</code></a></li>
 <li><a href="#globalconfigjson"><code>globalConfig.json</code></a></li>
 <li><a href="#address-spacesjson"><code>address spaces*.json</code></a></li>
+<li><a href="#budgetsjson"><code>budgets.json</code></a></li>
 <li><a href="#patternsjson"><code>patterns*.json</code></a></li>
-<li><a href="#sectionsjson"><code>sections.json</code></a></li>
-<li><a href="#categoriesjson-and-categoriessectionsjson"><code>categories.json</code> and <code>categoriesSections.json</code></a></li>
-<li><a href="#categorieskeywordsjson-and-categoriessectionskeywordsjson"><code>categoriesKeywords.json</code> and <code>categoriesSectionsKeywords.json</code></a></li>
+<li><a href="#virtualsectionsjson"><code>virtualSections*.json</code></a></li>
+<li><a href="#categoriesobjectsjson-and-categoriessectionsjson"><code>categoriesObjects.json</code> and <code>categoriesSections.json</code></a></li>
+<li><a href="#categoriesobjectskeywordsjson-and-categoriessectionskeywordsjson"><code>categoriesObjectsKeywords.json</code> and <code>categoriesSectionsKeywords.json</code></a></li>
 </ol>
 </li>
 <li><a href="#configuration-file-dependencies">Configuration File Dependencies</a></li>
-</ol>
-</li>
-<li><a href="#output-files">Output Files</a><ol>
+<li><a href="#output-files">Output Files</a></li>
 <li><a href="#image-summary">Image Summary</a></li>
 <li><a href="#module-summary">Module Summary</a></li>
 <li><a href="#objects-in-sections">Objects in Sections</a></li>
 <li><a href="#csv-header">CSV header</a></li>
-</ol>
-</li>
-<li><a href="#Terminology">Terminology</a></li>
-<li><a href="#examples">Examples</a><ol>
+<li><a href="#terminology">Terminology</a></li>
+<li><a href="#examples">Examples</a></li>
 <li><a href="#matching-module-name-and-category-using-categorieskeywordsjson">Matching module name and category using <code>categoriesKeywords.json</code></a></li>
 <li><a href="#removing-not-needed-module-names-from-categoriesjson">Removing not needed module names from <code>categories.json</code></a></li>
-</ol>
-</li>
-<li><a href="#general-information-about-map-files-and-build-chains">General Information on Mapfiles and the Build Chain</a></li>
-<li><a href="#technical-details">Technical Details</a><ol>
+<li><a href="#general-information-about-map-files-and-build-chains">General Information About Map Files and Build Chains</a></li>
+<li><a href="#technical-details">Technical Details</a></li>
 <li><a href="#ghs-monolith-file-generation">GHS Monolith file generation</a></li>
 <li><a href="#class-diagram-emma">Class diagram Emma</a></li>
 <li><a href="#calling-graph-emma">Calling Graph Emma</a></li>
-</ol>
-</li>
 </ol>
 <hr />
 <h1 id="requirements">Requirements</h1>
@@ -156,10 +149,10 @@ This tool creates a summary/overview about static memory usage in form of a comm
 </ul>
 </li>
 <li>Python libraries<ul>
-<li>pypiscout (<code>pip3 install pypiscout</code>)</li>
+<li>pypiscout 2.0 or higher: (<code>pip3 install pypiscout</code>)</li>
 </ul>
 </li>
-<li>Tested on Windows but should also work on Linux systems</li>
+<li>Tested on Windows and Linux systems</li>
 </ul>
 <h1 id="process">Process</h1>
 <p>Using the Mapfile Analyser is a two step process. The first step is to extract the required information from the mapfiles and save it to .csv files.
@@ -174,58 +167,56 @@ This is done with the <code>emma.py</code> script. The second step is to visuali
 </ul>
 <h1 id="usage">Usage</h1>
 <p>Image and module summaries of the specified mapfiles will be created.</p>
-<div class="codehilite"><pre><span></span>$ python emma.py --help
-usage: Emma Memory and Mapfile Analyser <span class="o">(</span>Emma<span class="o">)</span> <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>--version<span class="o">]</span> --project PROJECT
-                                           --mapfiles MAPFILES <span class="o">[</span>--dir DIR<span class="o">]</span>
-                                           <span class="o">[</span>--subdir SUBDIR<span class="o">]</span> <span class="o">[</span>--analyse_debug<span class="o">]</span>
-                                           <span class="o">[</span>--create_categories<span class="o">]</span>
-                                           <span class="o">[</span>--remove_unmatched<span class="o">]</span> <span class="o">[</span>--noprompt<span class="o">]</span>
-                                           <span class="o">[</span>-Werror<span class="o">]</span>
+<pre class="codehilite"><code>$ python emma.py --help
+usage: Emma Memory and Mapfile Analyser (Emma) [-h] [--version] --project PROJECT
+                                           --mapfiles MAPFILES [--dir DIR]
+                                           [--subdir SUBDIR] [--analyse_debug]
+                                           [--create_categories]
+                                           [--remove_unmatched] [--noprompt]
+                                           [-Werror]
 
-Analyser <span class="k">for</span> mapfiles from Greens Hills Linker <span class="o">(</span>other files are supported via
-configuration options<span class="o">)</span>.It creates a summary/overview about static memory usage
+Analyser for mapfiles from Greens Hills Linker (other files are supported via
+configuration options).It creates a summary/overview about static memory usage
 in form of a comma separated values file.
 
 optional arguments:
-  -h, --help           show this <span class="nb">help</span> message and <span class="nb">exit</span>
+  -h, --help           show this help message and exit
   --version            Display the version number.
   --project PROJECT    Path of directory holding the configuration.The project
                        name will be derived from the the name of this folder.
-                       <span class="o">(</span>default: None<span class="o">)</span>
+                       (default: None)
   --mapfiles MAPFILES  The folder containing the mapfiles that needs to be
-                       analyzed. <span class="o">(</span>default: None<span class="o">)</span>
-  --dir DIR            Output folder holding the statistics. <span class="o">(</span>default: None<span class="o">)</span>
+                       analyzed. (default: None)
+  --dir DIR            Output folder holding the statistics. (default: None)
   --subdir SUBDIR      User defined subdirectory name in the --dir folder.
-                       <span class="o">(</span>default: None<span class="o">)</span>
-  --analyse_debug      Include DWARF debug sections in analysis <span class="o">(</span>default:
-                       False<span class="o">)</span>
-  --create_categories  Create categories.json from keywords. <span class="o">(</span>default: False<span class="o">)</span>
+                       (default: None)
+  --analyse_debug      Include DWARF debug sections in analysis (default:
+                       False)
+  --create_categories  Create categories.json from keywords. (default: False)
   --remove_unmatched   Remove unmatched modules from categories.json.
-                       <span class="o">(</span>default: False<span class="o">)</span>
-  --noprompt           Exit fail on user prompt. <span class="o">(</span>default: False<span class="o">)</span>
-  -Werror              Treat all warnings as errors. <span class="o">(</span>default: False<span class="o">)</span>
+                       (default: False)
+  --noprompt           Exit fail on user prompt. (default: False)
+  -Werror              Treat all warnings as errors. (default: False)
 
-********* Marcel Schmalzl, Felix Mueller, Gergo Kocsis - <span class="m">2017</span>-2019 *********
-</pre></div>
+********* Marcel Schmalzl, Felix Mueller, Gergo Kocsis - 2017-2019 *********</code></pre>
 
 
 <h1 id="arguments">Arguments</h1>
 <h2 id="required-arguments">Required Arguments</h2>
-<div class="codehilite"><pre><span></span>--project PROJECT, -p PROJECT
+<pre class="codehilite"><code>--project PROJECT, -p PROJECT
 
---mapfiles MAPFILES, --map MAPFILES
-</pre></div>
+--mapfiles MAPFILES, --map MAPFILES</code></pre>
 
 
 <h2 id="optional-arguments">Optional Arguments</h2>
-<div class="codehilite"><pre><span></span>--dir
+<pre class="codehilite"><code>--dir
     User defined path for the top folder holding the `memStats`/output files.
     Per default it uses the same directory as the config files.
 
 --stats_dir
     User defined path inside the folder given in the `--dir` argument.
     This is usefull when batch analysing mapfiles from various development stages.
-    Every analysis output gets it&#39;s own directory.
+    Every analysis output gets it's own directory.
 
 --create_categories, -ctg
     Create categories.json from keywords.json for easier module categorisation.
@@ -247,8 +238,7 @@ optional arguments:
     Exit and fail on user prompt. Normally this happens when some files or configurations are ambiguous.
     This is useful when running Emma on CI systems.
 
--Werror
-</pre></div>
+-Werror</code></pre>
 
 
 <h1 id="project-configuration">Project Configuration</h1>
@@ -268,7 +258,7 @@ The mapfiles of this project are using the default mapfile format of Emma.</li>
 </ul>
 <h2 id="formal-definition">Formal Definition</h2>
 <p>An Emma project configuration contains several JSON files:</p>
-<div class="codehilite"><pre><span></span>+--[&lt;PROJECT&gt;]
+<pre class="codehilite"><code>+--[&lt;PROJECT&gt;]
 |   +-- [supplement]
 |   +-- globalConfig.json
 |   +-- addressSpaces*.json
@@ -278,8 +268,7 @@ The mapfiles of this project are using the default mapfile format of Emma.</li>
 |   +-- categoriesObjects.json
 |   +-- categoriesObjectsKeywords.json
 |   +-- categoriesSections.json
-|   +-- categoriesSectionsKeywords.json
-</pre></div>
+|   +-- categoriesSectionsKeywords.json</code></pre>
 
 
 <p>The files containing the asterisk symbol can be freely named by the user because the actual file names will have to be
@@ -1202,26 +1191,25 @@ AAAAABLrP/H5J1QKIFe6AAAAAElFTkSuQmCC
 " alt="./images/globalConfigScheme.png" width="70%" /> </div>
 
 <p>The globalConfig.json has to have the following format:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="err">&lt;CONFIG_ID&gt;:</span> <span class="err">{</span>
-        <span class="nt">&quot;compiler&quot;</span><span class="p">:</span> <span class="err">&lt;COMPILER_NAME&gt;</span><span class="p">,</span>
-        <span class="nt">&quot;addressSpacesPath&quot;</span><span class="p">:</span> <span class="err">&lt;CONFIG_FILE&gt;</span><span class="p">,</span>
-        <span class="nt">&quot;patternsPath&quot;</span><span class="p">:</span> <span class="err">&lt;CONFIG_FILE&gt;</span><span class="p">,</span>
-        <span class="nt">&quot;virtualSectionsPath&quot;</span><span class="p">:</span> <span class="err">&lt;CONFIG_FILE&gt;</span><span class="p">,</span>
-        <span class="nt">&quot;ignoreConfigID&quot;</span><span class="p">:</span> <span class="err">&lt;BOOL&gt;</span>
-    <span class="p">}</span><span class="err">,</span>
-    <span class="err">.</span>
-    <span class="err">.</span>
-    <span class="err">.</span>
-    <span class="err">&lt;CONFIG_ID&gt;:</span> <span class="p">{</span>
-        <span class="nt">&quot;compiler&quot;</span><span class="p">:</span> <span class="err">&lt;COMPILER_NAME&gt;</span><span class="p">,</span>
-        <span class="nt">&quot;addressSpacesPath&quot;</span><span class="p">:</span> <span class="err">&lt;CONFIG_FILE&gt;</span><span class="p">,</span>
-        <span class="nt">&quot;patternsPath&quot;</span><span class="p">:</span> <span class="err">&lt;CONFIG_FILE&gt;</span><span class="p">,</span>
-        <span class="nt">&quot;virtualSectionsPath&quot;</span><span class="p">:</span> <span class="err">&lt;CONFIG_FILE&gt;</span><span class="p">,</span>
-        <span class="nt">&quot;ignoreConfigID&quot;</span><span class="p">:</span> <span class="err">&lt;BOOL&gt;</span>
-    <span class="p">}</span>
-<span class="err">}</span>
-</pre></div>
+<pre class="codehilite"><code class="language-json">{
+    &lt;CONFIG_ID&gt;: {
+        &quot;compiler&quot;: &lt;COMPILER_NAME&gt;,
+        &quot;addressSpacesPath&quot;: &lt;CONFIG_FILE&gt;,
+        &quot;patternsPath&quot;: &lt;CONFIG_FILE&gt;,
+        &quot;virtualSectionsPath&quot;: &lt;CONFIG_FILE&gt;,
+        &quot;ignoreConfigID&quot;: &lt;BOOL&gt;
+    },
+    .
+    .
+    .
+    &lt;CONFIG_ID&gt;: {
+        &quot;compiler&quot;: &lt;COMPILER_NAME&gt;,
+        &quot;addressSpacesPath&quot;: &lt;CONFIG_FILE&gt;,
+        &quot;patternsPath&quot;: &lt;CONFIG_FILE&gt;,
+        &quot;virtualSectionsPath&quot;: &lt;CONFIG_FILE&gt;,
+        &quot;ignoreConfigID&quot;: &lt;BOOL&gt;
+    }
+}</code></pre>
 
 
 <p>The following rules apply:</p>
@@ -1256,28 +1244,27 @@ AAAAABLrP/H5J1QKIFe6AAAAAElFTkSuQmCC
 <h3 id="address-spacesjson"><code>address spaces*.json</code></h3>
 <p>The address spaces config files define the existing memory areas for the configIDs they were assigned to in the globalConfigs.json.</p>
 <p>These config files have to have the following format:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;offset&quot;</span><span class="p">:</span> <span class="err">&lt;ADDRESS&gt;</span><span class="p">,</span>
-    <span class="nt">&quot;memory&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="err">&lt;MEMORY_AREA&gt;:</span> <span class="err">{</span>
-            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="err">&lt;ADDRESS&gt;</span><span class="p">,</span>
-            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="err">&lt;ADDRESS&gt;</span><span class="p">,</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="err">&lt;MEMORY_TYPE&gt;</span>
-        <span class="p">},</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">&lt;MEMORY_AREA&gt;:</span> <span class="err">{</span>
-            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="err">&lt;ADDRESS&gt;</span><span class="p">,</span>
-            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="err">&lt;ADDRESS&gt;</span><span class="p">,</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="err">&lt;MEMORY_TYPE&gt;</span>
-        <span class="p">}</span>
-    <span class="err">},</span>
-    <span class="s2">&quot;ignoreMemory&quot;</span><span class="err">:</span> <span class="p">[</span>
-        <span class="err">&lt;MEMORY_AREA&gt;</span><span class="p">,</span> <span class="err">...</span> <span class="err">&lt;MEMORY_AREA&gt;</span>
-    <span class="p">]</span>
-<span class="err">}</span>
-</pre></div>
+<pre class="codehilite"><code class="language-json">{
+    &quot;offset&quot;: &lt;ADDRESS&gt;,
+    &quot;memory&quot;: {
+        &lt;MEMORY_AREA&gt;: {
+            &quot;start&quot;: &lt;ADDRESS&gt;,
+            &quot;end&quot;: &lt;ADDRESS&gt;,
+            &quot;type&quot;: &lt;MEMORY_TYPE&gt;
+        },
+        .
+        .
+        .
+        &lt;MEMORY_AREA&gt;: {
+            &quot;start&quot;: &lt;ADDRESS&gt;,
+            &quot;end&quot;: &lt;ADDRESS&gt;,
+            &quot;type&quot;: &lt;MEMORY_TYPE&gt;
+        }
+    },
+    &quot;ignoreMemory&quot;: [
+        &lt;MEMORY_AREA&gt;, ... &lt;MEMORY_AREA&gt;
+    ]
+}</code></pre>
 
 
 <p>The following rules apply:</p>
@@ -1315,33 +1302,32 @@ AAAAABLrP/H5J1QKIFe6AAAAAElFTkSuQmCC
 <p>The patterns config files define regex patterns for finding the mapfiles, monolith files and processing their content.
 They belong to the configID they were assigned to in the globalConfigs.json.</p>
 <p>These config files have to have the following format:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;mapfiles&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="err">&lt;SW_NAME&gt;:</span> <span class="err">{</span>
-            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="err">&lt;REGEX_PATTERN&gt;</span><span class="p">,</span> <span class="err">...</span> <span class="err">&lt;REGEX_PATTERN&gt;</span><span class="p">],</span>
-            <span class="nt">&quot;VAS&quot;</span><span class="p">:</span> <span class="err">&lt;VAS_NAME&gt;</span><span class="p">,</span>
-            <span class="nt">&quot;UniquePatternSections&quot;</span><span class="p">:</span> <span class="err">&lt;REGEX_PATTERN&gt;</span><span class="p">,</span>
-            <span class="nt">&quot;UniquePatternObjects&quot;</span><span class="p">:</span> <span class="err">&lt;REGEX_PATTERN&gt;</span><span class="p">,</span>
-            <span class="nt">&quot;memRegionExcludes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="err">&lt;MEMORY_AREA&gt;</span><span class="p">,</span> <span class="err">...</span> <span class="err">&lt;MEMORY_AREA&gt;</span><span class="p">]</span>
-        <span class="p">},</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">&lt;SW_NAME&gt;:</span> <span class="err">{</span>
-            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="err">&lt;REGEX_PATTERN&gt;</span><span class="p">,</span> <span class="err">...</span> <span class="err">&lt;REGEX_PATTERN&gt;</span><span class="p">],</span>
-            <span class="nt">&quot;VAS&quot;</span><span class="p">:</span> <span class="err">&lt;VAS_NAME&gt;</span><span class="p">,</span>
-            <span class="nt">&quot;UniquePatternSections&quot;</span><span class="p">:</span> <span class="err">&lt;REGEX_PATTERN&gt;</span><span class="p">,</span>
-            <span class="nt">&quot;UniquePatternObjects&quot;</span><span class="p">:</span> <span class="err">&lt;REGEX_PATTERN&gt;</span><span class="p">,</span>
-            <span class="nt">&quot;memRegionExcludes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="err">&lt;MEMORY_AREA&gt;</span><span class="p">,</span> <span class="err">...</span> <span class="err">&lt;MEMORY_AREA&gt;</span><span class="p">]</span>
-        <span class="p">}</span><span class="err">,</span>
-    <span class="err">},</span>
-    <span class="s2">&quot;monoliths&quot;</span><span class="err">:</span> <span class="p">{</span>
-        <span class="nt">&quot;&lt;MONILITH_NAME&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="err">&lt;REGEX_PATTERN&gt;</span><span class="p">,</span> <span class="err">...</span> <span class="err">&lt;REGEX_PATTERN&gt;</span><span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="err">}</span>
-</pre></div>
+<pre class="codehilite"><code class="language-json">{
+    &quot;mapfiles&quot;: {
+        &lt;SW_NAME&gt;: {
+            &quot;regex&quot;: [&lt;REGEX_PATTERN&gt;, ... &lt;REGEX_PATTERN&gt;],
+            &quot;VAS&quot;: &lt;VAS_NAME&gt;,
+            &quot;UniquePatternSections&quot;: &lt;REGEX_PATTERN&gt;,
+            &quot;UniquePatternObjects&quot;: &lt;REGEX_PATTERN&gt;,
+            &quot;memRegionExcludes&quot;: [&lt;MEMORY_AREA&gt;, ... &lt;MEMORY_AREA&gt;]
+        },
+        .
+        .
+        .
+        &lt;SW_NAME&gt;: {
+            &quot;regex&quot;: [&lt;REGEX_PATTERN&gt;, ... &lt;REGEX_PATTERN&gt;],
+            &quot;VAS&quot;: &lt;VAS_NAME&gt;,
+            &quot;UniquePatternSections&quot;: &lt;REGEX_PATTERN&gt;,
+            &quot;UniquePatternObjects&quot;: &lt;REGEX_PATTERN&gt;,
+            &quot;memRegionExcludes&quot;: [&lt;MEMORY_AREA&gt;, ... &lt;MEMORY_AREA&gt;]
+        },
+    },
+    &quot;monoliths&quot;: {
+        &quot;&lt;MONILITH_NAME&gt;&quot;: {
+            &quot;regex&quot;: [&lt;REGEX_PATTERN&gt;, ... &lt;REGEX_PATTERN&gt;]
+        }
+    }
+}</code></pre>
 
 
 <p>The following rules apply:</p>
@@ -1400,24 +1386,23 @@ a virtual address spaces defined in the <code>patterns*.json</code>file. This is
 and virtual sections as well and Emma needs to identify the virtual ones and assign them to a specific virtual address space.
 If your configuration does not use virtual address spaces, the virtualSections*.json files are not needed.</p>
 <p>This config file have to have the following format:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="err">&lt;VAS_NAME&gt;:</span> <span class="err">[</span>
-        <span class="err">&lt;SECTION_NAME&gt;,</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">&lt;SECTION_NAME&gt;</span>
-    <span class="err">],</span>
-    <span class="err">...</span>
-    <span class="err">&lt;VAS_NAME&gt;:</span> <span class="err">[</span>
-        <span class="err">&lt;SECTION_NAME&gt;,</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">&lt;SECTION_NAME&gt;</span>
-    <span class="err">]</span>
-<span class="p">}</span>
-</pre></div>
+<pre class="codehilite"><code class="language-json">{
+    &lt;VAS_NAME&gt;: [
+        &lt;SECTION_NAME&gt;,
+        .
+        .
+        .
+        &lt;SECTION_NAME&gt;
+    ],
+    ...
+    &lt;VAS_NAME&gt;: [
+        &lt;SECTION_NAME&gt;,
+        .
+        .
+        .
+        &lt;SECTION_NAME&gt;
+    ]
+}</code></pre>
 
 
 <p>The following rules apply:</p>
@@ -1440,26 +1425,25 @@ This function can be used for example to group the software components of one co
 The objects and sections will be first tried to be categorized by these files. If they could not be categorized, then the software will try
 to categorize them based on the <code>categoriesObjectsKeywords.json</code> and <code>categoriesSectionsKeywords.json</code> files.</p>
 <p>These config files have to have the following format:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="err">&lt;CATEGORY&gt;:</span> <span class="err">[</span>
-        <span class="err">&lt;NAME&gt;,</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">&lt;NAME&gt;</span>
-    <span class="err">],</span>
-    <span class="err">.</span>
-    <span class="err">.</span>
-    <span class="err">.</span>
-    <span class="err">&lt;CATEGORY&gt;:</span> <span class="err">[</span>
-        <span class="err">&lt;NAME&gt;,</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">&lt;NAME&gt;</span>
-    <span class="err">]</span>
-<span class="p">}</span>
-</pre></div>
+<pre class="codehilite"><code class="language-json">{
+    &lt;CATEGORY&gt;: [
+        &lt;NAME&gt;,
+        .
+        .
+        .
+        &lt;NAME&gt;
+    ],
+    .
+    .
+    .
+    &lt;CATEGORY&gt;: [
+        &lt;NAME&gt;,
+        .
+        .
+        .
+        &lt;NAME&gt;
+    ]
+}</code></pre>
 
 
 <p>The following rules apply:</p>
@@ -1481,23 +1465,22 @@ This function can be used for example to group the software components of one co
 The objects and sections will only tried to be categorized by these files if the categorization by the <code>categoriesObjects.json</code> and <code>categoriesSections.json</code> files failed.
 If they could not be categorized, then the software will assign them to a category called <code>&lt;unspecified&gt;</code> so they will be more visible in the results.</p>
 <p>These config files have to have the following format:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="err">&lt;CATEGORY&gt;:</span> <span class="err">[</span>
-        <span class="err">&lt;KEYWORD&gt;,</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">&lt;KEYWORD&gt;</span>
-    <span class="err">],</span>
-    <span class="err">&lt;CATEGORY&gt;:</span> <span class="err">[</span>
-        <span class="err">&lt;KEYWORD&gt;,</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">&lt;KEYWORD&gt;</span>
-    <span class="err">]</span>
-<span class="p">}</span>
-</pre></div>
+<pre class="codehilite"><code class="language-json">{
+    &lt;CATEGORY&gt;: [
+        &lt;KEYWORD&gt;,
+        .
+        .
+        .
+        &lt;KEYWORD&gt;
+    ],
+    &lt;CATEGORY&gt;: [
+        &lt;KEYWORD&gt;,
+        .
+        .
+        .
+        &lt;KEYWORD&gt;
+    ]
+}</code></pre>
 
 
 <p>The following rules apply:</p>
@@ -4339,10 +4322,9 @@ YII=
 <p>If you have virtual address spaces (VASes) defined. We need a "monolith file" pattern defined in <code>patterns*.json</code> in order to be able to translate virtual addresses back to physical addresses. In the same file you give each VAS a name/tag. This tag is later used to identify which section belongs to which VAS (defined in <code>sections*.json</code>). Again, the VAS names must match between those two files. We do this since you may have name clashes of sections names between different VASes.</p>
 <h1 id="output-files">Output Files</h1>
 <p>The output Files will be saved to the memStats folder of the respective project. The filename will have this form: </p>
-<div class="codehilite"><pre><span></span>&lt;PROJECT_NAME&gt;_Image_Summary_TIMESTAMP.csv
+<pre class="codehilite"><code class="language-bash">&lt;PROJECT_NAME&gt;_Image_Summary_TIMESTAMP.csv
 &lt;PROJECT_NAME&gt;_Module_Summary_TIMESTAMP.csv
-&lt;PROJECT_NAME&gt;_Objects_in_Sections_TIMESTAMP.csv
-</pre></div>
+&lt;PROJECT_NAME&gt;_Objects_in_Sections_TIMESTAMP.csv</code></pre>
 
 
 <h2 id="image-summary">Image Summary</h2>
@@ -7822,10 +7804,9 @@ This might sound counter-intuitive at the first spot. However we can see memory 
 </ul>
 <h1 id="examples">Examples</h1>
 <p>Create a Mapfile Summary for <PROJECT>:</p>
-<div class="codehilite"><pre><span></span>emma.py --project ..<span class="se">\&lt;</span>PROJECT&gt; <span class="se">\</span>
---mapfiles ..<span class="se">\M</span>yMapfiles <span class="se">\</span>
---dir ..<span class="se">\M</span>yMapfiles<span class="se">\r</span>esults
-</pre></div>
+<pre class="codehilite"><code class="language-bash">emma.py --project ..\&lt;PROJECT&gt; \
+--mapfiles ..\MyMapfiles \
+--dir ..\MyMapfiles\results</code></pre>
 
 
 <h2 id="matching-module-name-and-category-using-categorieskeywordsjson">Matching module name and category using <code>categoriesKeywords.json</code></h2>
@@ -7853,9 +7834,8 @@ This might sound counter-intuitive at the first spot. However we can see memory 
 <h1 id="technical-details">Technical Details</h1>
 <h2 id="ghs-monolith-file-generation">GHS Monolith file generation</h2>
 <p>Execute this to generate the monolith files (you need to have the ELF file for this step).</p>
-<div class="codehilite"><pre><span></span>gdump.exe -virtual_mapping -no_trunc_sec_names Application.elf &gt;&gt; monolith.map
-gdump.exe -map             -no_trunc_sec_names Application.elf &gt;&gt; monolith.map
-</pre></div>
+<pre class="codehilite"><code class="language-bash">gdump.exe -virtual_mapping -no_trunc_sec_names Application.elf &gt;&gt; monolith.map
+gdump.exe -map             -no_trunc_sec_names Application.elf &gt;&gt; monolith.map</code></pre>
 
 
 <p>By default long names will be truncated. This can lead to inaccurate results. In order to prevent this use <code>-no_trunc_sec_names</code>.</p>

@@ -207,7 +207,7 @@ def changePictureLinksToEmbeddingInHtmlData(htmlData, sourceDataPath=""):
         if os.path.isabs(linkedPicture):
             linkedPicturePath = linkedPicture
         else:
-            linkedPicturePath = os.path.join(os.path.dirname(sourceDataPath), linkedPicture)
+            linkedPicturePath = joinPath(os.path.dirname(sourceDataPath), linkedPicture)
 
         if not os.path.exists(linkedPicturePath):
             sc().warning("The file " + linkedPicturePath + " does not exist!")
