@@ -208,7 +208,7 @@ class CmdEmmaVis(TestHelper):
         Check that an ordinary run is successful
         """
         try:
-            argsEmmaVis = emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "--overview", "--inputDir", self.cmdLineTestOutputFolder, "--noprompt", "--quiet"])
+            argsEmmaVis = emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "--overview", "--inOutDir", self.cmdLineTestOutputFolder, "--noprompt", "--quiet"])
             emma_vis.main(argsEmmaVis)
         except Exception as e:  # pylint: disable=broad-except
                                 # Rationale: The purpose here is to catch any exception.
@@ -237,7 +237,7 @@ class CmdEmmaVis(TestHelper):
         Check run with non-existing project folder
         """
         with self.assertRaises(SystemExit) as context:
-            args = emma_vis.parseArgs(["--project", self.nonExistingPath, "--overview", "--inputDir", self.cmdLineTestOutputFolder, "--noprompt", "--quiet"])
+            args = emma_vis.parseArgs(["--project", self.nonExistingPath, "--overview", "--inOutDir", self.cmdLineTestOutputFolder, "--noprompt", "--quiet"])
             emma_vis.main(args)
         self.assertEqual(context.exception.code, -10)
 
@@ -246,7 +246,7 @@ class CmdEmmaVis(TestHelper):
         Check run with non-existing memStats folder
         """
         with self.assertRaises(SystemExit) as context:
-            args = emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "--overview", "--inputDir", self.nonExistingPath, "--noprompt", "--quiet"])
+            args = emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "--overview", "--inOutDir", self.nonExistingPath, "--noprompt", "--quiet"])
             emma_vis.main(args)
         self.assertEqual(context.exception.code, -10)
 
