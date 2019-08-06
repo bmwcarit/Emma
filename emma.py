@@ -40,7 +40,6 @@ def main(args):
 
     if numAnalyzedConfigIDs >= 1:
         sectionSummary.resolveDuplicateContainmentOverlap()
-
         if not args.create_categories and not args.remove_unmatched:
             # Normal run; write csv report
             sectionSummary.writeSummary()
