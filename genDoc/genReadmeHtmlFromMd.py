@@ -108,21 +108,18 @@ def main(arguments):
         sc().info("Storing Emma readme as a .html file...")
         markdownFilePath = r"../doc/readme.md"
         shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdownFilePath, (os.path.splitext(markdownFilePath)[0] + ".html"))
-        sc().info("Done.")
+        sc().info("Done.\n")
 
-        print("")
         sc().info("Storing Emma Visualiser readme as a .html file...")
         markdownFilePath = r"../doc/readme-vis.md"
         shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdownFilePath, (os.path.splitext(markdownFilePath)[0] + ".html"))
-        sc().info("Done.")
+        sc().info("Done.\n")
 
-        print("")
         sc().info("Storing the test_project readme as a .html file...")
         markdownFilePath = r"../doc/test_project/readme.md"
         shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdownFilePath, (os.path.splitext(markdownFilePath)[0] + ".html"))
-        sc().info("Done.")
+        sc().info("Done.\n")
 
-        print("")
         sc().info("Storing the top level README as a .html file...")
         # Change the working directory; otherwise we get errors about the relative image import paths in emma_helper.changePictureLinksToEmbeddingInHtmlData()
         os.chdir("..")

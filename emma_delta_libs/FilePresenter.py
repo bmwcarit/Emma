@@ -45,9 +45,9 @@ class FilePresenter:
         # TODO: Validate all inputs (FM)
         self.__printFileType()
         try:
-            filetype: str = self.__filetypes[int(input("Choose File type >"))]
+            filetype: str = self.__filetypes[int(input("Choose File type >\n"))]
         except KeyError:
-            sc.error("Select valid Summary.")
+            sc.error("Select valid Summary.\n")
             sys.exit(-10)
 
         candidates: typing.List[str] = self.__fileSelector.getCandidates()
@@ -64,7 +64,6 @@ class FilePresenter:
         return selectedFiles
 
     def __printCandidates(self, candidates: typing.List[str]) -> None:
-        print("")
         for i, candidate in enumerate(candidates):
             string = "    " + str(i) + ": " + candidate
             print(string)
@@ -79,6 +78,5 @@ class FilePresenter:
             print(string)
 
     def __printFileType(self) -> None:
-        print("")
         for i, file in self.__filetypes.items():
             print("    " + str(i) + ": " + file)

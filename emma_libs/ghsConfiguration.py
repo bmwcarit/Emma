@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import os
 import sys
 import re
+from pprint import pprint
 
 from pypiscout.SCout_Logger import Logger as sc
 
@@ -137,9 +138,6 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         :param fileType: Filetype that needs to be searched for.
         :return: Number of files found.
         """
-        # TODO : Would this not make more sense to execute it the other way around? (for every regex, for every file) (AGK)
-        # TODO : Also, could we save time by breaking earlier and not checking all the files if we have found something? (that would remove config error detection) (AGK)
-        # TODO : The function name is __addFilesPerConfigID but the search path is fixed to the self.mapfileRootPath. This is confusing. It shall be either more generic or renamed (AGK)
         # For every file in the received path
         for file in os.listdir(path):
             # For every entry for the received fileType
@@ -155,7 +153,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                 if foundFiles:
                     # We will add it to the configuration and also check whether more than one file was found to this pattern
                     configuration["patterns"][fileType][entry]["associatedFilename"] = foundFiles[0]
-                    print("\t\t\t Found " + fileType + ": ", foundFiles[0])
+                    print("\t\t\t\t Found " + fileType + ": ", foundFiles[0])
                     if len(foundFiles) > 1:
                         sc.warning("Ambiguous regex pattern in '" + configuration["patternsPath"] + "'. Selected '" + foundFiles[0] + "'. Regex matched: " + "".join(foundFiles))
 
@@ -288,7 +286,8 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             sectionsNotInConfigID = set(foundInMonolith) - set(foundInConfigID)
             if sectionsNotInConfigID:
                 sc().warning("Monolith File has the following sections. You might want to add it them the respective VAS in " + configuration["virtualSectionsPath"] + "!")
-                print(sectionsNotInConfigID)
+                for section in sectionsNotInConfigID:
+                    print("\t\t\t\t", section)
                 sc().warning("Still continue? (y/n)")
                 text = input("> ") if not noPrompt else sys.exit(-10)
                 if text != "y":
