@@ -74,6 +74,13 @@ class MemoryManager:
                             sc.warning("No configID left; all were ignored.")
                         continue
 
+                # Load and check mapfiles
+                # TODO: add option for recursive search (MSc)
+                if MAPFILES in globalConfig[configID].keys():
+                    absMapfilesDirPath = os.path.abspath(shared_libs.emma_helper.joinPath(self.mapfileRootPath, globalConfig[configID][MAPFILES]))
+                    shared_libs.emma_helper.checkIfFolderExists(absMapfilesDirPath)
+                    globalConfig[configID]["individualConfigIdMapfilePath"] = absMapfilesDirPath
+
                 # Loading the addressSpaces
                 if "addressSpacesPath" in globalConfig[configID].keys():
                     globalConfig[configID]["addressSpaces"] = shared_libs.emma_helper.readJson(shared_libs.emma_helper.joinPath(self.projectPath, globalConfig[configID]["addressSpacesPath"]))
@@ -269,11 +276,13 @@ class MemoryManager:
         :param fileType: Either "patterns" (=default) for mapfiles or "monoliths" for monolith files
         :return: Number of files detected
         """
+        if MAPFILES in self.globalConfig[configID].keys():
+            mapfilePath = self.globalConfig[configID]["individualConfigIdMapfilePath"]
+        else:
+            mapfilePath = self.mapfileRootPath
+
         # Find mapfiles
-        # TODO : Would this not make more sense to execute it the other way around? (for every regex, for every file) (AGK)
-        # TODO : Also, could we save time by breaking earlier and not checking all the files if we have found something? (that would remove config error detection) (AGK)
-        # TODO : The function name is __addFilesPerConfigID but the search path is fixed to the self.mapfileRootPath. This is confusing. It shall be either more generic or renamed (AGK)
-        for file in os.listdir(self.mapfileRootPath):
+        for file in os.listdir(mapfilePath):
             for entry in self.globalConfig[configID]["patterns"][fileType]:
                 foundFiles = []
                 for regex in self.globalConfig[configID]["patterns"][fileType][entry]["regex"]:
@@ -286,7 +295,6 @@ class MemoryManager:
                     print("\t\t\t Found " + fileType + ": ", foundFiles[0])
                     if len(foundFiles) > 1:
                         sc.warning("Ambiguous regex pattern in '" + self.globalConfig[configID]["patternsPath"] + "'. Selected '" + foundFiles[0] + "'. Regex matched: " + "".join(foundFiles))
-                        # TODO : we could have a logging class that could handle this exit if all warnings are errors thing. (AGK)
                         if self.args.Werror:
                             sys.exit(-10)
 
