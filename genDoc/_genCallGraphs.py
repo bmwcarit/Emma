@@ -36,7 +36,7 @@ EMMA_ROOT_FOLDER_RELATIVE = r".."
 FILTERED_PROFILE_SUFFIX = r"_filtered.profile"
 EMMA_EXECUTION_STRING = r"../emma.py --project ../doc/test_project --mapfiles ../doc/test_project/mapfiles --dir ../doc/test_project/results"
 EMMA_PROFILE_FILE_PATH = README_CALL_GRAPH_AND_UML_FOLDER_NAME + r"\emma.profile"
-EMMA_VIS_EXECUTION_STRING = r"../emma_vis.py --project ../doc/test_project --dir ../doc/test_project/results --overview --quiet"
+EMMA_VIS_EXECUTION_STRING = r"../emma_vis.py --projectDir ../doc/test_project --inOutDir ../doc/test_project/results --overview --quiet"
 EMMA_VIS_PROFILE_FILE_PATH = README_CALL_GRAPH_AND_UML_FOLDER_NAME + r"\emma_vis.profile"
 
 
@@ -144,7 +144,7 @@ def generateCallGraph(profileFile, executionString, verbose):
     sc().info("Generating call graphs for: " + executionString)
     sc().info("The results will be stored in: " + shared_libs.emma_helper.joinPath(os.getcwd(), README_CALL_GRAPH_AND_UML_FOLDER_NAME))
 
-    sc().info("Analyzing the program and creating the .profile file...")
+    sc().info("Analysing the program and creating the .profile file...\n")
     subprocess.run("python -m cProfile -o " + profileFile + " " + executionString, shell=True)
 
     profilerData = pstats.Stats(profileFile)
