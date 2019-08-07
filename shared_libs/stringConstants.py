@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 # Version ################################################
 VERSION_MAJOR = "2"
-VERSION_MINOR = "0"
+VERSION_MINOR = "1"
 EMMA_VERSION = ".".join([VERSION_MAJOR, VERSION_MINOR])
 EMMA_VISUALISER_VERSION = EMMA_VERSION
 EMMA_DELTAS_VERSION = EMMA_VERSION
