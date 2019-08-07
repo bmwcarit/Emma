@@ -86,8 +86,8 @@ Image and module summaries of the specified mapfiles will be created.
       --project PROJECT    Path of directory holding the configuration.The project
                            name will be derived from the the name of this folder.
                            (default: None)
-      --mapfiles MAPFILES  The folder containing the mapfiles that needs to be
-                           analyzed. (default: None)
+      --mapfiles MAPFILES  The folder containing the map files that need to be
+                           analysed. (default: None)
       --dir DIR            Output folder holding the statistics. (default: None)
       --subdir SUBDIR      User defined subdirectory name in the --dir folder.
                            (default: None)
@@ -111,43 +111,23 @@ Image and module summaries of the specified mapfiles will be created.
 
 ## Optional Arguments
 
-    --dir
-        User defined path for the top folder holding the `memStats`/output files.
-        Per default it uses the same directory as the config files. 
-
-    --stats_dir
-        User defined path inside the folder given in the `--dir` argument.
-        This is usefull when batch analysing mapfiles from various development stages.
-        Every analysis output gets it's own directory. 
-
-    --create_categories, -ctg
-        Create categories.json from keywords.json for easier module categorisation.
-
-    --remove_unmatched, -ru
-        Remove unmatched entries from categories.json. This is usefull when a categories.json from another project is used.
-
-    --help, -h
-
-    --dir STATS_DIR, -d STATS_DIR
-        User defined path for the folder `memStats` holding generated statistics from Emma (default: ./memStats).
-
-    --analyse_debug, --dbg
-        Normally we remove DWARF debug sections from the analysis to show the relevant information for a possible release software.
-        This can be prevented if this argument is set. DWARF section names are defined in stringConstants.py
-        `.unused_ram` is always excluded (regardless of this flag)
-        
-    --noprompt
-        Exit and fail on user prompt. Normally this happens when some files or configurations are ambiguous.
-        This is useful when running Emma on CI systems.
-
-    -Werror
+* `--dir`
+    * User defined path for the top folder holding the `memStats`/output files. Per default it uses the same directory as the config files.
+* `--stats_dir`
+  * User defined path inside the folder given in the `--dir` argument. This is usefull when batch analysing mapfiles from various development stages. Every analysis output gets it's own directory.
+* `--create_categories`
+  * Create `categories.json` from `keywords.json` for easier module categorisation.
+* `--remove_unmatched`,
+  * Remove unmatched entries from categories.json. This is usefull when a `categories.json` from another project is used.
+* `--analyse_debug`, `--dbg`
+  * Normally we remove DWARF debug sections from the analysis to show the relevant information for a possible release software. This can be prevented if this argument is set. DWARF section names are defined in `stringConstants.py`. `.unused_ram` is always excluded (regardless of this flag)
+* `--noprompt`
+  * Exit and fail on user prompt. Normally this happens when some files or configurations are ambiguous. This is useful when running Emma on CI systems.
 
 
 # Project Configuration
 
-The memory analysis will be executed based on the project configuration. In order to be able to use Emma with your project,
-you need to create a configuration matching your project's hardware and software.
-The configuration has to be established correctly, because **errors made in it, can distort the memory analysis results or it will be refused by Emma**.
+The memory analysis will be executed based on the project configuration. In order to be able to use Emma with your project, you need to create a configuration matching your project's hardware and software. **Configure Emma with high diligence since errors may lead to incorrect results of your analysis**. During the analysis Emma performs some sanity checks which helps you detecting misconfiguration.
 
 This chapter explains the role and functionality of each part of the configuration and illustrates all the settings that can be used.
 Based on this description the user will have to create his/her own configuration.
@@ -207,6 +187,7 @@ The globalConfig.json has to have the following format:
         <CONFIG_ID>: {
             "compiler": <COMPILER_NAME>,
             "addressSpacesPath": <CONFIG_FILE>,
+            "mapfiles": <MAPFILES_REL_PATH>,
             "ignoreConfigID": <BOOL>,
             <COMPILER_SPECIFIC_KEY_VALUE_PAIRS>
         },
@@ -216,6 +197,7 @@ The globalConfig.json has to have the following format:
         <CONFIG_ID>: {
             "compiler": <COMPILER_NAME>,
             "addressSpacesPath": <CONFIG_FILE>,
+            "mapfiles": <MAPFILES_REL_PATH>,
             "ignoreConfigID": <BOOL>,
             <COMPILER_SPECIFIC_KEY_VALUE_PAIRS>
         }
@@ -228,6 +210,7 @@ The following rules apply:
     * `<CONFIG_ID>` is a string
     * `<COMPILER_NAME>` is a string
     * `<CONFIG_FILE>` is a string 
+    * `<MAPFILES_REL_PATH>` is a string, with the special characters escaped in it
     * `<BOOL>` is a boolean value containing either **true** or **false**  
     * `<COMPILER_SPECIFIC_KEY_VALUE_PAIRS>` are the key-value pairs that are required by the selected compiler
 * There has to be at least one **configID** defined
@@ -237,6 +220,10 @@ The following rules apply:
     * by defining **addressSpacesPath**, the config file that defines the address spaces is assigned
     * The config files have to be in the same folder as the globalConfig.json
     * The config files don't need to be different for each configID (for example you can use the same address spaces config file for all the configIDs)
+* The mapfiles:
+    * specifies a folder **relative** to the one given via **--mapfiles** command line argument
+    * is optional, if is defined for a configID, then the map files belonging to this configId will be searched for within this folder
+    * Otherwise the mapfiles will be searched for in the **--mapfiles** root map file path
 * The ignoreConfigID:
     * can be used to mark a configID as ignored, which means that this will not be processed during the analysis
     * is optional, it does not need to be included in every configID, leaving it has the same effect as including it with false
@@ -427,7 +414,7 @@ The following rules apply:
 
 ### `patterns*.json`
 The patterns config files define regex patterns for finding the mapfiles, monolith files and processing their content.
-They belong to the configID they were assigned to in the globalConfigs.json.
+They belong to the configId they were assigned to in the globalConfigs.json.
 
 These config files have to have the following format:
 
@@ -495,7 +482,7 @@ The following rules apply:
 The virtual sections config files are used to assign the sections of the virtual address spaces to
 a virtual address spaces defined in the `patterns*.json`file. This is needed because the mapfiles can contain physical
 and virtual sections as well and Emma needs to identify the virtual ones and assign them to a specific virtual address space.
-For configId-s not using virtual address spaces, a virtualSections*.json file is not needed.
+If your configuration does not use virtual address spaces, the `virtualSections*.json` files are not needed.
 
 This config file have to have the following format:
 

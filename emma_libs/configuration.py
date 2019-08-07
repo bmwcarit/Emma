@@ -51,22 +51,30 @@ class Configuration:
         self.globalConfig = Configuration.__readGlobalConfigJson(globalConfigPath)
         sc().info("Imported " + str(len(self.globalConfig)) + " global config entries:" + str(list(self.globalConfig.keys())))
 
-        # Processing the addressSpaces*.json for all the configIds
+        # Processing the generic configuration parts for all the configId
         for configId in self.globalConfig:
-            if "addressSpacesPath" in self.globalConfig[configId].keys():
+            # Processing the addressSpaces*.json
+            if "addressSpacesPath" in self.globalConfig[configId]:
                 addressSpacesPath = shared_libs.emma_helper.joinPath(configurationPath, self.globalConfig[configId]["addressSpacesPath"])
                 self.globalConfig[configId]["addressSpaces"] = Configuration.__readAddressSpacesJson(addressSpacesPath)
             else:
                 sc().error("The " + configId + " does not have the key: " + "addressSpacesPath")
 
-        # Creating the SpecificConfiguration objects
-        for configId in self.globalConfig:
+            # Setting up the mapfile search paths for the configId
+            # TODO: add option for recursive search (MSc)
+            if MAPFILES in self.globalConfig[configId]:
+                mapfilesPathForThisConfigId = shared_libs.emma_helper.joinPath(mapfilesPath, self.globalConfig[configId][MAPFILES])
+            else:
+                mapfilesPathForThisConfigId = mapfilesPath
+            shared_libs.emma_helper.checkIfFolderExists(mapfilesPathForThisConfigId)
+
+            # Creating the SpecificConfiguration object
             if "compiler" in self.globalConfig[configId]:
                 usedCompiler = self.globalConfig[configId]["compiler"]
                 self.specificConfigurations[configId] = emma_libs.specificConfigurationFactory.createSpecificConfiguration(usedCompiler, noPrompt=noPrompt)
                 # Processing the compiler dependent parts of the configuration
                 sc().info("Processing the mapfiles of the configID \"" + configId + "\"")
-                self.specificConfigurations[configId].readConfiguration(configurationPath, mapfilesPath, configId, self.globalConfig[configId])
+                self.specificConfigurations[configId].readConfiguration(configurationPath, mapfilesPathForThisConfigId, configId, self.globalConfig[configId])
                 # Validating the the configuration
                 if not self.specificConfigurations[configId].checkConfiguration(configId, self.globalConfig[configId]):
                     sc().warning("The specificConfiguration object of the configId \"" +

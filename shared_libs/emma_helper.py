@@ -45,7 +45,7 @@ def checkIfFolderExists(folderName):
         sc().error("Given directory (" + os.path.abspath(folderName) + ") does not exist; exiting...")
 
 
-def checkForFile(filePath):
+def checkIfFileExists(filePath):
     """
     Check whether a file exists; If not exit with error message
     :param filePath: File path to check
@@ -69,7 +69,7 @@ def readJson(jsonInFilePath):
     Function to read a JSON file
     :return: dict of JSON
     """
-    checkForFile(os.path.abspath(jsonInFilePath))     # Absolute path for more readable error message
+    checkIfFileExists(os.path.abspath(jsonInFilePath))     # Absolute path for more readable error message
     with open(jsonInFilePath, "r") as fp:
         dictFromJson = json.load(fp)
     return dictFromJson

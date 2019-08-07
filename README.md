@@ -140,7 +140,7 @@ Utility scripts in [`./doc/`](doc) need additional dependencies. As a normal use
 
 Please refer to the [gprof2dot project site](https://github.com/jrfonseca/gprof2dot) and install its dependencies.
 
-Note that the `pyreverse` module from `pylint` is invoked via subprocess call within [./doc/genUmlDiagrams.py](doc).
+Note that those modules are invoked via subprocess calls within the [./genDoc/](genDoc/) scripts.
 
 
 **Code snippets etc.:**
