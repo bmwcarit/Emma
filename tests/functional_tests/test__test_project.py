@@ -230,9 +230,9 @@ class EmmaTestProject(unittest.TestCase):
         # Checking the report data
         self.checkReport(reportData, expectedReportData)
 
-    def test_moduleSummaryReport(self):
+    def test_objectSummaryReport(self):
         """
-        A function to test the Module Summary report of the test_project.
+        A function to test the Object Summary report of the test_project.
         :return: None
         """
         # Loading the report data

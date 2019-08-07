@@ -157,7 +157,7 @@ def lastModifiedFilesInDir(path, extension):
 
 def evalSummary(filename):
     """
-    Function to check whether current report file is image or module summary.
+    Function to check whether current report file is section or object summary.
     :param filename: Filename of a report.
     :return: FILE_IDENTIFIER_SECTION_SUMMARY if it´s a section- or FILE_IDENTIFIER_OBJECT_SUMMARY if it´s an object report, else None.
     """

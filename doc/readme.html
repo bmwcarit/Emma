@@ -102,7 +102,7 @@ This tool creates a summary/overview about static memory usage in form of a comm
 </blockquote>
 <hr />
 <h1 id="contents">Contents</h1>
-<ol>
+<ul>
 <li><a href="#emma">Emma</a></li>
 <li><a href="#contents">Contents</a></li>
 <li><a href="#requirements">Requirements</a></li>
@@ -113,37 +113,37 @@ This tool creates a summary/overview about static memory usage in form of a comm
 <li><a href="#required-arguments">Required Arguments</a></li>
 <li><a href="#optional-arguments">Optional Arguments</a></li>
 <li><a href="#project-configuration">Project Configuration</a></li>
-<li><a href="#formal-definition-of-the-generic-configuration">Formal definition of the generic configuration</a><ol>
-<li><a href="#PROJECT"><code>PROJECT</code></a></li>
+<li><a href="#formal-definition-of-the-generic-configuration">Formal definition of the generic configuration</a><ul>
+<li><a href="#project"><code>PROJECT</code></a></li>
 <li><a href="#supplement"><code>supplement</code></a></li>
 <li><a href="#globalconfigjson"><code>globalConfig.json</code></a></li>
-<li><a href="#addressSpacesjson"><code>addressSpaces*.json</code></a></li>
+<li><a href="#addressspacesjson"><code>addressSpaces*.json</code></a></li>
 <li><a href="#budgetsjson"><code>budgets.json</code></a></li>
 <li><a href="#categoriesobjectsjson-and-categoriessectionsjson"><code>categoriesObjects.json</code> and <code>categoriesSections.json</code></a></li>
 <li><a href="#categoriesobjectskeywordsjson-and-categoriessectionskeywordsjson"><code>categoriesObjectsKeywords.json</code> and <code>categoriesSectionsKeywords.json</code></a></li>
-</ol>
+</ul>
 </li>
-<li><a href="#formal-definition-of-the-GHS-compiler-specific-configuration">Formal Definition of the GHS compiler specific configuration</a>      <ol>
-<li><a href="#Extensions-to-the-globalConfigjson">Extensions to the <code>globalConfig.json</code></a></li>
+<li><a href="#formal-definition-of-the-ghs-compiler-specific-configuration">Formal Definition of the GHS compiler specific configuration</a><ul>
+<li><a href="#extensions-to-the-globalconfigjson">Extensions to the <code>globalConfig.json</code></a></li>
 <li><a href="#patternsjson"><code>patterns*.json</code></a></li>
 <li><a href="#virtualsectionsjson"><code>virtualSections*.json</code></a></li>
-</ol>
+</ul>
 </li>
 <li><a href="#output-files">Output Files</a></li>
-<li><a href="#image-summary">Image Summary</a></li>
-<li><a href="#module-summary">Module Summary</a></li>
+<li><a href="#section-summary">Section Summary</a></li>
+<li><a href="#object-summary">Object Summary</a></li>
 <li><a href="#objects-in-sections">Objects in Sections</a></li>
 <li><a href="#csv-header">CSV header</a></li>
 <li><a href="#terminology">Terminology</a></li>
 <li><a href="#examples">Examples</a></li>
-<li><a href="#matching-module-name-and-category-using-categorieskeywordsjson">Matching module name and category using <code>categoriesKeywords.json</code></a></li>
-<li><a href="#removing-not-needed-module-names-from-categoriesjson">Removing not needed module names from <code>categories.json</code></a></li>
+<li><a href="#matching-object-name-and-category-using-categorieskeywordsjson">Matching object name and category using <code>categoriesKeywords.json</code></a></li>
+<li><a href="#removing-not-needed-object-names-from-categoriesobjectsjson">Removing not needed object names from <code>categoriesObjects.json</code></a></li>
 <li><a href="#general-information-about-map-files-and-build-chains">General Information About Map Files and Build Chains</a></li>
 <li><a href="#technical-details">Technical Details</a></li>
 <li><a href="#ghs-monolith-file-generation">GHS Monolith file generation</a></li>
 <li><a href="#class-diagram-emma">Class diagram Emma</a></li>
 <li><a href="#calling-graph-emma">Calling Graph Emma</a></li>
-</ol>
+</ul>
 <hr />
 <h1 id="requirements">Requirements</h1>
 <ul>
@@ -169,7 +169,7 @@ This is done with the <code>emma.py</code> script. The second step is to visuali
     Devices based on architectures like this can be analyzed with Emma.</li>
 </ul>
 <h1 id="usage">Usage</h1>
-<p>Image and module summaries of the specified mapfiles will be created.</p>
+<p>Section and object summaries of the specified mapfiles will be created.</p>
 <pre class="codehilite"><code>$ python emma.py --help
 usage: Emma Memory and Mapfile Analyser (Emma) [-h] [--version] --project PROJECT
                                            --mapfiles MAPFILES [--dir DIR]
@@ -188,8 +188,8 @@ optional arguments:
   --project PROJECT    Path of directory holding the configuration.The project
                        name will be derived from the the name of this folder.
                        (default: None)
-  --mapfiles MAPFILES  The folder containing the mapfiles that needs to be
-                       analyzed. (default: None)
+  --mapfiles MAPFILES  The folder containing the map files that need to be
+                       analysed. (default: None)
   --dir DIR            Output folder holding the statistics. (default: None)
   --subdir SUBDIR      User defined subdirectory name in the --dir folder.
                        (default: None)
@@ -212,49 +212,31 @@ optional arguments:
 
 
 <h2 id="optional-arguments">Optional Arguments</h2>
-<pre class="codehilite"><code>--dir
-    User defined path for the top folder holding the `memStats`/output files.
-    Per default it uses the same directory as the config files.
-
---stats_dir
-    User defined path inside the folder given in the `--dir` argument.
-    This is usefull when batch analysing mapfiles from various development stages.
-    Every analysis output gets it's own directory.
-
---create_categories, -ctg
-    Create categories.json from keywords.json for easier module categorisation.
-
---remove_unmatched, -ru
-    Remove unmatched entries from categories.json. This is usefull when a categories.json from another project is used.
-
---help, -h
-
---dir STATS_DIR, -d STATS_DIR
-    User defined path for the folder `memStats` holding generated statistics from Emma (default: ./memStats).
-
---analyse_debug, --dbg
-    Normally we remove DWARF debug sections from the analysis to show the relevant information for a possible release software.
-    This can be prevented if this argument is set. DWARF section names are defined in stringConstants.py
-    `.unused_ram` is always excluded (regardless of this flag)
-
---noprompt
-    Exit and fail on user prompt. Normally this happens when some files or configurations are ambiguous.
-    This is useful when running Emma on CI systems.
-
--Werror</code></pre>
-
-
+<ul>
+<li><code>--dir</code><ul>
+<li>User defined path for the top folder holding the <code>memStats</code>/output files. Per default it uses the same directory as the config files.</li>
+</ul>
+</li>
+<li><code>--stats_dir</code></li>
+<li>User defined path inside the folder given in the <code>--dir</code> argument. This is usefull when batch analysing mapfiles from various development stages. Every analysis output gets it's own directory.</li>
+<li><code>--create_categories</code></li>
+<li>Create <code>categories*.json</code> from <code>categories*Keywords.json</code> for easier categorisation.</li>
+<li><code>--remove_unmatched</code>,</li>
+<li>Remove unmatched entries from <code>categories*.json</code>. This is useful when a <code>categories*.json</code> from another project is used.</li>
+<li><code>--analyse_debug</code>, <code>--dbg</code></li>
+<li>Normally we remove DWARF debug sections from the analysis to show the relevant information for a possible release software. This can be prevented if this argument is set. DWARF section names are defined in <code>stringConstants.py</code>. <code>.unused_ram</code> is always excluded (regardless of this flag)</li>
+<li><code>--noprompt</code></li>
+<li>Exit and fail on user prompt. Normally this happens when some files or configurations are ambiguous. This is useful when running Emma on CI systems.</li>
+</ul>
 <h1 id="project-configuration">Project Configuration</h1>
-<p>The memory analysis will be executed based on the project configuration. In order to be able to use Emma with your project,
-you need to create a configuration matching your project's hardware and software.
-The configuration has to be established correctly, because <strong>errors made in it, can distort the memory analysis results or it will be refused by Emma</strong>.</p>
+<p>The memory analysis will be executed based on the project configuration. In order to be able to use Emma with your project, you need to create a configuration matching your project's hardware and software. <strong>Configure Emma with high diligence since errors may lead to incorrect results of your analysis</strong>. During the analysis Emma performs some sanity checks which helps you detecting misconfiguration.</p>
 <p>This chapter explains the role and functionality of each part of the configuration and illustrates all the settings that can be used.
 Based on this description the user will have to create his/her own configuration.</p>
 <p>Creating a configuration is done by writing several JSON files (if you are not familiar with JSON, please visit https://www.json.org).
 This chapter will go trough the topic by formally defining the format, rules and the functionality of the config files.
-There are practical example projects available in the <strong>doc</strong> folder. These projects will lead you step by step trough the process of 
+There are practical example projects available in the <strong>doc</strong> folder. These projects will lead you step by step trough the process of
 creating a configuration and they also contain map files that can be analyzed.</p>
-<p>Currently the following example projects are available:  </p>
+<p>Currently the following example projects are available:</p>
 <ul>
 <li><strong>doc/test_project</strong> - A Test Project that illustrates a system with a hardware that consists of two devices: an MCU and an SOC.
 Both of the devices have a GHS compiler specific configuration and mapfiles.</li>
@@ -296,6 +278,7 @@ described in the <a href="#formal-definition-of-the-GHS-compiler-specific-config
     &lt;CONFIG_ID&gt;: {
         &quot;compiler&quot;: &lt;COMPILER_NAME&gt;,
         &quot;addressSpacesPath&quot;: &lt;CONFIG_FILE&gt;,
+        &quot;mapfiles&quot;: &lt;MAPFILES_REL_PATH&gt;,
         &quot;ignoreConfigID&quot;: &lt;BOOL&gt;,
         &lt;COMPILER_SPECIFIC_KEY_VALUE_PAIRS&gt;
     },
@@ -305,6 +288,7 @@ described in the <a href="#formal-definition-of-the-GHS-compiler-specific-config
     &lt;CONFIG_ID&gt;: {
         &quot;compiler&quot;: &lt;COMPILER_NAME&gt;,
         &quot;addressSpacesPath&quot;: &lt;CONFIG_FILE&gt;,
+        &quot;mapfiles&quot;: &lt;MAPFILES_REL_PATH&gt;,
         &quot;ignoreConfigID&quot;: &lt;BOOL&gt;,
         &lt;COMPILER_SPECIFIC_KEY_VALUE_PAIRS&gt;
     }
@@ -318,6 +302,7 @@ described in the <a href="#formal-definition-of-the-GHS-compiler-specific-config
 <li><code>&lt;CONFIG_ID&gt;</code> is a string</li>
 <li><code>&lt;COMPILER_NAME&gt;</code> is a string</li>
 <li><code>&lt;CONFIG_FILE&gt;</code> is a string </li>
+<li><code>&lt;MAPFILES_REL_PATH&gt;</code> is a string, with the special characters escaped in it</li>
 <li><code>&lt;BOOL&gt;</code> is a boolean value containing either <strong>true</strong> or <strong>false</strong>  </li>
 <li><code>&lt;COMPILER_SPECIFIC_KEY_VALUE_PAIRS&gt;</code> are the key-value pairs that are required by the selected compiler</li>
 </ul>
@@ -331,6 +316,12 @@ described in the <a href="#formal-definition-of-the-GHS-compiler-specific-config
 <li>by defining <strong>addressSpacesPath</strong>, the config file that defines the address spaces is assigned</li>
 <li>The config files have to be in the same folder as the globalConfig.json</li>
 <li>The config files don't need to be different for each configID (for example you can use the same address spaces config file for all the configIDs)</li>
+</ul>
+</li>
+<li>The mapfiles:<ul>
+<li>specifies a folder <strong>relative</strong> to the one given via <strong>--mapfiles</strong> command line argument</li>
+<li>is optional, if is defined for a configID, then the map files belonging to this configId will be searched for within this folder</li>
+<li>Otherwise the mapfiles will be searched for in the <strong>--mapfiles</strong> root map file path</li>
 </ul>
 </li>
 <li>The ignoreConfigID:<ul>
@@ -3375,7 +3366,7 @@ kJCIxdMAAAAASUVORK5CYII=
     &lt;CONFIG_ID&gt;: {
         &lt;GENERIC_KEY_VALUE_PAIRS&gt;,
         &quot;patternsPath&quot;: &lt;CONFIG_FILE&gt;,
-        &quot;virtualSectionsPath&quot;: &lt;CONFIG_FILE&gt;,
+        &quot;virtualSectionsPath&quot;: &lt;CONFIG_FILE&gt;
     },
     .
     .
@@ -3383,7 +3374,7 @@ kJCIxdMAAAAASUVORK5CYII=
     &lt;CONFIG_ID&gt;: {
         &lt;GENERIC_KEY_VALUE_PAIRS&gt;,
         &quot;patternsPath&quot;: &lt;CONFIG_FILE&gt;,
-        &quot;virtualSectionsPath&quot;: &lt;CONFIG_FILE&gt;,
+        &quot;virtualSectionsPath&quot;: &lt;CONFIG_FILE&gt;
     }
 }</code></pre>
 
@@ -3392,7 +3383,7 @@ kJCIxdMAAAAASUVORK5CYII=
 <ul>
 <li>The types used in the description:<ul>
 <li><code>&lt;GENERIC_KEY_VALUE_PAIRS&gt;</code> are the key-value pairs discussed in the <a href="#formal-definition-of-the-generic-configuration">Formal definition of the generic configuration</a> chapter</li>
-<li><code>&lt;CONFIG_FILE&gt;</code> is a string </li>
+<li><code>&lt;CONFIG_FILE&gt;</code> is a string</li>
 </ul>
 </li>
 <li>You must assign a patterns config file for each configID by defining the <strong>patternsPath</strong> key</li>
@@ -3402,7 +3393,7 @@ kJCIxdMAAAAASUVORK5CYII=
 </ul>
 <h3 id="patternsjson"><code>patterns*.json</code></h3>
 <p>The patterns config files define regex patterns for finding the mapfiles, monolith files and processing their content.
-They belong to the configID they were assigned to in the globalConfigs.json.</p>
+They belong to the configId they were assigned to in the globalConfigs.json.</p>
 <p>These config files have to have the following format:</p>
 <pre class="codehilite"><code class="language-json">{
     &quot;mapfiles&quot;: {
@@ -3486,7 +3477,7 @@ They belong to the configID they were assigned to in the globalConfigs.json.</p>
 <p>The virtual sections config files are used to assign the sections of the virtual address spaces to
 a virtual address spaces defined in the <code>patterns*.json</code>file. This is needed because the mapfiles can contain physical
 and virtual sections as well and Emma needs to identify the virtual ones and assign them to a specific virtual address space.
-For configId-s not using virtual address spaces, a virtualSections*.json file is not needed.</p>
+If your configuration does not use virtual address spaces, the <code>virtualSections*.json</code> files are not needed.</p>
 <p>This config file have to have the following format:</p>
 <pre class="codehilite"><code class="language-json">{
     &lt;VAS_NAME&gt;: [
@@ -3521,15 +3512,15 @@ For configId-s not using virtual address spaces, a virtualSections*.json file is
 </ul>
 <h1 id="output-files">Output Files</h1>
 <p>The output Files will be saved to the memStats folder of the respective project. The filename will have this form: </p>
-<pre class="codehilite"><code class="language-bash">&lt;PROJECT_NAME&gt;_Image_Summary_TIMESTAMP.csv
-&lt;PROJECT_NAME&gt;_Module_Summary_TIMESTAMP.csv
+<pre class="codehilite"><code class="language-bash">&lt;PROJECT_NAME&gt;_Section_Summary_TIMESTAMP.csv
+&lt;PROJECT_NAME&gt;_Object_Summary_TIMESTAMP.csv
 &lt;PROJECT_NAME&gt;_Objects_in_Sections_TIMESTAMP.csv</code></pre>
 
 
-<h2 id="image-summary">Image Summary</h2>
-<p>The file <code>&lt;PROJECT_NAME&gt;_Image_Summary_&lt;TIMESTAMP&gt;.csv</code> contains the sections from the mapfiles.</p>
-<h2 id="module-summary">Module Summary</h2>
-<p>The file <code>&lt;PROJECT_NAME&gt;_Module_Summary_&lt;TIMESTAMP&gt;.csv</code> contains the objects from the mapfiles.</p>
+<h2 id="section-summary">Section Summary</h2>
+<p>The file <code>&lt;PROJECT_NAME&gt;_Section_Summary_&lt;TIMESTAMP&gt;.csv</code> contains the sections from the mapfiles.</p>
+<h2 id="object-summary">Object Summary</h2>
+<p>The file <code>&lt;PROJECT_NAME&gt;_Object_Summary_&lt;TIMESTAMP&gt;.csv</code> contains the objects from the mapfiles.</p>
 <h2 id="objects-in-sections">Objects in Sections</h2>
 <p>"Objects in sections" provides ways to obtain a finer granularity of the categorisation result. Therefore categorised sections containing (smaller) objects of a different category got split up and result into a more accurate categorisation. As a result you will get output files in form of a <code>.csv</code> file which sets you up to do later processing on this data easily. In this file additional information is added like:</p>
 <ul>
@@ -6986,9 +6977,9 @@ This might sound counter-intuitive at the first spot. However we can see memory 
 <p>The CSV file has the following columns:</p>
 <ul>
 <li>The address start, end and sizes: <code>addrStartHex; addrEndHex; sizeHex; addrStartDec; addrEndDec; sizeDec; sizeHumanReadable</code></li>
-<li>The section and module name: <code>section; moduleName</code> Note: If the image summary contains only sections, the column moduleName will be left empty.</li>
+<li>The section and object name: <code>sectionName; moduleName</code> Note: If the image summary contains only sections, the column moduleName will be left empty.</li>
 <li><code>configID</code>, <code>memType</code> and <code>tag</code> are from the config files.</li>
-<li><code>vasName</code> is the virtual address space name defined in sections.json. The <code>DMA</code> field indicates whether a section/module is in a VAS. </li>
+<li><code>vasName</code> is the virtual address space name defined in sections.json. The <code>DMA</code> field indicates whether a section/object is in a VAS. </li>
 <li><code>category</code>: The category evaluated from categories*.json</li>
 <li><code>mapfile</code>: The mapfile, the entry originates from.</li>
 <li><code>overlapFlag</code>: Indicates whether one section overlaps with another.</li>
@@ -7008,17 +6999,17 @@ This might sound counter-intuitive at the first spot. However we can see memory 
 --dir ..\MyMapfiles\results</code></pre>
 
 
-<h2 id="matching-module-name-and-category-using-categorieskeywordsjson">Matching module name and category using <code>categoriesKeywords.json</code></h2>
-<p><code>categoriesKeywords.json</code> can be used to match module names with catgories by user defined keywords.</p>
+<h2 id="matching-object-name-and-category-using-categorieskeywordsjson">Matching object name and category using <code>categoriesKeywords.json</code></h2>
+<p><code>categoriesObjectsKeywords.json</code> can be used to match object names with catgories by user defined keywords.</p>
 <ul>
 <li>Arguments required:  <code>--create_categories</code></li>
 <li>This step will append the newly categorised modules to <code>categories.json</code>. The program will ask you to confirm to overwrite the file.</li>
 </ul>
-<h2 id="removing-not-needed-module-names-from-categoriesjson">Removing not needed module names from <code>categories.json</code></h2>
-<p>Not needed module names can be removed from <code>categories.json</code>, for example when <code>categories.json</code> from another project is used.</p>
+<h2 id="removing-not-needed-object-names-from-categoriesobjectsjson">Removing not needed object names from <code>categoriesObjects.json</code></h2>
+<p>Not needed object names can be removed from <code>categoriesObjects.json</code>, for example when <code>categoriesObjects.json</code> from another project is used.</p>
 <ul>
 <li>Arguments required:  <code>--remove_unmatched</code></li>
-<li>This step will remove never matching module names from <code>categories.json</code>. Some modules never match because e.g. the module got removed or is not present in the current release. The program will ask you to confirm to overwrite the file.</li>
+<li>This step will remove never matching object names from <code>categoriesObjects.json</code>. Some modules never match because e.g. the object got removed or is not present in the current release. The program will ask you to confirm to overwrite the file.</li>
 </ul>
 <h1 id="general-information-about-map-files-and-build-chains">General Information About Map Files and Build Chains</h1>
 <ul>

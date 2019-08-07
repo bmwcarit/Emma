@@ -6,42 +6,42 @@ This tool creates a summary/overview about static memory usage in form of a comm
 
 ------------------------
 # Contents
-1. [Emma](#emma)
-2. [Contents](#contents)
-3. [Requirements](#requirements)
-4. [Process](#process)
-5. [Limitations](#limitations)
-6. [Usage](#usage)
-7. [Arguments](#arguments)
-   1. [Required Arguments](#required-arguments)
-   2. [Optional Arguments](#optional-arguments)
-8. [Project Configuration](#project-configuration)
-   1. [Formal definition of the generic configuration](#formal-definition-of-the-generic-configuration)
-      1. [`PROJECT`](#PROJECT)
-      2. [`supplement`](#supplement)
-      3. [`globalConfig.json`](#globalconfigjson)
-      4. [`addressSpaces*.json`](#addressSpacesjson)
-      5. [`budgets.json`](#budgetsjson)
-      6. [`categoriesObjects.json` and `categoriesSections.json`](#categoriesobjectsjson-and-categoriessectionsjson)
-      7. [`categoriesObjectsKeywords.json` and `categoriesSectionsKeywords.json`](#categoriesobjectskeywordsjson-and-categoriessectionskeywordsjson)
-   2. [Formal Definition of the GHS compiler specific configuration](#formal-definition-of-the-GHS-compiler-specific-configuration)
-      1. [Extensions to the `globalConfig.json`](#Extensions-to-the-globalConfigjson)
-      2. [`patterns*.json`](#patternsjson)
-      3. [`virtualSections*.json`](#virtualsectionsjson)
-9. [Output Files](#output-files)
-   1. [Image Summary](#image-summary)
-   2. [Module Summary](#module-summary)
-   3. [Objects in Sections](#objects-in-sections)
-   4. [CSV header](#csv-header)
-10. [Terminology](#terminology)
-11. [Examples](#examples)
-   1. [Matching module name and category using `categoriesKeywords.json`](#matching-module-name-and-category-using-categorieskeywordsjson)
-   2. [Removing not needed module names from `categories.json`](#removing-not-needed-module-names-from-categoriesjson)
-12. [General Information About Map Files and Build Chains](#general-information-about-map-files-and-build-chains)
-13. [Technical Details](#technical-details)
-   1. [GHS Monolith file generation](#ghs-monolith-file-generation)
-   2. [Class diagram Emma](#class-diagram-emma)
-   3. [Calling Graph Emma](#calling-graph-emma)
+- [Emma](#emma)
+- [Contents](#contents)
+- [Requirements](#requirements)
+- [Process](#process)
+- [Limitations](#limitations)
+- [Usage](#usage)
+- [Arguments](#arguments)
+  - [Required Arguments](#required-arguments)
+  - [Optional Arguments](#optional-arguments)
+- [Project Configuration](#project-configuration)
+  - [Formal definition of the generic configuration](#formal-definition-of-the-generic-configuration)
+    - [`PROJECT`](#project)
+    - [`supplement`](#supplement)
+    - [`globalConfig.json`](#globalconfigjson)
+    - [`addressSpaces*.json`](#addressspacesjson)
+    - [`budgets.json`](#budgetsjson)
+    - [`categoriesObjects.json` and `categoriesSections.json`](#categoriesobjectsjson-and-categoriessectionsjson)
+    - [`categoriesObjectsKeywords.json` and `categoriesSectionsKeywords.json`](#categoriesobjectskeywordsjson-and-categoriessectionskeywordsjson)
+  - [Formal Definition of the GHS compiler specific configuration](#formal-definition-of-the-ghs-compiler-specific-configuration)
+    - [Extensions to the `globalConfig.json`](#extensions-to-the-globalconfigjson)
+    - [`patterns*.json`](#patternsjson)
+    - [`virtualSections*.json`](#virtualsectionsjson)
+- [Output Files](#output-files)
+  - [Section Summary](#section-summary)
+  - [Object Summary](#object-summary)
+  - [Objects in Sections](#objects-in-sections)
+  - [CSV header](#csv-header)
+- [Terminology](#terminology)
+- [Examples](#examples)
+  - [Matching object name and category using `categoriesKeywords.json`](#matching-object-name-and-category-using-categorieskeywordsjson)
+  - [Removing not needed object names from `categoriesObjects.json`](#removing-not-needed-object-names-from-categoriesobjectsjson)
+- [General Information About Map Files and Build Chains](#general-information-about-map-files-and-build-chains)
+- [Technical Details](#technical-details)
+  - [GHS Monolith file generation](#ghs-monolith-file-generation)
+  - [Class diagram Emma](#class-diagram-emma)
+  - [Calling Graph Emma](#calling-graph-emma)
 
 ------------------------
 
@@ -66,7 +66,7 @@ The Emma is only suitable for analyzing projects where the devices have a single
     Devices based on architectures like this can be analyzed with Emma.
 
 # Usage
-Image and module summaries of the specified mapfiles will be created.
+Section and object summaries of the specified mapfiles will be created.
 
     $ python emma.py --help
     usage: Emma Memory and Mapfile Analyser (Emma) [-h] [--version] --project PROJECT
@@ -116,9 +116,9 @@ Image and module summaries of the specified mapfiles will be created.
 * `--stats_dir`
   * User defined path inside the folder given in the `--dir` argument. This is usefull when batch analysing mapfiles from various development stages. Every analysis output gets it's own directory.
 * `--create_categories`
-  * Create `categories.json` from `keywords.json` for easier module categorisation.
+  * Create `categories*.json` from `categories*Keywords.json` for easier categorisation.
 * `--remove_unmatched`,
-  * Remove unmatched entries from categories.json. This is usefull when a `categories.json` from another project is used.
+  * Remove unmatched entries from `categories*.json`. This is useful when a `categories*.json` from another project is used.
 * `--analyse_debug`, `--dbg`
   * Normally we remove DWARF debug sections from the analysis to show the relevant information for a possible release software. This can be prevented if this argument is set. DWARF section names are defined in `stringConstants.py`. `.unused_ram` is always excluded (regardless of this flag)
 * `--noprompt`
@@ -519,17 +519,17 @@ The following rules apply:
 The output Files will be saved to the memStats folder of the respective project. The filename will have this form: 
 
     :::bash
-    <PROJECT_NAME>_Image_Summary_TIMESTAMP.csv
-    <PROJECT_NAME>_Module_Summary_TIMESTAMP.csv
+    <PROJECT_NAME>_Section_Summary_TIMESTAMP.csv
+    <PROJECT_NAME>_Object_Summary_TIMESTAMP.csv
     <PROJECT_NAME>_Objects_in_Sections_TIMESTAMP.csv
 
-## Image Summary
+## Section Summary
 
-The file `<PROJECT_NAME>_Image_Summary_<TIMESTAMP>.csv` contains the sections from the mapfiles.
+The file `<PROJECT_NAME>_Section_Summary_<TIMESTAMP>.csv` contains the sections from the mapfiles.
 
-## Module Summary
+## Object Summary
 
-The file `<PROJECT_NAME>_Module_Summary_<TIMESTAMP>.csv` contains the objects from the mapfiles.
+The file `<PROJECT_NAME>_Object_Summary_<TIMESTAMP>.csv` contains the objects from the mapfiles.
 
 ## Objects in Sections
 "Objects in sections" provides ways to obtain a finer granularity of the categorisation result. Therefore categorised sections containing (smaller) objects of a different category got split up and result into a more accurate categorisation. As a result you will get output files in form of a `.csv` file which sets you up to do later processing on this data easily. In this file additional information is added like:
@@ -574,9 +574,9 @@ Section names for section reserves and entries are `<Emma_SectionReserve>` and `
 The CSV file has the following columns:
 
 * The address start, end and sizes: `addrStartHex; addrEndHex; sizeHex; addrStartDec; addrEndDec; sizeDec; sizeHumanReadable`
-* The section and module name: `section; moduleName` Note: If the image summary contains only sections, the column moduleName will be left empty.
+* The section and object name: `sectionName; moduleName` Note: If the image summary contains only sections, the column moduleName will be left empty.
 * `configID`, `memType` and `tag` are from the config files.
-* `vasName` is the virtual address space name defined in sections.json. The `DMA` field indicates whether a section/module is in a VAS. 
+* `vasName` is the virtual address space name defined in sections.json. The `DMA` field indicates whether a section/object is in a VAS. 
 * `category`: The category evaluated from categories*.json
 * `mapfile`: The mapfile, the entry originates from.
 * `overlapFlag`: Indicates whether one section overlaps with another.
@@ -597,17 +597,17 @@ Create a Mapfile Summary for <PROJECT>:
     --mapfiles ..\MyMapfiles \
     --dir ..\MyMapfiles\results
 
-## Matching module name and category using `categoriesKeywords.json`
-`categoriesKeywords.json` can be used to match module names with catgories by user defined keywords.
+## Matching object name and category using `categoriesKeywords.json`
+`categoriesObjectsKeywords.json` can be used to match object names with catgories by user defined keywords.
 
 * Arguments required:  ```--create_categories```
 * This step will append the newly categorised modules to `categories.json`. The program will ask you to confirm to overwrite the file.
 
-## Removing not needed module names from `categories.json`
-Not needed module names can be removed from `categories.json`, for example when `categories.json` from another project is used.
+## Removing not needed object names from `categoriesObjects.json`
+Not needed object names can be removed from `categoriesObjects.json`, for example when `categoriesObjects.json` from another project is used.
 
 * Arguments required:  ```--remove_unmatched```
-* This step will remove never matching module names from `categories.json`. Some modules never match because e.g. the module got removed or is not present in the current release. The program will ask you to confirm to overwrite the file.
+* This step will remove never matching object names from `categoriesObjects.json`. Some modules never match because e.g. the object got removed or is not present in the current release. The program will ask you to confirm to overwrite the file.
 
 
 # General Information About Map Files and Build Chains

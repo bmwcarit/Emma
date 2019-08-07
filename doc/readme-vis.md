@@ -181,7 +181,7 @@ This is completely user defined, Emma and its components are not relying on thes
 # Input/Output Files
 All output files will be saved to `./[PROJECT]/results`.
 
-If not specified otherwise using the `--quiet` and `--inOutDir` commands, the visualiser will choose the last modified image and module summary .csv files in the `./[PROJECT]/memStats` directory. If there is no module summary present the visualisation of the modules will be skipped.
+If not specified otherwise using the `--quiet` and `--inOutDir` commands, the visualiser will choose the last modified section and object summary .csv files in the `./[PROJECT]/memStats` directory. If there is no module summary present the visualisation of the modules will be skipped.
 
 
 Output files are:

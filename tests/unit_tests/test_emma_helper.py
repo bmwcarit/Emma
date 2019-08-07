@@ -66,14 +66,14 @@ class EmmaHelperTestCase(unittest.TestCase):
             shared_libs.emma_helper.checkIfFolderExists("DefinitelyNonExistingFolder")
         self.assertEqual(contextManager.exception.code, "error")
 
-    def test_checkForFile(self):
+    def test_checkIfFileExists(self):
         try:
-            shared_libs.emma_helper.checkForFile(__file__)
+            shared_libs.emma_helper.checkIfFileExists(__file__)
         except Exception:   # pylint: disable=broad-except
                             # Rationale: The goal here is to catch any exception types.
             self.fail("Unexpected exception!")
         with self.assertRaises(SystemExit) as contextManager:
-            shared_libs.emma_helper.checkForFile("DefinitelyNonExisting.file")
+            shared_libs.emma_helper.checkIfFileExists("DefinitelyNonExisting.file")
         self.assertEqual(contextManager.exception.code, "error")
 
     def test_mkDirIfNeeded(self):

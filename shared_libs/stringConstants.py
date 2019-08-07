@@ -54,10 +54,8 @@ EPILOG =\
     License GPL-3.0: GNU GPL version 3 <https://gnu.org/licenses/gpl.html>.
     This is free software: you are free to change and redistribute it.
     There is NO WARRANTY, to the extent permitted by law."""
-# TODO: This shall be changed to Object summary (AGK)
-FILE_IDENTIFIER_OBJECT_SUMMARY = "Module_Summary"
-# TODO: This shall be changed to Section summary (AGK)
-FILE_IDENTIFIER_SECTION_SUMMARY = "Image_Summary"
+FILE_IDENTIFIER_SECTION_SUMMARY = "Section_Summary"
+FILE_IDENTIFIER_OBJECT_SUMMARY = "Object_Summary"
 FILE_IDENTIFIER_OBJECTS_IN_SECTIONS = "Objects_in_Sections"
 IGNORE_CONFIG_ID = "ignoreConfigID"
 IGNORE_MEMORY = "ignoreMemory"
