@@ -176,7 +176,7 @@ usage: Emma Memory and Mapfile Analyser (Emma) [-h] [--version] --project PROJEC
                                            [--subdir SUBDIR] [--analyse_debug]
                                            [--create_categories]
                                            [--remove_unmatched] [--noprompt]
-                                           [-Werror]
+                                           [--Werror]
 
 Analyser for mapfiles from Greens Hills Linker (other files are supported via
 configuration options).It creates a summary/overview about static memory usage
@@ -199,7 +199,7 @@ optional arguments:
   --remove_unmatched   Remove unmatched modules from categories.json.
                        (default: False)
   --noprompt           Exit fail on user prompt. (default: False)
-  -Werror              Treat all warnings as errors. (default: False)
+  --Werror             Treat all warnings as errors. (default: False)
 
 ********* Marcel Schmalzl, Felix Mueller, Gergo Kocsis - 2017-2019 *********</code></pre>
 
@@ -3350,7 +3350,7 @@ TrfE+KvP8Tts5rHUZ4wXLeP7xzCP0ywxxvscX2Uzj+U+YzxvGf/LGObxW0uM+3yOt2vtWuEzxrOW
 8YfHMI+TLTEm+BxfYTOPVT5j/N0y/tcxzOMkS4wHfY4vt5nHGp8xnraM/00M8zjREuMhn+PLbOax
 1meMJy3jB8Qwj+MtMR7xOX6TzTzW+4zxhGX8UTHM4zhLjEd9ji+1mcePPmNMtIkBAMBP5v8Df06d
 kJCIxdMAAAAASUVORK5CYII=
-" alt="./images/configDependencies.png" width="100%" /> </div>
+" alt="./images/configDependencies.png" width="100%"> </div>
 
 <p>In <code>globalConfig.json</code>, you need to reference (ref relations on the picture):</p>
 <ol>
@@ -3393,7 +3393,7 @@ kJCIxdMAAAAASUVORK5CYII=
 </ul>
 <h3 id="patternsjson"><code>patterns*.json</code></h3>
 <p>The patterns config files define regex patterns for finding the mapfiles, monolith files and processing their content.
-They belong to the configId they were assigned to in the globalConfigs.json.</p>
+They belong to the <code>configID</code> they were assigned to in the <code>globalConfigs.json</code>.</p>
 <p>These config files have to have the following format:</p>
 <pre class="codehilite"><code class="language-json">{
     &quot;mapfiles&quot;: {
@@ -3477,7 +3477,7 @@ They belong to the configId they were assigned to in the globalConfigs.json.</p>
 <p>The virtual sections config files are used to assign the sections of the virtual address spaces to
 a virtual address spaces defined in the <code>patterns*.json</code>file. This is needed because the mapfiles can contain physical
 and virtual sections as well and Emma needs to identify the virtual ones and assign them to a specific virtual address space.
-If your configuration does not use virtual address spaces, the <code>virtualSections*.json</code> files are not needed.</p>
+If your configuration does not use virtual address spaces, the <code>virtualSections*.json</code> file is not needed.</p>
 <p>This config file have to have the following format:</p>
 <pre class="codehilite"><code class="language-json">{
     &lt;VAS_NAME&gt;: [
@@ -6949,7 +6949,7 @@ WUs4BgAAAAAAAAAAAAAAgKwlHAMAAAAAAAAAAAAAAEDWEo4BAAAAAAAAAAAAAAAgawnHAAAAAAAA
 AAAAAAAAkLWEYwAAAAAAAAAAAAAAAMhawjEAAAAAAAAAAAAAAABkLeEYAAAAAAAAAAAAAAAAspZw
 DAAAAAAAAAAAAAAAAFlLOAYAAAAAAAAAAAAAAICsJRwDAAAAAAAAAAAAAABA1hKOAQAAAAAAAAAA
 AAAAIGsJxwAAAAAAAAAAAAAAAJC1/g9IYu4l3Q4QSAAAAABJRU5ErkJggg==
-" alt="./images/objectsInSections.png" width="90%" /> </div>
+" alt="./images/objectsInSections.png" width="90%"> </div>
 
 <p>The file <code>&lt;PROJECT_NAME&gt;_Objects_in_Sections_&lt;TIMESTAMP&gt;.csv</code> is the result of the "merge" of the objects and the sections file.</p>
 <p>Objects/sections that are "touching" or overlapping each other in some way (see the above figure) are resolved in this step. Therefore the "weaker" section/object is split (and has therefore a reduced by size after each step).</p>
@@ -12485,7 +12485,7 @@ LgsAAAAAAADwWnJZAAAAAAAAgNeSywIAAAAAAAC8llwWAAAAAAAA4LXksgAAAAAAAACvJZcFAAAA
 AAAAeC25LAAAAAAAAMBr/f/XfkvOz8hnDwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0wNy0yNVQw
 ODo1NzoyNyswMDowMH5DhjAAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMDctMjVUMDg6NTc6Mjcr
 MDA6MDAPHj6MAAAAAElFTkSuQmCC
-" alt="images/emmaClassDiagram.png" width="1000" /> </div></p>
+" alt="images/emmaClassDiagram.png" width="1000"> </div></p>
 <h2 id="calling-graph-emma">Calling Graph Emma</h2>
 <p><div align="center"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAKoUAAAvyCAYAAAAFyYXsAAAABmJLR0QA/wD/AP+gvaeTAAAgAElE
 QVR4nOzde3QV1b048C+0VmppQCUtYgQVrIrEFypP5VotEqu1Wh9tdfkgrVoVWyvSq9BbeyXeXxGl
@@ -28622,7 +28622,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAlpBwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAExIOwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGBC
 2gEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT0g4AAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACY8AWSqPY2mR6Z0gAAAABJRU5ErkJggg==
-" alt="../genDoc/call_graph_uml/emma_filtered.profile.png" width="1000" /> </div></p>
+" alt="../genDoc/call_graph_uml/emma_filtered.profile.png" width="1000"> </div></p>
 
 </body>
 
