@@ -7,7 +7,7 @@ N: Full name
 I: Initials (besides the name initials can be used (alternatively to someones name) to identify someones comments)
 E: Email address
 K: PGP key ID and fingerprint
-F: Files and directories with globbing patterns patterns
+F: Files and directories with globbing patterns
 L: Link providing more information about this individual
 D: Description
 C: Country
@@ -21,7 +21,7 @@ An entry ends with two newlines.
 ````````````````````
 N: Marcel Schmalzl
 I: MSc
-E: marcel.schmalzl@partner.bmw.de
+E: marcel.schmalzl( .at)partner.bmw.de
 F: *
 D: Emma originator
 L: https://github.com/holzkohlengrill/
@@ -38,7 +38,8 @@ C: Germany
 ````````````````````
 N: András Gergő Kocsis
 I: AGK
-E: kocsisandrasgergo@gmail.com
+E: kocsisandrasgergo<AT GMAIL>
 F: *
 D: Emma maintainer
+L: https://github.com/KGergo88
 C: Germany

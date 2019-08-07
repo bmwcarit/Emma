@@ -102,28 +102,22 @@ code { background-color: #F6F8FA; }
 <hr />
 <h1 id="contents">Contents</h1>
 <ol>
+<li><a href="#emma-visualiser">Emma Visualiser</a></li>
+<li><a href="#contents">Contents</a></li>
 <li><a href="#requirements">Requirements</a></li>
 <li><a href="#process">Process</a></li>
 <li><a href="#usage">Usage</a></li>
-<li><a href="#arguments">Arguments</a><ol>
-<li><a href="#required-arguments">Required Arguments:</a></li>
-<li><a href="#optional-arguments">Optional Arguments:</a></li>
+<li><a href="#arguments-in-detail">Arguments in detail</a></li>
+<li><a href="#optional-arguments">Optional Arguments</a></li>
 <li><a href="#quiet-mode">Quiet Mode</a></li>
 <li><a href="#overview">Overview</a></li>
 <li><a href="#append-mode">Append Mode</a></li>
-</ol>
-</li>
-<li><a href="#project-configuration">Project Configuration</a><ol>
-<li><a href="#budgets.json">budgets.json</a></li>
-<li><a href="#supplement">[supplement]</a></li>
-</ol>
-</li>
-<li><a href="#input-files">Input Files</a></li>
-<li><a href="#output-folder-and-files">Output Folder and Files</a></li>
-<li><a href="#examples">Examples</a><ol>
+<li><a href="#project-configuration">Project Configuration</a></li>
+<li><a href="#budgetsjson"><code>budgets.json</code></a></li>
+<li><a href="#supplement"><code>[supplement]</code></a></li>
+<li><a href="#inputoutput-files">Input/Output Files</a></li>
+<li><a href="#examples">Examples</a></li>
 <li><a href="#calling-graph-emma-visualiser">Calling Graph Emma Visualiser</a></li>
-</ol>
-</li>
 </ol>
 <hr />
 <h1 id="requirements">Requirements</h1>
@@ -133,73 +127,104 @@ code { background-color: #F6F8FA; }
 </ul>
 </li>
 <li>Python libraries<ul>
-<li>pypiscout 1.7 or higher: (<code>pip3 install pypiscout</code>)</li>
+<li>pypiscout 2.0 or higher: (<code>pip3 install pypiscout</code>)</li>
 <li>Pandas 0.22 or higher: (<code>pip3 install pandas</code>)</li>
 <li>Matplotlib 2.2.0 or higher: (<code>pip3 install matplotlib</code>)</li>
 <li>Markdown 3.0.1 or higher: (<code>pip3 install Markdown</code>)</li>
 <li>Pygments 2.3.1 or higher: (<code>pip3 install Pygments</code>)</li>
 </ul>
 </li>
-<li>Tested on Windows but should also work on Linux systems</li>
+<li>Tested on Windows and Linux systems</li>
 </ul>
 <h1 id="process">Process</h1>
 <p>After analysing the mapfiles with the <code>emma.py</code> script, one can visualise them using <code>emma_vis.py</code>.</p>
 <h1 id="usage">Usage</h1>
-<div class="codehilite"><pre><span></span>$ python emma_vis.py --help
-usage: Emma Visualiser <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>--version<span class="o">]</span> --project PROJECT <span class="o">[</span>--quiet<span class="o">]</span> <span class="o">[</span>--append<span class="o">]</span>
-                       <span class="o">[</span>--dir DIR<span class="o">]</span> <span class="o">[</span>--subdir SUBDIR<span class="o">]</span> <span class="o">[</span>--overview<span class="o">]</span>
-                       <span class="o">[</span>--categorised_image_csv<span class="o">]</span> <span class="o">[</span>--noprompt<span class="o">]</span>
+<pre class="codehilite"><code>$ python emma_vis.py --help
+usage: Emma Visualiser [-h] [--version] --projectDir PROJECTDIR [--quiet]
+                    [--append] [--inOutDir INOUTDIR] [--subDir SUBDIR]
+                    [--overview] [--categorised_image_csv] [--noprompt]
 
-Data aggregation and visualisation tool <span class="k">for</span> Emma Memory and Mapfile Analyser <span class="o">(</span>Emma<span class="o">)</span>.
+Data aggregation and visualisation tool for Emma Memory and Mapfile Analyser
+(Emma).
 
 optional arguments:
-  -h, --help            show this <span class="nb">help</span> message and <span class="nb">exit</span>
-  --version             Display the version number.
-  --project PROJECT, -p PROJECT
-                        Path of directory holding the configs files. The
-                        project name will be derived from the root folder
-                        <span class="o">(</span>default: None<span class="o">)</span>
-  --quiet, -q           Automatically accepts last modified .csv file in
-                        ./memStats folder <span class="o">(</span>default: False<span class="o">)</span>
-  --append, -a          Append reports to file in ./results folder <span class="o">(</span>default:
-                        False<span class="o">)</span>
-  --dir DIR, -d DIR     User defined path to the statistics root directory.
-                        <span class="o">(</span>default: None<span class="o">)</span>
-  --subdir SUBDIR       User defined subdirectory in results folder. <span class="o">(</span>default:
-                        <span class="o">)</span>
-  --overview, -ovw      Create a .html overview. <span class="o">(</span>default: False<span class="o">)</span>
-  --categorised_image_csv, -cat_img
+-h, --help            show this help message and exit
+--version             Display the version number.
+--projectDir PROJECTDIR, -p PROJECTDIR
+                        Path to directory holding the config files. The
+                        project name will be derived from this folder name,
+                        (default: None)
+--quiet, -q           Automatically accepts last modified .csv file in
+                        ./memStats folder (default: False)
+--append              Append reports to file in ./results folder (default:
+                        False)
+--inOutDir INOUTDIR, -i INOUTDIR
+                        Path containing the memStats directory (-&gt; Emma
+                        output). If not given the `project` directory will be
+                        used. (default: None)
+--subDir SUBDIR       Sub-directory of `inOutDir` where the Emma Visualiser
+                        results will be stored. If not given results will be
+                        stored in `inOutDir`. (default: None)
+--overview            Create a .html overview. (default: False)
+--categorised_image_csv, -cat_img
                         Save a .csv of categories found inside the image
-                        summary <span class="o">(</span>default: False<span class="o">)</span>
-  --noprompt            Exit fail on user prompt. <span class="o">(</span>default: False<span class="o">)</span>
+                        summary (default: False)
+--noprompt            Exit program with an error if a user prompt occurs;
+                        useful for CI systems (default: False)
 
-********* Marcel Schmalzl, Felix Mueller, Gergo Kocsis - <span class="m">2017</span>-2019 *********
-</pre></div>
+Copyright (C) 2019 The Emma authors License GPL-3.0: GNU GPL version 3
+&lt;https://gnu.org/licenses/gpl.html&gt;. This is free software: you are free to
+change and redistribute it. There is NO WARRANTY, to the extent permitted by
+law.</code></pre>
 
 
-<h1 id="arguments">Arguments</h1>
-<h2 id="required-arguments">Required Arguments:</h2>
+<h1 id="arguments-in-detail">Arguments in detail</h1>
+<h2 id="optional-arguments">Optional Arguments</h2>
 <ul>
-<li><code>--project PROJECT, -p PROJECT</code></li>
+<li><code>--inOutDir INOUTDIR, -i INOUTDIR</code></li>
+<li><code>--subDir SUBDIR</code></li>
 </ul>
-<p>Specify the project root directory (the folder holding the .json files). The project name will be derived from the root folder.</p>
-<h2 id="optional-arguments">Optional Arguments:</h2>
+<p>User defined path for the folder <code>./memStats</code> holding generated statistics from Emma. If not specified the schema below will be followed:</p>
+<table>
+<thead>
+<tr>
+<th>Argument -&gt;</th>
+<th><code>--projectDir</code></th>
+<th><code>--inOutDir</code></th>
+<th><code>--subDir</code></th>
+<th>I/O path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Given?</td>
+<td>x</td>
+<td></td>
+<td></td>
+<td>projectDir</td>
+</tr>
+<tr>
+<td>Given?</td>
+<td>x</td>
+<td>x</td>
+<td></td>
+<td>inOutDir</td>
+</tr>
+<tr>
+<td>Given?</td>
+<td>x</td>
+<td>x</td>
+<td>x</td>
+<td>join(inOutDir + subDir)</td>
+</tr>
+</tbody>
+</table>
+<p>I/O path denotes the path containing <code>memStats</code>. In the same path the <code>results</code> folder will be created.</p>
+<p>By defining <code>SUBDIR</code> a folder with the given name is created in the results directory. This option makes it easier to distinguish between different development stages when batch analysing mapfiles.</p>
 <ul>
-<li><code>--help, -h</code></li>
-</ul>
-<p>Show the help message.</p>
-<ul>
-<li><code>--append, -a</code></li>
+<li><code>--append</code></li>
 </ul>
 <p>Additional reports in .csv format will be created in the ./results directory.</p>
-<ul>
-<li><code>--directory DIRECTORY, --dir DIRECTORY, -d DIRECTORY</code></li>
-</ul>
-<p>User defined path for the folder ./memStats holding generated statistics from Emma (default: ./memStats). If not specified the program will ask you to confirm the default path.</p>
-<ul>
-<li><code>--res_subdir RES_SUBDIR</code></li>
-</ul>
-<p>User defined subdirectory in results folder. By defining <code>RES_SUBDIR</code> a folder with the given name is created in the results directory. This option makes it easier to distinguish between different development stages when batch analysing mapfiles.</p>
 <ul>
 <li><code>--categorised_image_csv, -cat_img</code>
 Save a .csv of categories found inside the image summary (default: False).</li>
@@ -208,15 +233,15 @@ Save a .csv of categories found inside the image summary (default: False).</li>
 <ul>
 <li><code>--quiet, -q</code></li>
 </ul>
-<p>Automatically accepts last modified .csv file in ./memStats folder (default: False). If not specified the program will ask you to confirm the default path.</p>
+<p>Automatically accepts last modified <code>.csv</code> file in <code>./memStats</code> folder (default: False). If not specified the program will ask you to confirm the default path if not given or ambiguous.</p>
 <h2 id="overview">Overview</h2>
 <ul>
-<li><code>--overview, -ovw</code></li>
+<li><code>--overview</code></li>
 </ul>
 <p>This creates a .md and .html output containing an overview of the memory usage.</p>
 <h2 id="append-mode">Append Mode</h2>
 <ul>
-<li><code>--append, -a</code></li>
+<li><code>--append</code></li>
 </ul>
 <p>Appends analyses to .csv files. This can be used to visualise memory usage over different versions.</p>
 <h1 id="project-configuration">Project Configuration</h1>
@@ -229,14 +254,13 @@ prescribed by your project requirements in order to ensure there will be availab
 <p>The config file needs to have the following format:</p>
 <p>{
     "Project Threshold in %": <THRESHOLD_VALUE>,</p>
-<div class="codehilite"><pre><span></span>&quot;Budgets&quot;: [
+<pre class="codehilite"><code>&quot;Budgets&quot;: [
     [&lt;CONFIG_ID&gt;, &lt;MEMORY_TYPE&gt;, &lt;AVAILABLE_MEMORY&gt;],
     .
     .
     .
     [&lt;CONFIG_ID&gt;, &lt;MEMORY_TYPE&gt;, &lt;AVAILABLE_MEMORY&gt;]
-]
-</pre></div>
+]</code></pre>
 
 
 <p>}</p>
@@ -262,27 +286,25 @@ prescribed by your project requirements in order to ensure there will be availab
 <li>The <code>&lt;AVAILABLE_MEMORY&gt;</code>s are defining the available memory for a <code>&lt;MEMORY_TYPE&gt;</code> of a <code>&lt;CONFIG_ID&gt;</code> in bytes</li>
 </ul>
 <h2 id="supplement"><code>[supplement]</code></h2>
-<p>.md files in this directory will be appended to the report created by the <code>--overview</code> command.
+<p><code>.md</code> files in this directory will be appended to the report created by the <code>--overview</code> command.
 This can be used to append additional remarks to the overview.
-This is completely user defined, Emma and it´s components are not relying on these files in any way.</p>
-<h1 id="input-files">Input Files</h1>
-<p>If not specified otherwise with the <code>--quiet</code> and <code>--directory</code> commands, the visualiser will choose the last modified image and module summary .csv files in the ./[PROJECT]/memStats directory. If there is no module summary present the visualisation of the modules will be skipped.</p>
-<h1 id="output-folder-and-files">Output Folder and Files</h1>
+This is completely user defined, Emma and its components are not relying on these files in any way.</p>
+<h1 id="inputoutput-files">Input/Output Files</h1>
 <p>All output files will be saved to <code>./[PROJECT]/results</code>.</p>
+<p>If not specified otherwise using the <code>--quiet</code> and <code>--inOutDir</code> commands, the visualiser will choose the last modified image and module summary .csv files in the <code>./[PROJECT]/memStats</code> directory. If there is no module summary present the visualisation of the modules will be skipped.</p>
 <p>Output files are:</p>
 <ul>
-<li>.png's of all plots</li>
-<li>Overview mode creates .md and .html files of the overview</li>
-<li>A .csv file showing which section contains which modules.</li>
+<li><code>.png</code>'s of all plots</li>
+<li>Overview mode creates <code>.md</code> and <code>.html</code> files of the overview</li>
+<li>A <code>.csv</code> file showing which section contains which modules</li>
 </ul>
 <h1 id="examples">Examples</h1>
 <p>After the Image Summary has been created with emma.py and the memStats CSV files were saved to the directory <code>../[PROJECT]/results/memStats</code>, it can be visualised using:</p>
-<div class="codehilite"><pre><span></span>python emma_vis.py <span class="se">\</span>
---project ..<span class="se">\[</span>PROJECT<span class="o">]</span> <span class="se">\</span>
---dir ..<span class="se">\[</span>PROJECT<span class="o">]</span><span class="se">\r</span>esults <span class="se">\</span>
---quiet <span class="se">\</span>
---overview
-</pre></div>
+<pre class="codehilite"><code class="language-bash">python emma_vis.py \
+--project ..\[PROJECT] \
+--dir ..\[PROJECT]\results \
+--quiet \
+--overview</code></pre>
 
 
 <h2 id="calling-graph-emma-visualiser">Calling Graph Emma Visualiser</h2>

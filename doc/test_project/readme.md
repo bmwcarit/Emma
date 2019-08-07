@@ -55,7 +55,7 @@ simple RTOS running on it called OS.
 
 The memory layout of the MCU:
 
-<div align="center"> <img src="../../images/test_project/MCU_MemoryLayout.png" width="25%" /> </div>
+<div align="center"> <img src="../images/test_project/MCU_MemoryLayout.png" width="25%" /> </div>
 
 ### SOC
 
@@ -74,7 +74,7 @@ to the NetLogger framework if available on the system.
 
 The memory layout of the SOC:
 
-<div align="center"> <img src="../../images/test_project/SOC_MemoryLayout.png" width="25%" /> </div>
+<div align="center"> <img src="../images/test_project/SOC_MemoryLayout.png" width="25%" /> </div>
 
 ## Creating the configuration
 
