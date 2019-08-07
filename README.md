@@ -28,7 +28,7 @@ The whole Emma tool suite contains command line options making it convenient to 
 ------------------------
 <br>
 
-<div align="center"> <img src="./doc/images/architecture.png" width="100%" /> </div>
+<div align="center"> <img src="./doc/images/architecture.png" width="100%"> </div>
 
 ------------------------
 # Contents
@@ -46,7 +46,7 @@ Install dependencies: Python 3.6 or higher; `pip3 install Pygments Markdown matp
 # General Workflow
 The following figure shows a possible workflow using Emma:
 
-<div align="center"> <img src="./doc/images/workflow.png" width="100%" /> </div>
+<div align="center"> <img src="./doc/images/workflow.png" width="100%"> </div>
 
 **Emma** - as the core component - produces an intermediate `.csv` file. Inputs are mapfiles and JSON files (for configuration (memory layout, sizes, ...)). From this point you are very flexible to choose your own pipeline. You could
 
@@ -96,7 +96,7 @@ A basic configuration can be short per file. For complex systems you can choose 
 
 One main concept includes the `globalConfig.json`. You can see this as meta-config. Each configuration ID (configID) is a separately conducted analysis. Per configID you state individually the configuration files you want to use for this exact analysis. Herewith you can mix and match any combination of subconfigs you prefer.
 
-<div align="center"> <img src="./doc/images/globalConfigScheme.png" width="60%" /> </div>
+<div align="center"> <img src="./doc/images/globalConfigScheme.png" width="60%"> </div>
 
 A `globalConfig.json` could look like this:
 

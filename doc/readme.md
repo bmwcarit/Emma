@@ -369,7 +369,7 @@ The GHS compiler specific part of the configuration contains the following files
 
 The following dependencies exist within this type of a configuration:
 
-<div align="center"> <img src="./images/configDependencies.png" width="100%" /> </div>
+<div align="center"> <img src="./images/configDependencies.png" width="100%"> </div>
 
 In `globalConfig.json`, you need to reference (ref relations on the picture):
 
@@ -540,7 +540,7 @@ The file `<PROJECT_NAME>_Object_Summary_<TIMESTAMP>.csv` contains the objects fr
 * All meta data about the origin of each section/object (mapfile, addess space, ...)
 * ...
 
-<div align="center"> <img src="./images/objectsInSections.png" width="90%" /> </div>
+<div align="center"> <img src="./images/objectsInSections.png" width="90%"> </div>
 
 The file `<PROJECT_NAME>_Objects_in_Sections_<TIMESTAMP>.csv` is the result of the "merge" of the objects and the sections file.
 
@@ -631,7 +631,7 @@ Execute this to generate the monolith files (you need to have the ELF file for t
 By default long names will be truncated. This can lead to inaccurate results. In order to prevent this use `-no_trunc_sec_names`.
 
 ## Class diagram Emma
-<div align="center"> <img src="images/emmaClassDiagram.png" width="1000" /> </div>
+<div align="center"> <img src="images/emmaClassDiagram.png" width="1000"> </div>
 
 ## Calling Graph Emma
-<div align="center"> <img src="../genDoc/call_graph_uml/emma_filtered.profile.png" width="1000" /> </div>
+<div align="center"> <img src="../genDoc/call_graph_uml/emma_filtered.profile.png" width="1000"> </div>

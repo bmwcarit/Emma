@@ -202,4 +202,4 @@ After the Image Summary has been created with emma.py and the memStats CSV files
     --overview
 
 ## Calling Graph Emma Visualiser
-<div align="center"> <img src="../genDoc/call_graph_uml/emma_vis_filtered.profile.png" width="1000" /> </div>
+<div align="center"> <img src="../genDoc/call_graph_uml/emma_vis_filtered.profile.png" width="1000"> </div>

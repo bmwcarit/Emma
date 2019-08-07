@@ -146,7 +146,7 @@ In order to integrate these new classes, the following changes need to be made:
 The previously mentioned abstract classes from which the new classes need to inherit, describe the prototypes of the methods that need to be implemented in their docstrings.
 During runtime these methods (the ones with green background) will be called in the following order:
 
-<div align="center"> <img src="images/emmaAddingCompilerSupportActivityDiagram.png" width="700" /> </div>
+<div align="center"> <img src="images/emmaAddingCompilerSupportActivityDiagram.png" width="700"> </div>
 
 The methods need to implement the following functionality:
 
