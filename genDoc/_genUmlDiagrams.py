@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import os
 import subprocess
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 import gprof2dot    # pylint: disable=unused-import
                     # Rationale: Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
 
@@ -58,7 +58,7 @@ LIST_OF_SOURCE_FILE_PATHS = [           # "../../*" instead of "../*" since we c
 
 
 def main():
-    sc.info("Generating UML Class diagrams from the source files...")
+    sc().info("Generating UML Class diagrams from the source files...")
     for sourceFilePath in LIST_OF_SOURCE_FILE_PATHS:
         sourceFileName = os.path.splitext(os.path.basename(sourceFilePath))[0]
         subprocess.run("pyreverse -AS -o " + README_PICTURE_FORMAT + " " + sourceFilePath + " -p " + sourceFileName, cwd=README_CALL_GRAPH_AND_UML_FOLDER_NAME, shell=True)

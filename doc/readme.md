@@ -74,7 +74,7 @@ Image and module summaries of the specified mapfiles will be created.
                                                [--subdir SUBDIR] [--analyse_debug]
                                                [--create_categories]
                                                [--remove_unmatched] [--noprompt]
-                                               [-Werror]
+                                               [--Werror]
 
     Analyser for mapfiles from Greens Hills Linker (other files are supported via
     configuration options).It creates a summary/overview about static memory usage
@@ -97,7 +97,7 @@ Image and module summaries of the specified mapfiles will be created.
       --remove_unmatched   Remove unmatched modules from categories.json.
                            (default: False)
       --noprompt           Exit fail on user prompt. (default: False)
-      -Werror              Treat all warnings as errors. (default: False)
+      --Werror             Treat all warnings as errors. (default: False)
 
     ********* Marcel Schmalzl, Felix Mueller, Gergo Kocsis - 2017-2019 *********
 
@@ -140,7 +140,7 @@ Image and module summaries of the specified mapfiles will be created.
         Exit and fail on user prompt. Normally this happens when some files or configurations are ambiguous.
         This is useful when running Emma on CI systems.
 
-    -Werror
+    --Werror
 
 
 # Project Configuration

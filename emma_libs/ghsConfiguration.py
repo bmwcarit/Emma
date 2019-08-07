@@ -23,6 +23,7 @@ import re
 
 from pypiscout.SCout_Logger import Logger as sc
 
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
 import emma_libs.specificConfiguration
 import emma_libs.ghsMapfileRegexes
@@ -51,7 +52,6 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             configuration["patterns"] = shared_libs.emma_helper.readJson(patternsPath)
         else:
             sc().error("Missing patternsPath definition in the globalConfig,json for the configId: " + configId + "!")
-            sys.exit(-10)
 
         # Loading the virtualSections*.json if the file is present (only needed in case of VAS-es)
         if "virtualSectionsPath" in configuration:
@@ -152,9 +152,9 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                 if foundFiles:
                     # We will add it to the configuration and also check whether more than one file was found to this pattern
                     configuration["patterns"][fileType][entry]["associatedFilename"] = foundFiles[0]
-                    print("\t\t\t\t Found " + fileType + ": ", foundFiles[0])
+                    print(LISTING_INDENT + "Found " + fileType + ": ", foundFiles[0])
                     if len(foundFiles) > 1:
-                        sc.warning("Ambiguous regex pattern in '" + configuration["patternsPath"] + "'. Selected '" + foundFiles[0] + "'. Regex matched: " + "".join(foundFiles))
+                        sc().warning("Ambiguous regex pattern in '" + configuration["patternsPath"] + "'. Selected '" + foundFiles[0] + "'. Regex matched: " + "".join(foundFiles))
 
         # Check for found files in patterns and do some clean-up
         # We need to convert the keys into a temporary list in order to avoid iterating on the original which may be changed during the loop, that causes a runtime error
@@ -172,11 +172,11 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         :return: None
         """
 
-        def loadMonolithFile(configuration, noPrompt):
+        def loadMonolithFile(configuration, noprompt):
             """
             Function to Load monolith file.
             :param configuration: Configuration to which the monoliths need to be added.
-            :param noPrompt: True if no user prompts shall be made, False otherwise, in which case a program exit will be made.
+            :param noprompt: True if no user prompts shall be made, False otherwise, in which case a program exit will be made.
             :return: Content of the monolith file if it could be read, else None.
             """
             result = None
@@ -189,16 +189,20 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                 keyMonolithMapping.update({str(key): configuration["patterns"]["monoliths"][monolith]["associatedFilename"]})
 
             if numMonolithFiles > 1:
-                sc().info("More than one monolith file detected. Which to chose (1, 2, ...)?")
+                sc().info("More than one monolith file detected:")
                 # Display files
                 for key, monolith in keyMonolithMapping.items():
-                    print(" ", key.ljust(10), monolith)
-                # Ask for index which file to chose
-                mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx() if not noPrompt else sys.exit(-10)
-                # We will only accept values in range [0, numMonolithFiles)
-                while not 0 <= mapfileIndexChosen < numMonolithFiles:
-                    sc().warning("Invalid value; try again:")
-                    mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx() if not noPrompt else sys.exit(-10)
+                    print(LISTING_INDENT, f"{key}: {monolith}")
+                if noprompt:
+                    sc().wwarning("No prompt is active. Using first monolith file in list: " + str(keyMonolithMapping['0']))
+                    mapfileIndexChosen = 0
+                else:
+                    # Let the user choose the index of the correct file
+                    sc().info("Choose the index of the desired monolith file")
+                    mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx()
+                    while not 0 <= mapfileIndexChosen < numMonolithFiles:               # Accept only values within the range [0, numMonolithFiles)
+                        sc().warning("Invalid value; try again:")
+                        mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx()
             elif numMonolithFiles < 1:
                 sc().error("No monolith file found but needed for processing")
 
@@ -253,11 +257,11 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         return result
 
     @staticmethod
-    def __checkMonolithSections(configuration, noPrompt):
+    def __checkMonolithSections(configuration, noprompt):
         """
         The function collects the VAS sections from the monolith files and from the global config and from the monolith mapfile.
         :param configuration: Configuration thats monolith sections need to be checked.
-        :param noPrompt: True if no user prompts shall be made, False otherwise, in which case a program exit will be made.
+        :param noprompt: True if no user prompts shall be made, False otherwise, in which case a program exit will be made.
         :return: True if the monolith sections were ok, False otherwise.
         """
         result = False
@@ -286,9 +290,13 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             if sectionsNotInConfigID:
                 sc().warning("Monolith File has the following sections. You might want to add it them the respective VAS in " + configuration["virtualSectionsPath"] + "!")
                 for section in sectionsNotInConfigID:
-                    print("\t\t\t\t", section)
+                    print(LISTING_INDENT, section)
                 sc().warning("Still continue? (y/n)")
-                text = input("> ") if not noPrompt else sys.exit(-10)
+                if noprompt:
+                    sc().wwarning("No prompt is active. Chose `y` to continue.")
+                    text = "y"
+                else:
+                    text = input("> ")
                 if text != "y":
                     sys.exit(-10)
             else:

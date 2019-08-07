@@ -25,7 +25,7 @@ import datetime
 import argparse
 import pandas
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
@@ -58,20 +58,19 @@ def main(args):
     consumptionObjectsInSections.plotPieChart(plotShow=False)
 
     # Image Summary object
-    sc.info("Analysing", imageFile)
+    sc().info("Analysing", imageFile)
     consumptionImage = emma_vis_libs.dataVisualiserSections.ImageConsumptionList(projectPath=args.projectDir,
                                                                                  fileToUse=imageFile,
                                                                                  resultsPath=resultsPath)
 
     # Module Summary object
-    sc.info("Analysing", moduleFile)
+    sc().info("Analysing", moduleFile)
     try:
         consumptionModule = emma_vis_libs.dataVisualiserObjects.ModuleConsumptionList(projectPath=args.projectDir,
                                                                                       fileToUse=moduleFile,
                                                                                       resultsPath=args.inOutPath)
     except ValueError:
-        sc.error("Data does not contain any module/object entry - exiting...")
-        sys.exit(-10)
+        sc().error("Data does not contain any module/object entry - exiting...")
 
     # Object for visualisation fo image and module summary
     categorisedImage = emma_vis_libs.dataVisualiserCategorisedSections.CategorisedImageConsumptionList(resultsPath=resultsPath,
@@ -93,7 +92,7 @@ def main(args):
 
     # Write each report to file if append mode in args is selected
     if args.append:
-        sc.info("Appending reports...")
+        sc().info("Appending reports...")
         consumptionImage.writeReportToFile()
         report = emma_vis_libs.dataReports.Reports(projectPath=args.projectDir)
         report.plotNdisplay(plotShow=False)
@@ -187,8 +186,7 @@ def parseArgs(arguments=""):
 
     # Check given paths
     if parsedArguments.projectDir is None:                  # This should not happen since it is a required argument
-        sc.error("No project path given. Exiting...")
-        sys.exit(-10)
+        sc().error("No project path given. Exiting...")
     else:
         parsedArguments.projectDir = shared_libs.emma_helper.joinPath(parsedArguments.projectDir)           # Unify path
         shared_libs.emma_helper.checkIfFolderExists(parsedArguments.projectDir)
@@ -219,13 +217,14 @@ def parseArgs(arguments=""):
 
 if __name__ == "__main__":
     parsedArguments = parseArgs()
+    sc(invVerbosity=-1, actionWarning=(lambda : sys.exit(-10) if parsedArguments.Werror is not None else None), actionError=lambda : sys.exit(-10))
 
-    sc.header("Emma Memory and Mapfile Analyser - Visualiser", symbol="/")
+    sc().header("Emma Memory and Mapfile Analyser - Visualiser", symbol="/")
 
     timeStart = timeit.default_timer()
-    sc.info("Started processing at:", datetime.datetime.now().strftime("%H:%M:%S"))
+    sc().info("Started processing at:", datetime.datetime.now().strftime("%H:%M:%S"))
 
     main(parsedArguments)
 
     timeEnd = timeit.default_timer()
-    sc.info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " + "{0:.2f}".format(timeEnd - timeStart) + "s)")
+    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " + "{0:.2f}".format(timeEnd - timeStart) + "s)")

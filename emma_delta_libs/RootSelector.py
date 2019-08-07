@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import os
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
@@ -33,7 +33,7 @@ def selectRoot() -> str:
     deltaConfigPath: str = shared_libs.emma_helper.joinPath("./", DELTA_CONFIG)
     if os.path.isfile(deltaConfigPath):
         rootpath = shared_libs.emma_helper.readJson(deltaConfigPath)[DELTA_LATEST_PATH]
-        sc.info("Using " + rootpath + " as project.")
+        sc().info("Using " + rootpath + " as project.")
     else:
         rootpath = input("Enter project root path >")
 

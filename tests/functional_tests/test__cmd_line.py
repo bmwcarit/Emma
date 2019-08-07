@@ -53,7 +53,7 @@ class TestHelper(unittest.TestCase):
         # Setting up the logger
         # This syntax will default init it and then change the settings with the __call__()
         # This is needed so that the unit tests can have different settings and not interfere with each other
-        sc()(4, actionWarning=None, actionError=TestHelper.actionError)
+        sc()(invVerbosity=4, actionWarning=None, actionError=lambda : sys.exit(-10))
 
         # Switching to the Emma root folder
         os.chdir(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -85,10 +85,6 @@ class TestHelper(unittest.TestCase):
         shutil.copytree(os.path.join(sourceTestProjectFolder, "mapfiles"), os.path.join(self.cmdLineTestProjectFolder, "mapfiles"))
         # Creating the output folder for the results with the test case name
         os.makedirs(self.cmdLineTestOutputFolder)
-
-    @staticmethod
-    def actionError():
-        sys.exit(-10)
 
     def deInit(self):
         """

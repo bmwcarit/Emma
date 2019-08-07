@@ -23,7 +23,7 @@ import re
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from shared_libs.stringConstants import *   # pylint: disable=unused-wildcard-import,wildcard-import
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
 import emma_libs.memoryEntry
 
@@ -39,7 +39,7 @@ class Categorisation:
         # pylint: disable=too-many-arguments
         # Rationale: The categorisation paths and the settings needs to be set-up by this function.
 
-        self.noPrompt = noPrompt
+        self.noprompt = noPrompt
         # These are list of sections and objects that are categorised by keywords (these will be used for updating the categories*.json files)
         self.keywordCategorisedSections = []
         self.keywordCategorisedObjects = []
@@ -131,7 +131,11 @@ class Categorisation:
         if updateCategoriesFromKeywordMatches:
             # Asking the user whether a file shall be updated. If no prompt is allowed, we will exit.
             sc().info("Merge categoriesSections.json with categorised modules from " + CATEGORIES_KEYWORDS_SECTIONS_JSON + "?\nIt will be overwritten.\n`y` to accept, any other key to discard.")
-            text = input("> ") if not self.noPrompt else sys.exit(-10)
+            if self.noprompt:
+                sc().wwarning("No prompt is active. Chose to overwrite file.")
+                text = "y"
+            else:
+                text = input("> ")
             # If an update is allowed
             if text == "y":
                 Categorisation.__updateCategoriesJson(self.categoriesSections, self.keywordCategorisedSections, self.categoriesSectionsPath)
@@ -142,7 +146,11 @@ class Categorisation:
                 sc().info(text + " was entered, aborting the update. The " + self.categoriesSectionsPath + " was not changed.")
         # Do we need to remove the unmatched categories?
         if removeUnmatchedCategories:
-            text = input("> ") if not self.noPrompt else sys.exit(-10)
+            if self.noprompt:
+                sc().wwarning("No prompt is active. Chose `y` to remove unmatched categories.")
+                text = "y"
+            else:
+                text = input("> ")
             if text == "y":
                 sc().info("Remove unmatched modules from " + CATEGORIES_SECTIONS_JSON + "?\nIt will be overwritten.\n `y` to accept, any other key to discard.")
                 Categorisation.__removeUnmatchedFromCategoriesJson(self.categoriesSections, sectionCollection, emma_libs.memoryEntry.SectionEntry, self.categoriesSectionsPath)
@@ -163,7 +171,11 @@ class Categorisation:
         if updateCategoriesFromKeywordMatches:
             # Updating the object categorisation file
             sc().info("Merge categoriesObjects.json with categorised modules from " + CATEGORIES_KEYWORDS_OBJECTS_JSON + "?\nIt will be overwritten.\n`y` to accept, any other key to discard.")
-            text = input("> ") if not self.noPrompt else sys.exit(-10)
+            if self.noprompt:
+                sc().wwarning("No prompt is active. Chose `y` to overwrite.")
+                text = "y"
+            else:
+                text = input("> ")
             # If an update is allowed
             if text == "y":
                 Categorisation.__updateCategoriesJson(self.categoriesObjects, self.keywordCategorisedObjects, self.categoriesObjectsPath)
@@ -171,10 +183,14 @@ class Categorisation:
                 # Re-categorize objects if the categorisation file have been changed
                 self.__fillOutObjectCategories(objectCollection)
             else:
-                sc().info(text + " was entered, aborting the update. The " + self.categoriesObjectsPath + " was not changed.")
+                sc().info(text + " was entered, aborting the update. The file " + self.categoriesObjectsPath + " was not changed.")
         # Do we need to remove the unmatched categories?
         if removeUnmatchedCategories:
-            text = input("> ") if not self.noPrompt else sys.exit(-10)
+            if self.noprompt:
+                sc().wwarning("No prompt is active. Chose `y` to remove unmatched.")
+                text = "y"
+            else:
+                text = input("> ")
             if text == "y":
                 sc().info("Remove unmatched modules from " + CATEGORIES_OBJECTS_JSON + "?\nIt will be overwritten.\n `y` to accept, any other key to discard.")
                 Categorisation.__removeUnmatchedFromCategoriesJson(self.categoriesObjects, objectCollection, emma_libs.memoryEntry.ObjectEntry, self.categoriesObjectsPath)

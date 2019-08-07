@@ -24,7 +24,7 @@ import os
 
 import pandas
 import matplotlib.pyplot
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
@@ -147,7 +147,7 @@ class ModuleConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
         :return: nothing
         """
 
-        sc.info("Appending module summary to overview...")
+        sc().info("Appending module summary to overview...")
 
         # TODO: This should be better explained (AGK)
         self.plotByCategorisedModules(plotShow=False)  # Re-write .png to ensure up-to-date overview

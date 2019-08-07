@@ -110,7 +110,7 @@ def parseArgs(arguments=""):
         default=False
     )
     parser.add_argument(
-        "-Werror",
+        "--Werror",
         help="Treat all warnings as errors.",
         action="store_true",
         default=False
@@ -159,10 +159,7 @@ if __name__ == "__main__":
     # Parsing the arguments
     ARGS = parseArgs()
 
-    def exitProgram():
-        sys.exit(-10)
-
-    sc(-1, actionWarning=(exitProgram if ARGS.Werror is not None else None), actionError=exitProgram)
+    sc(invVerbosity=-1, actionWarning=(lambda : sys.exit(-10) if ARGS.Werror is not None else None), actionError=lambda : sys.exit(-10))
 
     sc().header("Emma Memory and Mapfile Analyser", symbol="/")
 

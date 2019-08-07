@@ -21,7 +21,7 @@ import sys
 import os
 import typing
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import emma_delta_libs.FileSelector
@@ -47,8 +47,7 @@ class FilePresenter:
         try:
             filetype: str = self.__filetypes[int(input("Choose File type >\n"))]
         except KeyError:
-            sc.error("Select valid Summary.\n")
-            sys.exit(-10)
+            sc().error("Select valid Summary.\n")
 
         candidates: typing.List[str] = self.__fileSelector.getCandidates()
         self.__printCandidates(candidates)
@@ -56,8 +55,7 @@ class FilePresenter:
         indices: typing.List[str] = indices.split(" ")
         indices: typing.List[int] = [int(i) for i in indices]
         if len(indices) <= 1:
-            sc.error("Select more than one file.")
-            sys.exit(-10)
+            sc().error("Select more than one file.")
 
         selectedFiles: typing.List[str] = self.__fileSelector.selectFiles(indices, filetype)
         self.__printSelectedFiles(selectedFiles)
@@ -69,7 +67,7 @@ class FilePresenter:
             print(string)
 
     def __printSelectedFiles(self, paths: typing.List[str]) -> None:
-        sc.info("Selected files:")
+        sc().info("Selected files:")
         for i, path in enumerate(paths):
             pathSplit: typing.List[str] = os.path.split(path)
             version: str = os.path.split(os.path.split(pathSplit[0])[0])[1]

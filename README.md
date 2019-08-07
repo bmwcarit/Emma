@@ -23,7 +23,7 @@ Holding the aforementioned **augmented data** makes it easy to **detect issues i
 
 The Emma visualiser helps you to create nice plots and reports in a `.png` and `.html` and markdown file format.
 
-The whole Emma tool suite contains command line options making it convenient to be **run on a build server** like `-Werror` (treat all warnings as errors) or `--no-prompt` (exit and fail on user prompts; user prompts can happen when ambiguous configurations appear such as multiple matches for one configured map files).
+The whole Emma tool suite contains command line options making it convenient to be **run on a build server** like `--Werror` (treat all warnings as errors) or `--no-prompt` (exit and fail on user prompts; user prompts can happen when ambiguous configurations appear such as multiple matches for one configured map files).
 
 ------------------------
 <br>

@@ -21,7 +21,7 @@ import abc
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from shared_libs.stringConstants import *   # pylint: disable=unused-wildcard-import,wildcard-import
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 
 
 class MapfileProcessor(abc.ABC):

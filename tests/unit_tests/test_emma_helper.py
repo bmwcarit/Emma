@@ -28,7 +28,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 # pylint: disable=wrong-import-position
 # Rationale: This module needs to access modules that are above them in the folder structure.
 
-from shared_libs.stringConstants import *   # pylint: disable=unused-wildcard-import,wildcard-import
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
 
 
@@ -40,21 +40,13 @@ class EmmaHelperTestCase(unittest.TestCase):
     Unit tests for the emma_helper module.
     """
     def setUp(self):
-
-        # Setting up the logger
-        # This syntax will default init it and then change the settings with the __call__()
-        # This is needed so that the unit tests can have different settings and not interfere with each other
-        sc()(4, actionWarning=EmmaHelperTestCase.warningAction, actionError=EmmaHelperTestCase.errorAction)
-
-    # A warning action that will be registered in the logger
-    @staticmethod
-    def warningAction():
-        sys.exit("warning")
-
-    # An error action that will be registered in the logger
-    @staticmethod
-    def errorAction():
-        sys.exit("error")
+        """
+        Setting up the logger
+        This syntax will default init it and then change the settings with the __call__()
+        This is needed so that the unit tests can have different settings and not interfere with each other
+        :return: None
+        """
+        sc()(invVerbosity=4, actionWarning=lambda : sys.exit("warning"), actionError=lambda : sys.exit("error"))
 
     def test_checkIfFolderExists(self):
         try:

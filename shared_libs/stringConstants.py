@@ -61,6 +61,7 @@ FILE_IDENTIFIER_SECTION_SUMMARY = "Image_Summary"
 FILE_IDENTIFIER_OBJECTS_IN_SECTIONS = "Objects_in_Sections"
 IGNORE_CONFIG_ID = "ignoreConfigID"
 IGNORE_MEMORY = "ignoreMemory"
+LISTING_INDENT = "\t\t\t\t "                    # This is used if you want to list something; in this case you normally don't use pypiscout but a `print()`
 MAPFILE = "mapfile"
 OUTPUT_DIR = "memStats"
 OUTPUT_DIR_VISUALISER = "results"

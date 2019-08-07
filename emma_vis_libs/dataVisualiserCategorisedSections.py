@@ -24,7 +24,7 @@ import json
 
 import pandas
 import matplotlib.pyplot
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
@@ -183,7 +183,7 @@ class CategorisedImageConsumptionList:
         :param markdownFilePath: The path of the Markdown file to which the data will be appended to.
         :return: nothing
         """
-        sc.info("Appending module summary to overview...")
+        sc().info("Appending module summary to overview...")
 
         with open(markdownFilePath, 'a') as markdown:
             markdown.write("\n# Modules included in allocated Memory\n")

@@ -29,7 +29,7 @@ sys.path.append("../")
 # pylint: disable=wrong-import-position
 # Rationale: This module needs to access modules that are above them in the folder structure.
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import, wildcard-import
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
 import genDoc._genCallGraphs
 import genDoc._genUmlDiagrams
@@ -70,10 +70,8 @@ def main(arguments):
     :param arguments: Processed command line arguments.
     :return: None
     """
-    def exitProgram():
-        sys.exit(-10)
+    sc(invVerbosity=-1, actionWarning=lambda : sys.exit(-10), actionError=lambda : sys.exit(-10))
 
-    sc(-1, exitProgram, exitProgram)
     sc().header("Generating the Readme documents", symbol="/")
 
     # Give a hint on python sys-call
@@ -95,7 +93,7 @@ def main(arguments):
 
     try:
         if not os.path.isdir(README_CALL_GRAPH_AND_UML_FOLDER_NAME):
-            sc.info("The folder \"" + README_CALL_GRAPH_AND_UML_FOLDER_NAME + "\" was created because it did not exist...")
+            sc().info("The folder \"" + README_CALL_GRAPH_AND_UML_FOLDER_NAME + "\" was created because it did not exist...")
             os.makedirs(README_CALL_GRAPH_AND_UML_FOLDER_NAME)
 
         if not arguments.no_graphs:

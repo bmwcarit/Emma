@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import os
 import sys
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 import shared_libs.emma_helper
 import shared_libs.stringConstants
@@ -44,8 +44,7 @@ def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool
 
     # Check if no files were found
     if len(lastModifiedFiles) < 1:
-        sc.error("No files in the specified directory:", os.path.abspath(path))
-        sys.exit(-10)
+        sc().error("No files in the specified directory:", os.path.abspath(path))
 
     # Get last modified file (we NOT ONLY need this for the quiet mode)
     # Backwards iterate over file list (so newest file will be first)
@@ -59,27 +58,30 @@ def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool
     if quiet:
         # Just use the last found file (we did this before)
         pass
+    elif noprompt:
+        sc().wwarning("No prompt is active. Using last modified file named:", fileToUse)
+        pass
     elif not append:
         # If nothing specified AND append mode is OFF ask which file to use
-        sc.info("Last modified file:")
+        sc().info("Last modified file:")
         print("\t" + fileToUse)
-        sc.info("`y` to accept; otherwise specify an absolute path (without quotes)")
+        sc().info("`y` to accept; otherwise specify an absolute path (without quotes)")
         while True:
-            text = input("> ") if not noprompt else sys.exit(-10)
+            text = input("> ")
+
             if text == "y":
                 break
             if text is not None and text != "" and os.path.isfile(text) and text.endswith(".csv"):
                 fileToUse = text
                 break
             else:
-                sc.warning("Invalid input.")
+                sc().warning("Invalid input.")
 
         # Check if the fixed file name portions are within the found file name
         if shared_libs.stringConstants.FILE_IDENTIFIER_OBJECT_SUMMARY is shared_libs.emma_helper.evalSummary(lastModifiedFiles[-1]):
-            sc.warning("Last modified file is a " + shared_libs.stringConstants.FILE_IDENTIFIER_OBJECT_SUMMARY + "\n")
+            sc().warning("Last modified file is a " + shared_libs.stringConstants.FILE_IDENTIFIER_OBJECT_SUMMARY + "\n")
 
     if fileToUse is None:
-        sc.error("No file containing '" + subStringIdentifier + "' found in " + path)
-        sys.exit(-10)
+        sc().error("No file containing '" + subStringIdentifier + "' found in " + path)
 
     return fileToUse
