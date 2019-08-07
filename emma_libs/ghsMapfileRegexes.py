@@ -24,10 +24,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import re
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 
 class Groups:
+    # pylint: disable=too-few-public-methods
+    # Rationale: This is a special class to be used for mapfile processing, it does not have to have more public mehtods.
+
     """
     Helper class for regex groups
     """
@@ -44,15 +47,21 @@ class Groups:
 
 
 class RegexPatternBase:
+    # pylint: disable=too-few-public-methods
+    # Rationale: This is a special class to be used for mapfile processing, it does not have to have more public mehtods.
+
     """
     Base class for module/image summary
     """
-    def __init__(self, defaultSectionOffset=None):
+    def __init__(self):
         self.pattern = None
         self.Groups = Groups()
 
 
 class ModuleSummaryPattern(RegexPatternBase):
+    # pylint: disable=too-few-public-methods
+    # Rationale: This is a special class to be used for mapfile processing, it does not have to have more public mehtods.
+
     """
     Class holding the regex pattern for module summary
     """
@@ -76,6 +85,9 @@ class ModuleSummaryPattern(RegexPatternBase):
 
 
 class ImageSummaryPattern(RegexPatternBase):
+    # pylint: disable=too-few-public-methods
+    # Rationale: This is a special class to be used for mapfile processing, it does not have to have more public mehtods.
+
     """
     Class holding the regex pattern for image summary
     """
@@ -96,8 +108,8 @@ class ImageSummaryPattern(RegexPatternBase):
         self.Groups.size = "sizeHex"
         self.Groups.sectionOffset = "sectionOffset"
 
-    # TODO : Why do we have this here and why dont we have a "getImageName" instead? (AGK)
-    def getModuleName(self, lineComponents):
+    def getModuleName(self, lineComponents):    # pylint: disable=unused-argument, no-self-use
+                                                # Rationale: Sections do not have object names. This function has to have the same prototype as the other subclasses of the RegexPatternBase.
         """
         :param lineComponents: A mapfile line - here not needed (image has no module names (>> thus empty string))
         :return: Empty string (because image has no module names)
@@ -106,6 +118,9 @@ class ImageSummaryPattern(RegexPatternBase):
 
 
 class UpperMonolithPattern(RegexPatternBase):
+    # pylint: disable=too-few-public-methods
+    # Rationale: This is a special class to be used for mapfile processing, it does not have to have more public mehtods.
+
     """
     Class holding regex pattern for virtual <-> physical section mapping in monolith file
     """
@@ -126,11 +141,14 @@ class UpperMonolithPattern(RegexPatternBase):
 
 
 class LowerMonolithPattern(RegexPatternBase):
+    # pylint: disable=too-few-public-methods
+    # Rationale: This is a special class to be used for mapfile processing, it does not have to have more public mehtods.
+
     """
     Class holding the regex pattern for the lower part of the monolith file
     """
     def __init__(self):
-        super().__init__(defaultSectionOffset=0)
+        super().__init__()
         self.pattern = re.compile(r"""
             # ^\s{4}[\.*\w+]+\s+0x[0-9a-f]+\s+[0x]*[0-9a-f]+\s\(\w+\s*/[\w+,\s]+\)
             (?:\s{4})(?P<section>[\.*\w+]+)							    	# Section
@@ -143,9 +161,10 @@ class LowerMonolithPattern(RegexPatternBase):
         self.Groups.origin = "address"  # address is equvialent to base Address
         self.Groups.size = "size"
 
-        sc.info("Preparing lower monolith summary...")
+        sc().info("Preparing lower monolith summary...")
 
-    def getModuleName(self, lineComponents):
+    def getModuleName(self, lineComponents):    # pylint: disable=unused-argument, no-self-use
+                                                # Rationale: Sections do not have object names. This function has to have the same prototype as the other subclasses of the RegexPatternBase.
         """
         :param lineComponents: A mapfile line - here not needed (image has no module names (>> thus empty string))
         :return: Empty string (because image has no module names)

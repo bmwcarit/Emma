@@ -19,14 +19,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 # Emma Memory and Mapfile Analyser - helpers
 
 
-import sys
 import os
 import re
 import json
 import hashlib
 import base64
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
+
 import markdown
 import markdown.extensions.codehilite
 import markdown.extensions.fenced_code
@@ -42,8 +42,7 @@ def checkIfFolderExists(folderName):
     :param folderName: Project to check
     """
     if not os.path.isdir(folderName):
-        sc.error("Given directory (" + os.path.abspath(folderName) + ") does not exist; exiting...")
-        sys.exit(-10)
+        sc().error("Given directory (" + os.path.abspath(folderName) + ") does not exist; exiting...")
 
 
 def checkIfFileExists(filePath):
@@ -52,8 +51,7 @@ def checkIfFileExists(filePath):
     :param filePath: File path to check
     """
     if not os.path.exists(filePath):
-        sc.error("Given file (" + filePath + ") does not exist; exiting...")
-        sys.exit(-10)
+        sc().error("Given file (" + filePath + ") does not exist; exiting...")
 
 
 def mkDirIfNeeded(path):
@@ -63,7 +61,7 @@ def mkDirIfNeeded(path):
     """
     if not os.path.isdir(path):
         os.makedirs(path)
-        sc.info("Directory " + path + " created since not present")
+        sc().info("Directory " + path + " created since not present")
 
 
 def readJson(jsonInFilePath):
@@ -92,29 +90,33 @@ def unifyAddress(address):
     :param address: hex or dec address
     :return: [addressHex, addressDec)
     """
-    if type(address) == str and address is not None:
+    if isinstance(address, str) and address is not None:
         address = int(address, 16)
         addressHex = hex(address)
-    elif type(address) == int and address is not None:
+    elif isinstance(address, int) and address is not None:
         addressHex = hex(address)
     else:
-        sc.error("Address must be either of type int or str")
+        sc().error("unifyAddress(): Address must be either of type int or str!")
         raise TypeError
     return addressHex, address
 
 
 def getTimestampFromFilename(filename):
     """
-    Get the timestamp from the summary
-    :param filename: summary filename in ./memstats
-    :return: The timestamp in string form
+    Get the timestamp from a report file name.
+    :param filename: Name of the report file.
+    :return: The timestamp in string form if found in the filename, else None.
     """
+    result = None
+
     pattern = re.compile(r"\d{4}-\d{2}-\d{2}-\d{2}h\d{2}s\d{2}")  # Matches timestamps of the following format: `2017-11-06-14h56s52`
     match = re.search(pattern, filename)
     if match:
-        return match.group()
+        result = match.group()
     else:
-        sc.error("Could not match the given filename:", filename)
+        sc().error("Could not match the given filename:", filename)
+
+    return result
 
 
 def getColourValFromString(inputString):
@@ -134,28 +136,39 @@ def lastModifiedFilesInDir(path, extension):
     :param extension: Only files with a specified extension are included
     :return: Sorted list of modified files
     """
-    directory = os.listdir(path)
-    fileTimestamps = []
+    result = []
 
-    for file in directory:
-        file = joinPath(path, file)
-        if os.path.isfile(file) and file.endswith(extension):
-            time = os.path.getmtime(file)
-            fileTimestamps.append([time, file])
+    if os.path.isdir(path):
+        directory = os.listdir(path)
+        fileTimestamps = []
 
-    return [item[1] for item in sorted(fileTimestamps)]       # python sorts always by first element for nested lists; we only need the last element (last change) and only its filename (>> [1])
+        for file in directory:
+            file = joinPath(path, file)
+
+            if os.path.isfile(file) and file.endswith(extension):
+                time = os.path.getmtime(file)
+                fileTimestamps.append([time, file])
+
+            # python sorts always by first element for nested lists; we only need the last element (last change) and only its filename (>> [1])
+            result = [item[1] for item in sorted(fileTimestamps)]
+
+    return result
 
 
 def evalSummary(filename):
     """
-    Function to check whether current memStats file is image or module summary
-    :param filename: Filename to check
-    :return: "Image_Summary" or "Module_Summary"
+    Function to check whether current report file is section or object summary.
+    :param filename: Filename of a report.
+    :return: FILE_IDENTIFIER_SECTION_SUMMARY if it´s a section- or FILE_IDENTIFIER_OBJECT_SUMMARY if it´s an object report, else None.
     """
+    result = None
+
     if FILE_IDENTIFIER_SECTION_SUMMARY in filename:
-        return FILE_IDENTIFIER_SECTION_SUMMARY
+        result = FILE_IDENTIFIER_SECTION_SUMMARY
     elif FILE_IDENTIFIER_OBJECT_SUMMARY in filename:
-        return FILE_IDENTIFIER_OBJECT_SUMMARY
+        result = FILE_IDENTIFIER_OBJECT_SUMMARY
+
+    return result
 
 
 def projectNameFromPath(path):
@@ -168,10 +181,14 @@ def projectNameFromPath(path):
 
 
 def joinPath(*paths):
+    """
+    Join paths together maintaining one slash direction. This is especially important when using multiple operating systems (use forward slashes only).
+    :param paths: [List(string)] List of paths which are going to be joined together
+    :return: [string] The joined path
+    """
     # Removing the elements that are None because these can be optional path elements and they would cause an exception
     listOfReceivedPaths = [i for i in paths if i is not None]
-    # FIXME : Docstring or comment pls, and what about the commented out code?
-    return os.path.normpath(os.path.join(*listOfReceivedPaths))  # .replace("\\", "/")
+    return os.path.normpath(os.path.join(*listOfReceivedPaths))
 
 
 def changePictureLinksToEmbeddingInHtmlData(htmlData, sourceDataPath=""):
@@ -183,23 +200,25 @@ def changePictureLinksToEmbeddingInHtmlData(htmlData, sourceDataPath=""):
     :param sourceDataPath: This is the path of the file from which the htmlData comes from. It is needed during the search for the picture files.
     :return: The modified htmlData.
     """
-    list_of_linked_pictures = re.findall(r"<img src=\"([^\"]*)", htmlData)
-    for linked_picture in list_of_linked_pictures:
-        # If the linked_picture is not an absolute path it needs to be prepended with the sourceDataPath
-        if os.path.isabs(linked_picture):
-            linked_picture_path = linked_picture
-        else:
-            linked_picture_path = os.path.join(os.path.dirname(sourceDataPath), linked_picture)
+    listOfLinkedPictures = re.findall(r"<img src=\"([^\"]*)", htmlData)
 
-        if not os.path.exists(linked_picture_path):
-            sc.warning("The file " + linked_picture_path + " does not exist!")
+    for linkedPicture in listOfLinkedPictures:
+        # If the linkedPicture is not an absolute path it needs to be prepended with the sourceDataPath
+        if os.path.isabs(linkedPicture):
+            linkedPicturePath = linkedPicture
+        else:
+            linkedPicturePath = joinPath(os.path.dirname(sourceDataPath), linkedPicture)
+
+        if not os.path.exists(linkedPicturePath):
+            sc().warning("The file " + linkedPicturePath + " does not exist!")
             continue
 
-        with open(linked_picture_path, "rb") as file_object:
-            encoded_picture_data = base64.encodebytes(file_object.read())
-        linked_picture_file_extension = os.path.splitext(linked_picture)[1][1:]
-        replacement_string = "data:image/" + linked_picture_file_extension + ";base64," + encoded_picture_data.decode() + "\" alt=\"" + linked_picture
-        htmlData = htmlData.replace(linked_picture, replacement_string)
+        with open(linkedPicturePath, "rb") as fileObject:
+            encodedPictureData = base64.encodebytes(fileObject.read())
+        linkedPictureFileExtension = os.path.splitext(linkedPicture)[1][1:]
+        replacementString = "data:image/" + linkedPictureFileExtension + ";base64," + encodedPictureData.decode() + "\" alt=\"" + linkedPicture
+        htmlData = htmlData.replace(linkedPicture, replacementString)
+
     return htmlData
 
 
@@ -224,63 +243,65 @@ def convertMarkdownFileToHtmlFile(markdownFilePath, htmlFilePath):
     :param htmlFilePath: Path to the .html file.
     :return: nothing
     """
-    with open(markdownFilePath, "r") as file_object:
-        markdownData = file_object.read()
+    with open(markdownFilePath, "r") as fileObject:
+        markdownData = fileObject.read()
 
     htmlData = convertMarkdownDataToHtmlData(markdownData)
     htmlData = changePictureLinksToEmbeddingInHtmlData(htmlData, markdownFilePath)
     htmlData = HTML_TEMPLATE.replace(HTML_TEMPLATE_BODY_PLACEHOLDER, htmlData)
 
-    with open(htmlFilePath, "w") as file_object:
-        file_object.write(htmlData)
+    with open(htmlFilePath, "w") as fileObject:
+        fileObject.write(htmlData)
 
 
-def findFilesInDir(search_directory, regex_pattern=r".*", including_root=True):
+def findFilesInDir(searchDirectory, regexPattern=r".*", includingRoot=True):
     """
     It looks recursively for files in the search_directory that are matching the regex_pattern.
-    :param search_directory: The directory in which the search will be done.
-    :param regex_pattern: The regex patterns that the files will be matched against.
-    :param including_root: If true, the search directory will be added to the path of the search results as well.
+    :param searchDirectory: The directory in which the search will be done.
+    :param regexPattern: The regex patterns that the files will be matched against.
+    :param includingRoot: If true, the search directory will be added to the path of the search results as well.
     :return: The paths of the files found.
     :rtype: list of str
     """
     result = []
-    for (root, directories, files) in os.walk(search_directory):
+    for (root, _, files) in os.walk(searchDirectory):
         for file in files:
-            if re.search(regex_pattern, file) is not None:
-                if including_root:
+            if re.search(regexPattern, file) is not None:
+                if includingRoot:
                     result.append(joinPath(root, file))
                 else:
                     result.append(file)
     return result
 
 
-def saveMatplotlibPicture(picture_data, path_to_save, savefig_format, savefig_dpi, savefig_transparent):
+def saveMatplotlibPicture(pictureData, pathToSave, savefigFormat, savefigDpi, savefigTransparent):
     """
     Function to save a matplotlib figure to disk. It ensures that the picture file is properly flushed.
-    :param picture_data: A matplotlib Figure object that has a savefig method.
-    :param path_to_save: The path where the picture will be saved to.
-    :param savefig_format: This value will be forwarded to the savefig method of the Figure object. (See savefig´s description for details)
-    :param savefig_dpi: This value will be forwarded to the savefig method of the Figure object. (See savefig´s description for details)
-    :param savefig_transparent: This value will be forwarded to the savefig method of the Figure object. (See savefig´s description for details)
+    :param pictureData: A matplotlib Figure object that has a savefig method.
+    :param pathToSave: The path where the picture will be saved to.
+    :param savefigFormat: This value will be forwarded to the savefig method of the Figure object. (See savefig´s description for details)
+    :param savefigDpi: This value will be forwarded to the savefig method of the Figure object. (See savefig´s description for details)
+    :param savefigTransparent: This value will be forwarded to the savefig method of the Figure object. (See savefig´s description for details)
     :return: nothing
     """
-    with open(path_to_save, "wb") as file_object:
-        picture_data.savefig(file_object, format=savefig_format, dpi=savefig_dpi, transparent=savefig_transparent)
-        file_object.flush()
+    with open(pathToSave, "wb") as fileObject:
+        pictureData.savefig(fileObject, format=savefigFormat, dpi=savefigDpi, transparent=savefigTransparent)
+        fileObject.flush()
 
 
-"""
-MIT License toHumanReadable
-Copyright (c) 2019 Marcel Schmalzl, Steve Göring
-https://github.com/TeamFlowerPower/kb/wiki/humanReadable
-"""
+def toHumanReadable(num, suffix='B'):     # pylint: disable=inconsistent-return-statements
+                                          # Rationale: This code was copied from the source below, it will not be changed to keep it aligned with the original.
+    # pylint: disable=invalid-name
+    # Rationale: This code was copied from the source below, it will not be changed to keep it aligned with the original.
 
-
-def toHumanReadable(num, suffix='B'):
     """
-    Converts a number into a human readable format: humanReadableSize(168963795964) -> '157.4 GiB'
+    Converts a number into a human readable format: humanReadableSize(168963795964) -> ' 157.36 GiB'
     Note: we use binary prefixes (-> 1kiB = 1024 Byte)
+
+    MIT License toHumanReadable
+    Copyright (c) 2019 Marcel Schmalzl, Steve Göring
+    https://github.com/TeamFlowerPower/kb/wiki/humanReadable
+
     :param num: Number to convert
     :param suffix: The suffix that will be added to the quantifier
     :return: Formatted string
@@ -297,31 +318,20 @@ def toHumanReadable(num, suffix='B'):
 
 
 class Prompt:
+    # pylint: disable=too-few-public-methods
+    # Rationale: This is legacy code, changing it into a function would require changes in other code parts.
+    """
+    Class that contains functions that help handling of user prompts.
+    """
     @staticmethod
     def idx():
         """
-        Prompt for an index [0,inf[ and return it if in this range otherwise return `None`
-        :return:
+        Prompt for an index [0, inf) and return it if in this range.
+        :return: The index entered by the user, None otherwise.
         """
+        result = -1
         text = input("> ")
-        if text is None or text == "":
-            return -1
-        else:
-            return int(text)
+        if text is not None and text != "":
+            result = int(text)
 
-    @staticmethod
-    def txt():
-        # TODO: implement this method (Msc)
-        raise NotImplementedError
-
-
-def checkIfHelpWasCalled():
-    """
-    Checks if --help or -h is within the command line argument list
-    This is an argparse limitation
-    :return: False if it is inside; else True
-    """
-    if "--help" in sys.argv or "-h" in sys.argv:
-        return False
-    else:
-        return True
+        return result

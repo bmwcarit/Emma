@@ -20,8 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 
 # Version ################################################
-VERSION_MAJOR = "2"
-VERSION_MINOR = "1"
+VERSION_MAJOR = "3"
+VERSION_MINOR = "0"
 EMMA_VERSION = ".".join([VERSION_MAJOR, VERSION_MINOR])
 EMMA_VISUALISER_VERSION = EMMA_VERSION
 EMMA_DELTAS_VERSION = EMMA_VERSION
@@ -54,20 +54,19 @@ EPILOG =\
     License GPL-3.0: GNU GPL version 3 <https://gnu.org/licenses/gpl.html>.
     This is free software: you are free to change and redistribute it.
     There is NO WARRANTY, to the extent permitted by law."""
-# TODO: This shall be changed to Object summary (AGK)
-FILE_IDENTIFIER_OBJECT_SUMMARY = "Module_Summary"
-# TODO: This shall be changed to Section summary (AGK)
-FILE_IDENTIFIER_SECTION_SUMMARY = "Image_Summary"
+FILE_IDENTIFIER_SECTION_SUMMARY = "Section_Summary"
+FILE_IDENTIFIER_OBJECT_SUMMARY = "Object_Summary"
 FILE_IDENTIFIER_OBJECTS_IN_SECTIONS = "Objects_in_Sections"
 IGNORE_CONFIG_ID = "ignoreConfigID"
 IGNORE_MEMORY = "ignoreMemory"
+LISTING_INDENT = "\t\t\t\t "                    # This is used if you want to list something; in this case you normally don't use pypiscout but a `print()`
 MAPFILE = "mapfile"
 MAPFILES = "mapfiles"
 OUTPUT_DIR = "memStats"
 OUTPUT_DIR_VISUALISER = "results"
 MEM_TYPE = "memType"
 MEM_REGION_TO_EXCLUDE = "memRegionExcludes"
-MODULE_NAME = "moduleName"
+OBJECT_NAME = "object"
 MODULE_SIZE_BYTE = "Module Size [Byte]"
 MODULE_SIZE_PERCENT = "Module Size [%]"
 OVERLAP_FLAG = "overlapFlag"
@@ -80,7 +79,7 @@ SIZE_DEC_BY_CATEGORY = "sizeDec by category"
 SIZE_HEX = "sizeHex"
 SIZE_HEX_ORIGINAL = "sizeHexOriginal"
 SIZE_HUMAN_READABLE = "sizeHumanReadable"
-TAG = "tag"
+MEM_TYPE_TAG = "tag"
 TIMESTAMP = "timestamp"
 TOTAL_USED_PERCENT = "Total used [%]"
 UNIQUE_PATTERN_SECTIONS = "UniquePatternSections"
@@ -99,6 +98,9 @@ README_CALL_GRAPH_AND_UML_FOLDER_NAME = "call_graph_uml"
 README_PICTURE_FORMAT = "png"
 OBJECTS_IN_SECTIONS_SECTION_ENTRY = "<Emma_SectionEntry>"
 OBJECTS_IN_SECTIONS_SECTION_RESERVE = "<Emma_SectionReserve>"
+UNKNOWN_MEM_REGION = "<Emma_UnknownMemRegion>"
+UNKNOWN_MEM_TYPE = "<Emma_UnknownMemType>"
+UNKNOWN_CATEGORY = "<Emma_UnknownCategory>"
 
 # The HTML Template that will be used during the conversion of .md files to .html
 # The CSS in the header has two parts:
@@ -138,7 +140,7 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
 DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 # The body placeholder is placed into the template and then later it can be searched for and replaced by the actual body content.
 HTML_TEMPLATE_BODY_PLACEHOLDER = "__BODY__"
@@ -286,3 +288,5 @@ SECTIONS_TO_EXCLUDE = DWARF_SECTIONS.union(frozenset(
         ".mr_rw_NandFlashDataBuffer"
     }
 ))
+
+COMPILER_NAME_GHS = "GHS"

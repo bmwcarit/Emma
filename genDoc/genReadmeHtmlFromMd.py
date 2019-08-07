@@ -21,10 +21,14 @@ import sys
 import os
 import argparse
 
-import pypiscout as sc
-import gprof2dot            # Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
+from pypiscout.SCout_Logger import Logger as sc
+import gprof2dot    # pylint: disable=unused-import
+                    # Rationale: Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
 
 sys.path.append("../")
+# pylint: disable=wrong-import-position
+# Rationale: This module needs to access modules that are above them in the folder structure.
+
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
 import genDoc._genCallGraphs
@@ -61,69 +65,80 @@ def ParseArguments():
 
 
 def main(arguments):
-    sc.header("Generating the Readme documents", symbol="/")
+    """
+    Main function.
+    :param arguments: Processed command line arguments.
+    :return: None
+    """
+    sc(invVerbosity=-1, actionWarning=lambda: sys.exit(-10), actionError=lambda: sys.exit(-10))
+
+    sc().header("Generating the Readme documents", symbol="/")
 
     # Give a hint on python sys-call
-    sc.info("A `python` system call is going to happen. If any errors occur please check the following first:")
+    sc().info("A `python` system call is going to happen. If any errors occur please check the following first:")
     if sys.platform == "win32":
-        sc.info("Windows OS detected. Make sure `python` refers to the Python3 version targeted for this application (-> dependencies; e.g. WSL comes with its own Python).")
+        sc().info("Windows OS detected. Make sure `python` refers to the Python3 version targeted for this application (-> dependencies; e.g. WSL comes with its own Python).")
     else:
-        sc.info("Make sure `python` refers to a Python 3 installation.")
+        sc().info("Make sure `python` refers to a Python 3 installation.")
 
     # Store original path variables
-    path_old_value = os.environ["PATH"]
+    pathOldValue = os.environ["PATH"]
     if not("Graphviz" in os.environ["PATH"] or "graphviz" in os.environ["PATH"]):
         if arguments.graphviz_bin_folder is not None:
-            graphviz_bin_abspath = os.path.abspath(arguments.graphviz_bin_folder)
+            graphvizBinAbspath = os.path.abspath(arguments.graphviz_bin_folder)
             # Add to path
-            os.environ["PATH"] += (graphviz_bin_abspath + ";")
+            os.environ["PATH"] += (graphvizBinAbspath + ";")
         else:
-            sc.error("The \"graphviz_bin_folder\" was not found in PATH nor was given in the argument --graphviz_bin_folder")
-            sys.exit(-1)
+            sc().error("The \"graphviz_bin_folder\" was not found in PATH nor was given in the argument --graphviz_bin_folder")
 
     try:
         if not os.path.isdir(README_CALL_GRAPH_AND_UML_FOLDER_NAME):
-            sc.info("The folder \"" + README_CALL_GRAPH_AND_UML_FOLDER_NAME + "\" was created because it did not exist...")
+            sc().info("The folder \"" + README_CALL_GRAPH_AND_UML_FOLDER_NAME + "\" was created because it did not exist...")
             os.makedirs(README_CALL_GRAPH_AND_UML_FOLDER_NAME)
 
         if not arguments.no_graphs:
+            # pylint: disable=protected-access
+            # Rationale: These modules are private so that the users will not use them directly. They are meant to be used trough this script.
             genDoc._genCallGraphs.main(arguments)
-            genDoc._genUmlDiagrams.main(arguments)
+            genDoc._genUmlDiagrams.main()
 
-        print("")
-        sc.info("Storing Emma readme as a .html file...")
-        markdown_file_path = r"../doc/readme.md"
-        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdown_file_path, (os.path.splitext(markdown_file_path)[0] + ".html"))
-        sc.info("Done.")
+        sc().info("Storing Emma readme as a .html file...")
+        markdownFilePath = r"../doc/readme.md"
+        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
+        sc().info("Done.\n")
 
-        print("")
-        sc.info("Storing Emma Visualiser readme as a .html file...")
-        markdown_file_path = r"../doc/readme-vis.md"
-        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdown_file_path, (os.path.splitext(markdown_file_path)[0] + ".html"))
-        sc.info("Done.")
+        sc().info("Storing Emma Visualiser readme as a .html file...")
+        markdownFilePath = r"../doc/readme-vis.md"
+        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
+        sc().info("Done.\n")
 
-        print("")
-        sc.info("Storing the test_project readme as a .html file...")
-        markdown_file_path = r"../doc/test_project/readme/readme.md"
-        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdown_file_path, (os.path.splitext(markdown_file_path)[0] + ".html"))
-        sc.info("Done.")
-        
-        print("")
-        sc.info("Storing the top level README as a .html file...")
+        sc().info("Storing Emma contribution as a .html file...")
+        markdownFilePath = r"../doc/contribution.md"
+        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
+        sc().info("Done.\n")
+
+        sc().info("Storing the test_project readme as a .html file...")
+        markdownFilePath = r"../doc/test_project/readme.md"
+        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
+        sc().info("Done.\n")
+
+
+        sc().info("Storing the top level README as a .html file...")
         # Change the working directory; otherwise we get errors about the relative image import paths in emma_helper.changePictureLinksToEmbeddingInHtmlData()
         os.chdir("..")
-        markdown_file_path = r"README.md"
-        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdown_file_path, (os.path.splitext(markdown_file_path)[0] + ".html"))
-        sc.info("Done.")
+        markdownFilePath = r"../README.md"
+        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
+        sc().info("Done.")
         os.chdir("doc")     # Change working directory back
 
-    except Exception as e:
-        sc.error("An exception was caught:", e)
+    except Exception as exception:  # pylint: disable=broad-except
+                                    # Rationale: We are not trying to catch a specific exception type here.
+                                    # The purpose of this is, that the PATH environment variable will be set back in case of an error.
+        sc().error("An exception was caught:", exception)
 
     # Get back initial path config
-    os.environ["PATH"] = path_old_value
+    os.environ["PATH"] = pathOldValue
 
 
-if "__main__" == __name__:
-    arguments = ParseArguments()
-    main(arguments)
+if __name__ == "__main__":
+    main(ParseArguments())

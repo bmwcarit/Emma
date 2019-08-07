@@ -21,7 +21,7 @@ import sys
 import os
 import typing
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
@@ -53,8 +53,7 @@ class FileSelector:
         lastModifiedFiles: typing.List[str] = shared_libs.emma_helper.lastModifiedFilesInDir(path, ".csv")  # Newest/youngest file is last element
 
         if not lastModifiedFiles:
-            sc.error("No matching Files in: " + path)
-            sys.exit(-10)
+            sc().error("No matching Files in: " + path)
 
         # Backwards iterate over file list (so newest file will be first)
         for i in range(len(lastModifiedFiles) - 1, -1, -1):

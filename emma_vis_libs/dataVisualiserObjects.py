@@ -24,7 +24,7 @@ import os
 
 import pandas
 import matplotlib.pyplot
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
@@ -37,26 +37,25 @@ class ModuleConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
     does not have categories or the like they need to be added here.
     """
 
-    def __init__(self, projectPath, args, fileToUse, resultsPath):
+    def __init__(self, projectPath, fileToUse, resultsPath):
         super().__init__(fileToUse, resultsPath, projectPath)
         self.projectPath = projectPath
         self.project = os.path.split(projectPath)[-1]
-        self.args = args
         self.consumptionByCategorisedModules = self.calcConsumptionByCategorisedModules()
 
     def printCategorisedModules(self):
         print(self.consumptionByCategorisedModules)
 
     def plotByCategorisedModules(self, plotShow=True):
-        myfigure = self.displayConsumptionByCategorisedModules(self.consumptionByCategorisedModules)
+        myFigure = self.displayConsumptionByCategorisedModules(self.consumptionByCategorisedModules)
         filename = self.project + MEMORY_ESTIMATION_PARTITION_OF_ALLOCATED_MEMORY_PICTURE_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION
-        shared_libs.emma_helper.saveMatplotlibPicture(myfigure, os.path.join(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
+        shared_libs.emma_helper.saveMatplotlibPicture(myFigure, os.path.join(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
         if plotShow:
             matplotlib.pyplot.show()
 
     def calcConsumptionByCategorisedModules(self):
         """
-        Calculate and group the module data by categoriy in percent
+        Calculate and group the module data by category in percent
         :return: dataframe of grouped memStats
         """
         # Resolve the containment/overlap/duplicate flags
@@ -148,7 +147,7 @@ class ModuleConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
         :return: nothing
         """
 
-        sc.info("Appending module summary to overview...")
+        sc().info("Appending object summary to overview...")
 
         # TODO: This should be better explained (AGK)
         self.plotByCategorisedModules(plotShow=False)  # Re-write .png to ensure up-to-date overview

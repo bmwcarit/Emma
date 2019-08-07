@@ -27,6 +27,8 @@ import pandas
 import matplotlib
 import matplotlib.style
 
+from pypiscout.SCout_Logger import Logger as sc
+
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
 
@@ -89,20 +91,20 @@ class Visualiser:
         # default header
         self.header = [                                                                 # TODO: Remove the header list and replace it with constants from stringConstants.py
             # Later indexes are used (therefore the numbers commented inline)
-            ADDR_START_HEX,         # 0
+            ADDR_START_HEX,        # 0
             ADDR_END_HEX,
             SIZE_HEX,              # 2
             ADDR_START_DEC,
             ADDR_END_DEC,
             SIZE_DEC,              # 5
-            MODULE_NAME,
+            OBJECT_NAME,
             CONFIG_ID,             # 7
             VAS_NAME,
             MEM_TYPE,
-            TAG,                  # 10
+            MEM_TYPE_TAG,          # 10
             CATEGORY,
             DMA,
-            MAPFILE               # 13
+            MAPFILE                # 13
         ]
         self.data = pandas.DataFrame(columns=self.header)
         matplotlib.style.use("ggplot")      # Pycharm might claim there is no reference 'style' in `__init__.py` (you can ignore this)(https://stackoverflow.com/a/23839976/4773274)
@@ -118,11 +120,17 @@ class Visualiser:
         Reads the budgets.json file
         :return: nothing
         """
-        filepath = shared_libs.emma_helper.joinPath(self.projectPath, "budgets.json")
-        with open(filepath, "r") as fp:
-            budgets = json.load(fp)
-        self.budgets = budgets["Budgets"]
-        self.projectThreshold = budgets["Project Threshold in %"]
+        self.budgets = None
+        self.projectThreshold = None
+
+        try:
+            filepath = shared_libs.emma_helper.joinPath(self.projectPath, "budgets.json")
+            with open(filepath, "r") as fp:
+                budgets = json.load(fp)
+                self.budgets = budgets["Budgets"]
+                self.projectThreshold = budgets["Project Threshold in %"]
+        except FileNotFoundError:
+            sc().error("The budgets.json file was not found in the project folder (" + self.projectPath + ")!")
 
     def __readMemStatsFile(self):
         """

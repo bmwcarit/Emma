@@ -1,9 +1,11 @@
 {
 	"MCU": {
+        "compiler": "GHS",
 		"addressSpacesPath": "addressSpaces_MCU.json",
 		"patternsPath": "patterns_MCU.json"
 	},
 	"SOC": {
+        "compiler": "GHS",
 		"addressSpacesPath": "addressSpaces_SOC.json",
 		"patternsPath": "patterns_SOC.json",
 		"virtualSectionsPath": "virtualSections_SOC.json"

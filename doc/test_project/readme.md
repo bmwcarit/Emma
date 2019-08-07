@@ -55,7 +55,7 @@ simple RTOS running on it called OS.
 
 The memory layout of the MCU:
 
-<div align="center"> <img src="../../images/test_project/MCU_MemoryLayout.png" width="25%" /> </div>
+<div align="center"> <img src="../images/test_project/MCU_MemoryLayout.png" width="25%"> </div>
 
 ### SOC
 
@@ -74,7 +74,7 @@ to the NetLogger framework if available on the system.
 
 The memory layout of the SOC:
 
-<div align="center"> <img src="../../images/test_project/SOC_MemoryLayout.png" width="25%" /> </div>
+<div align="center"> <img src="../images/test_project/SOC_MemoryLayout.png" width="25%"> </div>
 
 ## Creating the configuration
 
@@ -85,8 +85,9 @@ This chapter will explain creating the configuration for the project by explaini
 Creating the project configuration starts with creating the globalConfig.json. This file lists the programmable devices of
 the system and assigns the further configuration files to configuration.
 
-We will add our two devices (MCU and SOC) as JSON objects. For every device, at least two config files must be assigned,
+We will add our two devices (MCU and SOC) as JSON objects. For every device, the used compiler and at least two config files must be assigned:
 the addressSpaces and the patterns. For devices using virtual address spaces, a third one, the sections is needed as well.
+As we are using Green Hills Compiler, so the mapfiles will be in this format, we will define the value "GHS" for both of the devices.
 
 Since in our system, we have different devices with different memory layout, we have assigned two different addressSpaces
 config files to them. If your system contains multiple devices of the same type, you can use the same
@@ -100,15 +101,18 @@ In contrast to the MCU, the SOC does use virtual address spaces, so we will assi
     :::json
     {
         "MCU": {
+            "compiler": "GHS",
             "addressSpacesPath": "addressSpaces_MCU.json",
             "patternsPath": "patterns_MCU.json"
         },
         "SOC": {
+            "compiler": "GHS",
             "addressSpacesPath": "addressSpaces_SOC.json",
             "patternsPath": "patterns_SOC.json",
-            "virtualSectionsPath": "virtualSections_SOC.json",
+            "virtualSectionsPath": "virtualSections_SOC.json"
         }
     }
+
 
 In the following, the config files assigned to the MCU will be explained.
 

@@ -17,58 +17,23 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 
+import sys
 import timeit
 import datetime
 import argparse
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
 import emma_libs.memoryManager
-import emma_libs.memoryMap
 
 
-def main(args):
-    sc.header("Preparing image summary", symbol=".")
-
-    # Create MemoryManager instance with Variables for image summary
-    sectionSummary = emma_libs.memoryManager.SectionParser(args)                            # String identifier for outfilenames
-
-    # FIXME: Something before importData() takes quite a lot of processing time (MSc)
-    numAnalyzedConfigIDs = sectionSummary.importData()                                      # Read Data
-
-    if numAnalyzedConfigIDs >= 1:
-        sectionSummary.resolveDuplicateContainmentOverlap()
-        if not args.create_categories and not args.remove_unmatched:
-            # Normal run; write csv report
-            sectionSummary.writeSummary()
-        else:
-            # Categorisation-only run: do not write a csv report
-            pass
-
-    sc.header("Preparing module summary", symbol=".")
-
-    objectSummary = emma_libs.memoryManager.ObjectParser(args)                              # String identifier for outfilenames
-
-    # FIXME: Something before importData() takes quite a lot of processing time (MSc)
-    numAnalyzedConfigIDs = objectSummary.importData()                                       # Read Data
-    if numAnalyzedConfigIDs >= 1:
-        objectSummary.resolveDuplicateContainmentOverlap()
-
-        if args.create_categories:
-            fileChanged = objectSummary.createCategoriesJson()                              # Create categories.json from keywords
-            if fileChanged:
-                objectSummary.importData()                                                  # Re-read Data
-        elif args.remove_unmatched:
-            objectSummary.removeUnmatchedFromCategoriesJson()
-        else:
-            objectSummary.writeSummary()
-
-    sc.header("Preparing objects in sections summary", symbol=".")
-
-    objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionSummary.consumerCollection, objectSummary.consumerCollection)
-    emma_libs.memoryMap.memoryMapToCSV(args.dir, args.subdir, args.project, objectsInSections)
+def main(arguments):
+    memoryManager = emma_libs.memoryManager.MemoryManager(*processArguments(arguments))
+    memoryManager.readConfiguration()
+    memoryManager.processMapfiles()
+    memoryManager.createReports()
 
 
 def parseArgs(arguments=""):
@@ -120,12 +85,6 @@ def parseArgs(arguments=""):
         help="User defined subdirectory name in the --dir folder.",
         default=None
     )
-    # parser.add_argument(      # TODO: Currently not implemented (useful?) (MSc)
-    #     "--verbose",
-    #     "-v",
-    #     help="Generate verbose output",
-    #     action="count"        # See: https://docs.python.org/3/library/argparse.html#action
-    # )
     parser.add_argument(
         "--analyse_debug",
         help="Include DWARF debug sections in analysis",
@@ -151,41 +110,66 @@ def parseArgs(arguments=""):
         default=False
     )
     parser.add_argument(
-        "-Werror",
+        "--Werror",
         help="Treat all warnings as errors.",
         action="store_true",
         default=False
     )
 
-    if "" == arguments:
-        args = parser.parse_args()
+    # We will either parse the arguments string if it is not empty,
+    # or (in the default case) the data from sys.argv
+    if arguments == "":
+        parsedArguments = parser.parse_args()
     else:
-        args = parser.parse_args(arguments)
+        # Arguments were passed to this function (e.g. for unit testing)
+        parsedArguments = parser.parse_args(arguments)
 
-    if args.dir is None:
-        args.dir = args.project
+    return parsedArguments
+
+
+def processArguments(arguments):
+    """
+    Function to extract the settings values from the command line arguments.
+    :param arguments: The command line arguments, that is the result of the parser.parse_args().
+    :return: The setting values.
+    """
+    projectName = shared_libs.emma_helper.projectNameFromPath(shared_libs.emma_helper.joinPath(arguments.project))
+    configurationPath = shared_libs.emma_helper.joinPath(arguments.project)
+    mapfilesPath = shared_libs.emma_helper.joinPath(arguments.mapfiles)
+
+    # If an output directory was not specified then the result will be stored to the project folder
+    if arguments.dir is None:
+        directory = arguments.project
     else:
         # Get paths straight (only forward slashes)
-        args.dir = shared_libs.emma_helper.joinPath(args.dir)
+        directory = shared_libs.emma_helper.joinPath(arguments.dir)
+    # Get paths straight (only forward slashes) or set it to empty if it was empty
+    subDir = shared_libs.emma_helper.joinPath(arguments.subdir) if arguments.subdir is not None else ""
 
-    if args.subdir is not None:
-        # Get paths straight (only forward slashes)
-        args.subdir = shared_libs.emma_helper.joinPath(args.subdir)
+    outputPath = shared_libs.emma_helper.joinPath(directory, subDir, OUTPUT_DIR)
+    analyseDebug = arguments.analyse_debug
+    createCategories = arguments.create_categories
+    removeUnmatched = arguments.remove_unmatched
+    noPrompt = arguments.noprompt
 
-    args.mapfiles = shared_libs.emma_helper.joinPath(args.mapfiles)
-
-    return args
+    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt
 
 
 if __name__ == "__main__":
-    args = parseArgs()
+    # Parsing the arguments
+    ARGS = parseArgs()
 
-    sc.header("Emma Memory and Mapfile Analyser", symbol="/")
+    sc(invVerbosity=-1, actionWarning=(lambda: sys.exit(-10) if ARGS.Werror is not None else None), actionError=lambda: sys.exit(-10))
 
-    timeStart = timeit.default_timer()
-    sc.info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
+    sc().header("Emma Memory and Mapfile Analyser", symbol="/")
 
-    main(args)
+    # Starting the time measurement of Emma
+    TIME_START = timeit.default_timer()
+    sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
 
-    timeEnd = timeit.default_timer()
-    sc.info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " "{0:.2f}".format(timeEnd - timeStart) + "s)")
+    # Executing Emma
+    main(ARGS)
+
+    # Stopping the time measurement of Emma
+    TIME_END = timeit.default_timer()
+    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " "{0:.2f}".format(TIME_END - TIME_START) + "s)")

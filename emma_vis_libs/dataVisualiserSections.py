@@ -34,11 +34,10 @@ class ImageConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
     Class holding the image data from .csv Memstats, plus methods for printing/plotting,
     file writing and .md/.html creation
     """
-    def __init__(self, projectPath, args, fileToUse, resultsPath):
+    def __init__(self, projectPath, fileToUse, resultsPath):
         super().__init__(fileToUse, resultsPath, projectPath)
         self.projectPath = projectPath
         self.project = os.path.split(projectPath)[-1]
-        self.args = args
         self.consumptionByMemType = self.calcConsumptionByMemType()
         self.consumptionByMemTypeDetailed = self.calcConsumptionByMemTypeDetailed()
         self.consumptionByMemTypePerMap = self.calcConsumptionByMemTypePerMap()
@@ -99,7 +98,7 @@ class ImageConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
         groupedByMemType = groupedByMemType[[SIZE_DEC] + [self.header[i] for i in indices]]          # Get only columns we need
 
         # Grouping
-        groupedByMemTypeAcc = groupedByMemType.groupby([CONFIG_ID, TAG]).sum()
+        groupedByMemTypeAcc = groupedByMemType.groupby([CONFIG_ID, MEM_TYPE_TAG]).sum()
 
         # Set formats and cast type
         pandas.options.display.float_format = '{:14,.0f}'.format
@@ -146,7 +145,7 @@ class ImageConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
         groupedByMemTypeAcc[self.headerAvailable] = (1 - groupedByMemTypeAcc[self.headerUsed]) * 100                        # Check for negative value in next line
         for i in range(groupedByMemTypeAcc[self.headerAvailable].size):
             if groupedByMemTypeAcc[self.headerAvailable][i] < 0:
-                # Set available header to 0 if previously caluclated value is negative (hence no more memory left)
+                # Set available header to 0 if previously calculated value is negative (hence no more memory left)
                 groupedByMemTypeAcc[self.headerAvailable][i] = 0
 
         groupedByMemTypeAcc[self.headerUsed] *= 100
@@ -253,7 +252,6 @@ class ImageConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
         myfigure = self.displayConsumptionByMemType()
         filename = self.project + MEMORY_ESTIMATION_BY_PERCENTAGES_PICTURE_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION
         shared_libs.emma_helper.saveMatplotlibPicture(myfigure, os.path.join(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
-
         if plotShow:
             matplotlib.pyplot.show()              # Show plots after results in console output are shown
 

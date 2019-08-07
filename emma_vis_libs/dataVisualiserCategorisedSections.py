@@ -24,7 +24,7 @@ import json
 
 import pandas
 import matplotlib.pyplot
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
@@ -58,18 +58,17 @@ class CategorisedImageConsumptionList:
         module is stored in the memory units.
         :return: A grouped dataframe containing the grouped image and modules
         """
-
         # Prepare image summary data
         self.imageData.reset_index()
-        self.imageData = self.imageData.drop([CATEGORY, ADDR_START_HEX, ADDR_END_HEX, SIZE_HEX, ADDR_END_DEC, VAS_NAME, DMA, MAPFILE, MODULE_NAME], 1)
+        self.imageData = self.imageData.drop([CATEGORY, ADDR_START_HEX, ADDR_END_HEX, SIZE_HEX, ADDR_END_DEC, VAS_NAME, DMA, MAPFILE, OBJECT_NAME], 1)
         self.imageData = self.imageData.groupby([CONFIG_ID, MEM_TYPE, SECTION_NAME]).sum()
         self.imageData = self.imageData.rename(index=str, columns={SIZE_DEC: SECTION_SIZE_BYTE})
         self.imageData = self.imageData.reset_index()
 
         # Prepare module summary data
         self.moduleData = self.moduleData.reset_index()
-        self.moduleData = self.moduleData.drop([TAG, ADDR_START_DEC, ADDR_START_HEX, ADDR_END_HEX, SIZE_HEX, ADDR_END_DEC, VAS_NAME, DMA, MAPFILE], 1)
-        self.moduleData = self.moduleData.groupby([CONFIG_ID, MEM_TYPE, SECTION_NAME, MODULE_NAME, CATEGORY]).sum()
+        self.moduleData = self.moduleData.drop([MEM_TYPE_TAG, ADDR_START_DEC, ADDR_START_HEX, ADDR_END_HEX, SIZE_HEX, ADDR_END_DEC, VAS_NAME, DMA, MAPFILE], 1)
+        self.moduleData = self.moduleData.groupby([CONFIG_ID, MEM_TYPE, SECTION_NAME, OBJECT_NAME, CATEGORY]).sum()
         self.moduleData = self.moduleData.rename(index=str, columns={SIZE_DEC: MODULE_SIZE_BYTE})
         self.moduleData = self.moduleData.reset_index()
 
@@ -79,7 +78,7 @@ class CategorisedImageConsumptionList:
                                         on=[CONFIG_ID, MEM_TYPE, SECTION_NAME])
 
         # Aggregate categorisedImage to desired form
-        categorisedImage = categorisedImage.groupby([CONFIG_ID, MEM_TYPE, SECTION_NAME, SECTION_SIZE_BYTE, CATEGORY, MODULE_NAME]).sum()
+        categorisedImage = categorisedImage.groupby([CONFIG_ID, MEM_TYPE, SECTION_NAME, SECTION_SIZE_BYTE, CATEGORY, OBJECT_NAME]).sum()
 
         return categorisedImage
 
@@ -109,7 +108,7 @@ class CategorisedImageConsumptionList:
         :return: The grouped dataframe
         """
         groupedImage = self.__categorisedImage.reset_index()
-        groupedImage = groupedImage.groupby([CONFIG_ID, MEM_TYPE, CATEGORY, SECTION_NAME, SECTION_SIZE_BYTE, MODULE_NAME]).sum()
+        groupedImage = groupedImage.groupby([CONFIG_ID, MEM_TYPE, CATEGORY, SECTION_NAME, SECTION_SIZE_BYTE, OBJECT_NAME]).sum()
         return groupedImage
 
     def displayUsedByModulesInImage(self):
@@ -184,7 +183,7 @@ class CategorisedImageConsumptionList:
         :param markdownFilePath: The path of the Markdown file to which the data will be appended to.
         :return: nothing
         """
-        sc.info("Appending module summary to overview...")
+        sc().info("Appending object summary to overview...")
 
         with open(markdownFilePath, 'a') as markdown:
             markdown.write("\n# Modules included in allocated Memory\n")
@@ -198,15 +197,13 @@ class CategorisedImageConsumptionList:
         :return: nothing
         """
 
-        myfigure = self.displayUsedByModulesInImage()
+        myFigure = self.displayUsedByModulesInImage()
         filename = self.project + MEMORY_ESTIMATION_BY_MODULES_PICTURE_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION
 
-        shared_libs.emma_helper.saveMatplotlibPicture(myfigure, shared_libs.emma_helper.joinPath(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
+        shared_libs.emma_helper.saveMatplotlibPicture(myFigure, shared_libs.emma_helper.joinPath(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
 
         if plotShow:
             matplotlib.pyplot.show()  # Show plots after results in console output are shown
-
-        return
 
     def categorisedImagetoCSV(self):
         """
@@ -225,8 +222,8 @@ class CategorisedImageConsumptionList:
             .reset_index()\
             .drop([SECTION_SIZE_BYTE, MODULE_SIZE_BYTE], 1)\
             .groupby([CONFIG_ID, MEM_TYPE, SECTION_NAME, CATEGORY])\
-            .agg({MODULE_NAME: "count"})
-        categoriesCSV.sort_values(MODULE_NAME, ascending=False, inplace=True)
+            .agg({OBJECT_NAME: "count"})
+        categoriesCSV.sort_values(OBJECT_NAME, ascending=False, inplace=True)
         categoriesCSV = {k: list(categoriesCSV.ix[k].index) for k in categoriesCSV.index.levels[0]}
 
         # Extract desired data for section -> category matching

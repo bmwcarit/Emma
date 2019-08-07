@@ -22,7 +22,7 @@ import timeit
 import datetime
 import argparse
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 
@@ -33,7 +33,12 @@ import emma_delta_libs.FileSelector
 import emma_delta_libs.RootSelector
 
 
-def parseArgs():
+def parseArgs(arguments=""):
+    """
+    Argument parser
+    :param arguments: List of strings specifying the arguments to be parsed (default: "" (-> meaning that arguments from the command line should be parsed)
+    :return: Argparse object
+    """
     # Argument parser
     parser = argparse.ArgumentParser(
         prog="Emma Delta Analyser",
@@ -72,7 +77,15 @@ def parseArgs():
         action="store_true"
     )
 
-    return parser.parse_args()
+    # We will either parse the arguments string if it is not empty,
+    # or (in the default case) the data from sys.argv
+    if "" == arguments:
+        parsedArguments = parser.parse_args()
+    else:
+        # Arguments were passed to this function (e.g. for unit testing)
+        parsedArguments = parser.parse_args(arguments)
+
+    return parsedArguments
 
 
 def main(args):
@@ -90,23 +103,24 @@ def main(args):
         filePresenter = emma_delta_libs.FilePresenter.FilePresenter(fileSelector=fileSelector)
         candidates = filePresenter.chooseCandidates()
     else:
-        sc.error("No matching arguments.")
-        sys.exit(-10)
+        sc().error("No matching arguments.")
 
     delta = emma_delta_libs.Delta.Delta(files=candidates, outfile=args.outfile)
     delta.tocsv()
-    sc.info("Saved delta to " + args.outfile)
+    sc().info("Saved delta to " + args.outfile)
 
 
 if __name__ == "__main__":
     args = parseArgs()
 
-    sc.header("Emma Memory and Mapfile Analyser - Deltas", symbol="/")
+    sc(invVerbosity=-1, actionWarning=(lambda : sys.exit(-10) if args.Werror is not None else None), actionError=lambda : sys.exit(-10))
+
+    sc().header("Emma Memory and Mapfile Analyser - Deltas", symbol="/")
 
     timeStart = timeit.default_timer()
-    sc.info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
+    sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
 
     main(args)
 
     timeEnd = timeit.default_timer()
-    sc.info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " + "{0:.2f}".format(timeEnd - timeStart) + "s)")
+    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " + "{0:.2f}".format(timeEnd - timeStart) + "s)")

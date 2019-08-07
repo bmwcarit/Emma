@@ -21,7 +21,7 @@ import sys
 import os
 import typing
 
-import pypiscout as sc
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import emma_delta_libs.FileSelector
@@ -45,10 +45,9 @@ class FilePresenter:
         # TODO: Validate all inputs (FM)
         self.__printFileType()
         try:
-            filetype: str = self.__filetypes[int(input("Choose File type >"))]
+            filetype: str = self.__filetypes[int(input("Choose File type >\n"))]
         except KeyError:
-            sc.error("Select valid Summary.")
-            sys.exit(-10)
+            sc().error("Select valid Summary.\n")
 
         candidates: typing.List[str] = self.__fileSelector.getCandidates()
         self.__printCandidates(candidates)
@@ -56,21 +55,19 @@ class FilePresenter:
         indices: typing.List[str] = indices.split(" ")
         indices: typing.List[int] = [int(i) for i in indices]
         if len(indices) <= 1:
-            sc.error("Select more than one file.")
-            sys.exit(-10)
+            sc().error("Select more than one file.")
 
         selectedFiles: typing.List[str] = self.__fileSelector.selectFiles(indices, filetype)
         self.__printSelectedFiles(selectedFiles)
         return selectedFiles
 
     def __printCandidates(self, candidates: typing.List[str]) -> None:
-        print("")
         for i, candidate in enumerate(candidates):
             string = "    " + str(i) + ": " + candidate
             print(string)
 
     def __printSelectedFiles(self, paths: typing.List[str]) -> None:
-        sc.info("Selected files:")
+        sc().info("Selected files:")
         for i, path in enumerate(paths):
             pathSplit: typing.List[str] = os.path.split(path)
             version: str = os.path.split(os.path.split(pathSplit[0])[0])[1]
@@ -79,6 +76,5 @@ class FilePresenter:
             print(string)
 
     def __printFileType(self) -> None:
-        print("")
         for i, file in self.__filetypes.items():
             print("    " + str(i) + ": " + file)

@@ -31,11 +31,10 @@ import shared_libs.emma_helper
 
 
 class MemoryMap(emma_vis_libs.dataVisualiser.Visualiser):
-    def __init__(self, projectPath, args, fileToUse, resultsPath):
+    def __init__(self, projectPath, fileToUse, resultsPath):
         super().__init__(fileToUse, resultsPath, projectPath)
         self.projectPath = projectPath
         self.project = os.path.split(projectPath)[-1]
-        self.args = args
 
     def plotPieChart(self, plotShow=True):
         data = emma_vis_libs.dataVisualiser.removeDataWithFlags(sourceData=self.data, rmContained=True, rmDuplicate=True)
@@ -69,8 +68,6 @@ class MemoryMap(emma_vis_libs.dataVisualiser.Visualiser):
 
                 filename = self.project + "_" + configID + "_" + memType + "_" + self.statsTimestamp + ".png"
                 matplotlib.pyplot.savefig(shared_libs.emma_helper.joinPath(self.resultsPath, filename), dpi=MEMORY_ESTIMATION_PICTURE_DPI, transparent=False, bbox_inches="tight")
-
             if plotShow:
                 matplotlib.pyplot.show()
-
         return

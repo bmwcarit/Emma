@@ -18,20 +18,28 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 
 import os
-import argparse
 import subprocess
 
-import pypiscout as sc
-import gprof2dot           # Not directly used; later we do a sys-call wich needs the library
+from pypiscout.SCout_Logger import Logger as sc
+import gprof2dot    # pylint: disable=unused-import
+                    # Rationale: Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 
 
-list_of_source_file_paths = [           # "../../*" instead of "../*" since we change the working directory within the system call
-    "../../emma_libs/mapfileRegexes.py",
+LIST_OF_SOURCE_FILE_PATHS = [           # "../../*" instead of "../*" since we change the working directory within the system call
+    "../../emma_libs/categorisation.py",
+    "../../emma_libs/configuration.py",
+    "../../emma_libs/ghsConfiguration.py",
+    "../../emma_libs/ghsMapfileProcessor.py",
+    "../../emma_libs/ghsMapfileRegexes.py",
+    "../../emma_libs/mapfileProcessor.py",
+    "../../emma_libs/mapfileProcessorFactory.py",
     "../../emma_libs/memoryEntry.py",
     "../../emma_libs/memoryManager.py",
     "../../emma_libs/memoryMap.py",
+    "../../emma_libs/specificConfiguration.py",
+    "../../emma_libs/specificConfigurationFactory.py",
     "../../emma_delta_libs/Delta.py",
     "../../emma_delta_libs/FilePresenter.py",
     "../../emma_delta_libs/FileSelector.py",
@@ -49,42 +57,11 @@ list_of_source_file_paths = [           # "../../*" instead of "../*" since we c
 ]
 
 
-def ParseArguments():
-    """
-    Argument parser
-    :return: argparse object containing the parsed options
-    """
-    parser = argparse.ArgumentParser(
-        prog="Emma - Call graph generator",
-        description="Script to generate call graphs that can be used in the documentation or to examine the run of Emma and the Emma visualiser.",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument(
-        "--graphviz_bin_folder",
-        help=r"The bin subfolder of the Graphviz software. Example: c:\Program Files (x86)\Graphviz2.38\bin",
-        required=True
-    )
-    parser.add_argument(
-        "--verbose",
-        help="Prints out more info during run.",
-        default=False
-    )
-    return parser.parse_args()
-
-
-def main(arguments):
-    sc.info("Generating UML Class diagrams from the source files...")
-    for source_file_path in list_of_source_file_paths:
-        source_file_name = os.path.splitext(os.path.basename(source_file_path))[0]
-        subprocess.run("pyreverse -AS -o " + README_PICTURE_FORMAT + " " + source_file_path + " -p " + source_file_name, cwd=README_CALL_GRAPH_AND_UML_FOLDER_NAME, shell=True)
-        # Note that pyreverse must be called via subprocess (do NOT import it as a module)
+def main():
+    sc().info("Generating UML Class diagrams from the source files...")
+    for sourceFilePath in LIST_OF_SOURCE_FILE_PATHS:
+        sourceFileName = os.path.splitext(os.path.basename(sourceFilePath))[0]
+        subprocess.run("pyreverse -AS -o " + README_PICTURE_FORMAT + " " + sourceFilePath + " -p " + sourceFileName, cwd=README_CALL_GRAPH_AND_UML_FOLDER_NAME, shell=True)
+        # Note that pyreverse MUST be called via subprocess (do NOT import it as a module)
         # The main reason are licencing issues (GPLv2 is incompatible with GPLv3) (https://softwareengineering.stackexchange.com/questions/110380/call-gpl-software-from-non-gpl-software)
         # See also: https://github.com/TeamFlowerPower/kb/wiki/callGraphsUMLdiagrams
-
-
-if __name__ == "__main__":
-    arguments = ParseArguments()
-    if not os.path.isdir(README_CALL_GRAPH_AND_UML_FOLDER_NAME):
-        sc.info("The folder \"" + README_CALL_GRAPH_AND_UML_FOLDER_NAME + "\" was created because it did not exist...")
-        os.makedirs(README_CALL_GRAPH_AND_UML_FOLDER_NAME)
-    main(arguments)
