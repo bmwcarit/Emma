@@ -53,7 +53,7 @@ class TestHelper(unittest.TestCase):
         # Setting up the logger
         # This syntax will default init it and then change the settings with the __call__()
         # This is needed so that the unit tests can have different settings and not interfere with each other
-        sc()(invVerbosity=4, actionWarning=None, actionError=lambda : sys.exit(-10))
+        sc()(invVerbosity=4, actionWarning=None, actionError=lambda: sys.exit(-10))
 
         # Switching to the Emma root folder
         os.chdir(os.path.join(os.path.dirname(__file__), "..", ".."))

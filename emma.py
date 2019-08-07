@@ -159,7 +159,7 @@ if __name__ == "__main__":
     # Parsing the arguments
     ARGS = parseArgs()
 
-    sc(invVerbosity=-1, actionWarning=(lambda : sys.exit(-10) if ARGS.Werror is not None else None), actionError=lambda : sys.exit(-10))
+    sc(invVerbosity=-1, actionWarning=(lambda: sys.exit(-10) if ARGS.Werror is not None else None), actionError=lambda: sys.exit(-10))
 
     sc().header("Emma Memory and Mapfile Analyser", symbol="/")
 

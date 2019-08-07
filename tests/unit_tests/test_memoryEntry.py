@@ -270,7 +270,7 @@ class MemEntryHandlerTestCase(unittest.TestCase):
 
     def setUp(self):
         # Setting up the logger
-        sc(invVerbosity=4, actionWarning=None, actionError=lambda : sys.exit(-10))
+        sc(invVerbosity=4, actionWarning=None, actionError=lambda: sys.exit(-10))
 
     def test_abstractness(self):
         # pylint: disable=abstract-class-instantiated, unused-variable

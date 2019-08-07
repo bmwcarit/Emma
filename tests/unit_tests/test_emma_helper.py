@@ -46,7 +46,7 @@ class EmmaHelperTestCase(unittest.TestCase):
         This is needed so that the unit tests can have different settings and not interfere with each other
         :return: None
         """
-        sc()(invVerbosity=4, actionWarning=lambda : sys.exit("warning"), actionError=lambda : sys.exit("error"))
+        sc()(invVerbosity=4, actionWarning=lambda: sys.exit("warning"), actionError=lambda: sys.exit("error"))
 
     def test_checkIfFolderExists(self):
         try:

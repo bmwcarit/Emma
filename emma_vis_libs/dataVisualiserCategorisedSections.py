@@ -183,7 +183,7 @@ class CategorisedImageConsumptionList:
         :param markdownFilePath: The path of the Markdown file to which the data will be appended to.
         :return: nothing
         """
-        sc().info("Appending module summary to overview...")
+        sc().info("Appending object summary to overview...")
 
         with open(markdownFilePath, 'a') as markdown:
             markdown.write("\n# Modules included in allocated Memory\n")

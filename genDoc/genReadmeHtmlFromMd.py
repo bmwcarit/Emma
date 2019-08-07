@@ -70,7 +70,7 @@ def main(arguments):
     :param arguments: Processed command line arguments.
     :return: None
     """
-    sc(invVerbosity=-1, actionWarning=lambda : sys.exit(-10), actionError=lambda : sys.exit(-10))
+    sc(invVerbosity=-1, actionWarning=lambda: sys.exit(-10), actionError=lambda: sys.exit(-10))
 
     sc().header("Generating the Readme documents", symbol="/")
 

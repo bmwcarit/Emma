@@ -147,7 +147,7 @@ class ModuleConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
         :return: nothing
         """
 
-        sc().info("Appending module summary to overview...")
+        sc().info("Appending object summary to overview...")
 
         # TODO: This should be better explained (AGK)
         self.plotByCategorisedModules(plotShow=False)  # Re-write .png to ensure up-to-date overview

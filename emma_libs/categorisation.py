@@ -18,7 +18,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 
 import os
-import sys
 import re
 
 from pypiscout.SCout_Logger import Logger as sc
@@ -129,7 +128,7 @@ class Categorisation:
         """
         # Updating the section categorisation file
         if updateCategoriesFromKeywordMatches:
-            # Asking the user whether a file shall be updated. If no prompt is allowed, we will exit.
+            # Asking the user whether a file shall be updated. If no prompt is on we will overwrite by default.
             sc().info("Merge categoriesSections.json with categorised modules from " + CATEGORIES_KEYWORDS_SECTIONS_JSON + "?\nIt will be overwritten.\n`y` to accept, any other key to discard.")
             if self.noprompt:
                 sc().wwarning("No prompt is active. Chose to overwrite file.")

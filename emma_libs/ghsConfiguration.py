@@ -91,7 +91,6 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         """
         if os.path.isdir(mapfilesPath):
             numMapfiles = GhsConfiguration.__addFilesToConfiguration(mapfilesPath, configuration, "mapfiles")
-            sc().info(str(numMapfiles) + " mapfiles found")
         else:
             sc().error("The mapfiles folder (\"" + mapfilesPath + "\") does not exist!")
 
@@ -152,7 +151,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                 if foundFiles:
                     # We will add it to the configuration and also check whether more than one file was found to this pattern
                     configuration["patterns"][fileType][entry]["associatedFilename"] = foundFiles[0]
-                    print(LISTING_INDENT + "Found " + fileType + ": ", foundFiles[0])
+                    sc().info(LISTING_INDENT + "Found " + fileType + ": ", foundFiles[0])
                     if len(foundFiles) > 1:
                         sc().warning("Ambiguous regex pattern in '" + configuration["patternsPath"] + "'. Selected '" + foundFiles[0] + "'. Regex matched: " + "".join(foundFiles))
 
@@ -192,7 +191,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                 sc().info("More than one monolith file detected:")
                 # Display files
                 for key, monolith in keyMonolithMapping.items():
-                    print(LISTING_INDENT, f"{key}: {monolith}")
+                    sc().info(LISTING_INDENT, f"{key}: {monolith}")
                 if noprompt:
                     sc().wwarning("No prompt is active. Using first monolith file in list: " + str(keyMonolithMapping['0']))
                     mapfileIndexChosen = 0
@@ -292,7 +291,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             if sectionsNotInConfigID:
                 sc().warning("Monolith File has the following sections. You might want to add it them the respective VAS in " + configuration["virtualSectionsPath"] + "!")
                 for section in sectionsNotInConfigID:
-                    print(LISTING_INDENT, section)
+                    sc().info(LISTING_INDENT, section)
                 sc().warning("Still continue? (y/n)")
                 if noprompt:
                     sc().wwarning("No prompt is active. Chose `y` to continue.")
