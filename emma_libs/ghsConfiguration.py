@@ -90,7 +90,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         :return: None
         """
         if os.path.isdir(mapfilesPath):
-            numMapfiles = GhsConfiguration.__addFilesToConfiguration(mapfilesPath, configuration, "mapfiles")
+            GhsConfiguration.__addFilesToConfiguration(mapfilesPath, configuration, "mapfiles")
         else:
             sc().error("The mapfiles folder (\"" + mapfilesPath + "\") does not exist!")
 
