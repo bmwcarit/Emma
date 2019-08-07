@@ -16,17 +16,18 @@ This tool creates a summary/overview about static memory usage in form of a comm
    1. [Required Arguments](#required-arguments)
    2. [Optional Arguments](#optional-arguments)
 8. [Project Configuration](#project-configuration)
-   1. [Formal Definition](#formal-definition)
-      1. [`[<PROJECT>]`](#project)
-      2. [`[supplement]`](#supplement)
+   1. [Formal definition of the generic configuration](#formal-definition-of-the-generic-configuration)
+      1. [`PROJECT`](#PROJECT)
+      2. [`supplement`](#supplement)
       3. [`globalConfig.json`](#globalconfigjson)
-      4. [`address spaces*.json`](#address-spacesjson)
+      4. [`addressSpaces*.json`](#addressSpacesjson)
       5. [`budgets.json`](#budgetsjson)
-      6. [`patterns*.json`](#patternsjson)
-      7. [`virtualSections*.json`](#virtualsectionsjson)
-      8. [`categoriesObjects.json` and `categoriesSections.json`](#categoriesobjectsjson-and-categoriessectionsjson)
-      9. [`categoriesObjectsKeywords.json` and `categoriesSectionsKeywords.json`](#categoriesobjectskeywordsjson-and-categoriessectionskeywordsjson)
-   2. [Configuration File Dependencies](#configuration-file-dependencies)
+      6. [`categoriesObjects.json` and `categoriesSections.json`](#categoriesobjectsjson-and-categoriessectionsjson)
+      7. [`categoriesObjectsKeywords.json` and `categoriesSectionsKeywords.json`](#categoriesobjectskeywordsjson-and-categoriessectionskeywordsjson)
+   2. [Formal Definition of the GHS compiler specific configuration](#formal-definition-of-the-GHS-compiler-specific-configuration)
+      1. [Extensions to the `globalConfig.json`](#Extensions-to-the-globalConfigjson)
+      2. [`patterns*.json`](#patternsjson)
+      3. [`virtualSections*.json`](#virtualsectionsjson)
 9. [Output Files](#output-files)
    1. [Image Summary](#image-summary)
    2. [Module Summary](#module-summary)
@@ -153,51 +154,51 @@ Based on this description the user will have to create his/her own configuration
 
 Creating a configuration is done by writing several JSON files (if you are not familiar with JSON, please visit https://www.json.org).
 This chapter will go trough the topic by formally defining the format, rules and the functionality of the config files.
-There are practical example projects available in the doc folder available. These projects will lead you step by step trough the process of 
+There are practical example projects available in the **doc** folder. These projects will lead you step by step trough the process of
 creating a configuration and they also contain map files that can be analyzed.
 
-The following example projects are available:  
+Currently the following example projects are available:
 
 * **doc/test_project** - A Test Project that illustrates a system with a hardware that consists of two devices: an MCU and an SOC.
-The mapfiles of this project are using the default mapfile format of Emma.
+Both of the devices have a GHS compiler specific configuration and mapfiles.
 
-## Formal Definition
+An Emma project configuration consists of two parts: the generic configuration and the compiler specific configuration.
 
-An Emma project configuration contains several JSON files:
+## Formal definition of the generic configuration
+The generic part of the configuration contains the following files:
 
-    +--[<PROJECT>]
+    +-- [<PROJECT>]
     |   +-- [supplement]
     |   +-- globalConfig.json
     |   +-- addressSpaces*.json
-    |   +-- patterns*.json
-    |   +-- virtualSections*.json
     |   +-- budgets.json
     |   +-- categoriesObjects.json
     |   +-- categoriesObjectsKeywords.json
     |   +-- categoriesSections.json
     |   +-- categoriesSectionsKeywords.json
+    |   +-- <COMPILER_SPECIFIC_CONFIGURATION_FILES>
 
 The files containing the asterisk symbol can be freely named by the user because the actual file names will have to be
 listed in the globalConfig.json.
 
-### `[<PROJECT>]`
+### `PROJECT`
 The configuration has to be contained by a folder. The name of the folder will be the name of the configuration.
 From the files ending with a * symbol, the configuration can contain more than one but maximum up to the number of configIDs defined in globalConfig.json.
 
-### `[supplement]`
-You can add .md files into this folder with mark down syntax to add information regarding your project that will be contained by the .html overview.
+### `supplement`
+You can add .md files into this folder with Markdown syntax to add information regarding your project that will be contained by the .html overview.
 For more information please refer to the Emma Visualiser's documentation.
 
 ### `globalConfig.json`
-The globalConfig.json is the starting point of the configurations.
-It defines the used compiler, the memory configurations of the system and the names of the config files that belong to these.
-A memory configuration is describes a unit that has memory associated to it, for example an MCU, MPU or an SOC.
-During the analysis, it will be examined to which extent the memory resources that are available for these units are used.
-A compiler definition is used for determining the mapfile format.
+The globalConfig.json is the starting point of a configuration, this file defines the **configId**-s.
+The configId-s are the hardware units of the system that have memory associated to them, for example an MCU, MPU or an SOC.
+During the analysis, it will be examined to which extent these memory resources are used.
 
-In Emma, a memory configuration is called a **configID**. For each configID the the following config files need to be defined:
-
-<div align="center"> <img src="./images/globalConfigScheme.png" width="70%" /> </div>
+For each configId, globalConfig.json assigns a compiler. This means that the mapfiles belonging to the configId were created by the selected compiler.
+This is important, since the format of these files are specific to the compiler. For each configId an addressSpaces*.json config file will be assigned.
+Furthermore the globalConfig.json assigns compiler specific config files to each configId, that need to be consistent with the selected compiler.
+For example if a GHS compiler was selected to the configId, then the compiler specific configuration part of this configId have to fulfill the requirements
+described in the [Formal Definition of the GHS compiler specific configuration](#formal-definition-of-the-GHS-compiler-specific-configuration) chapter.
 
 The globalConfig.json has to have the following format:
 
@@ -206,9 +207,8 @@ The globalConfig.json has to have the following format:
         <CONFIG_ID>: {
             "compiler": <COMPILER_NAME>,
             "addressSpacesPath": <CONFIG_FILE>,
-            "patternsPath": <CONFIG_FILE>,
-            "virtualSectionsPath": <CONFIG_FILE>,
-            "ignoreConfigID": <BOOL>
+            "ignoreConfigID": <BOOL>,
+            <COMPILER_SPECIFIC_KEY_VALUE_PAIRS>
         },
         .
         .
@@ -216,9 +216,8 @@ The globalConfig.json has to have the following format:
         <CONFIG_ID>: {
             "compiler": <COMPILER_NAME>,
             "addressSpacesPath": <CONFIG_FILE>,
-            "patternsPath": <CONFIG_FILE>,
-            "virtualSectionsPath": <CONFIG_FILE>,
-            "ignoreConfigID": <BOOL>
+            "ignoreConfigID": <BOOL>,
+            <COMPILER_SPECIFIC_KEY_VALUE_PAIRS>
         }
     }
 
@@ -226,24 +225,23 @@ The following rules apply:
 
 * The file contains a single unnamed JSON object
 * The types used in the description:
-    * `<COMPILER_NAME>` is a string
     * `<CONFIG_ID>` is a string
+    * `<COMPILER_NAME>` is a string
     * `<CONFIG_FILE>` is a string 
     * `<BOOL>` is a boolean value containing either **true** or **false**  
+    * `<COMPILER_SPECIFIC_KEY_VALUE_PAIRS>` are the key-value pairs that are required by the selected compiler
 * There has to be at least one **configID** defined
-* You must define a compiler for each configID by defining the **compiler** key. The possible values are:
+* You must select a compiler for every configID, by defining the **compiler** key. The possible values are:
     * "GHS" - Green Hills Compiler
-* You must assign three config files for each configID by defining the following key, value pairs:
+* You must assign the following config files for each configID by defining the following key, value pairs:
     * by defining **addressSpacesPath**, the config file that defines the address spaces is assigned
-    * by defining **patternsPath**, the config file that defines the patterns is assigned
-    * by defining **virtualSectionsPath**, the config file that listing the sections of the virtual address spaces is assigned
     * The config files have to be in the same folder as the globalConfig.json
-    * The config files don't need to be different for each configID (for example you can use the same sections config file for all the configIDs)
+    * The config files don't need to be different for each configID (for example you can use the same address spaces config file for all the configIDs)
 * The ignoreConfigID:
     * can be used to mark a configID as ignored, which means that this will not be processed during the analysis
     * is optional, it does not need to be included in every configID, leaving it has the same effect as including it with false
 
-### `address spaces*.json`
+### `addressSpaces*.json`
 The address spaces config files define the existing memory areas for the configIDs they were assigned to in the globalConfigs.json.
 
 These config files have to have the following format:
@@ -294,6 +292,138 @@ The following rules apply:
 
 ### `budgets.json`
 The budgets config file belongs to the Emma Visualiser. For a description, please see: **doc\readme-vis.md**.
+
+### `categoriesObjects.json` and `categoriesSections.json`
+The categories config files are used to categorize objects and sections to user defined categories by using their full names.
+These files are optional, if no categorization needed, these config files do not need to be created.
+This function can be used for example to group the software components of one company together which will make the results easier to understand.
+
+The `categoriesObjects.json` is used for the objects and the `categoriesSections.json` is  used for the section categorization.
+The objects and sections will be first tried to be categorized by these files. If they could not be categorized, then the software will try
+to categorize them based on the `categoriesObjectsKeywords.json` and `categoriesSectionsKeywords.json` files.
+
+These config files have to have the following format:
+
+    :::json
+    {
+        <CATEGORY>: [
+            <NAME>,
+            .
+            .
+            .
+            <NAME>
+        ],
+        .
+        .
+        .
+        <CATEGORY>: [
+            <NAME>,
+            .
+            .
+            .
+            <NAME>
+        ]
+    }
+
+The following rules apply:
+
+* The file contains a single unnamed JSON object
+* The types used in the description:
+    * `<CATEGORY>` is a string containing a unique category name
+    * `<NAME>` is a string
+* The categorisation can be done either by hand or with the **--create_categories** command line argument (for usage see there)
+* The `<NAME>` has to contain full names of the sections or objects
+
+### `categoriesObjectsKeywords.json` and `categoriesSectionsKeywords.json`
+The categories keywords config files are used to categorize objects and sections to user defined categories by using only substrings of their names.
+These files are optional, if no categorization needed, these config files do not need to be created.
+This function can be used for example to group the software components of one company together which will make the results easier to understand.
+
+The `categoriesObjectsKeywords.json` is used for the objects and the `categoriesSectionsKeywords.json` is  used for the section categorization.
+The objects and sections will only tried to be categorized by these files if the categorization by the `categoriesObjects.json` and `categoriesSections.json` files failed.
+If they could not be categorized, then the software will assign them to a category called `<Emma_UnknownCategory>` so they will be more visible in the results.
+
+These config files have to have the following format:
+
+    :::json
+    {
+        <CATEGORY>: [
+            <KEYWORD>,
+            .
+            .
+            .
+            <KEYWORD>
+        ],
+        <CATEGORY>: [
+            <KEYWORD>,
+            .
+            .
+            .
+            <KEYWORD>
+        ]
+    }
+
+The following rules apply:
+
+* The file contains a single unnamed JSON object
+* The types used in the description:
+    * `<CATEGORY>` is a string containing a unique category name
+    * `<KEYWORD>` is a string
+* The categorisation has to be done by hand
+* The `<KEYWORD>` contains a regex pattern for the names of the sections or objects
+
+## Formal Definition of the GHS compiler specific configuration
+The GHS compiler specific part of the configuration contains the following files:
+
+    +-- [<PROJECT>]
+    |   +-- <GENERIC_CONFIGURATION_FILES>
+    |   +-- patterns*.json
+    |   +-- virtualSections*.json
+
+The following dependencies exist within this type of a configuration:
+
+<div align="center"> <img src="./images/configDependencies.png" width="100%" /> </div>
+
+In `globalConfig.json`, you need to reference (ref relations on the picture):
+
+1. `addressSpaces*.json`
+2. `patterns*.json`
+3. `sections*.json`
+
+`memRegionExcludes`: You can exclude certain memory regions with this keyword in `patterns*.json`. In order to do this the memory regions/tags must match with those defined in `addressSpaces*.json`.
+
+If you have virtual address spaces (VASes) defined. You need a `"monolith file"` pattern defined in `patterns*.json` in order to be able to translate virtual addresses back to physical addresses. In the same file you give each VAS a name. This name is later used to identify which section belongs to which VAS (defined in `virtualSections*.json`). The VAS names must match between those two files. This is needed in order to avoid name clashes of sections names between different VASes.
+
+### Extensions to the `globalConfig.json`
+
+The globalConfig.json has to have the following format **for configId-s that have selected "GHS" as compiler**:
+
+    :::json
+    {
+        <CONFIG_ID>: {
+            <GENERIC_KEY_VALUE_PAIRS>,
+            "patternsPath": <CONFIG_FILE>,
+            "virtualSectionsPath": <CONFIG_FILE>
+        },
+        .
+        .
+        .
+        <CONFIG_ID>: {
+            <GENERIC_KEY_VALUE_PAIRS>,
+            "patternsPath": <CONFIG_FILE>,
+            "virtualSectionsPath": <CONFIG_FILE>
+        }
+    }
+
+The following rules apply:
+
+* The types used in the description:
+    * `<GENERIC_KEY_VALUE_PAIRS>` are the key-value pairs discussed in the [Formal definition of the generic configuration](#formal-definition-of-the-generic-configuration) chapter
+    * `<CONFIG_FILE>` is a string
+* You must assign a patterns config file for each configID by defining the **patternsPath** key
+* If the configId contains virtual address spaces, you must assign a config file describing them by defining **virtualSectionsPath** key
+* The assigned config files have to be in the same folder as the globalConfig.json
+* The config files don't need to be different for each configID (for example you can use the same virtual sections config file for all the configIDs)
 
 ### `patterns*.json`
 The patterns config files define regex patterns for finding the mapfiles, monolith files and processing their content.
@@ -365,7 +495,7 @@ The following rules apply:
 The virtual sections config files are used to assign the sections of the virtual address spaces to
 a virtual address spaces defined in the `patterns*.json`file. This is needed because the mapfiles can contain physical
 and virtual sections as well and Emma needs to identify the virtual ones and assign them to a specific virtual address space.
-If your configuration does not use virtual address spaces, the virtualSections*.json files are not needed.
+For configId-s not using virtual address spaces, a virtualSections*.json file is not needed.
 
 This config file have to have the following format:
 
@@ -397,103 +527,6 @@ The following rules apply:
 * The `<VAS_NAME>` keys are the ones that were defined in the `patterns*.json`
 * Every `<VAS_NAME>` key has an array as value that lists the sections that belong to the virtual address space 
 * There are no rules for the assignment, this needs to be done intuitively based on the project being analyzed
-
-### `categoriesObjects.json` and `categoriesSections.json`
-The categories config files are used to categorize objects and sections to user defined categories by using their full names.
-These files are optional, if no categorization needed, these config files do not need to be created.
-This function can be used for example to group the software components of one company together which will make the results easier to understand.
-
-The `categoriesObjects.json` is used for the objects and the `categoriesSections.json` is  used for the section categorization.
-The objects and sections will be first tried to be categorized by these files. If they could not be categorized, then the software will try
-to categorize them based on the `categoriesObjectsKeywords.json` and `categoriesSectionsKeywords.json` files.
-
-These config files have to have the following format:
-
-    :::json
-    {
-        <CATEGORY>: [
-            <NAME>,
-            .
-            .
-            .
-            <NAME>
-        ],
-        .
-        .
-        .
-        <CATEGORY>: [
-            <NAME>,
-            .
-            .
-            .
-            <NAME>
-        ]
-    }
-
-The following rules apply:
-
-* The file contains a single unnamed JSON object
-* The types used in the description:
-    * `<CATEGORY>` is a string containing a unique category name
-    * `<NAME>` is a string
-* The categorisation can be done either by hand or with the **--create_categories** command line argument (for usage see there)
-* The `<NAME>` has to contain full names of the sections or objects
-
-### `categoriesObjectsKeywords.json` and `categoriesSectionsKeywords.json`
-The categories keywords config files are used to categorize objects and sections to user defined categories by using only substrings of their names.
-These files are optional, if no categorization needed, these config files do not need to be created.
-This function can be used for example to group the software components of one company together which will make the results easier to understand.
-
-The `categoriesObjectsKeywords.json` is used for the objects and the `categoriesSectionsKeywords.json` is  used for the section categorization.
-The objects and sections will only tried to be categorized by these files if the categorization by the `categoriesObjects.json` and `categoriesSections.json` files failed.
-If they could not be categorized, then the software will assign them to a category called `<unspecified>` so they will be more visible in the results.
-
-These config files have to have the following format:
-
-    :::json
-    {
-        <CATEGORY>: [
-            <KEYWORD>,
-            .
-            .
-            .
-            <KEYWORD>
-        ],
-        <CATEGORY>: [
-            <KEYWORD>,
-            .
-            .
-            .
-            <KEYWORD>
-        ]
-    }
-
-The following rules apply:
-
-* The file contains a single unnamed JSON object
-* The types used in the description:
-    * `<CATEGORY>` is a string containing a unique category name
-    * `<KEYWORD>` is a string
-* The categorisation has to be done by hand
-* The `<KEYWORD>` contains a regex pattern for the names of the sections or objects
-
-## Configuration File Dependencies
-In order to work correctly Emma expects certain relations between configuration files. This section shall provide an overview:
-
-<div align="center"> <img src="./images/configDependencies.png" width="100%" /> </div>
-
-Since `globalConfig.json` is "just" a meta-config you reference filenames of
-
-1. `addressSpaces*.json`
-2. `patterns*.json` and
-3. `sections*.json`.
-
-These filenames must (obviously) match with the real filenames - there are referenced (`ref`).
-
-`memRegionExcludes`: You can exclude certain memory regions with this keyword in `patterns*.json`. In order to do this the memory regions/tags must match with those defined in `addressSpaces*.json`.
-
-If you have virtual address spaces (VASes) defined. We need a "monolith file" pattern defined in `patterns*.json` in order to be able to translate virtual addresses back to physical addresses. In the same file you give each VAS a name/tag. This tag is later used to identify which section belongs to which VAS (defined in `sections*.json`). Again, the VAS names must match between those two files. We do this since you may have name clashes of sections names between different VASes.
-
 
 # Output Files
 The output Files will be saved to the memStats folder of the respective project. The filename will have this form: 

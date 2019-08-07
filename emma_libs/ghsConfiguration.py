@@ -20,7 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import os
 import sys
 import re
-from pprint import pprint
 
 from pypiscout.SCout_Logger import Logger as sc
 

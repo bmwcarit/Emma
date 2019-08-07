@@ -118,7 +118,7 @@ def parseArgs(arguments=""):
 
     # We will either parse the arguments string if it is not empty,
     # or (in the default case) the data from sys.argv
-    if "" == arguments:
+    if arguments == "":
         parsedArguments = parser.parse_args()
     else:
         # Arguments were passed to this function (e.g. for unit testing)
