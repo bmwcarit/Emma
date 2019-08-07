@@ -254,6 +254,8 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
 
     @staticmethod
     def __checkMonolithSections(configuration, noPrompt):
+        # pylint: disable=too-many-locals
+        # Rationale: The code quality would not increase significantly from fewer local variables.
         """
         The function collects the VAS sections from the monolith files and from the global config and from the monolith mapfile.
         :param configuration: Configuration thats monolith sections need to be checked.

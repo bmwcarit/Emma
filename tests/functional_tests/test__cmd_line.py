@@ -260,8 +260,7 @@ class CmdEmmaVis(TestHelper):
             self.runEmma()
             args = emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "--overview", "--noprompt", "--quiet"])
             emma_vis.main(args)
-            import matplotlib.pyplot
-            matplotlib.pyplot.close('all')
+            plt.close('all')
         except Exception as e:  # pylint: disable=broad-except
                                 # Rationale: The purpose here is to catch any exception.
             self.fail("Unexpected exception: " + str(e))
