@@ -4,4 +4,4 @@
 
 duplication:
    exclude_paths:
-     - tests
+     - tests/*
