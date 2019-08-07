@@ -5,38 +5,41 @@
 
 ------------------------
 # Contents
-1. [Requirements](#requirements)
-1. [Process](#process)
-1. [Limitations](#limitations)
-1. [Usage](#usage)
-1. [Arguments](#arguments)
-    1. [Required Arguments](#required-arguments)
-    1. [Optional Arguments](#optional-arguments)
-1. [Project Configuration](#project-configuration)
-    1. [Formal Definition](#formal-definition)
-        1. [`[<PROJECT>]`](#project)
-        1. [`[supplement]`](#supplement)
-        1. [`globalConfig.json`](#globalconfigjson)
-        1. [`address spaces*.json`](#address-spacesjson)
-        1. [`patterns*.json`](#patternsjson)
-        1. [`sections.json`](#sectionsjson)
-        1. [`categories.json` and `categoriesSections.json`](#categoriesjson-and-categoriessectionsjson)
-        1. [`categoriesKeywords.json` and `categoriesSectionsKeywords.json`](#categorieskeywordsjson-and-categoriessectionskeywordsjson)
-    1. [Configuration File Dependencies](#configuration-file-dependencies)
-1. [Output Files](#output-files)
-    1. [Image Summary](#image-summary)
-    1. [Module Summary](#module-summary)
-    1. [Objects in Sections](#objects-in-sections)
-    1. [CSV header](#csv-header)
-1. [Terminology](#Terminology)
-1. [Examples](#examples)
-    1. [Matching module name and category using `categoriesKeywords.json`](#matching-module-name-and-category-using-categorieskeywordsjson)
-    1. [Removing not needed module names from `categories.json`](#removing-not-needed-module-names-from-categoriesjson)
-1. [General Information on Mapfiles and the Build Chain](#general-information-about-map-files-and-build-chains)
-1. [Technical Details](#technical-details)
-    1. [GHS Monolith file generation](#ghs-monolith-file-generation)
-    1. [Class diagram Emma](#class-diagram-emma)
-    1. [Calling Graph Emma](#calling-graph-emma)
+1. [Emma](#emma)
+2. [Contents](#contents)
+3. [Requirements](#requirements)
+4. [Process](#process)
+5. [Limitations](#limitations)
+6. [Usage](#usage)
+7. [Arguments](#arguments)
+   1. [Required Arguments](#required-arguments)
+   2. [Optional Arguments](#optional-arguments)
+8. [Project Configuration](#project-configuration)
+   1. [Formal Definition](#formal-definition)
+      1. [`[<PROJECT>]`](#project)
+      2. [`[supplement]`](#supplement)
+      3. [`globalConfig.json`](#globalconfigjson)
+      4. [`address spaces*.json`](#address-spacesjson)
+      5. [`budgets.json`](#budgetsjson)
+      6. [`patterns*.json`](#patternsjson)
+      7. [`virtualSections*.json`](#virtualsectionsjson)
+      8. [`categoriesObjects.json` and `categoriesSections.json`](#categoriesobjectsjson-and-categoriessectionsjson)
+      9. [`categoriesObjectsKeywords.json` and `categoriesSectionsKeywords.json`](#categoriesobjectskeywordsjson-and-categoriessectionskeywordsjson)
+   2. [Configuration File Dependencies](#configuration-file-dependencies)
+9. [Output Files](#output-files)
+   1. [Image Summary](#image-summary)
+   2. [Module Summary](#module-summary)
+   3. [Objects in Sections](#objects-in-sections)
+   4. [CSV header](#csv-header)
+10. [Terminology](#terminology)
+11. [Examples](#examples)
+   1. [Matching module name and category using `categoriesKeywords.json`](#matching-module-name-and-category-using-categorieskeywordsjson)
+   2. [Removing not needed module names from `categories.json`](#removing-not-needed-module-names-from-categoriesjson)
+12. [General Information About Map Files and Build Chains](#general-information-about-map-files-and-build-chains)
+13. [Technical Details](#technical-details)
+   1. [GHS Monolith file generation](#ghs-monolith-file-generation)
+   2. [Class diagram Emma](#class-diagram-emma)
+   3. [Calling Graph Emma](#calling-graph-emma)
 
 ------------------------
 
@@ -81,8 +84,8 @@ Image and module summaries of the specified mapfiles will be created.
       --project PROJECT    Path of directory holding the configuration.The project
                            name will be derived from the the name of this folder.
                            (default: None)
-      --mapfiles MAPFILES  The folder containing the mapfiles that needs to be
-                           analyzed. (default: None)
+      --mapfiles MAPFILES  The folder containing the map files that need to be
+                           analysed. (default: None)
       --dir DIR            Output folder holding the statistics. (default: None)
       --subdir SUBDIR      User defined subdirectory name in the --dir folder.
                            (default: None)
@@ -106,50 +109,30 @@ Image and module summaries of the specified mapfiles will be created.
 
 ## Optional Arguments
 
-    --dir
-        User defined path for the top folder holding the `memStats`/output files.
-        Per default it uses the same directory as the config files. 
-
-    --stats_dir
-        User defined path inside the folder given in the `--dir` argument.
-        This is usefull when batch analysing mapfiles from various development stages.
-        Every analysis output gets it's own directory. 
-
-    --create_categories, -ctg
-        Create categories.json from keywords.json for easier module categorisation.
-
-    --remove_unmatched, -ru
-        Remove unmatched entries from categories.json. This is usefull when a categories.json from another project is used.
-
-    --help, -h
-
-    --dir STATS_DIR, -d STATS_DIR
-        User defined path for the folder `memStats` holding generated statistics from Emma (default: ./memStats).
-
-    --analyse_debug, --dbg
-        Normally we remove DWARF debug sections from the analysis to show the relevant information for a possible release software.
-        This can be prevented if this argument is set. DWARF section names are defined in stringConstants.py
-        `.unused_ram` is always excluded (regardless of this flag)
-        
-    --noprompt
-        Exit and fail on user prompt. Normally this happens when some files or configurations are ambiguous.
-        This is useful when running Emma on CI systems.
-
-    -Werror
+* `--dir`
+    * User defined path for the top folder holding the `memStats`/output files. Per default it uses the same directory as the config files. 
+* `--stats_dir`
+  * User defined path inside the folder given in the `--dir` argument. This is usefull when batch analysing mapfiles from various development stages. Every analysis output gets it's own directory. 
+* `--create_categories`
+  * Create `categories.json` from `keywords.json` for easier module categorisation.
+* `--remove_unmatched`,
+  * Remove unmatched entries from categories.json. This is usefull when a `categories.json` from another project is used.
+* `--analyse_debug`, `--dbg`
+  * Normally we remove DWARF debug sections from the analysis to show the relevant information for a possible release software. This can be prevented if this argument is set. DWARF section names are defined in `stringConstants.py`. `.unused_ram` is always excluded (regardless of this flag)
+* `--noprompt`
+  * Exit and fail on user prompt. Normally this happens when some files or configurations are ambiguous. This is useful when running Emma on CI systems.
 
 
 # Project Configuration
 
-The memory analysis will be executed based on the project configuration. In order to be able to use Emma with your project,
-you need to create a configuration matching your project's hardware and software.
-The configuration has to be established correctly, because **errors made in it, can distort the memory analysis results or it will be refused by Emma**.
+The memory analysis will be executed based on the project configuration. In order to be able to use Emma with your project, you need to create a configuration matching your project's hardware and software. **Configure Emma with high diligence since errors may lead to incorrect results of your analysis**. During the analysis Emma performs some sanity checks which helps you detecting misconfiguration.
 
 This chapter explains the role and functionality of each part of the configuration and illustrates all the settings that can be used.
 Based on this description the user will have to create his/her own configuration.
 
-Creating a configuration is done by writing several JSON files (if you are not familiar with JSON, please visit https://www.json.org).
-This chapter will go trough the topic by formally defining the format, rules and the functionality of the config files.
-There are practical example projects available in the doc folder available. These projects will lead you step by step trough the process of 
+Creating a configuration file is done in the JSON format (if you are not familiar with JSON, please visit https://www.json.org).
+
+This chapter will go trough the topic by formally defining the format, rules and the functionality of the config files. There are practical example projects available in the doc folder available. These projects will lead you step by step trough the process of 
 creating a configuration and they also contain map files that can be analyzed.
 
 The following example projects are available:  
@@ -190,7 +173,7 @@ It defines the memory configurations of the system and defines the names of the 
 A memory configuration is describes a unit that has memory associated to it, for example an MCU, MPU or an SOC.
 During the analysis, it will be examined to which extent the memory resources that are available for these units are used.
 
-In Emma, a memory configuration is called a **configID**. For each configID the the following config files need to be defined:
+In Emma, a memory configuration is called a **configID**. For each `configID` the the following config files need to be defined:
 
 <div align="center"> <img src="./images/globalConfigScheme.png" width="70%" /> </div>
 
@@ -202,7 +185,8 @@ The globalConfig.json has to have the following format:
             "addressSpacesPath": <CONFIG_FILE>,
             "patternsPath": <CONFIG_FILE>,
             "virtualSectionsPath": <CONFIG_FILE>,
-            "ignoreConfigID": <BOOL>
+            "ignoreConfigID": <BOOL>,
+            "mapfiles": <REL_PATH>
         },
         .
         .
@@ -222,16 +206,22 @@ The following rules apply:
     * `<CONFIG_ID>` is a string
     * `<CONFIG_FILE>` is a string 
     * `<BOOL>` is a boolean value containing either **true** or **false**  
+    * `<PATH>` is a relative path of type string (special charcaters must be escaped)
 * There has to be at least one **configID** defined
-* You must assign three config files for each configID by defining the following key, value pairs:
-    * by defining **addressSpacesPath**, the config file that defines the address spaces is assigned
-    * by defining **patternsPath**, the config file that defines the patterns is assigned
-    * by defining **virtualSectionsPath**, the config file that listing the sections of the virtual address spaces is assigned
+* You must assign three config files for each `configID` by defining the following key, value pairs:
+    * by defining **`addressSpacesPath`**, the config file that defines the address spaces is assigned
+    * by defining **`patternsPath`**, the config file that defines the patterns is assigned
+    * by defining **`virtualSectionsPath`**, the config file that listing the sections of the virtual address spaces is assigned
     * The config files have to be in the same folder as the globalConfig.json
-    * The config files don't need to be different for each configID (for example you can use the same sections config file for all the configIDs)
-* The ignoreConfigID:
-    * can be used to mark a configID as ignored, which means that this will not be processed during the analysis
+    * The config files don't need to be different for each `configID` (for example you can use the same sections config file for all the configIDs)
+* `ignoreConfigID`:
+    * can be used to mark a `configID` as ignored, which means that this will not be processed during the analysis
     * is optional, it does not need to be included in every configID, leaving it has the same effect as including it with false
+* `mapfiles`:
+    * specifies a path **relative** to the one given via command line argument (-> root map file path).
+    * If `mapfiles` is specified for a `configID` map files will be searched within this **relative** path.
+    * Otherwise the root map file path will be used.
+
 
 ### `address spaces*.json`
 The address spaces config files define the existing memory areas for the configIDs they were assigned to in the globalConfigs.json.
@@ -287,7 +277,7 @@ The budgets config file belongs to the Emma Visualiser. For a description, pleas
 
 ### `patterns*.json`
 The patterns config files define regex patterns for finding the mapfiles, monolith files and processing their content.
-They belong to the configID they were assigned to in the globalConfigs.json.
+They belong to the `configID` they were assigned to in the globalConfigs.json.
 
 These config files have to have the following format:
 
@@ -328,7 +318,7 @@ The following rules apply:
     * `<VAS_NAME>` is a string
     * `<MONOLITH_NAME>` is a string containing a unique name
 * The **mapfiles** object must be present in the file with at least one entry:
-    * Each entry describes a SW unit of the configId (eg. a bootloader or application if an MCU is used or a process if an OS, like Linux is used):
+    * Each entry describes a SW unit of the `configID` (eg. a bootloader or application if an MCU is used or a process if an OS, like Linux is used):
         * The **regex** defines one ore more regex pattern to find the mapfile that contains the data for this SW unit:
             * It is possible to give more than one regex patterns in case of non-uniform mapfile names
             * If more than one map file will be found for the SW unit, a warning will be thrown
@@ -345,7 +335,7 @@ The following rules apply:
         * The **memRegionExcludes** lists the memory areas that needs to be ignored during the analysis of the mapfile
             * The sections and objects of the mapfile that belong to the memory areas listed here will be ignored
             * The memory areas can be selected from the <MEMORY_AREA> elements defined in the "memory" object of address spaces config file
-* The **monoliths** object is optional, it is only needed if the configId has virtual address spaces
+* The **monoliths** object is optional, it is only needed if the `configID` has virtual address spaces
     * If one the of the mapfiles object has a VAS key, then a monolith is needed
     * It is possible to give more than one regex patterns in case of non-uniform monolith file names
     * If more than one monolith file will be found for the SW unit, a warning will be thrown
@@ -355,7 +345,7 @@ The following rules apply:
 The virtual sections config files are used to assign the sections of the virtual address spaces to
 a virtual address spaces defined in the `patterns*.json`file. This is needed because the mapfiles can contain physical
 and virtual sections as well and Emma needs to identify the virtual ones and assign them to a specific virtual address space.
-If your configuration does not use virtual address spaces, the virtualSections*.json files are not needed.
+If your configuration does not use virtual address spaces, the `virtualSections*.json` files are not needed.
 
 This config file have to have the following format:
 
