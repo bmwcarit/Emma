@@ -1813,6 +1813,13 @@ ZnkAMjAxOS0wOC0wNlQwOTo0NToxNiswMDowMIFgVlgAAAAASUVORK5CYII=
 </ul>
 </li>
 </ul>
+<h2 id="expected-changes-to-project-and-documentation-after-adding-a-new-compiler-support">Expected changes to project and documentation after adding a new compiler support</h2>
+<p>To make it possible for users and other contributors to easily get started with the added new support, the following non code related changes need to made:</p>
+<ul>
+<li>Add a test project with a step-by-step introduction to the <strong>doc</strong> folder. Take the <strong>doc/test_project</strong> as example.</li>
+<li>Add a chapter to the <strong>doc/readme.md</strong> describing the configuration of the new compiler. Take the chapter <strong>Formal Definition of the GHS compiler specific configuration</strong> as example.</li>
+<li>After changing the Markdown files, please re-generate the HTML files with the <strong>genDoc/genReadmeHtmlFromMd.py</strong> script, using the <code>--no_graphs</code> command line argument.</li>
+</ul>
 <hr />
 <h1 id="colour-palette">Colour palette</h1>
 <p>The following colour palette is used for the documentation:</p>

@@ -321,7 +321,7 @@ class Categorisation:
                 categoriesToRemoveFrom.pop(category)
             else:
                 # Category occurs in consumerCollection, hence is present in mapfiles,
-                # overwrite old category module list with the ones acutally occuring in mapfiles
+                # overwrite old category object list with the ones acutally occuring in mapfiles
                 categoriesToRemoveFrom[category] = categorisedElements[category]
 
         # Sort self.categories case-insensitive in alphabetical order

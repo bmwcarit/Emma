@@ -73,7 +73,7 @@ def parseArgs(arguments=""):
     parser.add_argument(
         "--mapfiles",
         required=True,
-        help="The folder containing the mapfiles that needs to be analyzed.",
+        help="The folder containing the map files that need to be analysed.",
     )
     parser.add_argument(
         "--dir",

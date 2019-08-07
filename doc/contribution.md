@@ -172,6 +172,13 @@ The methods need to implement the following functionality:
         * `compilerSpecificData`
     * Before returning, call the `MapfileProcessor::fillOutMemoryRegionsAndMemoryTypes()` on the created lists to fill out the `memTypeTag` and `memType` members
 
+## Expected changes to project and documentation after adding a new compiler support
+To make it possible for users and other contributors to easily get started with the added new support, the following non code related changes need to made:
+
+* Add a test project with a step-by-step introduction to the **doc** folder. Take the **doc/test_project** as example.
+* Add a chapter to the **doc/readme.md** describing the configuration of the new compiler. Take the chapter **Formal Definition of the GHS compiler specific configuration** as example.
+* After changing the Markdown files, please re-generate the HTML files with the **genDoc/genReadmeHtmlFromMd.py** script, using the `--no_graphs` command line argument.
+
 ----------------------------------------------------------------
 # Colour palette
 The following colour palette is used for the documentation:
