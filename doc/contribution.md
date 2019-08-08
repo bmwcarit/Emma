@@ -69,7 +69,7 @@ See also [here](https://help.github.com/en/articles/requesting-a-pull-request-re
 # Coding guidelines
 Generally [PEP-8](https://github.com/python/peps/blob/master/pep-0008.txt) or the [Google style guide](https://github.com/google/styleguide/blob/gh-pages/pyguide.md) apply. However we deviate slightly from this (see the following sections). 
 
-**If in doubt run [pylint](https://www.pylint.org/) by using our pylint configuration file (`.pylintrc`).**
+**If in doubt run [pylint](https://www.pylint.org/) by using our pylint configuration file ([`.pylintrc`](../.pylintrc)).**
 
 ## Style
 * Naming conventions
