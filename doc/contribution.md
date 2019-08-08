@@ -69,6 +69,8 @@ See also [here](https://help.github.com/en/articles/requesting-a-pull-request-re
 # Coding guidelines
 Generally [PEP-8](https://github.com/python/peps/blob/master/pep-0008.txt) or the [Google style guide](https://github.com/google/styleguide/blob/gh-pages/pyguide.md) apply. However we deviate slightly from this (see the following sections). 
 
+**If in doubt run [pylint](https://www.pylint.org/) by using our pylint configuration file (`.pylintrc`).**
+
 ## Style
 * Naming conventions
     * mixedCase (camelCase and PascalCase is used)
@@ -79,15 +81,15 @@ Generally [PEP-8](https://github.com/python/peps/blob/master/pep-0008.txt) or th
 * Imports in Python
     * The imports need to be separated from other parts of the file with 2-2 blank lines above and under
     * They need to be grouped into the following three groups:
-      * Python Standard Library Imports
-      * 3rd Party Imports
-      * Emma Imports
+        * Python Standard Library Imports
+        * 3rd Party Imports
+        * Emma Imports
     * The groups need to be in the same order as in the previous list and they need to be separated from each other with a single blank line
     * Only packages and modules shall be imported, individual classes and functions not
     * Imports shall not use renaming
     * There are some exceptions:
-      * Importing from shared_libs.stringConstants shall be done in the following way: `from shared_libs.stringConstants import *`
-      * Importing the `pyipiscout` library shall be done in the following way: `import pypiscout as sc`
+        * Importing from shared_libs.stringConstants shall be done in the following way: `from shared_libs.stringConstants import *`
+        * Importing the `pyipiscout` library shall be done in the following way: `import pypiscout as sc`
 * British English shall be used in function names and comments
     * Exceptions:
         * `map file` is always written as `mapfile`
