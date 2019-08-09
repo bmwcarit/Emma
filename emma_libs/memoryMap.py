@@ -62,7 +62,7 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
                     if actualElement.addressStart == otherElement.addressStart and actualElement.addressLength == otherElement.addressLength:
                         # Setting the actualElement´s duplicateFlag if it was not already set
                         if actualElement.duplicateFlag is None:
-                            actualElement.duplicateFlag = "Duplicate of (" + memEntryHandler.getName(otherElement) + ", " + otherElement.configID + ", " + otherElement.mapfile + ")"
+                            actualElement.duplicateFlag =  otherElement.configID + "::" + otherElement.mapfile + "::"  + otherElement.sectionName + ( "::"  + otherElement.objectName if otherElement.objectName != "" else "")
                         # Setting the actualElement to zero addressLength if this was not the first element of the duplicates
                         # This is needed to include only one of the duplicate elements with the real size in the report and not to distort the results
                         if otherElement.duplicateFlag is not None:
@@ -76,7 +76,7 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
                             if actualElement.addressStart >= otherElement.addressStart and (actualElement.addressStart + actualElement.addressLength) <= (otherElement.addressStart + otherElement.addressLength):
                                 # Setting the actualElement´s containmentFlag if it was not already set
                                 if actualElement.containmentFlag is None:
-                                    actualElement.containmentFlag = "Contained by (" + memEntryHandler.getName(otherElement) + ", " + otherElement.configID + ", " + otherElement.mapfile + ")"
+                                    actualElement.containmentFlag = otherElement.configID + "::" + otherElement.mapfile + "::"  + otherElement.sectionName + ( "::"  + otherElement.objectName if otherElement.objectName != "" else "")
                                     # Setting the actualElement to zero addressLength because this was contained by the otherElement
                                     # This is needed to include only one of these elements with the real size in the report and not to distort the results
                                     actualElement.addressLength = 0
@@ -87,7 +87,7 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
                                 else:
                                     # Case 5: actualElement is overlapped by otherElement: otherElement starts before and ends inside actualElement
                                     if actualElement.addressStart > otherElement.addressStart and (actualElement.addressStart + actualElement.addressLength) > (otherElement.addressStart + otherElement.addressLength):
-                                        actualElement.overlapFlag = "Overlapped by (" + memEntryHandler.getName(otherElement) + ", " + otherElement.configID + ", " + otherElement.mapfile + ")"
+                                        actualElement.overlapFlag =  otherElement.configID + "::" + otherElement.mapfile + "::"  + otherElement.sectionName + ( "::"  + otherElement.objectName if otherElement.objectName != "" else "")
                                         # Adjusting the addresses and length of the actualElement: reducing its size by the overlapping part
                                         newAddressStart = otherElement.addressStart + otherElement.addressLength
                                         sizeOfOverlappingPart = newAddressStart - actualElement.addressStart
@@ -279,17 +279,14 @@ def writeReportToDisk(reportPath, consumerCollection):
         writer = csv.writer(fp, delimiter=";", lineterminator="\n")
 
         # Creating the list with the first part of the static headers
-        headers = [ADDR_START_HEX, ADDR_END_HEX, SIZE_HEX, ADDR_START_DEC, ADDR_END_DEC,
-                   SIZE_DEC, SIZE_HUMAN_READABLE, SECTION_NAME, OBJECT_NAME, CONFIG_ID]
+        headers = [ADDR_START_HEX, ADDR_END_HEX, SIZE_HEX, ADDR_START_DEC, ADDR_END_DEC, SIZE_DEC, SIZE_HUMAN_READABLE, SECTION_NAME, OBJECT_NAME, CONFIG_ID]
 
         # Extending it with the compiler specific headers
         compilerSpecificHeaders = collectCompilerSpecificHeaders(consumerCollection)
         headers.extend(compilerSpecificHeaders)
 
         # Collecting the rest of the static headers
-        headers.extend([MEM_TYPE, MEM_TYPE_TAG, CATEGORY, MAPFILE,
-                        OVERLAP_FLAG, CONTAINMENT_FLAG, DUPLICATE_FLAG, CONTAINING_OTHERS_FLAG,
-                        ADDR_START_HEX_ORIGINAL, ADDR_END_HEX_ORIGINAL, SIZE_HEX_ORIGINAL, SIZE_DEC_ORIGINAL])
+        headers.extend([MEM_TYPE, MEM_TYPE_TAG, CATEGORY, MAPFILE, OVERLAP_FLAG, CONTAINMENT_FLAG, DUPLICATE_FLAG, CONTAINING_OTHERS_FLAG, ADDR_START_HEX_ORIGINAL, ADDR_END_HEX_ORIGINAL, SIZE_HEX_ORIGINAL, SIZE_DEC_ORIGINAL, FQN])
 
         # Writing the headers to the CSV file
         writer.writerow(headers)
@@ -297,8 +294,7 @@ def writeReportToDisk(reportPath, consumerCollection):
         # Writing the data lines to the file
         for row in consumerCollection:
             # Collecting the first part of the static data for the current row
-            rowData = [row.addressStartHex(), row.addressEndHex(), row.addressLengthHex(), row.addressStart, row.addressEnd(),
-                       row.addressLength, shared_libs.emma_helper.toHumanReadable(row.addressLength), row.sectionName, row.objectName, row.configID]
+            rowData = [row.addressStartHex(), row.addressEndHex(), row.addressLengthHex(), row.addressStart, row.addressEnd(), row.addressLength, shared_libs.emma_helper.toHumanReadable(row.addressLength), row.sectionName, row.objectName, row.configID]
 
             # Extending it with the data part of the compiler specific data pairs of this MemEntry object
             for compilerSpecificHeader in compilerSpecificHeaders:
@@ -319,7 +315,9 @@ def writeReportToDisk(reportPath, consumerCollection):
                 row.addressEndHexOriginal() if (row.overlapFlag is not None) else "",
                 # Lengths are modified in case of overlapping, containment and duplication so we will post the original values so that the changes can be seen
                 row.addressLengthHexOriginal() if ((row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
-                row.addressLengthOriginal if ((row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else ""
+                row.addressLengthOriginal if ((row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
+                # FQN
+                row.configID + "::" + row.mapfile + "::"  + row.sectionName + ( "::"  + row.objectName if row.objectName != "" and row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and row.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else "")
             ])
 
             # Writing the data to the file

@@ -101,15 +101,15 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
     def checkFlags(self, memEntry, memEntryHandler, expectedDuplicate=None, expectedContainingOthers=None, expectedContainedBy=None, expectedOverlappingOthers=None, expectedOverlappedBy=None):  # pylint: disable=too-many-arguments
                                                                                                                                                                                                   # Rationale: This function needs to be able to check all kinds of flags, this is why these arguments needed.
         if expectedDuplicate is not None:
-            self.assertEqual(memEntry.duplicateFlag, "Duplicate of (" + memEntryHandler.getName(expectedDuplicate) + ", " + expectedDuplicate.configID + ", " + expectedDuplicate.mapfile + ")")
+            self.assertEqual(memEntry.duplicateFlag, expectedDuplicate.configID + "::" + expectedDuplicate.mapfile + "::"  + expectedDuplicate.sectionName + ( "::"  + expectedDuplicate.objectName if expectedDuplicate.objectName != "" else ""))
         if expectedContainingOthers is not None:
             self.assertEqual(memEntry.containingOthersFlag, expectedContainingOthers)
         if expectedContainedBy is not None:
-            self.assertEqual(memEntry.containmentFlag, "Contained by (" + memEntryHandler.getName(expectedContainedBy) + ", " + expectedContainedBy.configID + ", " + expectedContainedBy.mapfile + ")")
+            self.assertEqual(memEntry.containmentFlag, expectedContainedBy.configID + "::" + expectedContainedBy.mapfile + "::"  + expectedContainedBy.sectionName + ( "::"  + expectedContainedBy.objectName if expectedContainedBy.objectName != "" else ""))
         if expectedOverlappingOthers is not None:
             self.assertEqual(memEntry.overlappingOthersFlag, expectedOverlappingOthers)
         if expectedOverlappedBy is not None:
-            self.assertEqual(memEntry.overlapFlag, "Overlapped by (" + memEntryHandler.getName(expectedOverlappedBy) + ", " + expectedOverlappedBy.configID + ", " + expectedOverlappedBy.mapfile + ")")
+            self.assertEqual(memEntry.overlapFlag, expectedOverlappedBy.configID + "::" + expectedOverlappedBy.mapfile + "::"  + expectedOverlappedBy.sectionName + ( "::"  + expectedOverlappedBy.objectName if expectedOverlappedBy.objectName != "" else ""))
 
     def checkAddressChanges(self, resolvedMemEntry, originalMemEntry, expectedAddressStart=None, expectedAddressLength=None, expectedAddressEnd=None):  # pylint: disable=too-many-arguments
                                                                                                                                                         # Rationale: This function needs to be able to check all kinds of address related data, this is why these arguments needed.

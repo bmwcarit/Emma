@@ -128,13 +128,17 @@ class MemoryManager:
 
     def createReports(self):
         """
-        A method to create the reports.
+        Creates the reports
         :return: None
         """
         # If the mapfiles were already processed
-        if self.memoryContent is not None:
+        def createStandardReports():
+            """
+            Create Section, Object and ObjectsInSections reports
+            :return: None
+            """
             # Putting the same consumer collection types together
-            # (At this points the collections are grouped by configId then by their types)
+            # (At this points the collections are grouped by configID then by their types)
             consumerCollections = {}
             for configId in self.memoryContent:
                 for collectionType in self.memoryContent[configId]:
@@ -147,5 +151,12 @@ class MemoryManager:
                 reportPath = emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType)
                 emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
                 sc().info("A report was stored:", os.path.abspath(reportPath))
+
+        def createDotReports():
+            pass
+
+        if self.memoryContent is not None:
+            createStandardReports()
+            createDotReports()
         else:
             sc().error("The mapfiles need to be processed before creating the reports!")
