@@ -121,9 +121,8 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
                         if physicalAddress is None:
                             warningSectionName = lineComponents.group(regexPatternData.Groups.section).rstrip()
                             warningObjectName = ("::" + lineComponents.group(regexPatternData.Groups.module).rstrip()) if hasattr(regexPatternData.Groups, "module") else ""
-                            sc().warning("The address translation failed for the element: \"" + mapfile + "(line " + str(lineNumber) + ")::" +
-                                         warningSectionName + warningObjectName + " (size: " + str(int(lineComponents.group(regexPatternData.Groups.size), 16)) + " B)\" of the configID \"" +
-                                         configId + "\"!")
+                            sc().warning("Address translation failed for the element: " + f"{configId}::{mapfileName}:{lineNumber}::{warningSectionName}" + ("::"  + warningObjectName if warningObjectName != "" else "")
+                                         + " (size: " + str(int(lineComponents.group(regexPatternData.Groups.size), 16)) + " B)! Section not found in VAS or outside address range.")
                             # We will not store this element and continue with the next one
                             continue
                     # In case the mapfile contains phyisical addresses, no translation is needed, we are just reading the address that is in the mapfile
@@ -203,6 +202,7 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
         The patterns config file can assign a VAS to a mapfile. Every VAS has VAS sections that are defined in the
         virtualSections file. The monolith file contains all the virtual sections of all the VAS-es with data
         based on which the address translation can be done.
+
         In order to do the translation we loop trough the entries in the monolith file and see whether the entry belongs
         to the VAS of this element. If so, when we need to make sure that the element resides within the virtual section.
         If that is also true, the address translation can be easily done with the data found in the monolith file.
