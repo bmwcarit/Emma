@@ -223,6 +223,10 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
                 # There is not much to do here, the reserve will be created after the object loop
                 break
 
+            # Case X: SW error, unhandled case...
+            else:
+                sc().error("MemoryManager::calculateObjectsInSections(): Case X: SW error, unhandled case...")
+
         # If we have ran out of objects for this section (at this point, we are out of the object loop)
         # And there is still some remaining part of the section, then we need to add it as reserve
         if sectionCopy is not None:
@@ -311,11 +315,11 @@ def writeReportToDisk(reportPath, consumerCollection):
                 row.duplicateFlag,
                 row.containingOthersFlag,
                 # Addresses are modified in case of overlapping so we will post the original values so that the changes can be seen
-                row.addressStartHexOriginal() if (row.overlapFlag is not None) else "",
-                row.addressEndHexOriginal() if (row.overlapFlag is not None) else "",
+                row.addressStartHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or (row.overlapFlag is not None)) else "",
+                row.addressEndHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or (row.overlapFlag is not None)) else "",
                 # Lengths are modified in case of overlapping, containment and duplication so we will post the original values so that the changes can be seen
-                row.addressLengthHexOriginal() if ((row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
-                row.addressLengthOriginal if ((row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
+                row.addressLengthHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or (row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
+                row.addressLengthOriginal if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or (row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
                 # FQN
                 row.configID + "::" + row.mapfile + "::"  + row.sectionName + ( "::"  + row.objectName if row.objectName != "" and row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and row.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else "")
             ])
