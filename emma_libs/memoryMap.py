@@ -186,6 +186,10 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
                 continue
 
             # Case 0: The object is completely overlapping the section
+            # S          |--------------|            or:       |-----|
+            # O          |--------------|                    |--------|
+            #       <= --^              ^-- >=
+            # FIXME: Is the right case valid? (MSc) --------^^^^^^^^^^^^
             if objectContainerElement.addressStart <= sectionCopy.addressStart and (sectionCopy.addressStart + sectionCopy.addressLength) <= (objectContainerElement.addressStart + objectContainerElement.addressLength):
                 # This object is overlapping the section completely. This means that all the following objects will be
                 # outside the section, so we can continue with the next section.
@@ -194,12 +198,17 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
                 break
 
             # Case 1: The object is overlapping the beginning of the section
+            # S          |--------------|            or:       |----------|
+            # O          |------|                           |-----------|
+            #       <= --^
             elif objectContainerElement.addressStart <= sectionCopy.addressStart and (objectContainerElement.addressStart + objectContainerElement.addressLength) < (sectionCopy.addressStart + sectionCopy.addressLength):
                 # Cutting off the beginning of the section
                 newSectionAddressStart = objectContainerElement.addressStart + objectContainerElement.addressLength
                 cutOffTheBeginningOfTheSection(sectionCopy, newSectionAddressStart)
 
             # Case 2: The object is overlapping a part in the middle of the section
+            # S          |--------------|
+            # O                 |----|
             elif sectionCopy.addressStart < objectContainerElement.addressStart and (objectContainerElement.addressStart + objectContainerElement.addressLength) < (sectionCopy.addressStart + sectionCopy.addressLength):
                 # Creating a sectionReserve
                 createASectionReserve(sectionCopy, objectContainerElement.addressStart - 1)
@@ -208,6 +217,9 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
                 cutOffTheBeginningOfTheSection(sectionCopy, newSectionAddressStart)
 
             # Case 3: The object is overlapping the end of the section
+            # S          |--------------|            or:       |----------|
+            # O                  |------|                           |---------|
+            #                           ^-- >=
             elif sectionCopy.addressStart < objectContainerElement.addressStart <= (sectionCopy.addressStart + sectionCopy.addressLength) <= (objectContainerElement.addressStart + objectContainerElement.addressLength):
                 # Creating the sectionReserve
                 createASectionReserve(sectionCopy, objectContainerElement.addressStart - 1)
@@ -219,6 +231,8 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
 
             # Case 4: The object is only starting after this section, it means that the following objects will also be outside the section.
             # So we have to create a reserve for the remaining part of the section and we can exit the object loop now and continue with the next section.
+            # S          |-----|
+            # O                       |----|
             elif (sectionCopy.addressStart + sectionCopy.addressLength) <= objectContainerElement.addressStart:
                 # There is not much to do here, the reserve will be created after the object loop
                 break
@@ -298,7 +312,18 @@ def writeReportToDisk(reportPath, consumerCollection):
         # Writing the data lines to the file
         for row in consumerCollection:
             # Collecting the first part of the static data for the current row
-            rowData = [row.addressStartHex(), row.addressEndHex(), row.addressLengthHex(), row.addressStart, row.addressEnd(), row.addressLength, shared_libs.emma_helper.toHumanReadable(row.addressLength), row.sectionName, row.objectName, row.configID]
+            rowData = [
+                row.addressStartHex() if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
+                row.addressEndHex() if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
+                row.addressLengthHex() if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
+                row.addressStart if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
+                row.addressEnd() if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
+                row.addressLength if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
+                shared_libs.emma_helper.toHumanReadable(row.addressLength) if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
+                row.sectionName,
+                row.objectName,
+                row.configID
+            ]
 
             # Extending it with the data part of the compiler specific data pairs of this MemEntry object
             for compilerSpecificHeader in compilerSpecificHeaders:
