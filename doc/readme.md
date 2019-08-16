@@ -550,7 +550,7 @@ This is done so that the file represents a continuous and refined memory mapping
 
 The information on such occurrences can be observed in the rightmost columns:
 
-* `overlapFlag`: Overlaps with the stated section
+* `overlapFlag`: Overlaps with the stated section ("overlapped by X" means X is an object/section which has a lower start address and therefore overlaps the current element)
 * `containmentFlag`: Is contained by the stated section
 * `duplicateFlag`: Duplicate entry
 * `containgOthers`: Contains stated sections/objects
