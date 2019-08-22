@@ -109,6 +109,8 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
                         # Name of the Virtual address space to which the elements of this mapfile belongs
                         vasName = configuration["patterns"]["mapfiles"][mapfile]["VAS"]
                         # List of the virtual sections that were belong to this mapfile. The address translation is done with the help of these sections.
+                        if not vasName in configuration["virtualSections"]:
+                            sc().error(f"VAS name `{vasName}` stated in patterns configuration but not found in virtualSections.")
                         virtualSectionsOfThisMapfile = configuration["virtualSections"][vasName]
                         # The part of the monolith file that contains the address translation data
                         monolithFileContent = configuration["sortMonolithTabularised"]
