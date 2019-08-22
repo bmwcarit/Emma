@@ -272,6 +272,45 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         self.checkFlags(resolvedSectionContainer[0], memEntryHandler, expectedOverlappingOthers=True)
         self.checkFlags(resolvedSectionContainer[1], memEntryHandler, expectedOverlappedBy=originalSectionContainer[0])
 
+    def test__overlapMultipleSections(self):
+        """
+        S  |------|
+        S    |---------|
+        S      |----------|
+        S           |-----|
+        """
+        # Creating the sections and objects for the test
+        FIRST_SECTION_ADDRESS_START = 0x0100
+        FIRST_SECTION_ADDRESS_END = 0x016F
+        SECOND_SECTION_ADDRESS_START = 0x0120
+        SECOND_SECTION_ADDRESS_END = 0x021F
+        THIRD_SECTION_ADDRESS_START = 0x0140
+        THIRD_SECTION_ADDRESS_END = 0x023F
+        FOURTH_SECTION_ADDRESS_START = 0x0190
+        FOURTH_SECTION_ADDRESS_END = 0x023F
+        listOfMemEntryData = [MemEntryData(FIRST_SECTION_ADDRESS_START, FIRST_SECTION_ADDRESS_END, section="first"),
+                              MemEntryData(SECOND_SECTION_ADDRESS_START, SECOND_SECTION_ADDRESS_END, section="second"),
+                              MemEntryData(THIRD_SECTION_ADDRESS_START, THIRD_SECTION_ADDRESS_END, section="third"),
+                              MemEntryData(FOURTH_SECTION_ADDRESS_START, FOURTH_SECTION_ADDRESS_END, section="fourth")]
+        memEntryHandler = emma_libs.memoryEntry.SectionEntry
+        originalSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
+        resolvedSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
+        # Running the resolveDuplicateContainmentOverlap list
+        emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
+
+        # Check the number of elements: no elements shall be removed or added to the container
+        self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
+
+        # Check whether the addresses were set properly (the second section shall lose its beginning)
+        self.checkAddressChanges(resolvedSectionContainer[0], originalSectionContainer[0],
+                                 expectedAddressStart=originalSectionContainer[0].addressStart,
+                                 expectedAddressEnd=originalSectionContainer[0].addressEnd())
+        self.checkAddressChanges(resolvedSectionContainer[1], originalSectionContainer[1],
+                                 expectedAddressStart=(originalSectionContainer[0].addressEnd() + 1),
+                                 expectedAddressEnd=originalSectionContainer[1].addressEnd())
+        # Check whether the flags were set properly
+        self.checkFlags(resolvedSectionContainer[0], memEntryHandler, expectedOverlappingOthers=True)
+        self.checkFlags(resolvedSectionContainer[1], memEntryHandler, expectedOverlappedBy=originalSectionContainer[0])
 
 class CalculateObjectsInSectionsTestCase(unittest.TestCase):
     # pylint: disable=invalid-name, missing-docstring
