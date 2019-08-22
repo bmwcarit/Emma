@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import os
 
 from pypiscout.SCout_Logger import Logger as sc
+import graphviz
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
@@ -58,12 +59,12 @@ class MemoryManager:
         self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt)
         # Check whether the configuration and the mapfiles folders exist
         shared_libs.emma_helper.checkIfFolderExists(self.settings.mapfilesPath)
-        # The configuration is empty at this moment, it can be read in with another method
-        self.configuration = None
-        # The memory content is empty at this moment, it can be loaded with another method
-        self.memoryContent = None
-        # The categorisation object does not exist yet, it can be created after reading in the configuration
-        self.categorisation = None
+        self.configuration = None                   # The configuration is empty at this moment, it can be read in with another method
+        # memoryContent [dict(list(memEntry))]
+        # Each key of this dict represents a configID; dict values are lists of consumerCollections
+        # consumerCollection: [list(memEntry)] lists of memEntry's; e.g. a Section_Summary which contains all memEnty objects per configID)
+        self.memoryContent = None                   # The memory content is empty at this moment, it can be loaded with another method
+        self.categorisation = None                  # The categorisation object does not exist yet, it can be created after reading in the configuration
 
     def readConfiguration(self):
         """
@@ -131,11 +132,11 @@ class MemoryManager:
         Creates the reports
         :return: None
         """
-        # If the mapfiles were already processed
-        def createStandardReports():
+        def consumerCollections2GlobalList():
             """
-            Create Section, Object and ObjectsInSections reports
-            :return: None
+            Concatenate each type of consumerCollection (memoryContent: dict(list(memEntry)) -> consumerCollection: list(list(memEntry)))
+            Concatenates all values (per list (Section_Summary, Object_Summary, Objects_in_Sections)) within the memoryContent dict (-> keys are configIDs)
+            :return: [list(list(memEntry))] Concatenated list of consumerCollections
             """
             # Putting the same consumer collection types together
             # (At this points the collections are grouped by configID then by their types)
@@ -145,15 +146,38 @@ class MemoryManager:
                     if collectionType not in consumerCollections:
                         consumerCollections[collectionType] = []
                     consumerCollections[collectionType].extend(self.memoryContent[configId][collectionType])
+            return consumerCollections
 
-            # Creating reports from the consumer colections
+
+        def createStandardReports():
+            """
+            Create Section, Object and ObjectsInSections reports
+            :return: None
+            """
+            consumerCollections = consumerCollections2GlobalList()
+
+            # Creating reports from the consumer collections
             for collectionType in consumerCollections:
                 reportPath = emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType)
                 emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
                 sc().info("A report was stored:", os.path.abspath(reportPath))
 
         def createDotReports():
-            pass
+            GLOBAL_ATTRIBUTES = {
+                "fontname": "Helvetica",
+                "shape": "octagon"
+            }
+
+
+            graph = graphviz.Digraph("newGraph")
+            graph.attr('node', GLOBAL_ATTRIBUTES)
+            # for
+            # graph.node(, 'C', _attributes={'shape': 'triangle'})
+            graph.node('A', 'A')
+            graph.node('B', 'B')
+            graph.node('C', 'C', _attributes={'shape': 'triangle'})
+
+            print(graph.source)
 
         if self.memoryContent is not None:
             createStandardReports()

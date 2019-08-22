@@ -70,9 +70,8 @@ class MapfileProcessor(abc.ABC):
             :return: None
             """
             objectName = ("::" + memEntry.objectName) if hasattr(memEntry, "module") else ""
-            loggerLevel("The element: \"" + memEntry.mapfile + "::" + memEntry.sectionName + objectName +
-                        " (@" + memEntry.addressStartHex() + ", size: " + str(memEntry.addressLength) + " B)\" of the configID \"" +
-                        memEntry.configID + "\" was removed. Reason: " + reason)
+            loggerLevel(f"Element: {memEntry.configID}::{memEntry.mapfile}::{memEntry.sectionName}" + ("::"  + memEntry.objectName if memEntry.objectName != "" else "")
+                        + f" `(size: " + str(memEntry.addressLength) + f" B, starts @{memEntry.addressStartHex()}) was removed. Reason: " + reason)
 
         def isElementMarkedAsExcluded(excludedMemoryRegionsFromMapfiles, memEntry):
             """

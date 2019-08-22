@@ -37,7 +37,7 @@ class Reports:
         self.projectPath = projectPath
         self.project = os.path.split(projectPath)[-1]
         self.reportFilePath = shared_libs.emma_helper.joinPath(projectPath, "results", self.project + "-Memory_Report_by_configID-memType.csv")
-        self.data = pandas.read_csv(self.reportFilePath, sep=";").drop_duplicates(subset=[TIMESTAMP, CONFIG_ID, MEM_TYPE])  # TODO: This is a temporary fix, we actually want to not append duplicates to the csv in the first place
+        self.data = pandas.read_csv(self.reportFilePath, sep=";").drop_duplicates(subset=[TIMESTAMP, CONFIG_ID, MEM_TYPE])  # TODO: This is a temporary fix, we actually want to not append duplicates to the csv in the first place (FM)
 
     def plotNdisplay(self, plotShow=True):
         grouped = self.data.groupby([CONFIG_ID])

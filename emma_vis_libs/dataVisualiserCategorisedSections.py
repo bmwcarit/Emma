@@ -111,6 +111,7 @@ class CategorisedImageConsumptionList:
         groupedImage = groupedImage.groupby([CONFIG_ID, MEM_TYPE, CATEGORY, SECTION_NAME, SECTION_SIZE_BYTE, OBJECT_NAME]).sum()
         return groupedImage
 
+    # FIXME: Colours of the legend are not working (MSc)
     def displayUsedByModulesInImage(self):
         """
         Creates the figure for the plot.
@@ -190,20 +191,21 @@ class CategorisedImageConsumptionList:
             markdown.write("    \n    " + self.__groupCategorisedImage().to_string().replace("\n", "\n    ") + "\n")
             markdown.write("\n\n")
 
-    def plotNdisplay(self, plotShow=True):
-        """
-        function to display and save to file the figure created in self.displayUsedByModulesInImage()
-        :param plotShow: Show plot or write to file only
-        :return: nothing
-        """
-
-        myFigure = self.displayUsedByModulesInImage()
-        filename = self.project + MEMORY_ESTIMATION_BY_MODULES_PICTURE_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION
-
-        shared_libs.emma_helper.saveMatplotlibPicture(myFigure, shared_libs.emma_helper.joinPath(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
-
-        if plotShow:
-            matplotlib.pyplot.show()  # Show plots after results in console output are shown
+    # FIXME: Deactivated; colours of legend in figure not correct - possibly this figure is not even needed/useful (MSc)
+    # def plotNdisplay(self, plotShow=True):
+    #     """
+    #     function to display and save to file the figure created in self.displayUsedByModulesInImage()
+    #     :param plotShow: Show plot or write to file only
+    #     :return: nothing
+    #     """
+    #
+    #     figure = self.displayUsedByModulesInImage()
+    #     filename = self.project + MEMORY_ESTIMATION_BY_MODULES_PICTURE_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION
+    #
+    #     shared_libs.emma_helper.saveMatplotlibPicture(figure, shared_libs.emma_helper.joinPath(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
+    #
+    #     if plotShow:
+    #         matplotlib.pyplot.show()  # Show plots after results in console output are shown
 
     def categorisedImagetoCSV(self):
         """

@@ -315,12 +315,12 @@ class Categorisation:
 
         for category in categoriesToRemoveFrom:  # For every category in categories.json
             if category not in categorisedElements:
-                # If category is in categories.json but has never occured in the mapfiles (hence not present in consumerCollection)
+                # If category is in categories.json but has never occurred in the mapfiles (hence not present in consumerCollection)
                 # Remove the not occuring category entirely
                 categoriesToRemoveFrom.pop(category)
             else:
                 # Category occurs in consumerCollection, hence is present in mapfiles,
-                # overwrite old category object list with the ones acutally occuring in mapfiles
+                # overwrite old category object list with the ones actually occurring in mapfiles
                 categoriesToRemoveFrom[category] = categorisedElements[category]
 
         # Sort self.categories case-insensitive in alphabetical order

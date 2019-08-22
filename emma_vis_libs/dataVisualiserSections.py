@@ -130,25 +130,20 @@ class ImageConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
         groupedByMemTypeAcc = self.groupDataByMemType([7, 9, 10, 13])
 
         # Prepare budgets
-        budgetsData = pandas.DataFrame(self.budgets, columns=[self.header[7], self.header[9], "budget"])                    # magic numbers: see in header (Visualiser)
-        budgetsData["budget"] = budgetsData["budget"].astype(float)
+        budgetsData = pandas.DataFrame(self.budgets, columns=[self.header[7], self.header[9], BUDGET])                      # magic numbers: see in header (Visualiser)
+        budgetsData[BUDGET] = budgetsData[BUDGET].astype(float)
 
-        # Merge and group with budgets
+        # Merge and group by configID & memType
         groupedByMemTypeAcc = groupedByMemTypeAcc.reset_index()                                                             # We need to reset the index first for merging
         groupedByMemTypeAcc = pandas.merge(groupedByMemTypeAcc, budgetsData, on=[self.header[7], self.header[9]])           # Some bars might not be shown in the graph if you forget to adapt the `configID`s in `budgets.json`
         groupedByMemTypeAcc = groupedByMemTypeAcc.groupby([self.header[7], self.header[9]]).sum()
 
-        # Normalise (for displaying percentage)
-        groupedByMemTypeAcc[USED_PERCENT] = groupedByMemTypeAcc[self.header[5]] / groupedByMemTypeAcc[BUDGET]
+        # Normalise and calculate percent (used/available)
+        groupedByMemTypeAcc[USED_PERCENT] = groupedByMemTypeAcc[self.header[5]] / groupedByMemTypeAcc[BUDGET] * 100
+        groupedByMemTypeAcc[AVAILABLE_PERCENT] = (100 - groupedByMemTypeAcc[USED_PERCENT])                                  # Check for negative value in next line
 
-        # Calculate available header, if negative it has to be set to 0%
-        groupedByMemTypeAcc[self.headerAvailable] = (1 - groupedByMemTypeAcc[self.headerUsed]) * 100                        # Check for negative value in next line
-        for i in range(groupedByMemTypeAcc[self.headerAvailable].size):
-            if groupedByMemTypeAcc[self.headerAvailable][i] < 0:
-                # Set available header to 0 if previously calculated value is negative (hence no more memory left)
-                groupedByMemTypeAcc[self.headerAvailable][i] = 0
-
-        groupedByMemTypeAcc[self.headerUsed] *= 100
+        # Cap percentage -> if negative it has to be set to 0%
+        groupedByMemTypeAcc.loc[groupedByMemTypeAcc[AVAILABLE_PERCENT] < 0, AVAILABLE_PERCENT] = 0
 
         return groupedByMemTypeAcc
 
@@ -186,7 +181,7 @@ class ImageConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
         # Plot bar graph
         title = "Memory Estimation - " + self.project + "    (Created " + self.statsTimestamp + ")"
 
-        barGraph = self.consumptionByMemType[[self.headerUsed, self.headerAvailable]].plot.bar(stacked=True,
+        barGraph = self.consumptionByMemType[[USED_PERCENT, AVAILABLE_PERCENT]].plot.bar(stacked=True,
                                                                                                figsize=(18, 10),
                                                                                                rot=45,
                                                                                                title=title,
@@ -200,7 +195,7 @@ class ImageConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
             if i >= len(barGraph.patches) / 2:
                 # Show budgets annotations in kiB
                 barGraph.annotate(
-                    s=shared_libs.emma_helper.toHumanReadable(int(self.consumptionByMemType["budget"][i % (len(barGraph.patches) / 2)])),  # Format of budget text
+                    s=shared_libs.emma_helper.toHumanReadable(int(self.consumptionByMemType[BUDGET][i % (len(barGraph.patches) / 2)])),  # Format of budget text
                     xy=(bar.get_x(), 100),                                                                         # Location of budget annotation, set to 100 so the annotation appears at the 100% line
                     color="#505359")
             else:

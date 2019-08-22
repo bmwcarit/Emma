@@ -47,9 +47,9 @@ class ModuleConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
         print(self.consumptionByCategorisedModules)
 
     def plotByCategorisedModules(self, plotShow=True):
-        myFigure = self.displayConsumptionByCategorisedModules(self.consumptionByCategorisedModules)
+        figure = self.displayConsumptionByCategorisedModules(self.consumptionByCategorisedModules)
         filename = self.project + MEMORY_ESTIMATION_PARTITION_OF_ALLOCATED_MEMORY_PICTURE_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION
-        shared_libs.emma_helper.saveMatplotlibPicture(myFigure, os.path.join(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
+        shared_libs.emma_helper.saveMatplotlibPicture(figure, os.path.join(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
         if plotShow:
             matplotlib.pyplot.show()
 
@@ -91,7 +91,6 @@ class ModuleConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
         consumptionPerMemory = consumptionPerMemory.groupby(["configID", MEM_TYPE, "category"]).sum()
         consumptionPerMemory = consumptionPerMemory.unstack().fillna(0)
 
-        # FIXME: Fix this plot (FM)
         pieGraph = consumptionPerMemory.plot.pie(subplots=True,
                                                  figsize=(28, 4),
                                                  colormap='tab20c',
@@ -149,15 +148,16 @@ class ModuleConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
 
         sc().info("Appending object summary to overview...")
 
-        # TODO: This should be better explained (AGK)
         self.plotByCategorisedModules(plotShow=False)  # Re-write .png to ensure up-to-date overview
 
-        with open(markdownFilePath, 'a') as markdown:
+        with open(markdownFilePath, "a") as markdown:
             markdown.write("\n# Percentage share of modules\n")
-            markdown.write(
-                "    \n    " + self.consumptionByCategorisedModules.to_string().replace("\n", "\n    ") + "\n")
+            markdown.write("    \n    " + self.consumptionByCategorisedModules.to_string().replace("\n", "\n    ") + "\n")
             markdown.write("\n\n*percentage share: share of the used memory*\n\n")
-            markdown.write("<div align=\"center\"> <img src=\"" + os.path.join(self.project + MEMORY_ESTIMATION_BY_MODULES_PICTURE_NAME_FIX_PART + self.statsTimestamp + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION) + "\" width=\"1000\"> </div>")
-            markdown.write("\n\n")
+
+            # FIXME: Deactivated; colours of legend in figure not correct - possibly this figure is not even needed/useful (MSc)
+            # markdown.write("<div align=\"center\"> <img src=\"" + os.path.join(self.project + MEMORY_ESTIMATION_BY_MODULES_PICTURE_NAME_FIX_PART + self.statsTimestamp + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION) + "\" width=\"1000\"> </div>")
+            # markdown.write("\n\n")
+
             markdown.write("<div align=\"center\"> <img src=\"" + os.path.join(self.project + MEMORY_ESTIMATION_PARTITION_OF_ALLOCATED_MEMORY_PICTURE_NAME_FIX_PART + self.statsTimestamp + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION) + "\" width=\"1000\"> </div>")
             markdown.write("\n")

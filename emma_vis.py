@@ -68,7 +68,7 @@ def main(args):
     try:
         consumptionModule = emma_vis_libs.dataVisualiserObjects.ModuleConsumptionList(projectPath=args.projectDir,
                                                                                       fileToUse=moduleFile,
-                                                                                      resultsPath=args.inOutPath)
+                                                                                      resultsPath=resultsPath)
     except ValueError:
         sc().error("Data does not contain any module/object entry - exiting...")
 
@@ -81,12 +81,12 @@ def main(args):
 
     # Do prints and plots
     consumptionImage.plotByMemType(plotShow=False)
-    # TODO: Why is this method call needed? What do we get from it? Why don´t we use its return value? (AGK)
-    consumptionImage.calcConsumptionByMemType()
-    categorisedImage.printModulesInImage()
-    categorisedImage.plotNdisplay(plotShow=False)
+    sc().info("\n", consumptionImage.calcConsumptionByMemType())
 
-    # Save the categorsied sections as csv
+    # FIXME: Deactivated; colours of legend in figure not correct - possibly this figure is not even needed/useful (MSc)
+    # categorisedImage.plotNdisplay(plotShow=False)
+
+    # Save the categorised sections as csv
     if args.categorised_image_csv:
         categorisedImage.categorisedImagetoCSV()
 

@@ -125,9 +125,9 @@ def getColourValFromString(inputString):
     :param inputString: an arbitrary string to convert
     :return: 6 digit hex string
     """
-    # FIXME: this will crash anyway since we do not import hashlib (MSc)
+    import hashlib                                                         # FIXME: import in function since it is currently not used (just to be sure that it won't break if it will be used in the future)
     hashedString = hashlib.sha256(inputString.encode())
-    return hashedString.hexdigest()[len(hashedString.hexdigest())-6:]                         # FIXME: stripping anything except the first 6 characters might fail in some cases >> investigate this further (MSc)
+    return hashedString.hexdigest()[len(hashedString.hexdigest())-6:]      # FIXME: stripping anything except the first 6 characters might fail in some cases >> investigate this further (MSc)
 
 
 def lastModifiedFilesInDir(path, extension):

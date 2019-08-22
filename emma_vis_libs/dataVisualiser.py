@@ -86,10 +86,8 @@ class Visualiser:
         self.statsTimestamp = shared_libs.emma_helper.getTimestampFromFilename(fileToUse)  # This is the timestamp parsed from the module/image summary filename
         self.resultsPath = resultsPath
         self.projectThreshold = None
-        self.headerUsed = USED_PERCENT
-        self.headerAvailable = AVAILABLE_PERCENT
         # default header
-        self.header = [                                                                 # TODO: Remove the header list and replace it with constants from stringConstants.py
+        self.header = [
             # Later indexes are used (therefore the numbers commented inline)
             ADDR_START_HEX,        # 0
             ADDR_END_HEX,
