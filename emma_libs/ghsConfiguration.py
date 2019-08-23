@@ -207,8 +207,12 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
 
             # Finally load the file
             configuration["monolithLoaded"] = True
-            with open(keyMonolithMapping[str(mapfileIndexChosen)], "r") as fp:
-                result = fp.readlines()
+            monolithFilepath = keyMonolithMapping[str(mapfileIndexChosen)]
+            try:
+                with open(monolithFilepath, "r") as fp:
+                    result = fp.readlines()
+            except FileNotFoundError:
+                sc().error(f"The monolith file `{os.path.abspath(monolithFilepath)}` was not found!")
 
             return result
 
@@ -276,8 +280,12 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         # In case there was no monolith loaded, the configuration does not need it so the check is passed
         if configuration["monolithLoaded"]:
             for entry in configuration["patterns"]["monoliths"]:
-                with open(configuration["patterns"]["monoliths"][entry]["associatedFilename"], "r") as monolithFile:
-                    monolithContent = monolithFile.readlines()
+                try:
+                    monolithFilepath = configuration["patterns"]["monoliths"][entry]["associatedFilename"]
+                    with open(monolithFilepath, "r") as monolithFile:
+                        monolithContent = monolithFile.readlines()
+                except FileNotFoundError:
+                    sc().error(f"The file `{os.path.abspath(monolithFilepath)}` was not found!")
                 for line in monolithContent:
                     lineComponents = re.search(monolithPattern.pattern, line)
                     if lineComponents:  # if match

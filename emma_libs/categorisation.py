@@ -312,7 +312,7 @@ class Categorisation:
         for key, value in rawCategorisedConsumerCollection.items():
             categorisedElements[value] = categorisedElements.get(value, [])
             categorisedElements[value].append(key)
-
+        # FIXME: dict changes during iteration (MSc)
         for category in categoriesToRemoveFrom:  # For every category in categories.json
             if category not in categorisedElements:
                 # If category is in categories.json but has never occurred in the mapfiles (hence not present in consumerCollection)

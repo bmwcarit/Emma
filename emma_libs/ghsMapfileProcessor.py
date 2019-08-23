@@ -75,8 +75,12 @@ class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
         # Importing every mapfile that was found
         for mapfile in configuration["patterns"]["mapfiles"]:
             # Opening the mapfile and reading in its content
-            with open(configuration["patterns"]["mapfiles"][mapfile]["associatedFilename"], "r") as mapfileFileObject:
-                mapfileContent = mapfileFileObject.readlines()
+            mapfilePath = configuration["patterns"]["mapfiles"][mapfile]["associatedFilename"]
+            try:
+                with open(mapfilePath, "r") as mapfileFileObject:
+                    mapfileContent = mapfileFileObject.readlines()
+            except FileNotFoundError:
+                sc().error(f"The map file `{os.path.abspath(mapfilePath)}` was not found!")
 
             # Storing the name of the mapfile
             mapfileName = os.path.split(configuration["patterns"]["mapfiles"][mapfile]["associatedFilename"])[-1]

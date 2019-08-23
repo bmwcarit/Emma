@@ -215,45 +215,53 @@ class CategorisedImageConsumptionList:
         filename = self.project + MEMORY_ESTIMATION_CATEGORISED_IMAGE_CVS_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + ".csv"
         self.__categorisedImage.to_csv(shared_libs.emma_helper.joinPath(self.resultsPath, filename), sep=";", mode="w", index=True)
 
-    def createCategoriesSections(self):
-        csvfilepath = self.resultsPath + self.project + MEMORY_ESTIMATION_CATEGORISED_IMAGE_CVS_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + ".csv"
-        jsonfile = open('categoriesSections.json', 'w')
 
-        # Read csv and group it to desired form
-        categoriesCSV = pandas.read_csv(csvfilepath, index_col=6, sep=";")\
-            .reset_index()\
-            .drop([SECTION_SIZE_BYTE, MODULE_SIZE_BYTE], 1)\
-            .groupby([CONFIG_ID, MEM_TYPE, SECTION_NAME, CATEGORY])\
-            .agg({OBJECT_NAME: "count"})
-        categoriesCSV.sort_values(OBJECT_NAME, ascending=False, inplace=True)
-        categoriesCSV = {k: list(categoriesCSV.ix[k].index) for k in categoriesCSV.index.levels[0]}
-
-        # Extract desired data for section -> category matching
-        categoriesList = []
-        for key in categoriesCSV:
-            for entry in range(len(categoriesCSV[key])):
-                categoriesList.append(categoriesCSV[key][entry][1:3])
-
-        # Convert list of tuples to dict
-        categoriesDict = {}
-        for entry in categoriesList:
-            categoriesDict[entry[0]] = entry[1]  # entry[0].strip('.') for stripping the "." before section names
-
-        # Format from section:category to category:list_of_sections
-        formatted = {}
-        for k, v in categoriesDict.items():
-            formatted[v] = formatted.get(v, [])
-            formatted[v].append(k)
-
-        # Sort list_of_sections case-insensitive in alphabetical order
-        for k in formatted.keys():
-            formatted[k].sort(key=lambda s: s.lower())
-
-        # Merge existing sectionCategories with our newly found categories
-        with open(shared_libs.emma_helper.joinPath(self.projectPath + "/categoriesSections.json"), "r") as fp:
-            visteonCategories = json.load(fp)
-
-        formatted = {**formatted, **visteonCategories}
-
-        # Print to .json
-        json.dump(formatted, jsonfile, indent=" ", sort_keys=True)
+    # FIXME: This function is never uses (MSc)
+    # def createCategoriesSections(self):
+    #     csvfilepath = self.resultsPath + self.project + MEMORY_ESTIMATION_CATEGORISED_IMAGE_CVS_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + ".csv"
+    #     jsonfile = open('categoriesSections.json', 'w')
+    #
+    #     # Read csv and group it to desired form
+    #     categoriesCSV = pandas.read_csv(csvfilepath, index_col=6, sep=";")\
+    #         .reset_index()\
+    #         .drop([SECTION_SIZE_BYTE, MODULE_SIZE_BYTE], 1)\
+    #         .groupby([CONFIG_ID, MEM_TYPE, SECTION_NAME, CATEGORY])\
+    #         .agg({OBJECT_NAME: "count"})
+    #     categoriesCSV.sort_values(OBJECT_NAME, ascending=False, inplace=True)
+    #     categoriesCSV = {k: list(categoriesCSV.ix[k].index) for k in categoriesCSV.index.levels[0]}
+    #
+    #     # Extract desired data for section -> category matching
+    #     categoriesList = []
+    #     for key in categoriesCSV:
+    #         for entry in range(len(categoriesCSV[key])):
+    #             categoriesList.append(categoriesCSV[key][entry][1:3])
+    #
+    #     # Convert list of tuples to dict
+    #     categoriesDict = {}
+    #     for entry in categoriesList:
+    #         categoriesDict[entry[0]] = entry[1]  # entry[0].strip('.') for stripping the "." before section names
+    #
+    #     # Format from section:category to category:list_of_sections
+    #     formatted = {}
+    #     for k, v in categoriesDict.items():
+    #         formatted[v] = formatted.get(v, [])
+    #         formatted[v].append(k)
+    #
+    #     # Sort list_of_sections case-insensitive in alphabetical order
+    #     for k in formatted.keys():
+    #         formatted[k].sort(key=lambda s: s.lower())
+    #
+    #     # Merge existing sectionCategories with our newly found categories
+    #     oldCategoriesSectionsPath = shared_libs.emma_helper.joinPath(self.projectPath + "categoriesSections.json")
+    #     try:
+    #         with open(oldCategoriesSectionsPath, "r") as fp:
+    #             oldCategories = json.load(fp)
+    #     except FileNotFoundError:
+    #         sc().error(f"The file `{os.path.abspath(oldCategoriesSectionsPath)}` was not found!")
+    #     except json.JSONDecodeError:
+    #         sc().error(f"JSON syntax error in `{os.path.abspath(oldCategoriesSectionsPath)}`!")
+    #
+    #     formatted = {**formatted, **oldCategories}
+    #
+    #     # Print to .json
+    #     json.dump(formatted, jsonfile, indent=" ", sort_keys=True)

@@ -23,6 +23,7 @@ import os
 
 import pandas
 import matplotlib.pyplot
+from pypiscout.SCout_Logger import Logger as sc
 
 from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import shared_libs.emma_helper
@@ -258,34 +259,46 @@ class ImageConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
         self.plotByMemType(plotShow=False)  # Re-write .png to ensure up-to-date overview
         markdownFilePath = shared_libs.emma_helper.joinPath(self.resultsPath, self.project + "-Memory_Overview_" + self.statsTimestamp.replace(" ", "") + ".md")
 
-        with open(markdownFilePath, 'w') as markdown:
-            markdown.write("Memory Estimation Overview - " + self.project + "\n==========================\n\n")
+        try:
+            with open(markdownFilePath, 'w') as markdown:
+                markdown.write("Memory Estimation Overview - " + self.project + "\n==========================\n\n")
 
-            markdown.write("<div align=\"center\"> <img src=\"" + shared_libs.emma_helper.joinPath(self.project + MEMORY_ESTIMATION_BY_PERCENTAGES_PICTURE_NAME_FIX_PART + self.statsTimestamp + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION) + "\" width=\"1000\"> </div>")
+                markdown.write("<div align=\"center\"> <img src=\"" + shared_libs.emma_helper.joinPath(self.project + MEMORY_ESTIMATION_BY_PERCENTAGES_PICTURE_NAME_FIX_PART + self.statsTimestamp + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION) + "\" width=\"1000\"> </div>")
 
-            markdown.write("\n")
+                markdown.write("\n")
 
-            markdown.write("\n# Usage by Memory Type\n")
-            markdown.write("    \n    " + self.consumptionByMemType.to_string().replace("\n", "\n    ") + "\n")
-            markdown.write("\n\n*" + SIZE_DEC + ": Used Memory in Byte* | *" + BUDGET + ": Total Memory Size* | *" + USED_PERCENT + ": Used Memory in %* | *" + AVAILABLE_PERCENT + ": Available Memory in %*\n\n")
+                markdown.write("\n# Usage by Memory Type\n")
+                markdown.write("    \n    " + self.consumptionByMemType.to_string().replace("\n", "\n    ") + "\n")
+                markdown.write("\n\n*" + SIZE_DEC + ": Used Memory in Byte* | *" + BUDGET + ": Total Memory Size* | *" + USED_PERCENT + ": Used Memory in %* | *" + AVAILABLE_PERCENT + ": Available Memory in %*\n\n")
 
-            markdown.write("\n# Usage by Mapfile\n")
-            markdown.write("    \n    " + self.consumptionByMemTypePerMap.to_string().replace("\n", "\n    ") + "\n")
-            markdown.write("\n\n*" + SIZE_DEC + ": Used Memory in Byte*\n\n")
+                markdown.write("\n# Usage by Mapfile\n")
+                markdown.write("    \n    " + self.consumptionByMemTypePerMap.to_string().replace("\n", "\n    ") + "\n")
+                markdown.write("\n\n*" + SIZE_DEC + ": Used Memory in Byte*\n\n")
+        except FileNotFoundError:
+            sc().error(f"The file `{os.path.abspath(markdownFilePath)}` was not found!")
 
         return markdownFilePath
 
     def appendSupplementToMarkdownOverview(self, markdownFilePath):
         """
-        Append .md files from supplements folder
-        :param markdownFilePath: The path of the Markdown file to which the data will be appended to.
+        Append .md files from supplements folder (searches all files recursively within the supplement folder)
+        :param markdownFilePath: The path of the Markdown file to which the data will be appended to
         :return: nothing
         """
+        supplementDirPath = shared_libs.emma_helper.joinPath(self.projectPath, SUPPLEMENT)
+        supplementFiles = []
 
-        supplementDirPath = shared_libs.emma_helper.joinPath(self.projectPath, "supplement")
         with open(markdownFilePath, 'a') as markdown:
             if os.path.isdir(supplementDirPath):
-                for root, directories, files in os.walk(supplementDirPath):
-                    for name in files:
-                        with open(shared_libs.emma_helper.joinPath(root, name), "r") as infile:
-                            markdown.write(infile.read())
+                for supplementRootPath, directories, filesInSupplementDir in os.walk(supplementDirPath):
+                    for aSupplementFile in filesInSupplementDir:
+                        aAbsSupplementFilePath = shared_libs.emma_helper.joinPath(supplementRootPath, aSupplementFile)
+                        supplementFiles.append(aAbsSupplementFilePath)
+            else:
+                sc().error(f"Supplement path (`{supplementDirPath}`) is not a directory!")
+            for supplementFile in supplementFiles:
+                try:
+                    with open(supplementFile, "r") as supplement:
+                        markdown.write(supplement.read())
+                except FileNotFoundError:                                                               # This case should hardly appear since the files were found milliseconds before
+                    sc().error(f"The file `{os.path.abspath(supplementFile)}` was not found!")

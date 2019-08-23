@@ -121,14 +121,17 @@ class Visualiser:
         self.budgets = None
         self.projectThreshold = None
 
+        filepath = shared_libs.emma_helper.joinPath(self.projectPath, "budgets.json")
         try:
-            filepath = shared_libs.emma_helper.joinPath(self.projectPath, "budgets.json")
             with open(filepath, "r") as fp:
                 budgets = json.load(fp)
-                self.budgets = budgets["Budgets"]
-                self.projectThreshold = budgets["Project Threshold in %"]
         except FileNotFoundError:
-            sc().error("The budgets.json file was not found in the project folder (" + self.projectPath + ")!")
+            sc().error(f"The file `{os.path.abspath(filepath)}` was not found!")
+        except json.JSONDecodeError:
+            sc().error(f"JSON syntax error in `{os.path.abspath(filepath)}`!")
+
+        self.budgets = budgets["Budgets"]
+        self.projectThreshold = budgets["Project Threshold in %"]
 
     def __readMemStatsFile(self):
         """

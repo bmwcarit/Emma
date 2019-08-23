@@ -70,8 +70,13 @@ def readJson(jsonInFilePath):
     :return: dict of JSON
     """
     checkIfFileExists(os.path.abspath(jsonInFilePath))     # Absolute path for more readable error message
-    with open(jsonInFilePath, "r") as fp:
-        dictFromJson = json.load(fp)
+    try:
+        with open(jsonInFilePath, "r") as fp:
+            dictFromJson = json.load(fp)
+    except FileNotFoundError:
+        sc().error(f"The file `{os.path.abspath(jsonInFilePath)}` was not found!")
+    except json.JSONDecodeError:
+        sc().error(f"JSON syntax error in `{os.path.abspath(jsonInFilePath)}`!")
     return dictFromJson
 
 
@@ -213,8 +218,12 @@ def changePictureLinksToEmbeddingInHtmlData(htmlData, sourceDataPath=""):
             sc().warning("The file " + linkedPicturePath + " does not exist!")
             continue
 
-        with open(linkedPicturePath, "rb") as fileObject:
-            encodedPictureData = base64.encodebytes(fileObject.read())
+        try:
+            with open(linkedPicturePath, "rb") as fileObject:
+                encodedPictureData = base64.encodebytes(fileObject.read())
+        except FileNotFoundError:
+            sc().error(f"The file `{os.path.abspath(linkedPicturePath)}` was not found!")
+
         linkedPictureFileExtension = os.path.splitext(linkedPicture)[1][1:]
         replacementString = "data:image/" + linkedPictureFileExtension + ";base64," + encodedPictureData.decode() + "\" alt=\"" + linkedPicture
         htmlData = htmlData.replace(linkedPicture, replacementString)
@@ -243,8 +252,11 @@ def convertMarkdownFileToHtmlFile(markdownFilePath, htmlFilePath):
     :param htmlFilePath: Path to the .html file.
     :return: nothing
     """
-    with open(markdownFilePath, "r") as fileObject:
-        markdownData = fileObject.read()
+    try:
+        with open(markdownFilePath, "r") as fileObject:
+            markdownData = fileObject.read()
+    except FileNotFoundError:
+            sc().error(f"The file `{os.path.abspath(markdownFilePath)}` was not found!")
 
     htmlData = convertMarkdownDataToHtmlData(markdownData)
     htmlData = changePictureLinksToEmbeddingInHtmlData(htmlData, markdownFilePath)

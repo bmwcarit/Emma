@@ -92,16 +92,18 @@ def main(args):
 
     # Write each report to file if append mode in args is selected
     if args.append:
-        sc().info("Appending reports...")
+        sc().info("Appending report...")
         consumptionImage.writeReportToFile()
         report = emma_vis_libs.dataReports.Reports(projectPath=args.projectDir)
         report.plotNdisplay(plotShow=False)
 
     # Create a Markdown overview document and add all parts to it
-    elif args.overview:
+    if args.overview:
+        sc().info("Generating markdown report...")
         markdownFilePath = consumptionImage.createMarkdownOverview()
         consumptionModule.appendModuleConsumptionToMarkdownOverview(markdownFilePath)
         consumptionImage.appendSupplementToMarkdownOverview(markdownFilePath)
+        sc().info("Generating html report...")
         shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdownFilePath, (os.path.splitext(markdownFilePath)[0] + ".html"))
 
 
