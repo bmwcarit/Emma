@@ -27,6 +27,8 @@ import shutil
 from pypiscout.SCout_Logger import Logger as sc
 from matplotlib import pyplot as plt
 
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 # pylint: disable=wrong-import-position
 # Rationale: This module needs to access modules that are above them in the folder structure.
@@ -63,7 +65,9 @@ class TestHelper(unittest.TestCase):
         # Defining a path that shall contain the project files
         self.cmdLineTestProjectFolder = os.path.join(self.cmdLineTestRootFolder, "test_project")
         # Defining a path that shall contain the mapfiles
-        self.cmdLineTestProjectMapfilesfolder = os.path.join(self.cmdLineTestProjectFolder, "mapfiles")
+        self.cmdLineTestProjectMapfilesFolder = os.path.join(self.cmdLineTestProjectFolder, MAPFILES)
+        # Defining a path for supplements
+        self.cmdLineTestProjectSupplementFolder = os.path.join(self.cmdLineTestProjectFolder, SUPPLEMENT)
         # Defining a path that shall contain the output
         self.cmdLineTestOutputFolder = os.path.join("tests", "other_files", "test__cmd_line", testCaseName)
         # Defining a path that shall not exist
@@ -77,12 +81,13 @@ class TestHelper(unittest.TestCase):
 
         # Creating the root folder
         os.makedirs(self.cmdLineTestProjectFolder)
+        os.makedirs(self.cmdLineTestProjectSupplementFolder)
         # Copying the project files
         for file in os.listdir(sourceTestProjectFolder):
             if os.path.splitext(file)[-1].lower() == ".json":
                 shutil.copy(os.path.join(sourceTestProjectFolder, file), self.cmdLineTestProjectFolder)
         # Copying the mapfiles
-        shutil.copytree(os.path.join(sourceTestProjectFolder, "mapfiles"), os.path.join(self.cmdLineTestProjectFolder, "mapfiles"))
+        shutil.copytree(os.path.join(sourceTestProjectFolder, MAPFILES), os.path.join(self.cmdLineTestProjectFolder, MAPFILES))
         # Creating the output folder for the results with the test case name
         os.makedirs(self.cmdLineTestOutputFolder)
 
@@ -118,7 +123,7 @@ class CmdEmma(TestHelper):
         Check that an ordinary run is successful
         """
         try:
-            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--dir", self.cmdLineTestOutputFolder])
+            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesFolder, "--dir", self.cmdLineTestOutputFolder])
             Emma.emma.main(args)
         except Exception as e:  # pylint: disable=broad-except
                                 # Rationale: The purpose here is to catch any exception.
@@ -138,7 +143,7 @@ class CmdEmma(TestHelper):
         Check that an unexpected argument does raise an exeption
         """
         with self.assertRaises(SystemExit) as context:
-            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--dir", self.cmdLineTestOutputFolder, "--blahhhhhh"])
+            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesFolder, "--dir", self.cmdLineTestOutputFolder, "--blahhhhhh"])
             Emma.emma.main(args)
         self.assertEqual(context.exception.code, 2)
 
@@ -147,7 +152,7 @@ class CmdEmma(TestHelper):
         Check run with non-existing project folder
         """
         with self.assertRaises(SystemExit) as context:
-            args = Emma.emma.parseArgs(["--project", self.nonExistingPath, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--dir", self.cmdLineTestOutputFolder])
+            args = Emma.emma.parseArgs(["--project", self.nonExistingPath, "--mapfiles", self.cmdLineTestProjectMapfilesFolder, "--dir", self.cmdLineTestOutputFolder])
             Emma.emma.main(args)
         self.assertEqual(context.exception.code, -10)
 
@@ -165,7 +170,7 @@ class CmdEmma(TestHelper):
         Check run without a --dir parameter
         """
         try:
-            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder])
+            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesFolder])
             Emma.emma.main(args)
         except Exception as e:  # pylint: disable=broad-except
                                 # Rationale: The purpose here is to catch any exception.
@@ -194,9 +199,9 @@ class CmdEmmaVis(TestHelper):
         :return: None
         """
         if outputFolder is not None:
-            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--dir", outputFolder, "--noprompt"])
+            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesFolder, "--dir", outputFolder, "--noprompt"])
         else:
-            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--noprompt"])
+            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesFolder, "--noprompt"])
         Emma.emma.main(args)
 
     def test_normalRun(self):

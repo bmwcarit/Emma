@@ -263,7 +263,7 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
             with open(markdownFilePath, 'w') as markdown:
                 markdown.write("Memory Estimation Overview - " + self.project + "\n==========================\n\n")
 
-                markdown.write("<div align=\"center\"> <img src=\"" + shared_libs.emma_helper.joinPath(self.project + MEMORY_ESTIMATION_BY_PERCENTAGES_PICTURE_NAME_FIX_PART + self.statsTimestamp + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION) + "\" width=\"1000\"> </div>")
+                markdown.write("<div align=\"center\"> <img src=\"" +Emma.shared_libs.emma_helper.joinPath(self.project + MEMORY_ESTIMATION_BY_PERCENTAGES_PICTURE_NAME_FIX_PART + self.statsTimestamp + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION) + "\" width=\"1000\"> </div>")
 
                 markdown.write("\n")
 
@@ -285,14 +285,14 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
         :param markdownFilePath: The path of the Markdown file to which the data will be appended to
         :return: nothing
         """
-        supplementDirPath = shared_libs.emma_helper.joinPath(self.projectPath, SUPPLEMENT)
+        supplementDirPath =Emma.shared_libs.emma_helper.joinPath(self.projectPath, SUPPLEMENT)
         supplementFiles = []
 
         with open(markdownFilePath, 'a') as markdown:
             if os.path.isdir(supplementDirPath):
                 for supplementRootPath, directories, filesInSupplementDir in os.walk(supplementDirPath):
                     for aSupplementFile in filesInSupplementDir:
-                        aAbsSupplementFilePath = shared_libs.emma_helper.joinPath(supplementRootPath, aSupplementFile)
+                        aAbsSupplementFilePath =Emma.shared_libs.emma_helper.joinPath(supplementRootPath, aSupplementFile)
                         supplementFiles.append(aAbsSupplementFilePath)
             else:
                 sc().error(f"Supplement path (`{supplementDirPath}`) is not a directory!")

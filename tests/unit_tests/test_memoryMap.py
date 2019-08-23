@@ -113,7 +113,7 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
 
     def checkAddressChanges(self, resolvedMemEntry, originalMemEntry, expectedAddressStart=None, expectedAddressLength=None, expectedAddressEnd=None):  # pylint: disable=too-many-arguments
                                                                                                                                                         # Rationale: This function needs to be able to check all kinds of address related data, this is why these arguments needed.
-        # If we have expect an address change
+        # If we expect an address change
         if expectedAddressStart is not None or expectedAddressLength is not None or expectedAddressEnd is not None:
             # Then we will check it with the expected values
             self.assertEqual(resolvedMemEntry.addressStart, expectedAddressStart)
@@ -274,10 +274,10 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
 
     def test__overlapMultipleSections(self):
         """
-        S  |------|
-        S    |---------|
-        S      |----------|
-        S           |-----|
+        S1  |------|
+        S2    |---------|
+        S3      |----------|
+        S4           |-----|
         """
         # Creating the sections and objects for the test
         FIRST_SECTION_ADDRESS_START = 0x0100
@@ -302,12 +302,9 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
 
         # Check whether the addresses were set properly (the second section shall lose its beginning)
-        self.checkAddressChanges(resolvedSectionContainer[0], originalSectionContainer[0],
-                                 expectedAddressStart=originalSectionContainer[0].addressStart,
-                                 expectedAddressEnd=originalSectionContainer[0].addressEnd())
-        self.checkAddressChanges(resolvedSectionContainer[1], originalSectionContainer[1],
-                                 expectedAddressStart=(originalSectionContainer[0].addressEnd() + 1),
-                                 expectedAddressEnd=originalSectionContainer[1].addressEnd())
+        self.checkAddressChanges(resolvedSectionContainer[0], originalSectionContainer[0], expectedAddressStart=originalSectionContainer[0].addressStart, expectedAddressEnd=originalSectionContainer[0].addressEnd())
+        self.checkAddressChanges(resolvedSectionContainer[1], originalSectionContainer[1], expectedAddressStart=(originalSectionContainer[0].addressEnd() + 1), expectedAddressEnd=originalSectionContainer[1].addressEnd())
+
         # Check whether the flags were set properly
         self.checkFlags(resolvedSectionContainer[0], memEntryHandler, expectedOverlappingOthers=True)
         self.checkFlags(resolvedSectionContainer[1], memEntryHandler, expectedOverlappedBy=originalSectionContainer[0])

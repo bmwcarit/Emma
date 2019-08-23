@@ -38,9 +38,9 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
 
     """
     Goes trough the consumerCollection and checks  and resolves all the elements for the following situations:
-        1 - Duplicate
-        2 - Containment
-        3 - Overlap
+        - Duplicate
+        - Containment
+        - Overlap
 
     :param consumerCollection: A list of MemEntry objects. It must be ordered increasingly based on the startAddress attribute of the elements.
                                The elements of the list will be changed during the processing.

@@ -21,7 +21,7 @@ import collections
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+#from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import Emma.shared_libs.emma_helper
 
 
@@ -207,10 +207,10 @@ class MemEntry:
     def __calculateAddressEnd(addressStart, addressLength):
         """
         Function to calculate the end address from a start address and a length.
-        :return: The calculated end address if that exists (the object has addressLenght > 0), None otherwise.
+        :return: The calculated end address if that exists (the object has addressLength > 0), None otherwise.
         """
         result = None
-        # Is this a non-zero length memEntry object?
+        # Check if this is a non-zero length memEntry object
         if addressLength > 0:
             result = addressStart + addressLength - 1
 
