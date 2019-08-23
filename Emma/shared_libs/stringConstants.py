@@ -19,14 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 # Emma Memory and Mapfile Analyser - string constants
 
 
-# Version ################################################
-VERSION_MAJOR = "3"
-VERSION_MINOR = "0"
-EMMA_VERSION = ".".join([VERSION_MAJOR, VERSION_MINOR])
-EMMA_VISUALISER_VERSION = EMMA_VERSION
-EMMA_DELTAS_VERSION = EMMA_VERSION
-# #########################################################
-
 ADDR_END_DEC = "addrEndDec"
 ADDR_END_HEX = "addrEndHex"
 ADDR_END_HEX_ORIGINAL = "addrEndHexOriginal"

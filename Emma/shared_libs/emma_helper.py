@@ -22,7 +22,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import os
 import re
 import json
-import hashlib
 import base64
 
 from pypiscout.SCout_Logger import Logger as sc
