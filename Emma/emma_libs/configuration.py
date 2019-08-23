@@ -19,9 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import shared_libs.emma_helper
-import emma_libs.specificConfigurationFactory
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.shared_libs.emma_helper
+import Emma.emma_libs.specificConfigurationFactory
 
 
 class Configuration:
@@ -44,10 +44,10 @@ class Configuration:
         :return: None
         """
         # Check whether the configurationPath exists
-        shared_libs.emma_helper.checkIfFolderExists(configurationPath)
+        Emma.shared_libs.emma_helper.checkIfFolderExists(configurationPath)
 
         # Processing the globalConfig.json
-        globalConfigPath = shared_libs.emma_helper.joinPath(configurationPath, "globalConfig.json")
+        globalConfigPath = Emma.shared_libs.emma_helper.joinPath(configurationPath, "globalConfig.json")
         self.globalConfig = Configuration.__readGlobalConfigJson(globalConfigPath)
         sc().info("Imported " + str(len(self.globalConfig)) + " global config entries:" + str(list(self.globalConfig.keys())))
 
@@ -55,7 +55,7 @@ class Configuration:
         for configId in self.globalConfig:
             # Processing the addressSpaces*.json
             if "addressSpacesPath" in self.globalConfig[configId]:
-                addressSpacesPath = shared_libs.emma_helper.joinPath(configurationPath, self.globalConfig[configId]["addressSpacesPath"])
+                addressSpacesPath = Emma.shared_libs.emma_helper.joinPath(configurationPath, self.globalConfig[configId]["addressSpacesPath"])
                 self.globalConfig[configId]["addressSpaces"] = Configuration.__readAddressSpacesJson(addressSpacesPath)
             else:
                 sc().error("The " + configId + " does not have the key: " + "addressSpacesPath")
@@ -63,15 +63,15 @@ class Configuration:
             # Setting up the mapfile search paths for the configId
             # TODO: add option for recursive search (MSc)
             if MAPFILES in self.globalConfig[configId]:
-                mapfilesPathForThisConfigId = shared_libs.emma_helper.joinPath(mapfilesPath, self.globalConfig[configId][MAPFILES])
+                mapfilesPathForThisConfigId = Emma.shared_libs.emma_helper.joinPath(mapfilesPath, self.globalConfig[configId][MAPFILES])
             else:
                 mapfilesPathForThisConfigId = mapfilesPath
-            shared_libs.emma_helper.checkIfFolderExists(mapfilesPathForThisConfigId)
+            Emma.shared_libs.emma_helper.checkIfFolderExists(mapfilesPathForThisConfigId)
 
             # Creating the SpecificConfiguration object
             if "compiler" in self.globalConfig[configId]:
                 usedCompiler = self.globalConfig[configId]["compiler"]
-                self.specificConfigurations[configId] = emma_libs.specificConfigurationFactory.createSpecificConfiguration(usedCompiler, noPrompt=noPrompt)
+                self.specificConfigurations[configId] = Emma.emma_libs.specificConfigurationFactory.createSpecificConfiguration(usedCompiler, noPrompt=noPrompt)
                 # Processing the compiler dependent parts of the configuration
                 sc().info("Processing the mapfiles of the configID \"" + configId + "\"")
                 self.specificConfigurations[configId].readConfiguration(configurationPath, mapfilesPathForThisConfigId, configId, self.globalConfig[configId])
@@ -91,7 +91,7 @@ class Configuration:
         :return: The content of the globalConfig.
         """
         # Load the globalConfig file
-        globalConfig = shared_libs.emma_helper.readJson(path)
+        globalConfig = Emma.shared_libs.emma_helper.readJson(path)
 
         # Loading the config files of the defined configID-s
         for configId in list(globalConfig.keys()):  # List of keys required so we can remove the ignoreConfigID entrys
@@ -119,7 +119,7 @@ class Configuration:
         :return: The content of the addressSpaces config file.
         """
         # Load the addressSpaces file
-        addressSpaces = shared_libs.emma_helper.readJson(path)
+        addressSpaces = Emma.shared_libs.emma_helper.readJson(path)
 
         # Removing the imported memory entries if they are listed in the IGNORE_MEMORY
         if IGNORE_MEMORY in addressSpaces.keys():

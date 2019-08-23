@@ -24,13 +24,13 @@ import argparse
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-
-import shared_libs.emma_helper
-import emma_delta_libs.Delta
-import emma_delta_libs.FilePresenter
-import emma_delta_libs.FileSelector
-import emma_delta_libs.RootSelector
+import Emma
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.shared_libs.emma_helper
+import Emma.emma_delta_libs.Delta
+import Emma.emma_delta_libs.FilePresenter
+import Emma.emma_delta_libs.FileSelector
+import Emma.emma_delta_libs.RootSelector
 
 
 def parseArgs(arguments=""):
@@ -50,7 +50,7 @@ def parseArgs(arguments=""):
         "--version",
         help="Display the version number.",
         action="version",
-        version="%(prog)s, Version: " + EMMA_DELTAS_VERSION
+        version="%(prog)s, Version: " + Emma.EMMA_DELTAS_VERSION
     )
     parser.add_argument(
         "--infiles",
@@ -92,20 +92,20 @@ def main(args):
     if args.infiles and args.outfile is not None:
         candidates = args.infiles
     elif args.project:
-        shared_libs.emma_helper.checkIfFolderExists(args.project)
-        fileSelector = emma_delta_libs.FileSelector.FileSelector(projectDir=args.project)
-        filePresenter = emma_delta_libs.FilePresenter.FilePresenter(fileSelector=fileSelector)
+        Emma.shared_libs.emma_helper.checkIfFolderExists(args.project)
+        fileSelector = Emma.emma_delta_libs.FileSelector.FileSelector(projectDir=args.project)
+        filePresenter = Emma.emma_delta_libs.FilePresenter.FilePresenter(fileSelector=fileSelector)
         candidates = filePresenter.chooseCandidates()
     elif not args.r:
-        rootpath = emma_delta_libs.RootSelector.selectRoot()
-        emma_delta_libs.RootSelector.saveNewRootpath(rootpath)
-        fileSelector = emma_delta_libs.FileSelector.FileSelector(projectDir=rootpath)
-        filePresenter = emma_delta_libs.FilePresenter.FilePresenter(fileSelector=fileSelector)
+        rootpath = Emma.emma_delta_libs.RootSelector.selectRoot()
+        Emma.emma_delta_libs.RootSelector.saveNewRootpath(rootpath)
+        fileSelector = Emma.emma_delta_libs.FileSelector.FileSelector(projectDir=rootpath)
+        filePresenter = Emma.emma_delta_libs.FilePresenter.FilePresenter(fileSelector=fileSelector)
         candidates = filePresenter.chooseCandidates()
     else:
         sc().error("No matching arguments.")
 
-    delta = emma_delta_libs.Delta.Delta(files=candidates, outfile=args.outfile)
+    delta = Emma.emma_delta_libs.Delta.Delta(files=candidates, outfile=args.outfile)
     delta.tocsv()
     sc().info("Saved delta to " + args.outfile)
 

@@ -21,8 +21,8 @@ import collections
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import shared_libs.emma_helper
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.shared_libs.emma_helper
 
 
 class MemEntry:
@@ -56,11 +56,11 @@ class MemEntry:
 
         # Converting the address related parameters to int
         if addressStart is not None:
-            _, addressStart = shared_libs.emma_helper.unifyAddress(addressStart)
+            _, addressStart = Emma.shared_libs.emma_helper.unifyAddress(addressStart)
         if addressLength is not None:
-            _, addressLength = shared_libs.emma_helper.unifyAddress(addressLength)
+            _, addressLength = Emma.shared_libs.emma_helper.unifyAddress(addressLength)
         if addressEnd is not None:
-            _, addressEnd = shared_libs.emma_helper.unifyAddress(addressEnd)
+            _, addressEnd = Emma.shared_libs.emma_helper.unifyAddress(addressEnd)
 
         self.addressStart = addressStart
 

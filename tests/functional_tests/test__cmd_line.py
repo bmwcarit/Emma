@@ -31,8 +31,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 # pylint: disable=wrong-import-position
 # Rationale: This module needs to access modules that are above them in the folder structure.
 
-import emma
-import emma_vis
+import Emma.emma
+import Emma.emma_vis
 
 
 class TestHelper(unittest.TestCase):
@@ -118,8 +118,8 @@ class CmdEmma(TestHelper):
         Check that an ordinary run is successful
         """
         try:
-            args = emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--dir", self.cmdLineTestOutputFolder])
-            emma.main(args)
+            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--dir", self.cmdLineTestOutputFolder])
+            Emma.emma.main(args)
         except Exception as e:  # pylint: disable=broad-except
                                 # Rationale: The purpose here is to catch any exception.
             self.fail("Unexpected exception: " + str(e))
@@ -129,8 +129,8 @@ class CmdEmma(TestHelper):
         Check that `--help` does not raise an exeption but exits with SystemExit(0)
         """
         with self.assertRaises(SystemExit) as context:
-            args = emma.parseArgs(["--help"])
-            emma.main(args)
+            args = Emma.emma.parseArgs(["--help"])
+            Emma.emma.main(args)
         self.assertEqual(context.exception.code, 0)
 
     def test_unrecognisedArgs(self):
@@ -138,8 +138,8 @@ class CmdEmma(TestHelper):
         Check that an unexpected argument does raise an exeption
         """
         with self.assertRaises(SystemExit) as context:
-            args = emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--dir", self.cmdLineTestOutputFolder, "--blahhhhhh"])
-            emma.main(args)
+            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--dir", self.cmdLineTestOutputFolder, "--blahhhhhh"])
+            Emma.emma.main(args)
         self.assertEqual(context.exception.code, 2)
 
     def test_noProjDir(self):
@@ -147,8 +147,8 @@ class CmdEmma(TestHelper):
         Check run with non-existing project folder
         """
         with self.assertRaises(SystemExit) as context:
-            args = emma.parseArgs(["--project", self.nonExistingPath, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--dir", self.cmdLineTestOutputFolder])
-            emma.main(args)
+            args = Emma.emma.parseArgs(["--project", self.nonExistingPath, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--dir", self.cmdLineTestOutputFolder])
+            Emma.emma.main(args)
         self.assertEqual(context.exception.code, -10)
 
     def test_noMapfileDir(self):
@@ -156,8 +156,8 @@ class CmdEmma(TestHelper):
         Check run with non-existing mapfile folder
         """
         with self.assertRaises(SystemExit) as context:
-            args = emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.nonExistingPath, "--dir", self.cmdLineTestOutputFolder])
-            emma.main(args)
+            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.nonExistingPath, "--dir", self.cmdLineTestOutputFolder])
+            Emma.emma.main(args)
         self.assertEqual(context.exception.code, -10)
 
     def test_noDirOption(self):
@@ -165,8 +165,8 @@ class CmdEmma(TestHelper):
         Check run without a --dir parameter
         """
         try:
-            args = emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder])
-            emma.main(args)
+            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder])
+            Emma.emma.main(args)
         except Exception as e:  # pylint: disable=broad-except
                                 # Rationale: The purpose here is to catch any exception.
             self.fail("Unexpected exception: " + str(e))
@@ -194,18 +194,18 @@ class CmdEmmaVis(TestHelper):
         :return: None
         """
         if outputFolder is not None:
-            args = emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--dir", outputFolder, "--noprompt"])
+            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--dir", outputFolder, "--noprompt"])
         else:
-            args = emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--noprompt"])
-        emma.main(args)
+            args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesfolder, "--noprompt"])
+        Emma.emma.main(args)
 
     def test_normalRun(self):
         """
         Check that an ordinary run is successful
         """
         try:
-            argsEmmaVis = emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "--overview", "--inOutDir", self.cmdLineTestOutputFolder, "--noprompt", "--quiet"])
-            emma_vis.main(argsEmmaVis)
+            argsEmmaVis = Emma.emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "--overview", "--inOutDir", self.cmdLineTestOutputFolder, "--noprompt", "--quiet"])
+            Emma.emma_vis.main(argsEmmaVis)
         except Exception as e:  # pylint: disable=broad-except
                                 # Rationale: The purpose here is to catch any exception.
             self.fail("Unexpected exception: " + str(e))
@@ -215,8 +215,8 @@ class CmdEmmaVis(TestHelper):
         Check that `--help` does not raise an exeption but exits with SystemExit(0)
         """
         with self.assertRaises(SystemExit) as context:
-            args = emma_vis.parseArgs(["--help"])
-            emma_vis.main(args)
+            args = Emma.emma_vis.parseArgs(["--help"])
+            Emma.emma_vis.main(args)
         self.assertEqual(context.exception.code, 0)
 
     def test_unrecognisedArgs(self):
@@ -224,8 +224,8 @@ class CmdEmmaVis(TestHelper):
         Check that an unexpected argument does raise an exeption
         """
         with self.assertRaises(SystemExit) as context:
-            args = emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "overview", "--dir", self.cmdLineTestOutputFolder, "--blahhhhhh", "--noprompt", "--quiet"])
-            emma_vis.main(args)
+            args = Emma.emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "overview", "--dir", self.cmdLineTestOutputFolder, "--blahhhhhh", "--noprompt", "--quiet"])
+            Emma.emma_vis.main(args)
         self.assertEqual(context.exception.code, 2)
 
     def test_noProjDir(self):
@@ -233,8 +233,8 @@ class CmdEmmaVis(TestHelper):
         Check run with non-existing project folder
         """
         with self.assertRaises(SystemExit) as context:
-            args = emma_vis.parseArgs(["--project", self.nonExistingPath, "--overview", "--inOutDir", self.cmdLineTestOutputFolder, "--noprompt", "--quiet"])
-            emma_vis.main(args)
+            args = Emma.emma_vis.parseArgs(["--project", self.nonExistingPath, "--overview", "--inOutDir", self.cmdLineTestOutputFolder, "--noprompt", "--quiet"])
+            Emma.emma_vis.main(args)
         self.assertEqual(context.exception.code, -10)
 
     def test_noMemStats(self):
@@ -242,8 +242,8 @@ class CmdEmmaVis(TestHelper):
         Check run with non-existing memStats folder
         """
         with self.assertRaises(SystemExit) as context:
-            args = emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "--overview", "--inOutDir", self.nonExistingPath, "--noprompt", "--quiet"])
-            emma_vis.main(args)
+            args = Emma.emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "--overview", "--inOutDir", self.nonExistingPath, "--noprompt", "--quiet"])
+            Emma.emma_vis.main(args)
         self.assertEqual(context.exception.code, -10)
 
     def test_noDirOption(self):
@@ -254,8 +254,8 @@ class CmdEmmaVis(TestHelper):
             # This a is a specific case, the default Emma results will not work here. Because of this, we will delete it and run the Emma again.
             shutil.rmtree(self.cmdLineTestOutputFolder)
             self.runEmma()
-            args = emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "--overview", "--noprompt", "--quiet"])
-            emma_vis.main(args)
+            args = Emma.emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "--overview", "--noprompt", "--quiet"])
+            Emma.emma_vis.main(args)
             plt.close('all')
         except Exception as e:  # pylint: disable=broad-except
                                 # Rationale: The purpose here is to catch any exception.

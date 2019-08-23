@@ -19,12 +19,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import os
 import re
+import copy
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import shared_libs.emma_helper
-import emma_libs.memoryEntry
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.shared_libs.emma_helper
+import Emma.emma_libs.memoryEntry
 
 
 class Categorisation:
@@ -49,8 +50,8 @@ class Categorisation:
         self.categoriesSectionsKeywordsPath = categoriesSectionsKeywordsPath
         # Loading the categories files. These files are optional, if they are not present we will store None instead.
         self.categoriesObjects = Categorisation.__readCategoriesJson(self.categoriesObjectsPath)
-        self.categoriesObjectsKeywords = Categorisation.__readCategoriesJson(self.categoriesObjectsKeywordsPath)
         self.categoriesSections = Categorisation.__readCategoriesJson(self.categoriesSectionsPath)
+        self.categoriesObjectsKeywords = Categorisation.__readCategoriesJson(self.categoriesObjectsKeywordsPath)
         self.categoriesSectionsKeywords = Categorisation.__readCategoriesJson(self.categoriesSectionsKeywordsPath)
 
     def fillOutCategories(self, sectionCollection, objectCollection):
@@ -82,12 +83,12 @@ class Categorisation:
     @staticmethod
     def __readCategoriesJson(path):
         """
-        Function ro read in a categorisation json file.
+        Function to load a categorisation json file.
         :param path: The path of the file that needs to be read.
         :return: Content of the json file.
         """
         if os.path.exists(path):
-            categoriesJson = shared_libs.emma_helper.readJson(path)
+            categoriesJson = Emma.shared_libs.emma_helper.readJson(path)
         else:
             categoriesJson = None
             sc().warning("There was no " + os.path.basename(path) + " file found, the categorization based on this will be skipped.")
@@ -152,7 +153,7 @@ class Categorisation:
                 text = input("> ")
             if text == "y":
                 sc().info("Remove unmatched modules from " + CATEGORIES_SECTIONS_JSON + "?\nIt will be overwritten.\n `y` to accept, any other key to discard.")
-                Categorisation.__removeUnmatchedFromCategoriesJson(self.categoriesSections, sectionCollection, emma_libs.memoryEntry.SectionEntry, self.categoriesSectionsPath)
+                Categorisation.__removeUnmatchedFromCategoriesJson(self.categoriesSections, sectionCollection, Emma.emma_libs.memoryEntry.SectionEntry, self.categoriesSectionsPath)
             else:
                 sc().info(text + " was entered, aborting the removal. The " + self.categoriesSectionsPath + " was not changed.")
 
@@ -192,7 +193,7 @@ class Categorisation:
                 text = input("> ")
             if text == "y":
                 sc().info("Remove unmatched modules from " + CATEGORIES_OBJECTS_JSON + "?\nIt will be overwritten.\n `y` to accept, any other key to discard.")
-                Categorisation.__removeUnmatchedFromCategoriesJson(self.categoriesObjects, objectCollection, emma_libs.memoryEntry.ObjectEntry, self.categoriesObjectsPath)
+                Categorisation.__removeUnmatchedFromCategoriesJson(self.categoriesObjects, objectCollection, Emma.emma_libs.memoryEntry.ObjectEntry, self.categoriesObjectsPath)
             else:
                 sc().info(text + " was entered, aborting the removal. The " + self.categoriesObjectsPath + " was not changed.")
 
@@ -292,12 +293,12 @@ class Categorisation:
             mergedCategories[key].sort(key=lambda s: s.lower())
 
         # Write the data to the outputPath
-        shared_libs.emma_helper.writeJson(outputPath, mergedCategories)
+        Emma.shared_libs.emma_helper.writeJson(outputPath, mergedCategories)
 
     @staticmethod
     def __removeUnmatchedFromCategoriesJson(categoriesToRemoveFrom, consumerCollection, memEntryHandler, outputPath):
         """
-        Removes categories from the categories files the categories for those no matches were found.
+        Removes categories from the categories files for those where no matches were found
         :param categoriesToRemoveFrom: This is the categories file from which we remove the unmatched categories.
         :param consumerCollection: This is the consumer collection based on we will decide which category has matched.
         :param memEntryHandler: This is a subclass of the MemEntryHandler.
@@ -313,7 +314,8 @@ class Categorisation:
             categorisedElements[value] = categorisedElements.get(value, [])
             categorisedElements[value].append(key)
         # FIXME: dict changes during iteration (MSc)
-        for category in categoriesToRemoveFrom:  # For every category in categories.json
+
+        for category in copy.copy(categoriesToRemoveFrom):  # For every category in categories.json
             if category not in categorisedElements:
                 # If category is in categories.json but has never occurred in the mapfiles (hence not present in consumerCollection)
                 # Remove the not occuring category entirely
@@ -328,4 +330,4 @@ class Categorisation:
             categoriesToRemoveFrom[key].sort(key=lambda s: s.lower())
 
         # Write the data to the outputPath
-        shared_libs.emma_helper.writeJson(outputPath, categoriesToRemoveFrom)
+        Emma.shared_libs.emma_helper.writeJson(outputPath, categoriesToRemoveFrom)

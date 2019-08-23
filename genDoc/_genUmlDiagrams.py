@@ -24,36 +24,36 @@ from pypiscout.SCout_Logger import Logger as sc
 import gprof2dot    # pylint: disable=unused-import
                     # Rationale: Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 
 
 LIST_OF_SOURCE_FILE_PATHS = [           # "../../*" instead of "../*" since we change the working directory within the system call
-    "../../emma_libs/categorisation.py",
-    "../../emma_libs/configuration.py",
-    "../../emma_libs/ghsConfiguration.py",
-    "../../emma_libs/ghsMapfileProcessor.py",
-    "../../emma_libs/ghsMapfileRegexes.py",
-    "../../emma_libs/mapfileProcessor.py",
-    "../../emma_libs/mapfileProcessorFactory.py",
-    "../../emma_libs/memoryEntry.py",
-    "../../emma_libs/memoryManager.py",
-    "../../emma_libs/memoryMap.py",
-    "../../emma_libs/specificConfiguration.py",
-    "../../emma_libs/specificConfigurationFactory.py",
-    "../../emma_delta_libs/Delta.py",
-    "../../emma_delta_libs/FilePresenter.py",
-    "../../emma_delta_libs/FileSelector.py",
-    "../../emma_delta_libs/RootSelector.py",
-    "../../emma_vis_libs/dataReports.py",
-    "../../emma_vis_libs/dataVisualiser.py",
-    "../../emma_vis_libs/dataVisualiserCategorisedSections.py",
-    "../../emma_vis_libs/dataVisualiserMemoryMap.py",
-    "../../emma_vis_libs/dataVisualiserObjects.py",
-    "../../emma_vis_libs/dataVisualiserSections.py",
-    "../../shared_libs/emma_helper.py",
-    "../../emma.py",
-    "../../emma_deltas.py",
-    "../../emma_vis.py"
+    "../../Emma/emma_libs/categorisation.py",
+    "../../Emma/emma_libs/configuration.py",
+    "../../Emma/emma_libs/ghsConfiguration.py",
+    "../../Emma/emma_libs/ghsMapfileProcessor.py",
+    "../../Emma/emma_libs/ghsMapfileRegexes.py",
+    "../../Emma/emma_libs/mapfileProcessor.py",
+    "../../Emma/emma_libs/mapfileProcessorFactory.py",
+    "../../Emma/emma_libs/memoryEntry.py",
+    "../../Emma/emma_libs/memoryManager.py",
+    "../../Emma/emma_libs/memoryMap.py",
+    "../../Emma/emma_libs/specificConfiguration.py",
+    "../../Emma/emma_libs/specificConfigurationFactory.py",
+    "../../Emma/emma_delta_libs/Delta.py",
+    "../../Emma/emma_delta_libs/FilePresenter.py",
+    "../../Emma/emma_delta_libs/FileSelector.py",
+    "../../Emma/emma_delta_libs/RootSelector.py",
+    "../../Emma/emma_vis_libs/dataReports.py",
+    "../../Emma/emma_vis_libs/dataVisualiser.py",
+    "../../Emma/emma_vis_libs/dataVisualiserCategorisedSections.py",
+    "../../Emma/emma_vis_libs/dataVisualiserMemoryMap.py",
+    "../../Emma/emma_vis_libs/dataVisualiserObjects.py",
+    "../../Emma/emma_vis_libs/dataVisualiserSections.py",
+    "../../Emma/shared_libs/emma_helper.py",
+    "../../Emma/emma.py",
+    "../../Emma/emma_deltas.py",
+    "../../Emma/emma_vis.py"
 ]
 
 

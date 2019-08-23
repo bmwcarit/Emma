@@ -28,15 +28,15 @@ import os
 import pandas
 import matplotlib.pyplot
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import shared_libs.emma_helper
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.shared_libs.emma_helper
 
 
 class Reports:
     def __init__(self, projectPath):
         self.projectPath = projectPath
         self.project = os.path.split(projectPath)[-1]
-        self.reportFilePath = shared_libs.emma_helper.joinPath(projectPath, "results", self.project + "-Memory_Report_by_configID-memType.csv")
+        self.reportFilePath = Emma.shared_libs.emma_helper.joinPath(projectPath, "results", self.project + "-Memory_Report_by_configID-memType.csv")
         self.data = pandas.read_csv(self.reportFilePath, sep=";").drop_duplicates(subset=[TIMESTAMP, CONFIG_ID, MEM_TYPE])  # TODO: This is a temporary fix, we actually want to not append duplicates to the csv in the first place (FM)
 
     def plotNdisplay(self, plotShow=True):
@@ -70,7 +70,7 @@ class Reports:
             matplotlib.pyplot.ylabel("used [%]")
 
             filename = self.project + "_Memory_Report_" + configID + ".png"
-            matplotlib.pyplot.savefig(shared_libs.emma_helper.joinPath(self.projectPath, "results", filename), dpi=MEMORY_ESTIMATION_PICTURE_DPI, transparent=False, bbox_inches="tight")
+            matplotlib.pyplot.savefig(Emma.shared_libs.emma_helper.joinPath(self.projectPath, "results", filename), dpi=MEMORY_ESTIMATION_PICTURE_DPI, transparent=False, bbox_inches="tight")
 
             if plotShow:
                 matplotlib.pyplot.show()  # Show plots after results in console output are shown

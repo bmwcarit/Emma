@@ -26,8 +26,8 @@ from pypiscout.SCout_Logger import Logger as sc
 import gprof2dot    # pylint: disable=unused-import
                     # Rationale: Not directly used, but later we do a sys-call wich needs the library. This is needed to inform the user to install the package.
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import shared_libs.emma_helper
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.shared_libs.emma_helper
 
 sys.path.append("..")
 
@@ -97,7 +97,7 @@ class ProfilerFilter:   # pylint: disable=too-few-public-methods
         for root, _, files in os.walk(self.rootFolder):
             for file in files:
                 if os.path.splitext(file)[1] == ".py":
-                    self.sourceFileList.append(shared_libs.emma_helper.joinPath(root, file))
+                    self.sourceFileList.append(Emma.shared_libs.emma_helper.joinPath(root, file))
 
     def __isThisOurCode(self, fileName):
         result = False
@@ -142,7 +142,7 @@ def generateCallGraph(profileFile, executionString, verbose):
     """
 
     sc().info("Generating call graphs for: " + executionString)
-    sc().info("The results will be stored in: " + shared_libs.emma_helper.joinPath(os.getcwd(), README_CALL_GRAPH_AND_UML_FOLDER_NAME))
+    sc().info("The results will be stored in: " + Emma.shared_libs.emma_helper.joinPath(os.getcwd(), README_CALL_GRAPH_AND_UML_FOLDER_NAME))
 
     sc().info("Analysing the program and creating the .profile file...\n")
     subprocess.run("python -m cProfile -o " + profileFile + " " + executionString, shell=True)

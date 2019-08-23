@@ -28,7 +28,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 # pylint: disable=wrong-import-position
 # Rationale: This module needs to access modules that are above them in the folder structure.
 
-import emma_libs.memoryEntry
+import Emma.emma_libs.memoryEntry
 
 
 class TestData:
@@ -57,7 +57,7 @@ class TestData:
         self.compilerSpecificData["vasName"] = self.vasName
         self.compilerSpecificData["vasSectionName"] = self.vasSectionName
 
-        self.basicMemEntry = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+        self.basicMemEntry = Emma.emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
                                                             addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd,
                                                             sectionName=self.sectionName, objectName=self.objectName,
                                                             memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
@@ -117,7 +117,7 @@ class MemEntryTestCase(unittest.TestCase, TestData):
     def test_constructorAddressLengthAndAddressEnd(self):
         # Modifying the self.addressEnd to make sure it is wrong
         self.addressEnd = self.addressStart + self.addressLength + 0x100
-        entryWithLengthAndAddressEnd = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+        entryWithLengthAndAddressEnd = Emma.emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
                                                                       addressStart=self.addressStart, addressLength=self.addressLength, addressEnd=self.addressEnd,
                                                                       sectionName=self.sectionName, objectName=self.objectName,
                                                                       memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
@@ -129,7 +129,7 @@ class MemEntryTestCase(unittest.TestCase, TestData):
 
     def test_constructorNoAddressLengthNorAddressEnd(self):
         self.assertFalse(self.actionErrorWasCalled)
-        entryWithoutLengthAndAddressEnd = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+        entryWithoutLengthAndAddressEnd = Emma.emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
                                                                          addressStart=self.addressStart, addressLength=None, addressEnd=None,
                                                                          sectionName=self.sectionName, objectName=self.objectName,
                                                                          memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
@@ -138,7 +138,7 @@ class MemEntryTestCase(unittest.TestCase, TestData):
         self.assertIsNone(entryWithoutLengthAndAddressEnd.addressLength)
 
     def test___setAddressesGivenEnd(self):
-        entry = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+        entry = Emma.emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
                                                addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd,
                                                sectionName=self.sectionName, objectName=self.objectName,
                                                memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
@@ -161,7 +161,7 @@ class MemEntryTestCase(unittest.TestCase, TestData):
         self.assertEqual(entry.addressEndHex(), hex(self.addressEnd))
 
     def test___setAddressesGivenLength(self):
-        entry = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+        entry = Emma.emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
                                                addressStart=self.addressStart, addressLength=self.addressLength, addressEnd=None,
                                                sectionName=self.sectionName, objectName=self.objectName,
                                                memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
@@ -185,7 +185,7 @@ class MemEntryTestCase(unittest.TestCase, TestData):
 
     def test_compilerSpecificDataWrongType(self):
         self.assertFalse(self.actionErrorWasCalled)
-        otherMemEntry = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+        otherMemEntry = Emma.emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
                                                        addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd,
                                                        sectionName=self.sectionName, objectName=self.objectName,
                                                        memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
@@ -194,7 +194,7 @@ class MemEntryTestCase(unittest.TestCase, TestData):
         self.assertIsNone(otherMemEntry.compilerSpecificData)
 
     def test_equalConfigID(self):
-        otherMemEntry = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+        otherMemEntry = Emma.emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
                                                        addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd,
                                                        sectionName=self.sectionName, objectName=self.objectName,
                                                        memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
@@ -204,7 +204,7 @@ class MemEntryTestCase(unittest.TestCase, TestData):
         self.assertEqual(self.basicMemEntry.equalConfigID(otherMemEntry), False)
 
     def test___lt__(self):
-        otherMemEntry = emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
+        otherMemEntry = Emma.emma_libs.memoryEntry.MemEntry(configID=self.configID, mapfileName=self.mapfileName,
                                                        addressStart=self.addressStart, addressLength=None, addressEnd=self.addressEnd,
                                                        sectionName=self.sectionName, objectName=self.objectName,
                                                        memType=self.memType, memTypeTag=self.memTypeTag, category=self.category,
@@ -221,9 +221,9 @@ class MemEntryTestCase(unittest.TestCase, TestData):
         # pylint: disable=protected-access
         # Rationale: This test was specificly written to access this private method.
 
-        self.assertEqual(emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, self.addressLength), self.addressEnd)
-        self.assertEqual(emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, 1), self.addressStart)
-        self.assertIsNone(emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, 0), self.addressStart)
+        self.assertEqual(Emma.emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, self.addressLength), self.addressEnd)
+        self.assertEqual(Emma.emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, 1), self.addressStart)
+        self.assertIsNone(Emma.emma_libs.memoryEntry.MemEntry._MemEntry__calculateAddressEnd(self.addressStart, 0), self.addressStart)
 
     def test___eq__(self):
         with self.assertRaises(NotImplementedError):
@@ -277,7 +277,7 @@ class MemEntryHandlerTestCase(unittest.TestCase):
         # Rationale: This test was specificly written to test whether it is possible to instantiate the MemEntryHandler class. Since it shall fail, it will not be tried to be used.
 
         with self.assertRaises(TypeError):
-            memEntryHandler = emma_libs.memoryEntry.MemEntryHandler()
+            memEntryHandler = Emma.emma_libs.memoryEntry.MemEntryHandler()
 
 
 class SectionEntryTestCase(unittest.TestCase, TestData):
@@ -301,12 +301,12 @@ class SectionEntryTestCase(unittest.TestCase, TestData):
         self.actionErrorWasCalled = True
 
     def test_isEqual(self):
-        self.assertTrue(emma_libs.memoryEntry.SectionEntry.isEqual(self.basicMemEntry, self.basicMemEntry))
+        self.assertTrue(Emma.emma_libs.memoryEntry.SectionEntry.isEqual(self.basicMemEntry, self.basicMemEntry))
         with self.assertRaises(TypeError):
-            emma_libs.memoryEntry.SectionEntry.isEqual(self.basicMemEntry, "This is obviously not a MemEntry object!")
+            Emma.emma_libs.memoryEntry.SectionEntry.isEqual(self.basicMemEntry, "This is obviously not a MemEntry object!")
 
     def test_getName(self):
-        name = emma_libs.memoryEntry.SectionEntry.getName(self.basicMemEntry)
+        name = Emma.emma_libs.memoryEntry.SectionEntry.getName(self.basicMemEntry)
         self.assertEqual(name, self.sectionName)
 
 
@@ -331,12 +331,12 @@ class ObjectEntryTestCase(unittest.TestCase, TestData):
         self.actionErrorWasCalled = True
 
     def test_isEqual(self):
-        self.assertTrue(emma_libs.memoryEntry.ObjectEntry.isEqual(self.basicMemEntry, self.basicMemEntry))
+        self.assertTrue(Emma.emma_libs.memoryEntry.ObjectEntry.isEqual(self.basicMemEntry, self.basicMemEntry))
         with self.assertRaises(TypeError):
-            emma_libs.memoryEntry.ObjectEntry.isEqual(self.basicMemEntry, "This is obviously not a MemEntry object!")
+            Emma.emma_libs.memoryEntry.ObjectEntry.isEqual(self.basicMemEntry, "This is obviously not a MemEntry object!")
 
     def test_getName(self):
-        name = emma_libs.memoryEntry.ObjectEntry.getName(self.basicMemEntry)
+        name = Emma.emma_libs.memoryEntry.ObjectEntry.getName(self.basicMemEntry)
         self.assertEqual(name, (self.sectionName + "::" + self.objectName))
 
 

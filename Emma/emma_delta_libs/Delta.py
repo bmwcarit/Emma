@@ -22,8 +22,8 @@ import typing
 
 import pandas
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import shared_libs.emma_helper
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.shared_libs.emma_helper
 
 
 class Delta:
@@ -53,7 +53,7 @@ class Delta:
         delta = lhs.join(rhs, lsuffix=LHS_SUFFIX, rsuffix=RHS_SUFFIX)
 
         delta[DELTA_SIZE_DEC] = delta[SIZE_DEC + LHS_SUFFIX] - delta[SIZE_DEC + RHS_SUFFIX]
-        delta[DELTA_HUMAN_READABLE] = delta[DELTA_SIZE_DEC].apply(shared_libs.emma_helper.toHumanReadable)
+        delta[DELTA_HUMAN_READABLE] = delta[DELTA_SIZE_DEC].apply(Emma.shared_libs.emma_helper.toHumanReadable)
         delta[DELTA_PERCENTAGE] = delta[DELTA_SIZE_DEC] / delta[SIZE_DEC + LHS_SUFFIX]
 
         return delta

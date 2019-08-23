@@ -20,22 +20,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 
 import setuptools
-
-# Version ################################################
-VERSION_MAJOR = "3"
-VERSION_MINOR = "1"
-EMMA_VERSION = ".".join([VERSION_MAJOR, VERSION_MINOR])
-EMMA_VISUALISER_VERSION = EMMA_VERSION
-EMMA_DELTAS_VERSION = EMMA_VERSION
-# #########################################################
-
+import Emma
 
 with open("README.md", "r") as fp:
     long_description = fp.read()
 
 setuptools.setup(
     name="pypiemma",
-    version=EMMA_VERSION,
+    version=Emma.EMMA_VERSION,
     license="GPLv3+",
     author="The Emma Authors",
     description="Emma Memory and Mapfile Analyser (Emma) | Conduct static (i.e. worst case) memory consumption \
