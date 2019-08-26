@@ -303,11 +303,16 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
 
         # Check whether the addresses were set properly (the second section shall lose its beginning)
         self.checkAddressChanges(resolvedSectionContainer[0], originalSectionContainer[0], expectedAddressStart=originalSectionContainer[0].addressStart, expectedAddressEnd=originalSectionContainer[0].addressEnd())
-        self.checkAddressChanges(resolvedSectionContainer[1], originalSectionContainer[1], expectedAddressStart=(originalSectionContainer[0].addressEnd() + 1), expectedAddressEnd=originalSectionContainer[1].addressEnd())
+        self.checkAddressChanges(resolvedSectionContainer[1], originalSectionContainer[1], expectedAddressStart=(originalSectionContainer[0].addressEnd() + 1), expectedAddressLength=0)
+        self.checkAddressChanges(resolvedSectionContainer[2], originalSectionContainer[2], expectedAddressStart=(originalSectionContainer[0].addressEnd() + 1), expectedAddressEnd=originalSectionContainer[2].addressEnd())
+        self.checkAddressChanges(resolvedSectionContainer[3], originalSectionContainer[3], expectedAddressStart=originalSectionContainer[3].addressStart, expectedAddressLength=0)
 
         # Check whether the flags were set properly
         self.checkFlags(resolvedSectionContainer[0], memEntryHandler, expectedOverlappingOthers=True)
-        self.checkFlags(resolvedSectionContainer[1], memEntryHandler, expectedOverlappedBy=originalSectionContainer[0])
+        self.checkFlags(resolvedSectionContainer[1], memEntryHandler, expectedOverlappedBy=originalSectionContainer[0], expectedContainedBy=originalSectionContainer[2])
+        self.checkFlags(resolvedSectionContainer[2], memEntryHandler, expectedOverlappedBy=originalSectionContainer[0], expectedContainingOthers=True)
+        self.checkFlags(resolvedSectionContainer[3], memEntryHandler, expectedContainedBy=originalSectionContainer[2])
+
 
 class CalculateObjectsInSectionsTestCase(unittest.TestCase):
     # pylint: disable=invalid-name, missing-docstring
