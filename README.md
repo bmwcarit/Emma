@@ -33,12 +33,13 @@ The whole Emma tool suite contains command line options making it convenient to 
 ------------------------
 # Contents
 1. [General Workflow](#general-workflow)
-1. [Quick Start Guide](#quick-start-guide)
+2. [Quick Start Guide](#quick-start-guide)
     1. [Project files are already present](#project-files-are-already-present)
-    1. [Project files have to be created](#project-files-have-to-be-created)
-1. [Full documentation](#full-documentation)
-1. [Contribute](#contribute)
-1. [Dependencies & Licences](#dependencies--licences)
+    2. [Project files that have to be created](#project-files-that-have-to-be-created)
+3. [Full documentation](#full-documentation)
+4. [Contribute](#contribute)
+5. [Mailing List](#mailing-list)
+6. [Dependencies & Licences](#dependencies--licences)
 
 Install dependencies: Python 3.6 or higher; `pip3 install Pygments Markdown matplotlib pandas pypiscout`
 
@@ -117,6 +118,13 @@ For the full documentation please refer to the [`./doc/`](./doc/) directory.
 
 # Contribute
 We are glad if you want to participate. In [`./doc/contribution.md`](doc/contribution.md) you will find a guide telling you everything you need to know including coding conventions and more.
+
+# [Mailing List](https://groups.google.com/forum/#!forum/emma-dev)
+
+```text
+emma-dev (. at) googlegroups.com
+```
+
 
 # Dependencies & Licences
 
