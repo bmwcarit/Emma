@@ -135,6 +135,7 @@ emma-dev (. at) googlegroups.com
 | Matplotlib (v3.0.0+) | [matplotlib](https://pypi.org/project/matplotlib/)  | Matplotlib License (BSD compatible)  | [https://matplotlib.org/users/installing.html](https://matplotlib.org/users/installing.html); [https://github.com/matplotlib/matplotlib](https://github.com/matplotlib/matplotlib)           |
 | Pandas (v0.23.4+)    | [pandas](https://pypi.org/project/pandas/)          | BSD-3-Clause                         | [https://github.com/pandas-dev/pandas/](https://github.com/pandas-dev/pandas/); [http://pandas.pydata.org/getpandas.html](http://pandas.pydata.org/getpandas.html)                           |
 | SCout (v1.8+)        | [pypiscout](https://pypi.org/project/pypiscout/)    | MIT                                  | [https://github.com/holzkohlengrill/SCout](https://github.com/holzkohlengrill/SCout)                                                                                                         |
+| Graphviz (v0.11.1+)  | [graphviz](https://pypi.org/project/graphviz/)      | MIT                                  | [https://github.com/xflr6/graphviz](https://github.com/xflr6/graphviz)                                                                                                                       |
 
 
 **Dependencies needed to generate documentation:**
