@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 # Emma Memory and Mapfile Analyser - visualiser
 
+import gc
 import sys
 import os
 import timeit
@@ -82,6 +83,10 @@ def main(args):
 
     # Do prints and plots
     consumptionImage.plotByMemType(plotShow=False)
+
+    # Prevent out of memory errors (-> `AssertionError: Unexpected exception: In RendererAgg: Out of memory`)
+    gc.collect()
+
     sc().info("\n", consumptionImage.calcConsumptionByMemType())
 
     # FIXME: Deactivated; colours of legend in figure not correct - possibly this figure is not even needed/useful (MSc)
