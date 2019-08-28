@@ -19,23 +19,27 @@ matrix:
           dist: xenial
           python: 3.7
           env: CODE_COV=true                # Only do code coverage once
-        #- os: linux
-        #  dist: 
-        #  python: 3.6            # = min required version for Emma
+        - os: linux
+          dist: xenial
+          python: 3.6            # = min required version for Emma
         # Disabled since travis does not support python on windows
         # - os: windows
 
 install:
+    # General packages
     - sudo apt-get install tree
     - pip install -U pylint
     - sudo apt-get install enchant          # needed for pyenchant
     - pip install pyenchant                 # needed for pylint spell checking
     - pip install -U coveralls
     - pip install codacy-coverage
-    - pip install -U Pygments Markdown matplotlib pandas pypiscout
+    # Packages for Emma
+    - pip install -U Pygments Markdown matplotlib pandas pypiscout graphviz
+    # Packages for Emma reports + html doc
     - sudo apt-get update
     - sudo apt-get install graphviz
     - pip install -U gprof2dot
+    # List installed pip packages
     - pip list
 
 git:

@@ -21,6 +21,7 @@ import collections
 
 from pypiscout.SCout_Logger import Logger as sc
 
+#FIXME: possibly unused import (MSc)
 #from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import Emma.shared_libs.emma_helper
 
