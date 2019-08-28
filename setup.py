@@ -34,10 +34,10 @@ setuptools.setup(
     post-process. Optionally .html and markdown reports as well as neat figures help you visualising your results.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="The Emma Authors",
-    author_email="emma-dev (. at) googlegroups.com",
+    maintainer="The Emma Authors",
+    maintainer_email="emma-dev@googlegroups.com",
     url="https://github.com/bmwcarit/Emma",
-    packages=["Emma"],
+    packages=setuptools.find_packages(),                        # Recursively find package files (i.e. sub-folders, ...)
     python_requires=">=3.6",
     install_requires=["Pygments",
                       "Markdown",
@@ -45,9 +45,11 @@ setuptools.setup(
                       "pandas",
                       "pypiscout>=2.0"
                       ],
-    extra_require=["gprof2dot",
-                   "pylint"
-                   ],
+    extras_require={"dev":                                      # Install dev version via `pip3 install pypiemma[dev]`
+                        ["gprof2dot",
+                        "pylint"
+                         ],
+                    },
     keywords=["memory-analysis",
               "mapfile",
               "memory-analyzer",

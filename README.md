@@ -41,7 +41,14 @@ The whole Emma tool suite contains command line options making it convenient to 
 5. [Mailing List](#mailing-list)
 6. [Dependencies & Licences](#dependencies--licences)
 
-Install dependencies: Python 3.6 or higher; `pip3 install Pygments Markdown matplotlib pandas pypiscout`
+
+# Installation
+
+```bash
+pip3 install pypiemma
+```
+
+Dependencies: Python 3.6 or higher; `pip3 install Pygments Markdown matplotlib pandas pypiscout`
 
 
 # General Workflow
@@ -147,7 +154,7 @@ Utility scripts in [`./doc/`](doc) need additional dependencies. As a normal use
 | gprof2dot (v2017.9.19+)  | [gprof2dot](https://pypi.org/project/gprof2dot/)    | LGPL-3.0                             | [https://github.com/jrfonseca/gprof2dot](https://github.com/jrfonseca/gprof2dot)                                                                   |
 | pylint (v2.3.1+)         | [pylint](https://pypi.org/project/pylint/)          | GPL-2.0                              | [https://github.com/PyCQA/pylint](https://github.com/PyCQA/pylint)                                                                                 |
 
-Please refer to the [gprof2dot project site](https://github.com/jrfonseca/gprof2dot) and install its dependencies.
+Please refer to the [gprof2dot project site](https://github.com/jrfonseca/gprof2dot) and install **its dependencies (this has to be done even if you install Emma via pip)**.
 
 Note that those modules are invoked via subprocess calls within the [./genDoc/](genDoc/) scripts.
 
