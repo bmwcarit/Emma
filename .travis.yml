@@ -15,6 +15,7 @@ matrix:
         - os: linux
           dist: bionic
           python: 3.7-dev
+
         - os: linux
           dist: xenial
           python: 3.7
@@ -46,11 +47,14 @@ git:
     submodules: false
 
 script:
+    # Linting
     - tree -a -I .git ../
     - find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
+    # Tests
     - cd tests/functional_tests
     - python -m unittest -v
     - cd ../unit_tests
+    # Coverage
     - coverage run -m unittest -v
     - tree -a -I .git ../
     - coverage report --omit="/home/travis/virtualenv/*","/home/travis/build/bmwcarit/Emma/tests/*"
