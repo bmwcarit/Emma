@@ -64,7 +64,7 @@ script:
     - coverage report --omit="/home/travis/virtualenv/*","/home/travis/build/bmwcarit/Emma/tests/*"
     - coverage xml
     # Build packages for pip
-    - python3 setup.py sdist bdist_wheel
+    - python setup.py sdist bdist_wheel
 
 after_success:
     - if [ -n "$CODE_COV" ]; then python-codacy-coverage -r coverage.xml; else echo skip; fi
