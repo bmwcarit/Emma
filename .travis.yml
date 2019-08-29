@@ -12,24 +12,6 @@ allow_failures:
     - python: nightly
     - python: 3.7-dev
 
-#matrix:
-#    include:
-#        - os: linux
-#          dist: bionic
-#          python: nightly
-#        - os: linux
-#          dist: bionic
-#          python: 3.7-dev
-#        - os: linux
-#          dist: xenial
-#          python: 3.7
-#          env: CODE_COV=true                # Only do code coverage once
-#        - os: linux
-#          dist: xenial
-#          python: 3.6            # = min required version for Emma
-#        # Disabled since travis does not support python on windows
-#        # - os: windows
-
 .ci-matrix-definitions:
     - &linux-bionic-nightly
       os: linux
@@ -74,48 +56,34 @@ install:
     # List installed pip packages
     - pip list
 
+.emma-testing-script:
+    - &emma-tests
+        - cd tests/functional_tests
+        - python -m unittest -v
+        - cd ../unit_tests
 
 # TODO: add alias + anchor for script in testing stage (MSc)
 jobs:
     include:
         - stage: testing
           <<: *linux-xenial-3-6
-          <<: *linux-bionic-3-7
-          <<: *linux-bionic-3-7-dev
-          <<: *linux-bionic-nightly
-          script:
-              - cd tests/functional_tests
-              - python -m unittest -v
-              - cd ../unit_tests
-        - stage: testing
-          <<: *linux-xenial-3-6
-          script:
-              - cd tests/functional_tests
-              - python -m unittest -v
-              - cd ../unit_tests
+          script: *emma-tests
         - stage: testing
           <<: *linux-bionic-3-7
-          script:
-              - cd tests/functional_tests
-              - python -m unittest -v
-              - cd ../unit_tests
+          script: *emma-tests
         - stage: testing
           <<: *linux-bionic-3-7-dev
-          script:
-              - cd tests/functional_tests
-              - python -m unittest -v
-              - cd ../unit_tests
+          script: *emma-tests
         - stage: testing
           <<: *linux-bionic-nightly
-          script:
-              - cd tests/functional_tests
-              - python -m unittest -v
-              - cd ../unit_tests
+          script: *emma-tests
+
         - stage: linting
           <<: *linux-bionic-3-7
           script:
               - tree -a -I .git ../
               - find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
+
         - stage: coverage
           <<: *linux-bionic-3-7
           script:
@@ -123,6 +91,7 @@ jobs:
               - tree -a -I .git ../
               - coverage report --omit="/home/travis/virtualenv/*","/home/travis/build/bmwcarit/Emma/tests/*"
               - coverage xml
+
         - stage: deployment
           <<: *linux-bionic-3-7
           deploy:
