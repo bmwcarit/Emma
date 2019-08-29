@@ -74,12 +74,38 @@ install:
     # List installed pip packages
     - pip list
 
+
+# TODO: add alias + anchor for script in testing stage (MSc)
 jobs:
     include:
         - stage: testing
           <<: *linux-xenial-3-6
           <<: *linux-bionic-3-7
           <<: *linux-bionic-3-7-dev
+          <<: *linux-bionic-nightly
+          script:
+              - cd tests/functional_tests
+              - python -m unittest -v
+              - cd ../unit_tests
+        - stage: testing
+          <<: *linux-xenial-3-6
+          script:
+              - cd tests/functional_tests
+              - python -m unittest -v
+              - cd ../unit_tests
+        - stage: testing
+          <<: *linux-bionic-3-7
+          script:
+              - cd tests/functional_tests
+              - python -m unittest -v
+              - cd ../unit_tests
+        - stage: testing
+          <<: *linux-bionic-3-7-dev
+          script:
+              - cd tests/functional_tests
+              - python -m unittest -v
+              - cd ../unit_tests
+        - stage: testing
           <<: *linux-bionic-nightly
           script:
               - cd tests/functional_tests
