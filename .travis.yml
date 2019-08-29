@@ -12,23 +12,23 @@ allow_failures:
     - python: nightly
     - python: 3.7-dev
 
-matrix:
-    include:
-        - os: linux
-          dist: bionic
-          python: nightly
-        - os: linux
-          dist: bionic
-          python: 3.7-dev
-        - os: linux
-          dist: xenial
-          python: 3.7
-          env: CODE_COV=true                # Only do code coverage once
-        - os: linux
-          dist: xenial
-          python: 3.6            # = min required version for Emma
-        # Disabled since travis does not support python on windows
-        # - os: windows
+#matrix:
+#    include:
+#        - os: linux
+#          dist: bionic
+#          python: nightly
+#        - os: linux
+#          dist: bionic
+#          python: 3.7-dev
+#        - os: linux
+#          dist: xenial
+#          python: 3.7
+#          env: CODE_COV=true                # Only do code coverage once
+#        - os: linux
+#          dist: xenial
+#          python: 3.6            # = min required version for Emma
+#        # Disabled since travis does not support python on windows
+#        # - os: windows
 
 #.ci-matrix-definitions:
 #    - &linux-bionic-nightly
@@ -53,27 +53,9 @@ matrix:
 #    # Disabled since travis does not support python on windows
 #    # - os: windows
 
-
-install:
-    # General packages
-    - sudo apt-get install tree
-    - pip install -U pylint
-    - sudo apt-get install enchant          # needed for pyenchant
-    - pip install pyenchant                 # needed for pylint spell checking
-    - pip install -U coveralls
-    - pip install codacy-coverage
-    # Packages for Emma
-    - pip install -U Pygments Markdown matplotlib pandas pypiscout graphviz
-    # Packages for Emma reports + html doc
-    - sudo apt-get update
-    - sudo apt-get install graphviz
-    - pip install -U gprof2dot
-    # Install pip deployment packages
-    - pip install --upgrade setuptools
-    - pip install --upgrade wheel
-    - pip install --upgrade twine
-    # List installed pip packages
-    - pip list
+os: linux
+dist: xenial
+python: 3.7
 
 jobs:
     include:
@@ -111,6 +93,27 @@ jobs:
                 branch: 18-pip-database
 #                on:
 #                    tags: true
+
+install:
+    # General packages
+    - sudo apt-get install tree
+    - pip install -U pylint
+    - sudo apt-get install enchant          # needed for pyenchant
+    - pip install pyenchant                 # needed for pylint spell checking
+    - pip install -U coveralls
+    - pip install codacy-coverage
+    # Packages for Emma
+    - pip install -U Pygments Markdown matplotlib pandas pypiscout graphviz
+    # Packages for Emma reports + html doc
+    - sudo apt-get update
+    - sudo apt-get install graphviz
+    - pip install -U gprof2dot
+    # Install pip deployment packages
+    - pip install --upgrade setuptools
+    - pip install --upgrade wheel
+    - pip install --upgrade twine
+    # List installed pip packages
+    - pip list
 
 git:
     submodules: false
