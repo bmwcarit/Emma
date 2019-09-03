@@ -12,6 +12,9 @@ allow_failures:
     - python: nightly
     - python: 3.7-dev
 
+git:
+    submodules: false
+
 .ci-matrix-definitions:
     - &linux-bionic-nightly
       os: linux
@@ -96,42 +99,10 @@ jobs:
           <<: *linux-bionic-3-7
           deploy:
               provider: pypi
-              server: https://test.pypi.org/simple/
+              server: https://test.pypi.org/legacy/
               user: holzkohlengrill
               password:
                   secure: deeDX2CmOp9H07QCgRRKAT8QBfHs3ZqE9kvpM1102+eelUWxiIkiuU5ewZXCCbMRumRvSLFUd4SZB+lQYs3svB4AVF2/u5NrcN5H+7Z0nczQeuXzdiZt8DY+lU3J2Va8VYNt5Gdj7wEie42ZqZRsYSZcV6emKUb8IxlxNFlGHe3ZgkTegPu4DlmWPnCLxe978LdKsTa4O/D/270AT0j7tYURTnnt1bNBnZXWHpli61bveAFkuJ5wwPYTh3eUWG02Oe3/ePEJIhErR5AhpQd5Xi4m0CFWh/P9RDvem3ySnU3xP4AK2qP3pGbw+IWnIYlXZAWu7YAuARgguI9yvyCRZlJFbMg3NXpXBUDWovD2A2tw/uxhnd3SR0jM3eCHluA0pSKUd3BHWkvOF0CR0hyLslnHvIX/IrnYLHhECqAqJESjxAYDz1OQY6f7b2INRU98BZkhXIYofch7bCfVXpGi8gR//840FTRP80mlGNB0J3wti8l5eoJTCiXO0mhzfGOQaegNDNlvfwse7rQXtka4GRlaNbQ3sLlkV80PA5bUn0U255lH6eH29kVQQnT0rUs6f2HID8HM6eiqdcKZ0mrVmIRO22dxQQoqOOiFboeLHCX8islvGT96yTubFEqVEnTRa/er+qCJjZUGEIqo9WHJAQEgXSU0MCMRrTLQ6DrMTog=
               branch: 18-pip-database
 #                on:
 #                    tags: true
-
-
-git:
-    submodules: false
-
-#script:
-#    # Build packages for pip
-#    - python setup.py sdist bdist_wheel
-#    # Linting
-#    - tree -a -I .git ../
-#    - find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
-#    # Tests
-#    - cd tests/functional_tests
-#    - python -m unittest -v
-#    - cd ../unit_tests
-#    # Coverage
-#    - coverage run -m unittest -v
-#    - tree -a -I .git ../
-#    - coverage report --omit="/home/travis/virtualenv/*","/home/travis/build/bmwcarit/Emma/tests/*"
-#    - coverage xml
-#
-#after_success:
-#    - if [ -n "$CODE_COV" ]; then python-codacy-coverage -r coverage.xml; else echo skip; fi
-#
-#deploy:
-#    provider: pypi
-#    server: https://test.pypi.org/simple/
-#    user: holzkohlengrill
-#    password:
-#        secure: deeDX2CmOp9H07QCgRRKAT8QBfHs3ZqE9kvpM1102+eelUWxiIkiuU5ewZXCCbMRumRvSLFUd4SZB+lQYs3svB4AVF2/u5NrcN5H+7Z0nczQeuXzdiZt8DY+lU3J2Va8VYNt5Gdj7wEie42ZqZRsYSZcV6emKUb8IxlxNFlGHe3ZgkTegPu4DlmWPnCLxe978LdKsTa4O/D/270AT0j7tYURTnnt1bNBnZXWHpli61bveAFkuJ5wwPYTh3eUWG02Oe3/ePEJIhErR5AhpQd5Xi4m0CFWh/P9RDvem3ySnU3xP4AK2qP3pGbw+IWnIYlXZAWu7YAuARgguI9yvyCRZlJFbMg3NXpXBUDWovD2A2tw/uxhnd3SR0jM3eCHluA0pSKUd3BHWkvOF0CR0hyLslnHvIX/IrnYLHhECqAqJESjxAYDz1OQY6f7b2INRU98BZkhXIYofch7bCfVXpGi8gR//840FTRP80mlGNB0J3wti8l5eoJTCiXO0mhzfGOQaegNDNlvfwse7rQXtka4GRlaNbQ3sLlkV80PA5bUn0U255lH6eH29kVQQnT0rUs6f2HID8HM6eiqdcKZ0mrVmIRO22dxQQoqOOiFboeLHCX8islvGT96yTubFEqVEnTRa/er+qCJjZUGEIqo9WHJAQEgXSU0MCMRrTLQ6DrMTog=
-#    on:
-#        tags: true
