@@ -66,14 +66,11 @@ install:
         - cd ../unit_tests
         - cd ..
     - &emma-deploy
-        - tree -a -I .git ../
-        - cd tests
-#        - cd functional_tests
+        - pushd tests
+        - pushd unit_tests
         - python -m unittest -v
-#        - cd ../unit_tests
-        - cd unit_tests
-        - cd ../../
-        - tree -a -I .git ../
+        - popd
+        - popd                   # Get back to the Emma root folder for deployment
 
 # TODO: add alias + anchor for script in testing stage (MSc)
 jobs:
