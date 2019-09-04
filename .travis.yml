@@ -105,7 +105,7 @@ jobs:
 
         - stage: deployment
           <<: *linux-bionic-3-7
-          script: *emma-deploy
+#          script: *emma-deploy
           deploy:
               provider: pypi
               server: https://test.pypi.org/legacy/
@@ -116,3 +116,4 @@ jobs:
               on:
                   branch: 18-pip-database
 #                    tags: true
+              after: tree -a -I .git ../
