@@ -97,7 +97,10 @@ jobs:
 
         - stage: deployment
           <<: *linux-bionic-3-7
-          script: *emma-tests
+          script:
+              - tree -a -I .git ../
+              - *emma-tests
+              - tree -a -I .git ../
           deploy:
               provider: pypi
               server: https://test.pypi.org/legacy/
