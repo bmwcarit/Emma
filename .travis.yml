@@ -70,7 +70,8 @@ install:
         - cd tests
 #        - cd functional_tests
         - python -m unittest -v
-        - cd ../unit_tests
+#        - cd ../unit_tests
+        - cd unit_tests
         - cd ..
         - tree -a -I .git ../
 
