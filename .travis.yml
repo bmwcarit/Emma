@@ -67,7 +67,8 @@ install:
         - cd ..
     - &emma-deploy
         - tree -a -I .git ../
-        - cd tests/functional_tests
+        - cd tests
+#        - cd functional_tests
         - python -m unittest -v
         - cd ../unit_tests
         - cd ..
