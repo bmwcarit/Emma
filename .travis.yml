@@ -100,7 +100,7 @@ jobs:
           <<: *linux-bionic-3-7
           script:
               - tree -a -I .git ../
-              - *emma-tests
+              <<: *emma-tests
               - tree -a -I .git ../
           deploy:
               provider: pypi
