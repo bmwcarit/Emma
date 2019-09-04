@@ -72,7 +72,7 @@ install:
         - python -m unittest -v
 #        - cd ../unit_tests
         - cd unit_tests
-        - cd ..
+        - cd ../../
         - tree -a -I .git ../
 
 # TODO: add alias + anchor for script in testing stage (MSc)
