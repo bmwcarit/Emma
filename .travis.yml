@@ -116,4 +116,4 @@ jobs:
               on:
                   branch: 18-pip-database
 #                    tags: true
-              after: tree -a -I .git ../
+          after_failure: tree -a -I .git ../
