@@ -156,21 +156,30 @@ def processArguments(arguments):
     return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt
 
 
-if __name__ == "__main__":
-    # Parsing the arguments
+def runEmma():
+    """
+    Runs Emma application
+    :return: None
+    """
+    # Parsing the command line arguments
     ARGS = parseArgs()
 
+    # Setup SCout
     sc(invVerbosity=-1, actionWarning=(lambda: sys.exit(-10) if ARGS.Werror is not None else None), actionError=lambda: sys.exit(-10))
 
     sc().header("Emma Memory and Mapfile Analyser", symbol="/")
 
-    # Starting the time measurement of Emma
+    # Start and display time measurement
     TIME_START = timeit.default_timer()
     sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
 
-    # Executing Emma
+    # Execute Emma
     main(ARGS)
 
-    # Stopping the time measurement of Emma
+    # Stop and display time measurement
     TIME_END = timeit.default_timer()
     sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " "{0:.2f}".format(TIME_END - TIME_START) + "s)")
+
+
+if __name__ == "__main__":
+    runEmma()

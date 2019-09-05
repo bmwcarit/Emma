@@ -96,7 +96,7 @@ def main(args):
     if args.categorised_image_csv:
         categorisedImage.categorisedImagetoCSV()
 
-    # Write each report to file if append mode in args is selected
+    # Write each report to file if append mode in parsedArguments is selected
     if args.append:
         sc().info("Appending report...")
         consumptionImage.writeReportToFile()
@@ -223,16 +223,30 @@ def parseArgs(arguments=""):
     return parsedArguments
 
 
-if __name__ == "__main__":
-    parsedArguments = parseArgs()
-    sc(invVerbosity=-1, actionWarning=(lambda : sys.exit(-10) if parsedArguments.Werror is not None else None), actionError=lambda : sys.exit(-10))
+def runEmmaVis():
+    """
+    Runs Emma Visualiser application
+    :return: None
+    """
+    # Parsing the command line arguments
+    ARGS = parseArgs()
+
+    # Setup SCout
+    sc(invVerbosity=-1, actionWarning=(lambda : sys.exit(-10) if ARGS.Werror is not None else None), actionError=lambda : sys.exit(-10))
 
     sc().header("Emma Memory and Mapfile Analyser - Visualiser", symbol="/")
 
-    timeStart = timeit.default_timer()
-    sc().info("Started processing at:", datetime.datetime.now().strftime("%H:%M:%S"))
+    # Start and display time measurement
+    TIME_START = timeit.default_timer()
+    sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
 
-    main(parsedArguments)
+    # Execute Emma Visualiser
+    main(ARGS)
 
-    timeEnd = timeit.default_timer()
-    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " + "{0:.2f}".format(timeEnd - timeStart) + "s)")
+    # Stop and display time measurement
+    TIME_END = timeit.default_timer()
+    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " + "{0:.2f}".format(TIME_END - TIME_START) + "s)")
+
+
+if __name__ == "__main__":
+    runEmmaVis()

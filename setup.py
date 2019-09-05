@@ -53,27 +53,28 @@ setuptools.setup(
                     },
     entry_points={                                              # Make Emma available as independent scripts
         "console_scripts": [
-            "emma=Emma.emma:main",
-            "emma_vis=Emma.emma_vis:main",
-            "emma_deltas=Emma.emma_vis:main"
+            "emma=Emma.emma:runEmma",
+            "emma_vis=Emma.emma_vis:runEmmaVis",
+            "emma_deltas=Emma.emma_vis:runEmmaDeltas"
         ],
     },
-    keywords=["memory-analysis",
-              "mapfile",
-              "memory-analyzer",
-              "embedded",
-              "ghs",
-              "gcc",
-              "mcu",
-              "linker",
-              "visualization",
-              "reports",
-              "csv",
-              "python",
-              "categorisation",
-              "memory-consumption",
-              "mapfile-analyser"
-              ],
+    keywords=[
+        "memory-analysis",
+        "mapfile",
+        "memory-analyzer",
+        "embedded",
+        "ghs",
+        "gcc",
+        "mcu",
+        "linker",
+        "visualization",
+        "reports",
+        "csv",
+        "python",
+        "categorisation",
+        "memory-consumption",
+        "mapfile-analyser"
+        ],
     classifiers=[
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
         "Programming Language :: Python :: 3",

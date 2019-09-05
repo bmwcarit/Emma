@@ -110,17 +110,30 @@ def main(args):
     sc().info("Saved delta to " + args.outfile)
 
 
-if __name__ == "__main__":
-    args = parseArgs()
+def runEmmaDeltas():
+    """
+    Runs Emma Deltas application
+    :return: None
+    """
+    # Parsing the command line arguments
+    ARGS = parseArgs()
 
-    sc(invVerbosity=-1, actionWarning=(lambda : sys.exit(-10) if args.Werror is not None else None), actionError=lambda : sys.exit(-10))
+    # Setup SCout
+    sc(invVerbosity=-1, actionWarning=(lambda : sys.exit(-10) if ARGS.Werror is not None else None), actionError=lambda : sys.exit(-10))
 
     sc().header("Emma Memory and Mapfile Analyser - Deltas", symbol="/")
 
-    timeStart = timeit.default_timer()
+    # Start and display time measurement
+    TIME_START = timeit.default_timer()
     sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
 
-    main(args)
+    # Execute Emma Deltas
+    main(ARGS)
 
-    timeEnd = timeit.default_timer()
-    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " + "{0:.2f}".format(timeEnd - timeStart) + "s)")
+    # Stop and display time measurement
+    TIME_END = timeit.default_timer()
+    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " + "{0:.2f}".format(TIME_END - TIME_START) + "s)")
+
+
+if __name__ == "__main__":
+    runEmmaDeltas()
