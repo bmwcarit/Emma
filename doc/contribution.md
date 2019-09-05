@@ -114,7 +114,7 @@ Emma was designed in a way, that adding support for new compilers is possible wi
 This chapter explains what are the new components that need to be added and how to integrate them into Emma.
 
 ## Compiler handling
-The globalConfig.json file of a configuration lists the configId-s of the project (see doc/readme for more info on Emma configurations).
+The globalConfig.json file of a configuration lists the configId-s of the project (see doc/readme-emma.md for more info on Emma configurations).
 Every configId has a key "compiler" (for example see the **doc/test_project** configuration).
 The value belonging to this key determines the classes used during runtime for the compiler specific tasks.
 
@@ -178,7 +178,7 @@ The methods need to implement the following functionality:
 To make it possible for users and other contributors to easily get started with the added new support, the following non code related changes need to made:
 
 * Add a test project with a step-by-step introduction to the **doc** folder. Take the **doc/test_project** as example.
-* Add a chapter to the **doc/readme.md** describing the configuration of the new compiler. Take the chapter **Formal Definition of the GHS compiler specific configuration** as example.
+* Add a chapter to the **doc/readme-emma.md** describing the configuration of the new compiler. Take the chapter **Formal Definition of the GHS compiler specific configuration** as example.
 * After changing the Markdown files, please re-generate the HTML files with the **genDoc/genReadmeHtmlFromMd.py** script, using the `--no_graphs` command line argument.
 
 ----------------------------------------------------------------

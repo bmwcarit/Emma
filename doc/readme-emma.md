@@ -278,7 +278,7 @@ The following rules apply:
     * It is optional, not including it or including it as an empty array means none of the `<MEMORY_AREA>`s are ignored
 
 ### `budgets.json`
-The budgets config file belongs to the Emma Visualiser. For a description, please see: **doc\readme-vis.md**.
+The budgets config file belongs to the Emma Visualiser. For a description, please see: **doc/readme-vis.md**.
 
 ### `categoriesObjects.json` and `categoriesSections.json`
 The categories config files are used to categorize objects and sections to user defined categories by using their full names.

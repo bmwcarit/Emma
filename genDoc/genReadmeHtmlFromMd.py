@@ -102,7 +102,7 @@ def main(arguments):
             genDoc._genUmlDiagrams.main()
 
         sc().info("Storing Emma readme as a .html file...")
-        markdownFilePath = r"../doc/readme.md"
+        markdownFilePath = r"../doc/readme-emma.md"
         Emma.shared_libs.emma_helper.convertMarkdownFileToHtmlFile(Emma.shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
         sc().info("Done.\n")
 
