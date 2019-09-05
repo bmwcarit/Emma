@@ -184,21 +184,21 @@ The globalConfig.json has to have the following format:
 
     :::json
     {
-        <CONFIG_ID>: {
-            "compiler": <COMPILER_NAME>,
-            "addressSpacesPath": <CONFIG_FILE>,
-            "mapfiles": <MAPFILES_REL_PATH>,
-            "ignoreConfigID": <BOOL>,
+        "<CONFIG_ID>": {
+            "compiler": "<COMPILER_NAME>",
+            "addressSpacesPath": "<CONFIG_FILE>",
+            "mapfiles": "<MAPFILES_REL_PATH>",
+            "ignoreConfigID": "<BOOL>",
             <COMPILER_SPECIFIC_KEY_VALUE_PAIRS>
         },
         .
         .
         .
-        <CONFIG_ID>: {
-            "compiler": <COMPILER_NAME>,
-            "addressSpacesPath": <CONFIG_FILE>,
-            "mapfiles": <MAPFILES_REL_PATH>,
-            "ignoreConfigID": <BOOL>,
+        "<CONFIG_ID>": {
+            "compiler": "<COMPILER_NAME>",
+            "addressSpacesPath": "<CONFIG_FILE>",
+            "mapfiles": "<MAPFILES_REL_PATH>",
+            "ignoreConfigID": "<BOOL>",
             <COMPILER_SPECIFIC_KEY_VALUE_PAIRS>
         }
     }
@@ -235,24 +235,24 @@ These config files have to have the following format:
 
     :::json
     {
-        "offset": <ADDRESS>,
+        "offset": "<ADDRESS>",
         "memory": {
-            <MEMORY_AREA>: {
-                "start": <ADDRESS>,
-                "end": <ADDRESS>,
-                "type": <MEMORY_TYPE>
+            "<MEMORY_AREA>": {
+                "start": "<ADDRESS>",
+                "end": "<ADDRESS>",
+                "type": "<MEMORY_TYPE>"
             },
             .
             .
             .
-            <MEMORY_AREA>: {
-                "start": <ADDRESS>,
-                "end": <ADDRESS>,
-                "type": <MEMORY_TYPE>
+            "<MEMORY_AREA>": {
+                "start": "<ADDRESS>",
+                "end": "<ADDRESS>",
+                "type": "<MEMORY_TYPE>"
             }
         },
         "ignoreMemory": [
-            <MEMORY_AREA>, ... <MEMORY_AREA>
+            "<MEMORY_AREA>", ... "<MEMORY_AREA>"
         ]
     }
 
@@ -293,22 +293,22 @@ These config files have to have the following format:
 
     :::json
     {
-        <CATEGORY>: [
-            <NAME>,
+        "<CATEGORY>": [
+            "<NAME>",
             .
             .
             .
-            <NAME>
+            "<NAME>"
         ],
         .
         .
         .
-        <CATEGORY>: [
-            <NAME>,
+        "<CATEGORY>": [
+            "<NAME>",
             .
             .
             .
-            <NAME>
+            "<NAME>"
         ]
     }
 
@@ -334,19 +334,19 @@ These config files have to have the following format:
 
     :::json
     {
-        <CATEGORY>: [
-            <KEYWORD>,
+        "<CATEGORY>": [
+            "<KEYWORD>",
             .
             .
             .
-            <KEYWORD>
+            "<KEYWORD>"
         ],
-        <CATEGORY>: [
-            <KEYWORD>,
+        "<CATEGORY>": [
+            "<KEYWORD>",
             .
             .
             .
-            <KEYWORD>
+            "<KEYWORD>"
         ]
     }
 
@@ -387,18 +387,18 @@ The globalConfig.json has to have the following format **for configId-s that hav
 
     :::json
     {
-        <CONFIG_ID>: {
+        "<CONFIG_ID>": {
             <GENERIC_KEY_VALUE_PAIRS>,
-            "patternsPath": <CONFIG_FILE>,
-            "virtualSectionsPath": <CONFIG_FILE>
+            "patternsPath": "<CONFIG_FILE>",
+            "virtualSectionsPath": "<CONFIG_FILE>"
         },
         .
         .
         .
-        <CONFIG_ID>: {
+        "<CONFIG_ID>": {
             <GENERIC_KEY_VALUE_PAIRS>,
-            "patternsPath": <CONFIG_FILE>,
-            "virtualSectionsPath": <CONFIG_FILE>
+            "patternsPath": "<CONFIG_FILE>",
+            "virtualSectionsPath": "<CONFIG_FILE>"
         }
     }
 
@@ -421,27 +421,27 @@ These config files have to have the following format:
     :::json
     {
         "mapfiles": {
-            <SW_NAME>: {
-                "regex": [<REGEX_PATTERN>, ... <REGEX_PATTERN>],
-                "VAS": <VAS_NAME>,
-                "UniquePatternSections": <REGEX_PATTERN>,
-                "UniquePatternObjects": <REGEX_PATTERN>,
-                "memRegionExcludes": [<MEMORY_AREA>, ... <MEMORY_AREA>]
+            "<SW_NAME>": {
+                "regex": ["<REGEX_PATTERN>", ... "<REGEX_PATTERN>"],
+                "VAS": "<VAS_NAME>",
+                "UniquePatternSections": "<REGEX_PATTERN>",
+                "UniquePatternObjects": "<REGEX_PATTERN>",
+                "memRegionExcludes": ["<MEMORY_AREA>", ... "<MEMORY_AREA>"]
             },
             .
             .
             .
-            <SW_NAME>: {
-                "regex": [<REGEX_PATTERN>, ... <REGEX_PATTERN>],
-                "VAS": <VAS_NAME>,
-                "UniquePatternSections": <REGEX_PATTERN>,
-                "UniquePatternObjects": <REGEX_PATTERN>,
-                "memRegionExcludes": [<MEMORY_AREA>, ... <MEMORY_AREA>]
+            "<SW_NAME>": {
+                "regex": ["<REGEX_PATTERN>", ... "<REGEX_PATTERN>"],
+                "VAS": "<VAS_NAME>",
+                "UniquePatternSections": "<REGEX_PATTERN>",
+                "UniquePatternObjects": "<REGEX_PATTERN>",
+                "memRegionExcludes": ["<MEMORY_AREA>", ... "<MEMORY_AREA>"]
             },
         },
         "monoliths": {
             "<MONILITH_NAME>": {
-                "regex": [<REGEX_PATTERN>, ... <REGEX_PATTERN>]
+                "regex": ["<REGEX_PATTERN>", ... "<REGEX_PATTERN>"]
             }
         }
     }
@@ -488,20 +488,20 @@ This config file have to have the following format:
 
     :::json
     {
-        <VAS_NAME>: [
-            <SECTION_NAME>,
+        "<VAS_NAME>": [
+            "<SECTION_NAME>",
             .
             .
             .
-            <SECTION_NAME>
+            "<SECTION_NAME>"
         ],
         ...
-        <VAS_NAME>: [
-            <SECTION_NAME>,
+        "<VAS_NAME>": [
+            "<SECTION_NAME>",
             .
             .
             .
-            <SECTION_NAME>
+            "<SECTION_NAME>"
         ]
     }
 
