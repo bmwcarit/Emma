@@ -38,12 +38,13 @@ setuptools.setup(
     maintainer_email="emma-dev@googlegroups.com",
     url="https://github.com/bmwcarit/Emma",
     packages=setuptools.find_packages(),                        # Recursively find package files (i.e. sub-folders, ...)
-    python_requires=">=3.6",
+    python_requires=Emma.PYTHON_REQ_VERSION,
     install_requires=["Pygments",
                       "Markdown",
                       "matplotlib",
                       "pandas",
-                      "pypiscout>=2.0"
+                      "pypiscout>=2.0",
+                      "graphviz"
                       ],
     extras_require={"dev":                                      # Install dev version via `pip3 install pypiemma[dev]`
                         ["gprof2dot",
