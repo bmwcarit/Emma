@@ -143,17 +143,18 @@ prescribed by your project requirements in order to ensure there will be availab
 
 The config file needs to have the following format:
 
-{
-    "Project Threshold in %": <THRESHOLD_VALUE>,
+    :::json
+    {
+        "Project Threshold in %": <THRESHOLD_VALUE>,
 
-    "Budgets": [
-        [<CONFIG_ID>, <MEMORY_TYPE>, <AVAILABLE_MEMORY>],
-        .
-        .
-        .
-        [<CONFIG_ID>, <MEMORY_TYPE>, <AVAILABLE_MEMORY>]
-    ]
-}
+        "Budgets": [
+            ["<CONFIG_ID>", "<MEMORY_TYPE>", <AVAILABLE_MEMORY>],
+            .
+            .
+            .
+            ["<CONFIG_ID>", "<MEMORY_TYPE>", <AVAILABLE_MEMORY>]
+        ]
+    }
 
 The following rules apply:
 
@@ -195,11 +196,7 @@ Output files are:
 After the Image Summary has been created with emma.py and the memStats CSV files were saved to the directory `../[PROJECT]/results/memStats`, it can be visualised using:
 
     :::bash
-    python emma_vis.py \
-    --project ..\[PROJECT] \
-    --dir ..\[PROJECT]\results \
-    --quiet \
-    --overview
+    python emma_vis.py --project ..\<PROJECT> --dir ..\[PROJECT]\results --quiet --overview
 
 ## Calling Graph Emma Visualiser
 <div align="center"> <img src="../genDoc/call_graph_uml/emma_vis_filtered.profile.png" width="1000"> </div>
