@@ -50,6 +50,13 @@ setuptools.setup(
                         "pylint"
                          ],
                     },
+    entry_points={                                              # Make Emma available as independent scripts
+        "console_scripts": [
+            "emma=Emma.emma:main",
+            "emma_vis=Emma.emma_vis:main",
+            "emma_deltas=Emma.emma_vis:main"
+        ],
+    },
     keywords=["memory-analysis",
               "mapfile",
               "memory-analyzer",
