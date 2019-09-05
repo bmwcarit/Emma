@@ -4,60 +4,20 @@
 > Conduct static (i.e. worst case) memory consumption analyses based on linker map files (currently only Green Hills map files are supported).
 This tool creates a summary/overview about static memory usage in form of a comma separated values (CSV) file.
 
-------------------------
-# Contents
-- [Emma](#emma)
-- [Contents](#contents)
-- [Requirements](#requirements)
-- [Process](#process)
-- [Limitations](#limitations)
-- [Usage](#usage)
-- [Arguments](#arguments)
-  - [Required Arguments](#required-arguments)
-  - [Optional Arguments](#optional-arguments)
-- [Project Configuration](#project-configuration)
-  - [Formal definition of the generic configuration](#formal-definition-of-the-generic-configuration)
-    - [`PROJECT`](#project)
-    - [`supplement`](#supplement)
-    - [`globalConfig.json`](#globalconfigjson)
-    - [`addressSpaces*.json`](#addressspacesjson)
-    - [`budgets.json`](#budgetsjson)
-    - [`categoriesObjects.json` and `categoriesSections.json`](#categoriesobjectsjson-and-categoriessectionsjson)
-    - [`categoriesObjectsKeywords.json` and `categoriesSectionsKeywords.json`](#categoriesobjectskeywordsjson-and-categoriessectionskeywordsjson)
-  - [Formal Definition of the GHS compiler specific configuration](#formal-definition-of-the-ghs-compiler-specific-configuration)
-    - [Extensions to the `globalConfig.json`](#extensions-to-the-globalconfigjson)
-    - [`patterns*.json`](#patternsjson)
-    - [`virtualSections*.json`](#virtualsectionsjson)
-- [Output Files](#output-files)
-  - [Section Summary](#section-summary)
-  - [Object Summary](#object-summary)
-  - [Objects in Sections](#objects-in-sections)
-  - [CSV header](#csv-header)
-- [Terminology](#terminology)
-- [Examples](#examples)
-  - [Matching object name and category using `categoriesKeywords.json`](#matching-object-name-and-category-using-categorieskeywordsjson)
-  - [Removing not needed object names from `categoriesObjects.json`](#removing-not-needed-object-names-from-categoriesobjectsjson)
-- [General Information About Map Files and Build Chains](#general-information-about-map-files-and-build-chains)
-- [Technical Details](#technical-details)
-  - [GHS Monolith file generation](#ghs-monolith-file-generation)
-  - [Class diagram Emma](#class-diagram-emma)
-  - [Calling Graph Emma](#calling-graph-emma)
 
-------------------------
-
-# Requirements
+## Requirements
 * Python 3.6 or higher
-    * Tested with 3.6.1rc1; 3.7.0
+    * Tested with 3.6.1rc1; 3.7.0, 3.7.1
 * Python libraries
     * pypiscout 2.0 or higher: (`pip3 install pypiscout`)
 * Tested on Windows and Linux systems
 
 
-# Process
+## Process
 Using the Mapfile Analyser is a two step process. The first step is to extract the required information from the mapfiles and save it to .csv files.
 This is done with the `emma.py` script. The second step is to visualise the data. This document explains the first part only, the visualisation is documented in the Emma visualiser readme document.
 
-# Limitations
+## Limitations
 The Emma is only suitable for analyzing projects where the devices have a single linear physical address space:
 
 * Devices that use for example the Intel 8051 architecture have separate code and data address spaces that both
@@ -65,7 +25,7 @@ The Emma is only suitable for analyzing projects where the devices have a single
 * Devices that use for example the ARMv6M architecture have a single linear address space.
     Devices based on architectures like this can be analyzed with Emma.
 
-# Usage
+## Usage
 Section and object summaries of the specified mapfiles will be created.
 
     $ python emma.py --help
@@ -102,14 +62,14 @@ Section and object summaries of the specified mapfiles will be created.
     ********* Marcel Schmalzl, Felix Mueller, Gergo Kocsis - 2017-2019 *********
 
 
-# Arguments
-## Required Arguments
+## Arguments
+### Required Arguments
 
     --project PROJECT, -p PROJECT
 
     --mapfiles MAPFILES, --map MAPFILES
 
-## Optional Arguments
+### Optional Arguments
 
 * `--dir`
     * User defined path for the top folder holding the `memStats`/output files. Per default it uses the same directory as the config files.
@@ -125,7 +85,7 @@ Section and object summaries of the specified mapfiles will be created.
   * Exit and fail on user prompt. Normally this happens when some files or configurations are ambiguous. This is useful when running Emma on CI systems.
 
 
-# Project Configuration
+## Project Configuration
 
 The memory analysis will be executed based on the project configuration. In order to be able to use Emma with your project, you need to create a configuration matching your project's hardware and software. **Configure Emma with high diligence since errors may lead to incorrect results of your analysis**. During the analysis Emma performs some sanity checks which helps you detecting misconfiguration.
 
@@ -144,7 +104,7 @@ Both of the devices have a GHS compiler specific configuration and mapfiles.
 
 An Emma project configuration consists of two parts: the generic configuration and the compiler specific configuration.
 
-## Formal definition of the generic configuration
+### Formal definition of the generic configuration
 The generic part of the configuration contains the following files:
 
     +-- [<PROJECT>]
@@ -161,15 +121,15 @@ The generic part of the configuration contains the following files:
 The files containing the asterisk symbol can be freely named by the user because the actual file names will have to be
 listed in the globalConfig.json.
 
-### `PROJECT`
+#### `PROJECT`
 The configuration has to be contained by a folder. The name of the folder will be the name of the configuration.
 From the files ending with a * symbol, the configuration can contain more than one but maximum up to the number of configIDs defined in globalConfig.json.
 
-### `supplement`
+#### `supplement`
 You can add .md files into this folder with Markdown syntax to add information regarding your project that will be contained by the .html overview.
 For more information please refer to the Emma Visualiser's documentation.
 
-### `globalConfig.json`
+#### `globalConfig.json`
 The globalConfig.json is the starting point of a configuration, this file defines the **configId**-s.
 The configId-s are the hardware units of the system that have memory associated to them, for example an MCU, MPU or an SOC.
 During the analysis, it will be examined to which extent these memory resources are used.
@@ -228,7 +188,7 @@ The following rules apply:
     * can be used to mark a configID as ignored, which means that this will not be processed during the analysis
     * is optional, it does not need to be included in every configID, leaving it has the same effect as including it with false
 
-### `addressSpaces*.json`
+#### `addressSpaces*.json`
 The address spaces config files define the existing memory areas for the configIDs they were assigned to in the globalConfigs.json.
 
 These config files have to have the following format:
@@ -277,10 +237,10 @@ The following rules apply:
     * The the elements of this array can be selected from the ones defined in the "memory" object
     * It is optional, not including it or including it as an empty array means none of the `<MEMORY_AREA>`s are ignored
 
-### `budgets.json`
+#### `budgets.json`
 The budgets config file belongs to the Emma Visualiser. For a description, please see: **doc/readme-vis.md**.
 
-### `categoriesObjects.json` and `categoriesSections.json`
+#### `categoriesObjects.json` and `categoriesSections.json`
 The categories config files are used to categorize objects and sections to user defined categories by using their full names.
 These files are optional, if no categorization needed, these config files do not need to be created.
 This function can be used for example to group the software components of one company together which will make the results easier to understand.
@@ -321,7 +281,7 @@ The following rules apply:
 * The categorisation can be done either by hand or with the **--create_categories** command line argument (for usage see there)
 * The `<NAME>` has to contain full names of the sections or objects
 
-### `categoriesObjectsKeywords.json` and `categoriesSectionsKeywords.json`
+#### `categoriesObjectsKeywords.json` and `categoriesSectionsKeywords.json`
 The categories keywords config files are used to categorize objects and sections to user defined categories by using only substrings of their names.
 These files are optional, if no categorization needed, these config files do not need to be created.
 This function can be used for example to group the software components of one company together which will make the results easier to understand.
@@ -359,7 +319,7 @@ The following rules apply:
 * The categorisation has to be done by hand
 * The `<KEYWORD>` contains a regex pattern for the names of the sections or objects
 
-## Formal Definition of the GHS compiler specific configuration
+### Formal Definition of the GHS compiler specific configuration
 The GHS compiler specific part of the configuration contains the following files:
 
     +-- [<PROJECT>]
@@ -381,7 +341,7 @@ In `globalConfig.json`, you need to reference (ref relations on the picture):
 
 If you have virtual address spaces (VASes) defined. You need a `"monolith file"` pattern defined in `patterns*.json` in order to be able to translate virtual addresses back to physical addresses. In the same file you give each VAS a name. This name is later used to identify which section belongs to which VAS (defined in `virtualSections*.json`). The VAS names must match between those two files. This is needed in order to avoid name clashes of sections names between different VASes.
 
-### Extensions to the `globalConfig.json`
+#### Extensions to the `globalConfig.json`
 
 The globalConfig.json has to have the following format **for configId-s that have selected "GHS" as compiler**:
 
@@ -412,7 +372,7 @@ The following rules apply:
 * The assigned config files have to be in the same folder as the globalConfig.json
 * The config files don't need to be different for each configID (for example you can use the same virtual sections config file for all the configIDs)
 
-### `patterns*.json`
+#### `patterns*.json`
 The patterns config files define regex patterns for finding the mapfiles, monolith files and processing their content.
 They belong to the `configID` they were assigned to in the `globalConfigs.json`.
 
@@ -478,7 +438,7 @@ The following rules apply:
     * If more than one monolith file will be found for the SW unit, a warning will be thrown
     * The search will be done in the mapfile folder defined by the command line arguments
 
-### `virtualSections*.json`
+#### `virtualSections*.json`
 The virtual sections config files are used to assign the sections of the virtual address spaces to
 a virtual address spaces defined in the `patterns*.json`file. This is needed because the mapfiles can contain physical
 and virtual sections as well and Emma needs to identify the virtual ones and assign them to a specific virtual address space.
@@ -515,7 +475,7 @@ The following rules apply:
 * Every `<VAS_NAME>` key has an array as value that lists the sections that belong to the virtual address space 
 * There are no rules for the assignment, this needs to be done intuitively based on the project being analyzed
 
-# Output Files
+## Output Files
 The output Files will be saved to the memStats folder of the respective project. The filename will have this form: 
 
     :::bash
@@ -523,15 +483,15 @@ The output Files will be saved to the memStats folder of the respective project.
     <PROJECT_NAME>_Object_Summary_TIMESTAMP.csv
     <PROJECT_NAME>_Objects_in_Sections_TIMESTAMP.csv
 
-## Section Summary
+### Section Summary
 
 The file `<PROJECT_NAME>_Section_Summary_<TIMESTAMP>.csv` contains the sections from the mapfiles.
 
-## Object Summary
+### Object Summary
 
 The file `<PROJECT_NAME>_Object_Summary_<TIMESTAMP>.csv` contains the objects from the mapfiles.
 
-## Objects in Sections
+### Objects in Sections
 "Objects in sections" provides ways to obtain a finer granularity of the categorisation result. Therefore categorised sections containing (smaller) objects of a different category got split up and result into a more accurate categorisation. As a result you will get output files in form of a `.csv` file which sets you up to do later processing on this data easily. In this file additional information is added like:
 
 * Overlaps (of sections/objects)
@@ -570,7 +530,7 @@ At the end you will find three remaining "types":
 
 Section names for section reserves and entries are `<Emma_SectionReserve>` and `<Emma_SectionEntry>` respectively. The `<Emma_xxxx>` pattern shows you names introduced by Emma.
 
-## CSV header
+### CSV header
 The CSV file has the following columns:
 
 * The address start, end and sizes: `addrStartHex; addrEndHex; sizeHex; addrStartDec; addrEndDec; sizeDec; sizeHumanReadable`
@@ -583,13 +543,13 @@ The CSV file has the following columns:
 * `containmentFlag`: Indicates whether a section is contained in another.
 * `duplicateFlag`: Indicates whether a section has duplicates.
 
-# Terminology
+## Terminology
 In places there is some specific terminology used which is explained in the following chapter:
 
 * DMA: Direct Memory Addressing; addresses which do not have to be translated (from virtual to physical); this has nothing to do with direct access to memory on the target (by bypassing the CPU core(s))
 * Emma was formerly known as MAdZ
 
-# Examples
+## Examples
 Create a Mapfile Summary for <PROJECT>:
 
     :::bash
@@ -597,20 +557,20 @@ Create a Mapfile Summary for <PROJECT>:
     --mapfiles ..\MyMapfiles \
     --dir ..\MyMapfiles\results
 
-## Matching object name and category using `categoriesKeywords.json`
+### Matching object name and category using `categoriesKeywords.json`
 `categoriesObjectsKeywords.json` can be used to match object names with catgories by user defined keywords.
 
 * Arguments required:  ```--create_categories```
 * This step will append the newly categorised modules to `categories.json`. The program will ask you to confirm to overwrite the file.
 
-## Removing not needed object names from `categoriesObjects.json`
+### Removing not needed object names from `categoriesObjects.json`
 Not needed object names can be removed from `categoriesObjects.json`, for example when `categoriesObjects.json` from another project is used.
 
 * Arguments required:  ```--remove_unmatched```
 * This step will remove never matching object names from `categoriesObjects.json`. Some modules never match because e.g. the object got removed or is not present in the current release. The program will ask you to confirm to overwrite the file.
 
 
-# General Information About Map Files and Build Chains
+## General Information About Map Files and Build Chains
 * [COMPILER, ASSEMBLER, LINKER AND LOADER: A BRIEF STORY](http://www.tenouk.com/ModuleW.html)
 * [Hello World: C, Assembly, Object File and Executable](http://resources.infosecinstitute.com/hello-world-c-assembly-object-file-and-executable)
 * [Analyzing the Linker Map file with a little help from the ELF and the DWARF](https://www.embeddedrelated.com/showarticle/900.php)
@@ -620,8 +580,8 @@ Not needed object names can be removed from `categoriesObjects.json`, for exampl
 * [Linker Scripts](http://www.scoberlin.de/content/media/http/informatik/gcc_docs/ld_3.html)
 
 
-# Technical Details
-## GHS Monolith file generation
+## Technical Details
+### GHS Monolith file generation
 Execute this to generate the monolith files (you need to have the ELF file for this step).
 
     :::bash
@@ -630,8 +590,8 @@ Execute this to generate the monolith files (you need to have the ELF file for t
 
 By default long names will be truncated. This can lead to inaccurate results. In order to prevent this use `-no_trunc_sec_names`.
 
-## Class diagram Emma
+### Class diagram Emma
 <div align="center"> <img src="images/emmaClassDiagram.png" width="1000"> </div>
 
-## Calling Graph Emma
+### Calling Graph Emma
 <div align="center"> <img src="../genDoc/call_graph_uml/emma_filtered.profile.png" width="1000"> </div>
