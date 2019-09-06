@@ -28,21 +28,11 @@ The whole Emma tool suite contains command line options making it convenient to 
 ------------------------
 <br>
 
-<div align="center"> <img src="./doc/images/architecture.png" width="100%"> </div>
-
-------------------------
-# Contents
-1. [General Workflow](#general-workflow)
-2. [Quick Start Guide](#quick-start-guide)
-    1. [Project files are already present](#project-files-are-already-present)
-    2. [Project files that have to be created](#project-files-that-have-to-be-created)
-3. [Full documentation](#full-documentation)
-4. [Contribute](#contribute)
-5. [Mailing List](#mailing-list)
-6. [Dependencies & Licences](#dependencies--licences)
+<!-- We use onerror to make images visible when viewing the content using GitHub Pages etc. on the other side reading the markdown file using an editor should kept intact -->
+<div align="center"> <img src="./doc/images/architecture.png" onerror="this.onerror=null;this.src='/images/architecture.png';" width="100%"> </div>
 
 
-# Installation
+## Installation
 
 ```bash
 pip3 install pypiemma
@@ -51,10 +41,11 @@ pip3 install pypiemma
 Dependencies: Python 3.6 or higher; `pip3 install Pygments Markdown matplotlib pandas pypiscout`
 
 
-# General Workflow
+## General Workflow
 The following figure shows a possible workflow using Emma:
 
-<div align="center"> <img src="./doc/images/workflow.png" width="100%"> </div>
+<!-- We use onerror to make images visible when viewing the content using GitHub Pages etc. on the other side reading the markdown file using an editor should kept intact -->
+<div align="center"> <img src="./doc/images/workflow.png" onerror="this.onerror=null;this.src='/images/workflow.png';" width="100%"> </div>
 
 **Emma** - as the core component - produces an intermediate `.csv` file. Inputs are mapfiles and JSON files (for configuration (memory layout, sizes, ...)). From this point you are very flexible to choose your own pipeline. You could
 
@@ -63,7 +54,7 @@ The following figure shows a possible workflow using Emma:
 * use your own tool for the data analysis.
 
 
-# Quick Start Guide
+## Quick Start Guide
 At this point we want to give you a brief overview what to do in the below two scenarios. If you want to play around go to [(project files are already present)](#Project-files-are-already-present) and use our example projects in [`./doc/test_project*`](./doc/).
 
 * if the Emma *project is already set-up* (JSON files were created) and you want to analyse your software with newly generated mapfiles proceed to [-> Project files are already present](#Project-files-are-already-present) or
@@ -73,7 +64,7 @@ Example projects (including Emma* outputs/results) can be found in [`./doc/test_
 
 ------------------------
 
-## Project files are already present
+### Project files are already present
 Try `python emma.py --help` to see all possible options or refer to the documentation (`./doc/*`).
 
 1. Create intermediate `.csv` from mapfiles with Emma:
@@ -88,7 +79,7 @@ python emma.py -p .\MyProjectFolder --map .\MyProjectFolder\mapfiles --dir .\MyP
 python emma_vis.py -p .\MyProjectFolder --dir .\MyProjectFolder\analysis --subdir Analysis_1 -q 
 ```
 
-## Project files that have to be created
+### Project files that have to be created
 To create a new project, the following files must be created:
 
 * `globalConfig.json`
@@ -104,7 +95,8 @@ A basic configuration can be short per file. For complex systems you can choose 
 
 One main concept includes the `globalConfig.json`. You can see this as meta-config. Each configuration ID (configID) is a separately conducted analysis. Per configID you state individually the configuration files you want to use for this exact analysis. Herewith you can mix and match any combination of subconfigs you prefer.
 
-<div align="center"> <img src="./doc/images/globalConfigScheme.png" width="60%"> </div>
+<!-- We use onerror to make images visible when viewing the content using GitHub Pages etc. on the other side reading the markdown file using an editor should kept intact -->
+<div align="center"> <img src="./doc/images/globalConfigScheme.png" onerror="this.onerror=null;this.src='/images/globalConfigScheme.png';" width="60%"> </div>
 
 A `globalConfig.json` could look like this:
 
@@ -119,21 +111,21 @@ A `globalConfig.json` could look like this:
 ```
 
 
-# Full documentation
+## Full documentation
 For the full documentation please refer to the [`./doc/`](./doc/) directory.
 
 
-# Contribute
+## Contribute
 We are glad if you want to participate. In [`./doc/contribution.md`](doc/contribution.md) you will find a guide telling you everything you need to know including coding conventions and more.
 
-# [Mailing List](https://groups.google.com/forum/#!forum/emma-dev)
+## [Mailing List](https://groups.google.com/forum/#!forum/emma-dev)
 
 ```text
 emma-dev (. at) googlegroups.com
 ```
 
 
-# Dependencies & Licences
+## Dependencies & Licences
 
 | Library (version)    | pip package name                                    | Licence                              | URL                                                                                                                                                                                          |
 |----------------------|-----------------------------------------------------|--------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -161,10 +153,9 @@ Note that those modules are invoked via subprocess calls within the [./genDoc/](
 
 **Code snippets etc.:**
 
-| Name (version)             | Kind                                                 | Modified?  | Licence         | URL                                                                                                                                                                                                                                                                                |
-|----------------------------|------------------------------------------------------|------------|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| pygmentize (v2.2.0+)       | Auto-generated .css file                             | Yes        | BSD-2-Clause    | [http://pygments.org/download/](http://pygments.org/download/); [https://bitbucket.org/birkenfeld/pygments-main/issues/1496/question-licence-of-auto-generated-css](https://bitbucket.org/birkenfeld/pygments-main/issues/1496/question-licence-of-auto-generated-css)             |
-| toHumanReadable (--)       | Code snippet                                         | No         | MIT             | [https://github.com/TeamFlowerPower/kb/wiki/humanReadable](https://github.com/TeamFlowerPower/kb/wiki/humanReadable)                                                                                                                                                               |
-| ~test_project_gcc (v1.3+)~ | ~Map files based on XMC 2Go Initial Start project~   | ~No~       | ~BSD-3-Clause~  | ~[Infineon -> Documents -> XMC 2Go Initial Start](https://www.infineon.com/cms/en/product/evaluation-boards/kit_xmc_2go_xmc1100_v1/#!documents)~                                                                                                                                   |
+| Name (version)                      | Kind                                                          | Modified?           | Licence                  | URL                                                                                                                                                                                                                                                                                |
+|-------------------------------------|---------------------------------------------------------------|---------------------|--------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| pygmentize (v2.2.0+)                | Auto-generated .css file                                      | Yes                 | BSD-2-Clause             | [http://pygments.org/download/](http://pygments.org/download/); [https://bitbucket.org/birkenfeld/pygments-main/issues/1496/question-licence-of-auto-generated-css](https://bitbucket.org/birkenfeld/pygments-main/issues/1496/question-licence-of-auto-generated-css)             |
+| toHumanReadable (--)                | Code snippet                                                  | No                  | MIT                      | [https://github.com/TeamFlowerPower/kb/wiki/humanReadable](https://github.com/TeamFlowerPower/kb/wiki/humanReadable)                                                                                                                                                               |
 
 For the full documentation please refer to the [`./doc/`](doc) directory.

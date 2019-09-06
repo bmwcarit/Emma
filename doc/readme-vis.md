@@ -172,4 +172,5 @@ After the Image Summary has been created with emma.py and the memStats CSV files
     python emma_vis.py --project ..\<PROJECT> --dir ..\[PROJECT]\results --quiet --overview
 
 ### Calling Graph Emma Visualiser
-<div align="center"> <img src="../genDoc/call_graph_uml/emma_vis_filtered.profile.png" width="1000"> </div>
+<!-- We use onerror to make images visible when viewing the content using GitHub Pages etc. on the other side reading the markdown file using an editor should kept intact -->
+<div align="center"> <img src="../genDoc/call_graph_uml/emma_vis_filtered.profile.png" onerror="this.onerror=null;this.src='https://github.com/bmwcarit/Emma/blob/master/genDoc/call_graph_uml/emma_vis_filtered.profile.png"';" width="1000"> </div>
