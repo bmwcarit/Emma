@@ -39,6 +39,7 @@ git:
     # - os: windows
 
 install:
+    # TODO: Separate installs per stage (to speed-up the job) (MSc)
     # General packages
     - sudo apt-get install tree
     - pip install -U pylint
@@ -56,6 +57,9 @@ install:
     - pip install --upgrade setuptools
     - pip install --upgrade wheel
     - pip install --upgrade twine
+    # Install mkdocs packages for GitHub pages deployment
+    - pip install mkdocs
+    - pip install mkdocs-material
     # List installed pip packages
     - pip list
 
@@ -107,15 +111,27 @@ jobs:
         - stage: deployment
           <<: *linux-bionic-3-7
           script: *emma-deploy
+          before_deploy:
+              - mkdocs build --verbose --clean --strict    # Build local version of the docs
           deploy:
-              provider: pypi
-#              server: https://test.pypi.org/legacy/       # Activate for testing
-              user: holzkohlengrill
-              password:
-                  secure: deeDX2CmOp9H07QCgRRKAT8QBfHs3ZqE9kvpM1102+eelUWxiIkiuU5ewZXCCbMRumRvSLFUd4SZB+lQYs3svB4AVF2/u5NrcN5H+7Z0nczQeuXzdiZt8DY+lU3J2Va8VYNt5Gdj7wEie42ZqZRsYSZcV6emKUb8IxlxNFlGHe3ZgkTegPu4DlmWPnCLxe978LdKsTa4O/D/270AT0j7tYURTnnt1bNBnZXWHpli61bveAFkuJ5wwPYTh3eUWG02Oe3/ePEJIhErR5AhpQd5Xi4m0CFWh/P9RDvem3ySnU3xP4AK2qP3pGbw+IWnIYlXZAWu7YAuARgguI9yvyCRZlJFbMg3NXpXBUDWovD2A2tw/uxhnd3SR0jM3eCHluA0pSKUd3BHWkvOF0CR0hyLslnHvIX/IrnYLHhECqAqJESjxAYDz1OQY6f7b2INRU98BZkhXIYofch7bCfVXpGi8gR//840FTRP80mlGNB0J3wti8l5eoJTCiXO0mhzfGOQaegNDNlvfwse7rQXtka4GRlaNbQ3sLlkV80PA5bUn0U255lH6eH29kVQQnT0rUs6f2HID8HM6eiqdcKZ0mrVmIRO22dxQQoqOOiFboeLHCX8islvGT96yTubFEqVEnTRa/er+qCJjZUGEIqo9WHJAQEgXSU0MCMRrTLQ6DrMTog=
-              distributions: "sdist bdist_wheel"          # add `bdist_wheel` besides `sdist`
-              skip_existing: true
-              on:
-#                  branch: 18-pip-database                 # Activate for testing
-                  tags: true
+              # Deploy mkdocs (GitHub pages)
+              - provider: pages
+                skip_cleanup: true
+                github_token: $GITHUB_TOKEN
+                local_dir: site
+                on:
+                    branch: master
+              # Deploy on PyPi database
+              - provider: pypi
+#                server: https://test.pypi.org/legacy/       # Activate for testing
+                user: ""
+                password:
+                    secure: ""
+                distributions: "sdist bdist_wheel"          # add `bdist_wheel` besides `sdist`
+                skip_existing: true
+                on:
+                    tags: true
+#                    branch: 18-pip-database                 # Activate for testing
 #          after_failure: tree -a -I .git ../
+
+
