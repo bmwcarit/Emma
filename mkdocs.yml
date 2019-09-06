@@ -1,0 +1,47 @@
+site_name: Emma Memmory and Mapfile Analyser
+repo_url: https://github.com/bmwcarit/Emma.git
+repo_name: Emma Memmory and Mapfile Analyser
+copyright: The Emma Authors
+
+docs_dir: doc
+use_directory_urls: False
+theme:
+    name: material
+    palette:
+        primary: "Black"
+        accent: "Amber"
+    logo:
+        icon: "🔍"
+    font: false
+    language: "en"
+    highlightjs: true
+#    hljs_style: Dracula
+    hljs_languages:
+      - yaml
+      - JSON
+
+extra:
+  social:
+    - type: 'github'
+      link: 'https://github.com/bmwcarit/Emma'
+
+#google_analytics:
+#  - 'UA-XXXXXXXX-X'
+#  - 'auto'
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - tables
+  - fenced_code
+  - extra
+  - codehilite:
+      linenums: true
+
+nav:
+  - Home: index.md                           # Symlink must have a different name than actual file (which we link to)
+  - Emma: readme-emma.md
+  - Emma Visualiser: readme-vis.md
+  - Test project: test_project/readme.md
+  - Contribute: contribution.md
+#  - "Emma Deltas": "readme-deltas.md"
