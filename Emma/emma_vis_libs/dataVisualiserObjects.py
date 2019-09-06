@@ -133,8 +133,7 @@ class ModuleConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
 
     def plotByCategorisedModulesPie(self, plotShow=True):
         myfigure = self.displayConsumptionCategorisedPie(self.consumptionByCategorisedModules)
-        filename = self.project + "-Memory_Estimation_by_Category_Pie_Chart_generated_" + self.statsTimestamp.replace(
-            " ", "")
+        filename = self.project + "-Memory_Estimation_by_Category_Pie_Chart_generated_" + self.statsTimestamp.replace(" ", "")
         myfigure.savefig(self.resultsPath + filename + ".png", dpi=MEMORY_ESTIMATION_PICTURE_DPI, transparent=False)
         if plotShow:
             matplotlib.pyplot.show()  # Show plots after results in console output are shown
