@@ -82,16 +82,16 @@ install:
 jobs:
     include:
         - stage: testing
-          <<: *linux-xenial-3-6
-          script: *emma-tests
-        - stage: testing
-          <<: *linux-bionic-3-7
+          <<: *linux-bionic-nightly
           script: *emma-tests
         - stage: testing
           <<: *linux-bionic-3-7-dev
           script: *emma-tests
         - stage: testing
-          <<: *linux-bionic-nightly
+          <<: *linux-bionic-3-7
+          script: *emma-tests
+        - stage: testing
+          <<: *linux-xenial-3-6
           script: *emma-tests
 
         - stage: linting
