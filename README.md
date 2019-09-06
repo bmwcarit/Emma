@@ -150,6 +150,16 @@ Please refer to the [gprof2dot project site](https://github.com/jrfonseca/gprof2
 
 Note that those modules are invoked via subprocess calls within the [./genDoc/](genDoc/) scripts.
 
+**Dependencies used for documentation on GitHub pages (separate, independent branch `gh-pages`):**
+
+Utility scripts used to build GitHub pages documentation. As a normal user you can ignore this.
+
+| Library (version)             | pip package name                                                  | Licence                              | URL                                                                                                                                                |
+|-------------------------------|-------------------------------------------------------------------|--------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| MkDocs (v1.0.4+)              | [mkdocs](https://pypi.org/project/mkdocs/)                        | BSD-3Clause                          | [https://github.com/mkdocs/mkdocs](https://github.com/mkdocs/mkdocs)                                                                               |
+| Material for MkDocs (v4.4.1+) | [mkdocs-material](https://pypi.org/project/mkdocs-material/)      | MIT                                  | [https://github.com/squidfunk/mkdocs-material](https://github.com/squidfunk/mkdocs-material)                                                       |
+
+
 
 **Code snippets etc.:**
 
