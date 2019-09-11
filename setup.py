@@ -48,7 +48,9 @@ setuptools.setup(
                       ],
     extras_require={"dev":                                      # Install dev version via `pip3 install pypiemma[dev]`
                         ["gprof2dot",
-                        "pylint"
+                         "pylint",
+                         "mkdocs",
+                         "mkdocs-material"
                          ],
                     },
     entry_points={                                              # Make Emma available as independent scripts
