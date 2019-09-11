@@ -163,25 +163,45 @@ class MemoryManager:
                 Emma.emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
                 sc().info("A report was stored:", os.path.abspath(reportPath))
 
-        def createDotReports():
-            GLOBAL_ATTRIBUTES = {
-                "fontname": "Helvetica",
-                "shape": "octagon"
-            }
+        # def createDotReports():
+        #     GLOBAL_ATTRIBUTES = {
+        #         "fontname": "Helvetica",
+        #         "shape": "octagon"
+        #     }
+        #
+        #
+        #     graph = graphviz.Digraph("newGraph")
+        #     graph.attr('node', GLOBAL_ATTRIBUTES)
+        #     # for
+        #     # graph.node(, 'C', _attributes={'shape': 'triangle'})
+        #     graph.node('A', 'A')
+        #     graph.node('B', 'B')
+        #     graph.node('C', 'C', _attributes={'shape': 'triangle'})
+        #
+        #     print(graph.source)
 
-
-            graph = graphviz.Digraph("newGraph")
-            graph.attr('node', GLOBAL_ATTRIBUTES)
-            # for
-            # graph.node(, 'C', _attributes={'shape': 'triangle'})
-            graph.node('A', 'A')
-            graph.node('B', 'B')
-            graph.node('C', 'C', _attributes={'shape': 'triangle'})
-
-            print(graph.source)
+        # def createTeamScaleReports():
+        #     consumerCollections = consumerCollections2GlobalList()
+        #     resultsLst = []
+        #
+        #     # Creating reports from the consumer collections
+        #     for memEntryRow in consumerCollections["Section_Summary"]:
+        #         fqn = memEntryRow.getFQN(sep="/")
+        #         size = Emma.shared_libs.emma_helper.toHumanReadable(memEntryRow.addressLength) if (memEntryRow.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else ""
+        #         # resultsLst.append({"path": fqn, "count": size})
+        #         resultsLst.append({"path": fqn, "count": memEntryRow.addressLength})
+        #     for memEntryRow in consumerCollections["Object_Summary"]:
+        #         fqn = memEntryRow.getFQN(sep="/")
+        #         size = Emma.shared_libs.emma_helper.toHumanReadable(memEntryRow.addressLength) if (memEntryRow.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else ""
+        #         # resultsLst.append({"path": fqn, "count": size})
+        #         resultsLst.append({"path": fqn, "count": memEntryRow.addressLength})
+        #
+        #     Emma.shared_libs.emma_helper.writeJson("testTeamScaleJSON.json", resultsLst)
 
         if self.memoryContent is not None:
+            # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separted string) (MSc)
             createStandardReports()
-            createDotReports()
+            # createDotReports()
+            # createTeamScaleReports()
         else:
             sc().error("The mapfiles need to be processed before creating the reports!")
