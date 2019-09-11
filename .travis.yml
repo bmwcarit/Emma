@@ -97,16 +97,18 @@ jobs:
         - stage: linting
           <<: *linux-bionic-3-7
           script:
-              - tree -a -I .git ../
+              - tree -a -I .git ./
               - find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
 
         - stage: coverage
           <<: *linux-bionic-3-7
           script:
+              - pushd ./tests/unit_tests
               - coverage run -m unittest -v
-              - tree -a -I .git ../
+              - tree -a -I .git ./
               - coverage report --omit="/home/travis/virtualenv/*","/home/travis/build/bmwcarit/Emma/tests/*"
               - coverage xml
+              - popd
 
         - stage: deployment
           <<: *linux-bionic-3-7
