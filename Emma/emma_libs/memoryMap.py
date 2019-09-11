@@ -346,7 +346,7 @@ def writeReportToDisk(reportPath, consumerCollection):
                 row.addressLengthHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or (row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
                 row.addressLengthOriginal if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or (row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
                 # FQN
-                row.configID + "::" + row.mapfile + "::"  + row.sectionName + ( "::"  + row.objectName if row.objectName != "" and row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and row.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else "")
+                row.getFQN()
             ])
 
             # Writing the data to the file
