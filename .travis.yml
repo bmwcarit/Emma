@@ -112,7 +112,7 @@ jobs:
           <<: *linux-bionic-3-7
           script: *emma-deploy
           before_deploy:
-              - mkdocs build --verbose --clean --strict    # Build local version of the docs
+              - mkdocs build --verbose --clean    # Build local version of the docs
           deploy:
               # Deploy mkdocs (GitHub pages)
               - provider: pages
