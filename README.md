@@ -1,15 +1,20 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8c6208f6f0bf4d429b13e2fa701aa780)](https://www.codacy.com/app/holzkohlengrill/Emma?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bmwcarit/Emma&amp;utm_campaign=Badge_Grade) [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/8c6208f6f0bf4d429b13e2fa701aa780)](https://www.codacy.com/app/holzkohlengrill/Emma?utm_source=github.com&utm_medium=referral&utm_content=bmwcarit/Emma&utm_campaign=Badge_Coverage) [![Build Status](https://travis-ci.org/bmwcarit/Emma.svg?branch=master)](https://travis-ci.org/bmwcarit/Emma) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-
-
-
 # Emma
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8c6208f6f0bf4d429b13e2fa701aa780)](https://www.codacy.com/app/holzkohlengrill/Emma?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bmwcarit/Emma&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/8c6208f6f0bf4d429b13e2fa701aa780)](https://www.codacy.com/app/holzkohlengrill/Emma?utm_source=github.com&utm_medium=referral&utm_content=bmwcarit/Emma&utm_campaign=Badge_Coverage)
+[![Build Status](https://travis-ci.org/bmwcarit/Emma.svg?branch=master)](https://travis-ci.org/bmwcarit/Emma)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+
 **Emma Memory and Mapfile Analyser (Emma)**
 
 > Conduct static (i.e. worst case) memory consumption analyses based on arbitrary linker map files. It produces extensive `.csv` files which are easy to filter and post-process. Optionally `.html` and markdown reports as well as neat figures help you visualising your results.
 
-Given a **map file input** (Green Hills map files are the default but others - like GCC - are supported via configuration options; examples are enclosed) Emma **map**s the addresses of sections (aka images) and/or objects (aka modules) **to memory regions** (all addresses given via map files must be known during compile time). Those memory regions are classified into two levels of granularity respectively. The first level defines arbitrary groups based on your personal taste (however using names similar to those defined by your microcontroller vendor makes most sense). Later each of those regions (second level) are assigned to one of four generalised predefined memory regions (those are: `INT_RAM`, `INT_FLASH`, `EXT_RAM`, `EXT_FLASH`). In case of **virtual memory** objects and sections lying within virtual address spaces (VASes) get **translated back into physical memory**. This is depicted in the below figure (lower part).
+<div align="center"> <img src="./doc/images/architecture.png" width="100%"> </div>
 
-**Categorisation** can be used to assign consumers (a consumer would usually represent a software component) to each object or section. This is useful for subsequent steps in order to display memory consumption per consumer type. See the upper part of the figure shown below. Mechanisms are provided to batch categorise object and section names. "Objects in sections" provides ways to obtain a **finer granularity of the categorisation result**. Therefore categorised sections containing (smaller) objects of a different category got split up and result into a more accurate categorisation.
+Given a **map file input** (Green Hills map files are the default but others - like GCC - are supported via configuration options; examples are enclosed) Emma **map**s the addresses of sections (aka images) and/or objects (aka modules) **to memory regions** (all addresses given via map files must be known during compile time). Those memory regions are classified into two levels of granularity respectively. The first level defines arbitrary groups based on your personal taste (however using names similar to those defined by your microcontroller vendor makes most sense). Later each of those regions (second level) are assigned to one of four generalised predefined memory regions (those are: `INT_RAM`, `INT_FLASH`, `EXT_RAM`, `EXT_FLASH`). In case of **virtual memory** objects and sections lying within virtual address spaces (VASes) get **translated back into physical memory**. This is depicted in the figure above (lower part).
+
+**Categorisation** can be used to assign consumers (a consumer would usually represent a software component) to each object or section. This is useful for subsequent steps in order to display memory consumption per consumer type. See the upper part of the figure shown above. Mechanisms are provided to batch categorise object and section names. "Objects in sections" provides ways to obtain a **finer granularity of the categorisation result**. Therefore categorised sections containing (smaller) objects of a different category got split up and result into a more accurate categorisation.
 
 As a result you will get **output** files in form of a **`.csv` file** which sets you up to do later processing on this data easily. In this file **additional information is added** like:
 
@@ -134,7 +139,6 @@ emma-dev (. at) googlegroups.com
 | Pygments (v2.3.1+)   | [Pygments](https://pypi.org/project/Pygments/)      | BSD-2-Clause                         | [https://bitbucket.org/birkenfeld/pygments-main/src/default/](https://bitbucket.org/birkenfeld/pygments-main/src/default/); [http://pygments.org/download/](http://pygments.org/download/)   |
 | Matplotlib (v3.0.0+) | [matplotlib](https://pypi.org/project/matplotlib/)  | Matplotlib License (BSD compatible)  | [https://matplotlib.org/users/installing.html](https://matplotlib.org/users/installing.html); [https://github.com/matplotlib/matplotlib](https://github.com/matplotlib/matplotlib)           |
 | SCout (v1.8+)        | [pypiscout](https://pypi.org/project/pypiscout/)    | MIT                                  | [https://github.com/holzkohlengrill/SCout](https://github.com/holzkohlengrill/SCout)                                                                                                         |
-| Graphviz (v0.11.1+)  | [graphviz](https://pypi.org/project/graphviz/)      | MIT                                  | [https://github.com/xflr6/graphviz](https://github.com/xflr6/graphviz)                                                                                                                       |
 
 
 **Dependencies needed to generate documentation:**

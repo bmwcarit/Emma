@@ -16,3 +16,7 @@ assignees: holzkohlengrill, KGergo88
 <!--     * Evaluate your contribution objectively. What are pro's, con's? -->
 <!--     * One contribution should solve only one problem. If not split it. -->
 <!--     * Your description should be self-explanatory (avoiding external resources). -->
+
+# TODOs
+* [ ] TODO1
+* [ ] TODO2
