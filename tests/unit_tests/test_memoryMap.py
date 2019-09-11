@@ -26,9 +26,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 # pylint: disable=wrong-import-position
 # Rationale: This module needs to access modules that are above them in the folder structure.
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import emma_libs.memoryEntry
-import emma_libs.memoryMap
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.emma_libs.memoryEntry
+import Emma.emma_libs.memoryMap
 
 
 class MemEntryData:
@@ -63,7 +63,7 @@ def createMemEntryObjects(sectionDataContainer=None, objectDataContainer=None):
         compilerSpecificData["DMA"] = True
         compilerSpecificData["vasName"] = ""
         compilerSpecificData["vasSectionName"] = ""
-        return emma_libs.memoryEntry.MemEntry(configID="MCU" if memEntryData.configId is None else memEntryData.configId,
+        return Emma.emma_libs.memoryEntry.MemEntry(configID="MCU" if memEntryData.configId is None else memEntryData.configId,
                                               mapfileName="mapfile.map",
                                               addressStart=memEntryData.addressStart,
                                               addressLength=0 if memEntryData.addressEnd is None else None,
@@ -93,10 +93,10 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
     # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>(). It is not necessary to add a docstring for every unit test.
 
     def assertEqualSections(self, firstSection, secondSection):
-        self.assertTrue(emma_libs.memoryEntry.SectionEntry.isEqual(firstSection, secondSection))
+        self.assertTrue(Emma.emma_libs.memoryEntry.SectionEntry.isEqual(firstSection, secondSection))
 
     def assertEqualObjects(self, firstObject, secondObject):
-        self.assertTrue(emma_libs.memoryEntry.ObjectEntry.isEqual(firstObject, secondObject))
+        self.assertTrue(Emma.emma_libs.memoryEntry.ObjectEntry.isEqual(firstObject, secondObject))
 
     def checkFlags(self, memEntry, memEntryHandler, expectedDuplicate=None, expectedContainingOthers=None, expectedContainedBy=None, expectedOverlappingOthers=None, expectedOverlappedBy=None):  # pylint: disable=too-many-arguments
                                                                                                                                                                                                   # Rationale: This function needs to be able to check all kinds of flags, this is why these arguments needed.
@@ -113,7 +113,7 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
 
     def checkAddressChanges(self, resolvedMemEntry, originalMemEntry, expectedAddressStart=None, expectedAddressLength=None, expectedAddressEnd=None):  # pylint: disable=too-many-arguments
                                                                                                                                                         # Rationale: This function needs to be able to check all kinds of address related data, this is why these arguments needed.
-        # If we have expect an address change
+        # If we expect an address change
         if expectedAddressStart is not None or expectedAddressLength is not None or expectedAddressEnd is not None:
             # Then we will check it with the expected values
             self.assertEqual(resolvedMemEntry.addressStart, expectedAddressStart)
@@ -139,11 +139,11 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         ADDRESS_START = 0x0100
         ADDRESS_END = 0x01FF
         listOfMemEntryData = [MemEntryData(ADDRESS_START, ADDRESS_END)]
-        memEntryHandler = emma_libs.memoryEntry.SectionEntry
+        memEntryHandler = Emma.emma_libs.memoryEntry.SectionEntry
         originalSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         resolvedSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         # Running the resolveDuplicateContainmentOverlap list
-        emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
+        Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, Emma.emma_libs.memoryEntry.SectionEntry)
 
         # Check the number of elements: no elements shall be removed or added to the container
         self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
@@ -166,11 +166,11 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         SECOND_SECTION_ADDRESS_END = 0x02FF
         listOfMemEntryData = [MemEntryData(FIRST_SECTION_ADDRESS_START, FIRST_SECTION_ADDRESS_END, section="first"),
                               MemEntryData(SECOND_SECTION_ADDRESS_START, SECOND_SECTION_ADDRESS_END, section="second")]
-        memEntryHandler = emma_libs.memoryEntry.SectionEntry
+        memEntryHandler = Emma.emma_libs.memoryEntry.SectionEntry
         originalSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         resolvedSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         # Running the resolveDuplicateContainmentOverlap list
-        emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
+        Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, Emma.emma_libs.memoryEntry.SectionEntry)
 
         # Check the number of elements: no elements shall be removed or added to the container
         self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
@@ -196,11 +196,11 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         SECOND_SECTION_ADDRESS_END = 0x01FF
         listOfMemEntryData = [MemEntryData(FIRST_SECTION_ADDRESS_START, FIRST_SECTION_ADDRESS_END, section="first"),
                               MemEntryData(SECOND_SECTION_ADDRESS_START, SECOND_SECTION_ADDRESS_END, section="second")]
-        memEntryHandler = emma_libs.memoryEntry.SectionEntry
+        memEntryHandler = Emma.emma_libs.memoryEntry.SectionEntry
         originalSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         resolvedSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         # Running the resolveDuplicateContainmentOverlap list
-        emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
+        Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, Emma.emma_libs.memoryEntry.SectionEntry)
 
         # Check the number of elements: no elements shall be removed or added to the container
         self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
@@ -224,11 +224,11 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         SECOND_SECTION_ADDRESS_END = 0x01FF
         listOfMemEntryData = [MemEntryData(FIRST_SECTION_ADDRESS_START, FIRST_SECTION_ADDRESS_END, section="first"),
                               MemEntryData(SECOND_SECTION_ADDRESS_START, SECOND_SECTION_ADDRESS_END, section="second")]
-        memEntryHandler = emma_libs.memoryEntry.SectionEntry
+        memEntryHandler = Emma.emma_libs.memoryEntry.SectionEntry
         originalSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         resolvedSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         # Running the resolveDuplicateContainmentOverlap list
-        emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
+        Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, Emma.emma_libs.memoryEntry.SectionEntry)
 
         # Check the number of elements: no elements shall be removed or added to the container
         self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
@@ -252,11 +252,11 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         SECOND_SECTION_ADDRESS_END = 0x027F
         listOfMemEntryData = [MemEntryData(FIRST_SECTION_ADDRESS_START, FIRST_SECTION_ADDRESS_END, section="first"),
                               MemEntryData(SECOND_SECTION_ADDRESS_START, SECOND_SECTION_ADDRESS_END, section="second")]
-        memEntryHandler = emma_libs.memoryEntry.SectionEntry
+        memEntryHandler = Emma.emma_libs.memoryEntry.SectionEntry
         originalSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         resolvedSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
         # Running the resolveDuplicateContainmentOverlap list
-        emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, emma_libs.memoryEntry.SectionEntry)
+        Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, Emma.emma_libs.memoryEntry.SectionEntry)
 
         # Check the number of elements: no elements shall be removed or added to the container
         self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
@@ -271,6 +271,47 @@ class ResolveDuplicateContainmentOverlapTestCase(unittest.TestCase):
         # Check whether the flags were set properly
         self.checkFlags(resolvedSectionContainer[0], memEntryHandler, expectedOverlappingOthers=True)
         self.checkFlags(resolvedSectionContainer[1], memEntryHandler, expectedOverlappedBy=originalSectionContainer[0])
+
+    def test__overlapMultipleSections(self):
+        """
+        S1  |------|
+        S2    |---------|
+        S3      |----------|
+        S4           |-----|
+        """
+        # Creating the sections and objects for the test
+        FIRST_SECTION_ADDRESS_START = 0x0100
+        FIRST_SECTION_ADDRESS_END = 0x016F
+        SECOND_SECTION_ADDRESS_START = 0x0120
+        SECOND_SECTION_ADDRESS_END = 0x021F
+        THIRD_SECTION_ADDRESS_START = 0x0140
+        THIRD_SECTION_ADDRESS_END = 0x023F
+        FOURTH_SECTION_ADDRESS_START = 0x0190
+        FOURTH_SECTION_ADDRESS_END = 0x023F
+        listOfMemEntryData = [MemEntryData(FIRST_SECTION_ADDRESS_START, FIRST_SECTION_ADDRESS_END, section="first"),
+                              MemEntryData(SECOND_SECTION_ADDRESS_START, SECOND_SECTION_ADDRESS_END, section="second"),
+                              MemEntryData(THIRD_SECTION_ADDRESS_START, THIRD_SECTION_ADDRESS_END, section="third"),
+                              MemEntryData(FOURTH_SECTION_ADDRESS_START, FOURTH_SECTION_ADDRESS_END, section="fourth")]
+        memEntryHandler = Emma.emma_libs.memoryEntry.SectionEntry
+        originalSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
+        resolvedSectionContainer, _ = createMemEntryObjects(listOfMemEntryData)
+        # Running the resolveDuplicateContainmentOverlap list
+        Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(resolvedSectionContainer, Emma.emma_libs.memoryEntry.SectionEntry)
+
+        # Check the number of elements: no elements shall be removed or added to the container
+        self.assertEqual(len(resolvedSectionContainer), len(originalSectionContainer))
+
+        # Check whether the addresses were set properly (the second section shall lose its beginning)
+        self.checkAddressChanges(resolvedSectionContainer[0], originalSectionContainer[0], expectedAddressStart=originalSectionContainer[0].addressStart, expectedAddressEnd=originalSectionContainer[0].addressEnd())
+        self.checkAddressChanges(resolvedSectionContainer[1], originalSectionContainer[1], expectedAddressStart=(originalSectionContainer[0].addressEnd() + 1), expectedAddressLength=0)
+        self.checkAddressChanges(resolvedSectionContainer[2], originalSectionContainer[2], expectedAddressStart=(originalSectionContainer[0].addressEnd() + 1), expectedAddressEnd=originalSectionContainer[2].addressEnd())
+        self.checkAddressChanges(resolvedSectionContainer[3], originalSectionContainer[3], expectedAddressStart=originalSectionContainer[3].addressStart, expectedAddressLength=0)
+
+        # Check whether the flags were set properly
+        self.checkFlags(resolvedSectionContainer[0], memEntryHandler, expectedOverlappingOthers=True)
+        self.checkFlags(resolvedSectionContainer[1], memEntryHandler, expectedOverlappedBy=originalSectionContainer[0], expectedContainedBy=originalSectionContainer[2])
+        self.checkFlags(resolvedSectionContainer[2], memEntryHandler, expectedOverlappedBy=originalSectionContainer[0], expectedContainingOthers=True)
+        self.checkFlags(resolvedSectionContainer[3], memEntryHandler, expectedContainedBy=originalSectionContainer[2])
 
 
 class CalculateObjectsInSectionsTestCase(unittest.TestCase):
@@ -338,10 +379,10 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         self.assertEqual(sectionReserve.objectName, OBJECTS_IN_SECTIONS_SECTION_RESERVE)
 
     def assertEqualSections(self, firstSection, secondSection):
-        self.assertTrue(emma_libs.memoryEntry.SectionEntry.isEqual(firstSection, secondSection))
+        self.assertTrue(Emma.emma_libs.memoryEntry.SectionEntry.isEqual(firstSection, secondSection))
 
     def assertEqualObjects(self, firstObject, secondObject):
-        self.assertTrue(emma_libs.memoryEntry.ObjectEntry.isEqual(firstObject, secondObject))
+        self.assertTrue(Emma.emma_libs.memoryEntry.ObjectEntry.isEqual(firstObject, secondObject))
 
     def test_singleSection(self):
         """
@@ -353,7 +394,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         ADDRESS_END = 0x01FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(ADDRESS_START, ADDRESS_END)], [])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + sectionReserve
         self.assertEqual(len(objectsInSections), 2)
@@ -382,7 +423,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
                                                                    MemEntryData(FOURTH_OBJECT_ADDRESS_START, None),
                                                                    MemEntryData(FIFTH_OBJECT_ADDRESS_START, None)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: firstObject +
         #                                       sectionEntry +
@@ -431,7 +472,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
                                                                    MemEntryData(SECOND_OBJECT_ADDRESS_START, None),
                                                                    MemEntryData(THIRD_OBJECT_ADDRESS_START, THIRD_OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: firstObject +
         #                                       firstSectionEntry +
@@ -478,7 +519,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         sectionContainer[0].containmentFlag = True
         sectionContainer[1].containmentFlag = True
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: firstSectionEntry +
         #                                       object +
@@ -503,7 +544,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x02FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + object
         self.assertEqual(len(objectsInSections), 2)
@@ -527,7 +568,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)],
                                                                   [MemEntryData(FIRST_OBJECT_ADDRESS_START, FIRST_OBJECT_ADDRESS_END), MemEntryData(SECOND_OBJECT_ADDRESS_START, SECOND_OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + firstObject + secondObject
         self.assertEqual(len(objectsInSections), 3)
@@ -550,7 +591,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x09FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: object + sectionEntry
         self.assertEqual(len(objectsInSections), 2)
@@ -571,7 +612,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x07FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + object
         self.assertEqual(len(objectsInSections), 2)
@@ -592,7 +633,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x03FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: object + sectionEntry
         self.assertEqual(len(objectsInSections), 2)
@@ -613,7 +654,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x0410
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + object + sectionReserve
         self.assertEqual(len(objectsInSections), 3)
@@ -636,7 +677,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x05FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + sectionReserve + object
         self.assertEqual(len(objectsInSections), 3)
@@ -659,7 +700,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x05A0
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + sectionReserve + object + sectionReserve
         self.assertEqual(len(objectsInSections), 4)
@@ -684,7 +725,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x03FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: object + sectionEntry + sectionReserve
         self.assertEqual(len(objectsInSections), 3)
@@ -707,7 +748,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x05FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + sectionReserve + object
         self.assertEqual(len(objectsInSections), 3)
@@ -730,7 +771,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x05FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: object + sectionEntry + sectionReserve
         self.assertEqual(len(objectsInSections), 3)
@@ -753,7 +794,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
         OBJECT_ADDRESS_END = 0x04FF
         sectionContainer, objectContainer = createMemEntryObjects([MemEntryData(SECTION_ADDRESS_START, SECTION_ADDRESS_END)], [MemEntryData(OBJECT_ADDRESS_START, OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry + sectionReserve + object
         self.assertEqual(len(objectsInSections), 3)
@@ -792,7 +833,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
                                                                    MemEntryData(FOURTH_OBJECT_ADDRESS_START, FOURTH_OBJECT_ADDRESS_END),
                                                                    MemEntryData(FIFTH_OBJECT_ADDRESS_START, FIFTH_OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: sectionEntry +
         #                                       firstObject +
@@ -857,7 +898,7 @@ class CalculateObjectsInSectionsTestCase(unittest.TestCase):
                                                                    MemEntryData(FOURTH_OBJECT_ADDRESS_START, FOURTH_OBJECT_ADDRESS_END),
                                                                    MemEntryData(FIFTH_OBJECT_ADDRESS_START, FIFTH_OBJECT_ADDRESS_END)])
         # Calculating the objectsInSections list
-        objectsInSections = emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
+        objectsInSections = Emma.emma_libs.memoryMap.calculateObjectsInSections(sectionContainer, objectContainer)
 
         # Check the number of created elements: firstObject +
         #                                       firstSectionEntry +

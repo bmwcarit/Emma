@@ -1,5 +1,4 @@
-﻿
-# Test Project
+﻿# Test Project
 
 This is an imaginary system, the mapfiles were created by hand and they are following the default Emma mapfile format.
 The goal of the project is to present a simple system without any complicated parts in order

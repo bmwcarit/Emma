@@ -3,30 +3,10 @@
 
 > Data aggregation and visualisation tool for Emma.
 
-------------------------
-# Contents
-1. [Emma Visualiser](#emma-visualiser)
-2. [Contents](#contents)
-3. [Requirements](#requirements)
-4. [Process](#process)
-5. [Usage](#usage)
-6. [Arguments in detail](#arguments-in-detail)
-   1. [Optional Arguments](#optional-arguments)
-   2. [Quiet Mode](#quiet-mode)
-   3. [Overview](#overview)
-   4. [Append Mode](#append-mode)
-7. [Project Configuration](#project-configuration)
-   1. [`budgets.json`](#budgetsjson)
-   2. [`[supplement]`](#supplement)
-8. [Input/Output Files](#inputoutput-files)
-9. [Examples](#examples)
-   1. [Calling Graph Emma Visualiser](#calling-graph-emma-visualiser)
 
-------------------------
-
-# Requirements
+## Requirements
 * Python 3.6 or higher
-	* Tested with 3.6.1rc1; 3.7.0
+	* Tested with 3.6.1rc1; 3.7.0, 3.7.1
 * Python libraries
 	* pypiscout 2.0 or higher: (`pip3 install pypiscout`)
 	* Pandas 0.22 or higher: (`pip3 install pandas`)
@@ -37,12 +17,11 @@
 
 
 
-# Process
-
+## Process
 After analysing the mapfiles with the `emma.py` script, one can visualise them using `emma_vis.py`.
 
 
-# Usage
+## Usage
 
     $ python emma_vis.py --help
     usage: Emma Visualiser [-h] [--version] --projectDir PROJECTDIR [--quiet]
@@ -84,9 +63,8 @@ After analysing the mapfiles with the `emma.py` script, one can visualise them u
 
 
 
-# Arguments in detail
-## Optional Arguments
-
+## Arguments in detail
+### Optional Arguments
 * `--inOutDir INOUTDIR, -i INOUTDIR`
 * `--subDir SUBDIR`
 
@@ -111,49 +89,45 @@ Additional reports in .csv format will be created in the ./results directory.
 Save a .csv of categories found inside the image summary (default: False).
 
 
-## Quiet Mode
-
+### Quiet Mode
 * `--quiet, -q`
 
 Automatically accepts last modified `.csv` file in `./memStats` folder (default: False). If not specified the program will ask you to confirm the default path if not given or ambiguous.
 
-## Overview
-
+### Overview
 * `--overview`
 
 This creates a .md and .html output containing an overview of the memory usage.
 
-## Append Mode
-
+### Append Mode
 * `--append`
 
 Appends analyses to .csv files. This can be used to visualise memory usage over different versions.
 
 
-# Project Configuration
-
+## Project Configuration
 There are several configuration files needed in order to analyze your project. Most of them are described in the Emma documentation.
 Here, only the ones described that are used by the Emma Visualiser exclusively.
 
-## `budgets.json`
-
+### `budgets.json`
 This config file is used to define the available memory for every memory area of every configID.
 Besides this it defines a threshold value as well that will be displayed on the diagrams. This threshold can be for example
 prescribed by your project requirements in order to ensure there will be available memory areas for future updates.
 
 The config file needs to have the following format:
 
-{
-    "Project Threshold in %": <THRESHOLD_VALUE>,
+    :::json
+    {
+        "Project Threshold in %": <THRESHOLD_VALUE>,
 
-    "Budgets": [
-        [<CONFIG_ID>, <MEMORY_TYPE>, <AVAILABLE_MEMORY>],
-        .
-        .
-        .
-        [<CONFIG_ID>, <MEMORY_TYPE>, <AVAILABLE_MEMORY>]
-    ]
-}
+        "Budgets": [
+            ["<CONFIG_ID>", "<MEMORY_TYPE>", <AVAILABLE_MEMORY>],
+            .
+            .
+            .
+            ["<CONFIG_ID>", "<MEMORY_TYPE>", <AVAILABLE_MEMORY>]
+        ]
+    }
 
 The following rules apply:
 
@@ -172,13 +146,13 @@ The following rules apply:
 * The `<CONFIG_ID>`s are the ones defined in the globalConfig.json (See the Emma documentation for details)
 * The `<AVAILABLE_MEMORY>`s are defining the available memory for a `<MEMORY_TYPE>` of a `<CONFIG_ID>` in bytes
 
-## `[supplement]`
+### `[supplement]`
 `.md` files in this directory will be appended to the report created by the `--overview` command.
 This can be used to append additional remarks to the overview.
 This is completely user defined, Emma and its components are not relying on these files in any way.
 
 
-# Input/Output Files
+## Input/Output Files
 All output files will be saved to `./[PROJECT]/results`.
 
 If not specified otherwise using the `--quiet` and `--inOutDir` commands, the visualiser will choose the last modified section and object summary .csv files in the `./[PROJECT]/memStats` directory. If there is no module summary present the visualisation of the modules will be skipped.
@@ -191,15 +165,12 @@ Output files are:
 * A `.csv` file showing which section contains which modules
 
 
-# Examples
+## Examples
 After the Image Summary has been created with emma.py and the memStats CSV files were saved to the directory `../[PROJECT]/results/memStats`, it can be visualised using:
 
     :::bash
-    python emma_vis.py \
-    --project ..\[PROJECT] \
-    --dir ..\[PROJECT]\results \
-    --quiet \
-    --overview
+    python emma_vis.py --project ..\<PROJECT> --dir ..\[PROJECT]\results --quiet --overview
 
-## Calling Graph Emma Visualiser
-<div align="center"> <img src="../genDoc/call_graph_uml/emma_vis_filtered.profile.png" width="1000"> </div>
+### Calling Graph Emma Visualiser
+<!-- We use onerror to make images visible when viewing the content using GitHub Pages etc. on the other side reading the markdown file using an editor should kept intact -->
+<div align="center"> <img src="../genDoc/call_graph_uml/emma_vis_filtered.profile.png" onerror="this.onerror=null;this.src='https://github.com/bmwcarit/Emma/blob/master/genDoc/call_graph_uml/emma_vis_filtered.profile.png"';" width="1000"> </div>

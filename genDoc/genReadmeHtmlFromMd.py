@@ -29,11 +29,10 @@ sys.path.append("../")
 # pylint: disable=wrong-import-position
 # Rationale: This module needs to access modules that are above them in the folder structure.
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import shared_libs.emma_helper
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.shared_libs.emma_helper
 import genDoc._genCallGraphs
 import genDoc._genUmlDiagrams
-
 
 def ParseArguments():
     """
@@ -103,23 +102,23 @@ def main(arguments):
             genDoc._genUmlDiagrams.main()
 
         sc().info("Storing Emma readme as a .html file...")
-        markdownFilePath = r"../doc/readme.md"
-        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
+        markdownFilePath = r"../doc/readme-emma.md"
+        Emma.shared_libs.emma_helper.convertMarkdownFileToHtmlFile(Emma.shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
         sc().info("Done.\n")
 
         sc().info("Storing Emma Visualiser readme as a .html file...")
         markdownFilePath = r"../doc/readme-vis.md"
-        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
+        Emma.shared_libs.emma_helper.convertMarkdownFileToHtmlFile(Emma.shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
         sc().info("Done.\n")
 
         sc().info("Storing Emma contribution as a .html file...")
         markdownFilePath = r"../doc/contribution.md"
-        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
+        Emma.shared_libs.emma_helper.convertMarkdownFileToHtmlFile(Emma.shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
         sc().info("Done.\n")
 
         sc().info("Storing the test_project readme as a .html file...")
         markdownFilePath = r"../doc/test_project/readme.md"
-        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
+        Emma.shared_libs.emma_helper.convertMarkdownFileToHtmlFile(Emma.shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
         sc().info("Done.\n")
 
 
@@ -127,7 +126,7 @@ def main(arguments):
         # Change the working directory; otherwise we get errors about the relative image import paths in emma_helper.changePictureLinksToEmbeddingInHtmlData()
         os.chdir("..")
         markdownFilePath = r"../README.md"
-        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
+        Emma.shared_libs.emma_helper.convertMarkdownFileToHtmlFile(Emma.shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
         sc().info("Done.")
         os.chdir("doc")     # Change working directory back
 
