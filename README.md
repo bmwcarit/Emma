@@ -10,7 +10,7 @@
 
 > Conduct static (i.e. worst case) memory consumption analyses based on arbitrary linker map files. It produces extensive `.csv` files which are easy to filter and post-process. Optionally `.html` and markdown reports as well as neat figures help you visualising your results.
 
-<div align="center"> <img src="./doc/images/architecture.png" width="100%"> </div>
+<div align="center"> <img src="./doc/images/architecture.png" onerror="this.onerror=null;this.src='images/architecture.png';" width="100%"> </div>
 
 Given a **map file input** (Green Hills map files are the default but others - like GCC - are supported via configuration options; examples are enclosed) Emma **map**s the addresses of sections (aka images) and/or objects (aka modules) **to memory regions** (all addresses given via map files must be known during compile time). Those memory regions are classified into two levels of granularity respectively. The first level defines arbitrary groups based on your personal taste (however using names similar to those defined by your microcontroller vendor makes most sense). Later each of those regions (second level) are assigned to one of four generalised predefined memory regions (those are: `INT_RAM`, `INT_FLASH`, `EXT_RAM`, `EXT_FLASH`). In case of **virtual memory** objects and sections lying within virtual address spaces (VASes) get **translated back into physical memory**. This is depicted in the figure above (lower part).
 
@@ -34,7 +34,7 @@ The whole Emma tool suite contains command line options making it convenient to 
 <br>
 
 <!-- We use onerror to make images visible when viewing the content using GitHub Pages etc. on the other side reading the markdown file using an editor should kept intact -->
-<div align="center"> <img src="./doc/images/architecture.png" onerror="this.onerror=null;this.src='/images/architecture.png';" width="100%"> </div>
+<div align="center"> <img src="./doc/images/architecture.png" onerror="this.onerror=null;this.src='images/architecture.png';" width="100%"> </div>
 
 
 ## Installation
@@ -50,7 +50,7 @@ Dependencies: Python 3.6 or higher; `pip3 install Pygments Markdown matplotlib p
 The following figure shows a possible workflow using Emma:
 
 <!-- We use onerror to make images visible when viewing the content using GitHub Pages etc. on the other side reading the markdown file using an editor should kept intact -->
-<div align="center"> <img src="./doc/images/workflow.png" onerror="this.onerror=null;this.src='/images/workflow.png';" width="100%"> </div>
+<div align="center"> <img src="./doc/images/workflow.png" onerror="this.onerror=null;this.src='images/workflow.png';" width="100%"> </div>
 
 **Emma** - as the core component - produces an intermediate `.csv` file. Inputs are mapfiles and JSON files (for configuration (memory layout, sizes, ...)). From this point you are very flexible to choose your own pipeline. You could
 
@@ -101,7 +101,7 @@ A basic configuration can be short per file. For complex systems you can choose 
 One main concept includes the `globalConfig.json`. You can see this as meta-config. Each configuration ID (configID) is a separately conducted analysis. Per configID you state individually the configuration files you want to use for this exact analysis. Herewith you can mix and match any combination of subconfigs you prefer.
 
 <!-- We use onerror to make images visible when viewing the content using GitHub Pages etc. on the other side reading the markdown file using an editor should kept intact -->
-<div align="center"> <img src="./doc/images/globalConfigScheme.png" onerror="this.onerror=null;this.src='/images/globalConfigScheme.png';" width="60%"> </div>
+<div align="center"> <img src="./doc/images/globalConfigScheme.png" onerror="this.onerror=null;this.src='images/globalConfigScheme.png';" width="60%"> </div>
 
 A `globalConfig.json` could look like this:
 
