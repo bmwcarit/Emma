@@ -4,7 +4,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/8c6208f6f0bf4d429b13e2fa701aa780)](https://www.codacy.com/app/holzkohlengrill/Emma?utm_source=github.com&utm_medium=referral&utm_content=bmwcarit/Emma&utm_campaign=Badge_Coverage)
 [![Build Status](https://travis-ci.org/bmwcarit/Emma.svg?branch=master)](https://travis-ci.org/bmwcarit/Emma)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-
+[![GitHub pages](https://img.shields.io/badge/doc-GitHub%20pages-blue)](https://bmwcarit.github.io/Emma)
 
 **Emma Memory and Mapfile Analyser (Emma)**
 
