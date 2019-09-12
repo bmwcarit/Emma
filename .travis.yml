@@ -105,9 +105,9 @@ jobs:
           script:
               - pushd ./tests/unit_tests
               - coverage run -m unittest -v
-              - tree -a -I .git ./
               - coverage report --omit="/home/travis/virtualenv/*","/home/travis/build/bmwcarit/Emma/tests/*"
               - coverage xml
+              - tree -a -I .git ./
               - popd
 
         - stage: deployment
