@@ -203,3 +203,4 @@ def main(arguments):
 
     # Get back initial path config
     os.environ["PATH"] = pathOldValue
+    os.chdir("genDoc")              # Change working directory back
