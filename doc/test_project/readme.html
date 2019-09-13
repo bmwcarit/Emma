@@ -94,20 +94,20 @@ code { background-color: #F6F8FA; }
 </head>
 <body>
 
-<p>﻿</p>
-<h1 id="test-project">Test Project</h1>
+<p>﻿# Test Project</p>
 <p>This is an imaginary system, the mapfiles were created by hand and they are following the default Emma mapfile format.
 The goal of the project is to present a simple system without any complicated parts in order
 to introduce the new users step-by-step to creating an Emma configuration.</p>
 <p>The project can be analyzed by running the following commands from the Emma top-level folder:</p>
-<pre class="codehilite"><code>Emma:
+<div class="codehilite"><pre><span></span>Emma:
     $ python emma.py --project doc/test_project --mapfiles doc/test_project/mapfiles --dir doc/test_project/results
 Emma Visualier:
-    $ python emma_vis.py --project doc/test_project --dir doc/test_project/results --overview --quiet</code></pre>
+    $ python emma_vis.py --project doc/test_project --dir doc/test_project/results --overview --quiet
+</pre></div>
 
 
 <p>The folder structure of the Test Project:</p>
-<pre class="codehilite"><code>+--[test_project]
+<div class="codehilite"><pre><span></span>+--[test_project]
 |   +-- [mapfiles]                          # The mapfiles of the project are stored here
 |   +-- [readme]                            # The folder of this description
 |   +-- [results]                           # The results of the analyse will be stored here by the commands above
@@ -121,7 +121,8 @@ Emma Visualier:
 |   +-- categoriesObjects.json
 |   +-- categoriesSections.json
 |   +-- categoriesObjectsKeywords.json    
-|   +-- categoriesSectionsKeywords.json</code></pre>
+|   +-- categoriesSectionsKeywords.json
+</pre></div>
 
 
 <h2 id="project-description">Project description</h2>
@@ -1935,19 +1936,20 @@ addressSpaces config file for these devices.</p>
 <p>The patterns config file files are usually unique for all the configIDs.</p>
 <p>Since the MCU does not have an MMU so it does not have virtual address spaces, we will not assign a sections config file to it.
 In contrast to the MCU, the SOC does use virtual address spaces, so we will assign a sections config file to it.</p>
-<pre class="codehilite"><code class="language-json">{
-    &quot;MCU&quot;: {
-        &quot;compiler&quot;: &quot;GHS&quot;,
-        &quot;addressSpacesPath&quot;: &quot;addressSpaces_MCU.json&quot;,
-        &quot;patternsPath&quot;: &quot;patterns_MCU.json&quot;
-    },
-    &quot;SOC&quot;: {
-        &quot;compiler&quot;: &quot;GHS&quot;,
-        &quot;addressSpacesPath&quot;: &quot;addressSpaces_SOC.json&quot;,
-        &quot;patternsPath&quot;: &quot;patterns_SOC.json&quot;,
-        &quot;virtualSectionsPath&quot;: &quot;virtualSections_SOC.json&quot;
-    }
-}</code></pre>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;MCU&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;compiler&quot;</span><span class="p">:</span> <span class="s2">&quot;GHS&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;addressSpacesPath&quot;</span><span class="p">:</span> <span class="s2">&quot;addressSpaces_MCU.json&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;patternsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;patterns_MCU.json&quot;</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;SOC&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;compiler&quot;</span><span class="p">:</span> <span class="s2">&quot;GHS&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;addressSpacesPath&quot;</span><span class="p">:</span> <span class="s2">&quot;addressSpaces_SOC.json&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;patternsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;patterns_SOC.json&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;virtualSectionsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;virtualSections_SOC.json&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
 
 
 <p>In the following, the config files assigned to the MCU will be explained.</p>
@@ -1960,28 +1962,29 @@ The "Code" area is an internal Flash area, where the program and the constants w
 The "SRAM" area is an internal RAM area, where data is stored. The last area is the "Device",
 where the SFRs of the controller are located. Since our software will have neither data nor code in this area,
 we will add it to the "ignoreMemory" array so it will not be a analyzed by Emma.</p>
-<pre class="codehilite"><code class="language-json">{
-    &quot;memory&quot;: {
-        &quot;Code&quot;: {
-            &quot;start&quot;: &quot;0x00000000&quot;,
-            &quot;end&quot;: &quot;0x1FFFFFFF&quot;,
-            &quot;type&quot;: &quot;INT_FLASH&quot;
-        },
-        &quot;SRAM&quot;: {
-            &quot;start&quot;: &quot;0x20000000&quot;,
-            &quot;end&quot;: &quot;0x3FFFFFFF&quot;,
-            &quot;type&quot;: &quot;INT_RAM&quot;
-        },
-        &quot;Device&quot;: {
-            &quot;start&quot;: &quot;0x40000000&quot;,
-            &quot;end&quot;: &quot;0x5FFFFFFF&quot;,
-            &quot;type&quot;: &quot;INT_RAM&quot;
-        }
-    },
-    &quot;ignoreMemory&quot;: [
-        &quot;Device&quot;
-    ]
-}</code></pre>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;memory&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;Code&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0x00000000&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0x1FFFFFFF&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;INT_FLASH&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;SRAM&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0x20000000&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0x3FFFFFFF&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;INT_RAM&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;Device&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0x40000000&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0x5FFFFFFF&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;INT_RAM&quot;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;ignoreMemory&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Device&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
 
 
 <h3 id="patterns_mcujson">patterns_MCU.json</h3>
@@ -1998,22 +2001,24 @@ the Emma documentation).</p>
 is that the Application and the Bootloader will never run at the same time. During the Application 
 runtime, the data of the Bootloader is not present in the memory, only the code, so the SRAM 
 memory are needs to be ignored to get the correct results. </p>
-<pre class="codehilite"><code class="language-json">{
-    &quot;mapfiles&quot;: {
-        &quot;MCU_Application&quot;: {
-            &quot;regex&quot;: [&quot;\\bMCU_Application\\.map&quot;]
-        },
-        &quot;MCU_Bootloader&quot;: {
-            &quot;regex&quot;: [&quot;\\bMCU_Bootloader\\.map&quot;]
-            &quot;memRegionExcludes&quot;: [&quot;SRAM&quot;]                
-        }
-    }
-}</code></pre>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;mapfiles&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;MCU_Application&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;\\bMCU_Application\\.map&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;MCU_Bootloader&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;\\bMCU_Bootloader\\.map&quot;</span><span class="p">]</span>
+            <span class="s2">&quot;memRegionExcludes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;SRAM&quot;</span><span class="p">]</span>                
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
 
 
 <p>At this point the absolute minimum configuration for the MCU is done. You can try it out by adding
 the following line to the "SOC" object in the globalConfig.json:</p>
-<pre class="codehilite"><code class="language-json">&quot;ignoreConfigID&quot;: true</code></pre>
+<div class="codehilite"><pre><span></span><span class="s2">&quot;ignoreConfigID&quot;</span><span class="err">:</span> <span class="kc">true</span>
+</pre></div>
 
 
 <p>This will lead to, that Emma will completely ignore the "SOC" configID and will not trow error
@@ -2035,35 +2040,36 @@ During the booting process, the third stage bootloader will be loaded to this ar
 but it will not be present after the booting process anymore so it will not be part of the Emma analyse.</p>
 <p>Based on all these info we will ignore the "Boot", "SRAM" and "Peripherals" memory areas by adding them
 to the "ignoreMemory" array.</p>
-<pre class="codehilite"><code class="language-json">{
-    &quot;memory&quot;: {
-        &quot;Boot&quot;: {
-            &quot;start&quot;: &quot;0x00000000&quot;,
-            &quot;end&quot;: &quot;0x0FFFFFFF&quot;,
-            &quot;type&quot;: &quot;INT_FLASH&quot;
-        },
-        &quot;SRAM&quot;: {
-            &quot;start&quot;: &quot;0x10000000&quot;,
-            &quot;end&quot;: &quot;0x1FFFFFFF&quot;,
-            &quot;type&quot;: &quot;INT_RAM&quot;
-        },
-        &quot;Peripherals&quot;: {
-            &quot;start&quot;: &quot;0x40000000&quot;,
-            &quot;end&quot;: &quot;0x5FFFFFFF&quot;,
-            &quot;type&quot;: &quot;INT_RAM&quot;
-        },
-        &quot;DDR&quot;: {
-          &quot;start&quot;: &quot;0xC0000000&quot;,
-          &quot;end&quot;: &quot;0xFFFFFFFF&quot;,
-          &quot;type&quot;: &quot;EXT_RAM&quot;
-        }
-    },
-    &quot;ignoreMemory&quot;: [
-      &quot;Boot&quot;,
-      &quot;SRAM&quot;,
-      &quot;Peripherals&quot;
-    ]
-}</code></pre>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;memory&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;Boot&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0x00000000&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0x0FFFFFFF&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;INT_FLASH&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;SRAM&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0x10000000&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0x1FFFFFFF&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;INT_RAM&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;Peripherals&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0x40000000&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0x5FFFFFFF&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;INT_RAM&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;DDR&quot;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0xC0000000&quot;</span><span class="p">,</span>
+          <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0xFFFFFFFF&quot;</span><span class="p">,</span>
+          <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;EXT_RAM&quot;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;ignoreMemory&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="s2">&quot;Boot&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;SRAM&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;Peripherals&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
 
 
 <h3 id="patterns_socjson">patterns_SOC.json</h3>
@@ -2087,26 +2093,27 @@ by adding patterns to the "UniquePatternSections" and "UniquePatternObjects" key
 the Emma documentation).</p>
 <p>For the SOC_monolith.map, we need to create the "monoliths" object. This object will contain a user defined
 name for the monolith, in this case "SOC_monolith" with a reg pattern just like the for the other mapfiles.</p>
-<pre class="codehilite"><code class="language-json">{
-    &quot;mapfiles&quot;: {
-        &quot;SOC_OperatingSystem&quot;: {
-            &quot;regex&quot;: [&quot;\\bSOC_OperatingSystem\\.map&quot;]
-        },
-        &quot;SOC_Application&quot;: {
-            &quot;regex&quot;: [&quot;\\bSOC_Application\\.map&quot;],
-            &quot;VAS&quot;: &quot;APP&quot;
-        },
-        &quot;SOC_NetLogger&quot;: {
-            &quot;regex&quot;: [&quot;\\bSOC_NetLogger\\.map&quot;],
-            &quot;VAS&quot;: &quot;NETLOG&quot;
-        }
-    },
-    &quot;monoliths&quot;: {
-        &quot;SOC_monolith&quot;: {
-            &quot;regex&quot;: [&quot;\\bSOC_monolith\\.map&quot;]
-        }
-    }
-}</code></pre>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;mapfiles&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;SOC_OperatingSystem&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;\\bSOC_OperatingSystem\\.map&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;SOC_Application&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;\\bSOC_Application\\.map&quot;</span><span class="p">],</span>
+            <span class="nt">&quot;VAS&quot;</span><span class="p">:</span> <span class="s2">&quot;APP&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;SOC_NetLogger&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;\\bSOC_NetLogger\\.map&quot;</span><span class="p">],</span>
+            <span class="nt">&quot;VAS&quot;</span><span class="p">:</span> <span class="s2">&quot;NETLOG&quot;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;monoliths&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;SOC_monolith&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;\\bSOC_monolith\\.map&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
 
 
 <h3 id="virtualsections_socjson">virtualSections_SOC.json</h3>
@@ -2115,24 +2122,25 @@ defined in the patterns_SOC.json with the "VAS" key. This is needed because the 
 sections as well and Emma needs to identify the virtual ones and assign them to a specific virtual address space.
 In this configuration only the SOC has virtual address spaces. The MCU does not need a
 config file like this.</p>
-<pre class="codehilite"><code class="language-json">{
-    &quot;APP&quot;: [
-        &quot;.app_text&quot;,
-        &quot;.app_rodata&quot;,
-        &quot;.app_data&quot;,
-        &quot;.app_bss&quot;,
-        &quot;.app_heap&quot;,
-        &quot;.app_stack&quot;
-    ],
-    &quot;NETLOG&quot;: [
-        &quot;.netlog_text&quot;,
-        &quot;.netlog_rodata&quot;,
-        &quot;.netlog_data&quot;,
-        &quot;.netlog_bss&quot;,
-        &quot;.netlog_heap&quot;,
-        &quot;.netlog_stack&quot;
-    ]
-}</code></pre>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;APP&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;.app_text&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.app_rodata&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.app_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.app_bss&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.app_heap&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.app_stack&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;NETLOG&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;.netlog_text&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.netlog_rodata&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.netlog_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.netlog_bss&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.netlog_heap&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.netlog_stack&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
 
 
 <h3 id="categorization">Categorization</h3>
@@ -2156,93 +2164,96 @@ found for them, they will be categorized with the name patterns. If after that t
 have a group, they will be assigned to the default group.</p>
 <h4 id="categoriessectionsjson">categoriesSections.json</h4>
 <p>This config file is used for grouping sections with their full name.</p>
-<pre class="codehilite"><code class="language-json">{
-  &quot;ReservedArea&quot;: [
-    &quot;bootloader&quot;,
-    &quot;application&quot;
-  ]
-}</code></pre>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;ReservedArea&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;bootloader&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;application&quot;</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
 
 
 <h4 id="categoriessectionskeywordsjson">categoriesSectionsKeywords.json</h4>
 <p>This config file is used for grouping sections with name patterns.</p>
-<pre class="codehilite"><code class="language-json">{
-  &quot;InterruptVectors&quot;: [
-    &quot;vectors&quot;
-  ],
-  &quot;Code&quot;: [
-    &quot;text&quot;,
-    &quot;os&quot;
-  ],
-  &quot;ConstantData&quot;: [
-    &quot;rodata&quot;
-  ],
-  &quot;StaticData&quot;: [
-    &quot;data&quot;,
-    &quot;bss&quot;
-  ],
-  &quot;DynamicData&quot;: [
-    &quot;stack&quot;,
-    &quot;heap&quot;
-  ]
-}</code></pre>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;InterruptVectors&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;vectors&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;Code&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;os&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;ConstantData&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;rodata&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;StaticData&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bss&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;DynamicData&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;stack&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;heap&quot;</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
 
 
 <h4 id="categoriesobjectsjson">categoriesObjects.json</h4>
 <p>This config file is used for grouping objects with their full name. </p>
-<pre class="codehilite"><code class="language-json">{
-  &quot;Identifiers&quot;: [
-    &quot;identifiers.o&quot;
-  ],
-  &quot;Globals&quot;: [
-    &quot;globals.o&quot;
-  ],
-  &quot;MCU_RTOS&quot;: [
-    &quot;os_scheduler.o&quot;,
-    &quot;os_tick.o&quot;,
-    &quot;os_heap.o&quot;,
-    &quot;os_queue.o&quot;,
-    &quot;os_diagnostics.o&quot;
-    ],
-    &quot;MCU_CAN_Stack&quot;: [
-    &quot;can_driver.o&quot;,
-    &quot;can_prot_frame.o&quot;,
-    &quot;can_prot_transfer.o&quot;,
-    &quot;can_prot_message.o&quot;,
-    &quot;can_prot_connection.o&quot;,
-    &quot;can_prot_control.o&quot;,
-    &quot;can_prot_firmware.o&quot;
-  ],
-  &quot;SOC_OperatingSystem&quot;: [
-    &quot;kernel.o&quot;,
-    &quot;kernel_api.o&quot;,
-    &quot;scheduler.o&quot;,
-    &quot;memory_manager.o&quot;,
-    &quot;network_manager.o&quot;,
-    &quot;process_manager.o&quot;,
-    &quot;ethernet_driver.o&quot;,
-    &quot;tcp_ip_stack.o&quot;,
-    &quot;display_driver.o&quot;,
-    &quot;touch_driver.o&quot;
-  ],
-  &quot;SOC_ApplicationLogging&quot;: [
-    &quot;netlog_lib.o&quot;,
-    &quot;logging.o&quot;
-  ],
-  &quot;SOC_ApplicationGraphics&quot;: [
-    &quot;gfx_lib.o&quot;,
-    &quot;touch_screen.o&quot;,
-    &quot;gui_main.o&quot;,
-    &quot;gui_animations.o&quot;
-  ],
-  &quot;SOC_NetLog&quot;: [
-    &quot;netlog_driver.o&quot;,
-    &quot;netlog_filter.o&quot;,
-    &quot;netlog_network_handler.o&quot;,
-    &quot;netlog_transfer.o&quot;,
-    &quot;netlog_connection.o&quot;
-  ]
-}</code></pre>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;Identifiers&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;identifiers.o&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;Globals&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;globals.o&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;MCU_RTOS&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;os_scheduler.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;os_tick.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;os_heap.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;os_queue.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;os_diagnostics.o&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;MCU_CAN_Stack&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;can_driver.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;can_prot_frame.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;can_prot_transfer.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;can_prot_message.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;can_prot_connection.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;can_prot_control.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;can_prot_firmware.o&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;SOC_OperatingSystem&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;kernel.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;kernel_api.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;scheduler.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;memory_manager.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;network_manager.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;process_manager.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ethernet_driver.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;tcp_ip_stack.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;display_driver.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;touch_driver.o&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;SOC_ApplicationLogging&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;netlog_lib.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;logging.o&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;SOC_ApplicationGraphics&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;gfx_lib.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;touch_screen.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;gui_main.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;gui_animations.o&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;SOC_NetLog&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;netlog_driver.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;netlog_filter.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;netlog_network_handler.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;netlog_transfer.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;netlog_connection.o&quot;</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
 
 
 <h4 id="categoriesobjectskeywordsjson">categoriesObjectsKeywords.json</h4>
@@ -2260,22 +2271,23 @@ are decimal values, and representing Bytes. You can find these values for your d
 memory is smaller than those. This config file shall contain the memory sizes that physically exist in the device.  </p>
 <p>We have to include every memory type: "INT_RAM", "EXT_RAM", "INT_FLASH", "EXT_FLASH". If your project has more than one
 memory area that are not ignored, with the same type, simply add their sizes together and include them like that in this file. </p>
-<pre class="codehilite"><code class="language-json">{
-    &quot;Project Threshold in %&quot;: 80,
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;Project Threshold in %&quot;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span>
 
 
-    &quot;Budgets&quot;: [
-        [&quot;MCU&quot;, &quot;INT_RAM&quot;,    262144],
-        [&quot;MCU&quot;, &quot;EXT_RAM&quot;,         0],
-        [&quot;MCU&quot;, &quot;INT_FLASH&quot;,  524288],
-        [&quot;MCU&quot;, &quot;EXT_FLASH&quot;,       0],
+    <span class="nt">&quot;Budgets&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s2">&quot;MCU&quot;</span><span class="p">,</span> <span class="s2">&quot;INT_RAM&quot;</span><span class="p">,</span>    <span class="mi">262144</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;MCU&quot;</span><span class="p">,</span> <span class="s2">&quot;EXT_RAM&quot;</span><span class="p">,</span>         <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;MCU&quot;</span><span class="p">,</span> <span class="s2">&quot;INT_FLASH&quot;</span><span class="p">,</span>  <span class="mi">524288</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;MCU&quot;</span><span class="p">,</span> <span class="s2">&quot;EXT_FLASH&quot;</span><span class="p">,</span>       <span class="mi">0</span><span class="p">],</span>
 
-        [&quot;SOC&quot;, &quot;INT_RAM&quot;,          0],
-        [&quot;SOC&quot;, &quot;EXT_RAM&quot;,   33554432],
-        [&quot;SOC&quot;, &quot;INT_FLASH&quot;,        0],
-        [&quot;SOC&quot;, &quot;EXT_FLASH&quot;,        0]
-    ]
-}</code></pre>
+        <span class="p">[</span><span class="s2">&quot;SOC&quot;</span><span class="p">,</span> <span class="s2">&quot;INT_RAM&quot;</span><span class="p">,</span>          <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;SOC&quot;</span><span class="p">,</span> <span class="s2">&quot;EXT_RAM&quot;</span><span class="p">,</span>   <span class="mi">33554432</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;SOC&quot;</span><span class="p">,</span> <span class="s2">&quot;INT_FLASH&quot;</span><span class="p">,</span>        <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;SOC&quot;</span><span class="p">,</span> <span class="s2">&quot;EXT_FLASH&quot;</span><span class="p">,</span>        <span class="mi">0</span><span class="p">]</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
 
 </body>
 
