@@ -33,16 +33,16 @@ import Emma.emma_delta_libs.FileSelector
 import Emma.emma_delta_libs.RootSelector
 
 
-def parseArgs(arguments=""):
+def initParser():
     """
-    Argument parser
-    :param arguments: List of strings specifying the arguments to be parsed (default: "" (-> meaning that arguments from the command line should be parsed)
-    :return: Argparse object
+    Prepare the parser for Emma
+    We need this as a separate function for the top level sub commands (argparse).
+    :return: Set-up parser
     """
     # Argument parser
     parser = argparse.ArgumentParser(
         prog="Emma Delta Analyser",
-        description="Analyses the difference between analyses",
+        description="Analyses differences between analyses",
         epilog=EPILOG,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
@@ -76,6 +76,16 @@ def parseArgs(arguments=""):
         help="Skips the prompt for root path of the analyses.",
         action="store_true"
     )
+    return parser
+
+
+def parseArgs(arguments=""):
+    """
+    Argument parser
+    :param arguments: List of strings specifying the arguments to be parsed (default: "" (-> meaning that arguments from the command line should be parsed)
+    :return: Argparse object
+    """
+    parser = initParser()
 
     # We will either parse the arguments string if it is not empty,
     # or (in the default case) the data from sys.argv
