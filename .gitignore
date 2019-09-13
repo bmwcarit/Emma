@@ -8,14 +8,17 @@ doc/tmp
 doc/test/
 doc/test_project/memStats
 doc/test_project/results
+pypiemma.egg-info/
+site/
 
-# Exclude the content of the "genDoc/call_graph_uml" folder except the .png files
-genDoc/call_graph_uml/*
-!genDoc/call_graph_uml/*.png
+
+# Exclude all but .png files for UML/call graphs
+doc/images/call_graph_uml/*
+!doc/images/call_graph_uml/*.png
 
 # Exclude PyCharm config files but include inspection profiles
 .idea/*
 !.idea/inspectionProfiles/
 
-# Exclude the coverate reports
+# Exclude the coverage reports
 tests/other_files/coverage/reports/*
