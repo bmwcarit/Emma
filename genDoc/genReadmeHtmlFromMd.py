@@ -76,9 +76,9 @@ def main(arguments):
     # Give a hint on python sys-call
     sc().info("A `python` system call is going to happen. If any errors occur please check the following first:")
     if sys.platform == "win32":
-        sc().info("Windows OS detected. Make sure `python` refers to the Python3 version targeted for this application (-> dependencies; e.g. WSL comes with its own Python).")
+        sc().info("Windows OS detected. Make sure `python` refers to the Python3 version targeted for this application (-> dependencies; e.g. WSL comes with its own Python).\n")
     else:
-        sc().info("Make sure `python` refers to a Python 3 installation.")
+        sc().info("Make sure `python` refers to a Python 3 installation.\n")
 
     # Store original path variables
     pathOldValue = os.environ["PATH"]
@@ -91,9 +91,9 @@ def main(arguments):
             sc().error("The \"graphviz_bin_folder\" was not found in PATH nor was given in the argument --graphviz_bin_folder")
 
     try:
-        if not os.path.isdir(README_CALL_GRAPH_AND_UML_FOLDER_NAME):
-            sc().info("The folder \"" + README_CALL_GRAPH_AND_UML_FOLDER_NAME + "\" was created because it did not exist...")
-            os.makedirs(README_CALL_GRAPH_AND_UML_FOLDER_NAME)
+        if not os.path.isdir(README_CALL_GRAPH_AND_UML_PATH):
+            sc().info("The folder \"" + README_CALL_GRAPH_AND_UML_PATH + "\" was created because it did not exist...")
+            os.makedirs(README_CALL_GRAPH_AND_UML_PATH)
 
         if not arguments.no_graphs:
             # pylint: disable=protected-access

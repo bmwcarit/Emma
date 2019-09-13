@@ -32,12 +32,12 @@ import Emma.shared_libs.emma_helper
 sys.path.append("..")
 
 
-EMMA_ROOT_FOLDER_RELATIVE = r".."
+EMMA_ROOT_FOLDER_RELATIVE = r"."
 FILTERED_PROFILE_SUFFIX = r"_filtered.profile"
-EMMA_EXECUTION_STRING = r"../emma.py --project ../doc/test_project --mapfiles ../doc/test_project/mapfiles --dir ../doc/test_project/results"
-EMMA_PROFILE_FILE_PATH = README_CALL_GRAPH_AND_UML_FOLDER_NAME + r"\emma.profile"
-EMMA_VIS_EXECUTION_STRING = r"../emma_vis.py --projectDir ../doc/test_project --inOutDir ../doc/test_project/results --overview --quiet"
-EMMA_VIS_PROFILE_FILE_PATH = README_CALL_GRAPH_AND_UML_FOLDER_NAME + r"\emma_vis.profile"
+EMMA_EXECUTION_STRING = r"-m Emma.emma --project doc/test_project --mapfiles doc/test_project/mapfiles --dir doc/test_project/results"
+EMMA_PROFILE_FILE_PATH = README_CALL_GRAPH_AND_UML_PATH + r"/emma.profile"
+EMMA_VIS_EXECUTION_STRING = r"-m Emma.emma_vis --projectDir doc/test_project --inOutDir doc/test_project/results --overview --quiet"
+EMMA_VIS_PROFILE_FILE_PATH = README_CALL_GRAPH_AND_UML_PATH + r"/emma_vis.profile"
 
 
 class ProfilerFilter:   # pylint: disable=too-few-public-methods
@@ -142,10 +142,10 @@ def generateCallGraph(profileFile, executionString, verbose):
     """
 
     sc().info("Generating call graphs for: " + executionString)
-    sc().info("The results will be stored in: " + Emma.shared_libs.emma_helper.joinPath(os.getcwd(), README_CALL_GRAPH_AND_UML_FOLDER_NAME))
+    sc().info("The results will be stored in: " + os.path.abspath(README_CALL_GRAPH_AND_UML_PATH))
 
     sc().info("Analysing the program and creating the .profile file...\n")
-    subprocess.run("python -m cProfile -o " + profileFile + " " + executionString, shell=True)
+    subprocess.run("python -m cProfile -o " + profileFile + " " + executionString, shell=True)#, cwd=os.path.join(os.path.dirname(__file__), "../Emma"))
 
     profilerData = pstats.Stats(profileFile)
     profilerData.sort_stats(pstats.SortKey.CUMULATIVE)
@@ -154,11 +154,11 @@ def generateCallGraph(profileFile, executionString, verbose):
         profilerData.print_stats()
 
     sc().info("Filtering the profiler data...")
-    profilerFilter = ProfilerFilter(EMMA_ROOT_FOLDER_RELATIVE)
+    profilerFilter = ProfilerFilter(os.path.abspath(EMMA_ROOT_FOLDER_RELATIVE))
     profilerFilter.filterProfilerData(profilerData.stats)
 
     filteredProfileFile = os.path.splitext(profileFile)[0] + FILTERED_PROFILE_SUFFIX
-    sc().info("Storing the filtered profile file to:", filteredProfileFile)
+    sc().info("Storing the filtered profile file to:", os.path.abspath(filteredProfileFile))
     profilerData.dump_stats(filteredProfileFile)
 
     sc().info("Creating the .dot file from the .profile file...")
@@ -192,6 +192,7 @@ def main(arguments):
         os.environ["PATH"] += (graphvizBinAbspath + ";")
 
     try:
+        os.chdir("..")              # Only do this here (not within generateCallGraph() in order to avoid race conditions)
         generateCallGraph(EMMA_PROFILE_FILE_PATH, EMMA_EXECUTION_STRING, arguments.verbose)
         generateCallGraph(EMMA_VIS_PROFILE_FILE_PATH, EMMA_VIS_EXECUTION_STRING, arguments.verbose)
 
