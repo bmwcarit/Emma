@@ -113,13 +113,12 @@ def main(args):
         Emma.shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdownFilePath, (os.path.splitext(markdownFilePath)[0] + ".html"))
 
 
-def parseArgs(arguments=""):
+def initParser():
     """
-    Argument parser
-    :param arguments: List of strings specifying the arguments to be parsed
-    :return: Argparse object
+    Prepare the parser for Emma
+    We need this as a separate function for the top level sub commands (argparse).
+    :return: Set-up parser
     """
-
     parser = argparse.ArgumentParser(
         prog="Emma Visualiser",
         description="Data aggregation and visualisation tool for Emma Memory and Mapfile Analyser (Emma).",
@@ -180,6 +179,16 @@ def parseArgs(arguments=""):
         action="store_true",
         default=False
     )
+    return parser
+
+
+def parseArgs(arguments=""):
+    """
+    Argument parser
+    :param arguments: List of strings specifying the arguments to be parsed
+    :return: Argparse object
+    """
+    parser = initParser()
 
     # We will either parse the arguments string if it is not empty,
     # or (in the default case) the data from sys.argv
