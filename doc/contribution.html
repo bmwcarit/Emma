@@ -94,13 +94,13 @@ code { background-color: #F6F8FA; }
 </head>
 <body>
 
-<h1 id="contribution-guide">Contribution guide</h1>
+<h2 id="contribution-guide">Contribution guide</h2>
 <p>This guide will assist you in order to successfully submit contributions for the Emma project.  </p>
-<h2 id="obtain-the-current-version-of-the-source-code">Obtain the current version of the source code</h2>
+<h3 id="obtain-the-current-version-of-the-source-code">Obtain the current version of the source code</h3>
 <p>Assure that you are working with the latest stable version.</p>
-<h2 id="describe-your-changes">Describe your changes</h2>
+<h3 id="describe-your-changes">Describe your changes</h3>
 <p>Absolutely describe your changes regardless of what problem you solved nor how complex your changes are. Keep the following points in mind:</p>
-<h3 id="general">General</h3>
+<h4 id="general">General</h4>
 <ul>
 <li>What is your motivation to do to this change?</li>
 <li>Why it is worth fixing?</li>
@@ -110,44 +110,48 @@ code { background-color: #F6F8FA; }
 <li>One contribution should solve only one problem. If not split it.</li>
 <li>Your description should be self-explanatory (avoiding external resources).</li>
 </ul>
-<h3 id="linking-referencing-documentation">Linking, referencing &amp; documentation</h3>
+<h4 id="linking-referencing-documentation">Linking, referencing &amp; documentation</h4>
 <ul>
 <li>If you link to tickets/mailing lists etc. reference to them. Summarise what is its principal outcome.</li>
 <li>When referencing specific commits: state the commit ID (use the long hash) + (!) the commit massage in order to make it more readable for the reviewer.</li>
 </ul>
-<h3 id="implementation-specific">Implementation specific</h3>
+<h4 id="implementation-specific">Implementation specific</h4>
 <ul>
 <li>How you solved the problem?</li>
 <li>If your solution is complex: provide an introduction before going into details. </li>
 <li>If your patch your solution describe what you have done and why.</li>
 </ul>
-<h2 id="test-and-review-your-code">Test and review your code</h2>
+<h3 id="test-and-review-your-code">Test and review your code</h3>
 <p>Test it on a clean environment.</p>
 <p>Review your code with regards to our <a href="#coding-guidelines">coding guidelines</a>.</p>
-<h2 id="check-and-act-on-the-review-process">Check and act on the review process</h2>
+<h3 id="check-and-act-on-the-review-process">Check and act on the review process</h3>
 <p>You may receive comments regarding your submission. In order to be considered you must respond to those comments. </p>
-<h2 id="sign-your-work">Sign your work</h2>
+<h3 id="sign-your-work">Sign your work</h3>
 <p>You must sign the <a href="https://developercertificate.org/">Developer Certificate of Origin (DCO)</a> for any submission. We use this to keep track of who contributed what. Additionaly you certify that the contribution is your own work or you have the right to pass it on as an open-source patch.</p>
 <p><strong>To do so you read the DCO and agree by adding a "sign-off" line at the end of the explanation of the patch like in the example below:</strong></p>
-<pre class="codehilite"><code class="language-text">Signed-off-by: Joe Contrib &lt;joe.contrib@somedomain.com&gt;</code></pre>
+<div class="codehilite"><pre><span></span>Signed-off-by: Joe Contrib &lt;joe.contrib@somedomain.com&gt;
+</pre></div>
 
 
 <p>Fill in your full name (no pseudonyms) and your email address surrounded by angle brackets.</p>
 <p>Small or formal changes can be done in square bracket notation:</p>
-<pre class="codehilite"><code>Signed-off-by: Joe Contrib &lt;joe.contrib@somedomain.com&gt;
+<div class="codehilite"><pre><span></span>Signed-off-by: Joe Contrib &lt;joe.contrib@somedomain.com&gt;
 [alice.maintain@somedomain.com: struct foo moved from foo.c to foo.h]
-Signed-off-by: Alice Maintain &lt;alice.maintain@somedomain.com&gt;</code></pre>
+Signed-off-by: Alice Maintain &lt;alice.maintain@somedomain.com&gt;
+</pre></div>
 
 
-<h2 id="do-the-pull-request">Do the pull request</h2>
-<pre class="codehilite"><code class="language-git">git request-pull master git://repo-url.git my-signed-tag</code></pre>
+<h3 id="do-the-pull-request">Do the pull request</h3>
+<div class="codehilite"><pre><span></span>git request-pull master git://repo-url.git my-signed-tag
+</pre></div>
 
 
 <p>See also <a href="https://help.github.com/en/articles/requesting-a-pull-request-review">here</a> for more information about pull requests in general on GitHub.</p>
 <hr />
-<h1 id="coding-guidelines">Coding guidelines</h1>
+<h2 id="coding-guidelines">Coding guidelines</h2>
 <p>Generally <a href="https://github.com/python/peps/blob/master/pep-0008.txt">PEP-8</a> or the <a href="https://github.com/google/styleguide/blob/gh-pages/pyguide.md">Google style guide</a> apply. However we deviate slightly from this (see the following sections). </p>
-<h2 id="style">Style</h2>
+<p><strong>If in doubt run <a href="https://www.pylint.org/">pylint</a> by using our pylint configuration file (<a href="../.pylintrc"><code>.pylintrc</code></a>).</strong></p>
+<h3 id="style">Style</h3>
 <ul>
 <li>Naming conventions<ul>
 <li>mixedCase (camelCase and PascalCase is used)</li>
@@ -159,16 +163,20 @@ Signed-off-by: Alice Maintain &lt;alice.maintain@somedomain.com&gt;</code></pre>
 <li>Max line length rule is ignored since it decreases readability, use line-breaks where appropriate</li>
 <li>Imports in Python<ul>
 <li>The imports need to be separated from other parts of the file with 2-2 blank lines above and under</li>
-<li>They need to be grouped into the following three groups:</li>
+<li>They need to be grouped into the following three groups:<ul>
 <li>Python Standard Library Imports</li>
 <li>3rd Party Imports</li>
 <li>Emma Imports</li>
+</ul>
+</li>
 <li>The groups need to be in the same order as in the previous list and they need to be separated from each other with a single blank line</li>
 <li>Only packages and modules shall be imported, individual classes and functions not</li>
 <li>Imports shall not use renaming</li>
-<li>There are some exceptions:</li>
+<li>There are some exceptions:<ul>
 <li>Importing from shared_libs.stringConstants shall be done in the following way: <code>from shared_libs.stringConstants import *</code></li>
 <li>Importing the <code>pyipiscout</code> library shall be done in the following way: <code>import pypiscout as sc</code></li>
+</ul>
+</li>
 </ul>
 </li>
 <li>British English shall be used in function names and comments<ul>
@@ -184,25 +192,25 @@ Signed-off-by: Alice Maintain &lt;alice.maintain@somedomain.com&gt;</code></pre>
 </ul>
 </li>
 </ul>
-<h2 id="path-handling">Path handling</h2>
+<h3 id="path-handling">Path handling</h3>
 <p>Use <code>os.path.normpath()</code> where appropriate. Using <code>/</code> and <code>\</code> can cause problems between OSes (even on Windows with WSL) and strange things could happen. Also prefer <code>joinPath()</code> (in <code>shared_libs.Emma_helper</code>) instetad of <code>os.path.join()</code>.</p>
-<h2 id="raising-exceptions">Raising exceptions</h2>
+<h3 id="raising-exceptions">Raising exceptions</h3>
 <ul>
 <li>Exceptions should be avoided where possible. Instead use a descriptive error message using <code>SCout</code> and exit with <code>sys.exit(&lt;err-code&gt;)</code></li>
 <li>the default error code is <code>-10</code></li>
 <li>For the user it is hard to distinquish whether an exception was caused by a bug or wrong user input</li>
 </ul>
 <hr />
-<h1 id="adding-compiler-support">Adding compiler support</h1>
+<h2 id="adding-compiler-support">Adding compiler support</h2>
 <p>The Emma tool was created in order to collect information from mapfiles and write them to CSV documents.
 These mapfiles are created by the compiler during the compilation of a software and their format is specific to the compiler used.</p>
 <p>Emma was designed in a way, that adding support for new compilers is possible with only minor changes to the existing codebase.
 This chapter explains what are the new components that need to be added and how to integrate them into Emma.</p>
-<h2 id="compiler-handling">Compiler handling</h2>
-<p>The globalConfig.json file of a configuration lists the configId-s of the project (see doc/readme for more info on Emma configurations).
+<h3 id="compiler-handling">Compiler handling</h3>
+<p>The globalConfig.json file of a configuration lists the configId-s of the project (see doc/readme-emma.md for more info on Emma configurations).
 Every configId has a key "compiler" (for example see the <strong>doc/test_project</strong> configuration).
 The value belonging to this key determines the classes used during runtime for the compiler specific tasks.</p>
-<h2 id="new-classes-that-need-to-be-added">New classes that need to be added</h2>
+<h3 id="new-classes-that-need-to-be-added">New classes that need to be added</h3>
 <p>To implement the support for a new compiler, new classes need to be developed.
 These will be responsible for reading the compiler specific parts of the configuration and for processing the mapfiles.
 These classes should be located in the <strong>emma_libs</strong> folder, and it is recommended that they contain the name of the compiler they belong to as a prefix, for example: <strong>emma_libs/ghsConfiguration.py</strong></p>
@@ -211,7 +219,7 @@ These classes should be located in the <strong>emma_libs</strong> folder, and it
 <li>From <strong>emma_libs/specificConfiguration.py</strong>: <code>SpecificConfiguration</code></li>
 <li>From <strong>emma_libs/mapfileProcessor.py</strong>: <code>MapfileProcessor</code>  </li>
 </ul>
-<h2 id="changes-need-to-be-done-on-the-existing-codebase">Changes need to be done on the existing codebase</h2>
+<h3 id="changes-need-to-be-done-on-the-existing-codebase">Changes need to be done on the existing codebase</h3>
 <p>In order to integrate these new classes, the following changes need to be made:</p>
 <ul>
 <li>Adding name string constant for the new compiler<ul>
@@ -233,7 +241,7 @@ These classes should be located in the <strong>emma_libs</strong> folder, and it
 </ul>
 </li>
 </ul>
-<h2 id="expected-functionality-of-the-new-components">Expected functionality of the new components</h2>
+<h3 id="expected-functionality-of-the-new-components">Expected functionality of the new components</h3>
 <p>The previously mentioned abstract classes from which the new classes need to inherit, describe the prototypes of the methods that need to be implemented in their docstrings.
 During runtime these methods (the ones with green background) will be called in the following order:</p>
 <div align="center"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABZEAAAqMCAMAAACeaUhYAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
@@ -1813,15 +1821,15 @@ ZnkAMjAxOS0wOC0wNlQwOTo0NToxNiswMDowMIFgVlgAAAAASUVORK5CYII=
 </ul>
 </li>
 </ul>
-<h2 id="expected-changes-to-project-and-documentation-after-adding-a-new-compiler-support">Expected changes to project and documentation after adding a new compiler support</h2>
+<h3 id="expected-changes-to-project-and-documentation-after-adding-a-new-compiler-support">Expected changes to project and documentation after adding a new compiler support</h3>
 <p>To make it possible for users and other contributors to easily get started with the added new support, the following non code related changes need to made:</p>
 <ul>
 <li>Add a test project with a step-by-step introduction to the <strong>doc</strong> folder. Take the <strong>doc/test_project</strong> as example.</li>
-<li>Add a chapter to the <strong>doc/readme.md</strong> describing the configuration of the new compiler. Take the chapter <strong>Formal Definition of the GHS compiler specific configuration</strong> as example.</li>
+<li>Add a chapter to the <strong>doc/readme-emma.md</strong> describing the configuration of the new compiler. Take the chapter <strong>Formal Definition of the GHS compiler specific configuration</strong> as example.</li>
 <li>After changing the Markdown files, please re-generate the HTML files with the <strong>genDoc/genReadmeHtmlFromMd.py</strong> script, using the <code>--no_graphs</code> command line argument.</li>
 </ul>
 <hr />
-<h1 id="colour-palette">Colour palette</h1>
+<h2 id="colour-palette">Colour palette</h2>
 <p>The following colour palette is used for the documentation:</p>
 <table>
 <thead>
