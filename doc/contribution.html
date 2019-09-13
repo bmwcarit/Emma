@@ -129,21 +129,18 @@ code { background-color: #F6F8FA; }
 <h3 id="sign-your-work">Sign your work</h3>
 <p>You must sign the <a href="https://developercertificate.org/">Developer Certificate of Origin (DCO)</a> for any submission. We use this to keep track of who contributed what. Additionaly you certify that the contribution is your own work or you have the right to pass it on as an open-source patch.</p>
 <p><strong>To do so you read the DCO and agree by adding a "sign-off" line at the end of the explanation of the patch like in the example below:</strong></p>
-<div class="codehilite"><pre><span></span>Signed-off-by: Joe Contrib &lt;joe.contrib@somedomain.com&gt;
-</pre></div>
+<pre class="codehilite"><code class="language-text">Signed-off-by: Joe Contrib &lt;joe.contrib@somedomain.com&gt;</code></pre>
 
 
 <p>Fill in your full name (no pseudonyms) and your email address surrounded by angle brackets.</p>
 <p>Small or formal changes can be done in square bracket notation:</p>
-<div class="codehilite"><pre><span></span>Signed-off-by: Joe Contrib &lt;joe.contrib@somedomain.com&gt;
+<pre class="codehilite"><code>Signed-off-by: Joe Contrib &lt;joe.contrib@somedomain.com&gt;
 [alice.maintain@somedomain.com: struct foo moved from foo.c to foo.h]
-Signed-off-by: Alice Maintain &lt;alice.maintain@somedomain.com&gt;
-</pre></div>
+Signed-off-by: Alice Maintain &lt;alice.maintain@somedomain.com&gt;</code></pre>
 
 
 <h3 id="do-the-pull-request">Do the pull request</h3>
-<div class="codehilite"><pre><span></span>git request-pull master git://repo-url.git my-signed-tag
-</pre></div>
+<pre class="codehilite"><code class="language-git">git request-pull master git://repo-url.git my-signed-tag</code></pre>
 
 
 <p>See also <a href="https://help.github.com/en/articles/requesting-a-pull-request-review">here</a> for more information about pull requests in general on GitHub.</p>
