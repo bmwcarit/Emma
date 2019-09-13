@@ -91,8 +91,9 @@ def main(arguments):
             sc().error("The \"graphviz_bin_folder\" was not found in PATH nor was given in the argument --graphviz_bin_folder")
 
     try:
-        if not os.path.isdir(README_CALL_GRAPH_AND_UML_PATH):
-            sc().info("The folder \"" + README_CALL_GRAPH_AND_UML_PATH + "\" was created because it did not exist...")
+        outPath = os.path.abspath(Emma.shared_libs.emma_helper.joinPath("..", README_CALL_GRAPH_AND_UML_PATH))
+        if not os.path.isdir(outPath):
+            sc().info("The folder \"" + outPath + "\" was created because it did not exist...")
             os.makedirs(README_CALL_GRAPH_AND_UML_PATH)
 
         if not arguments.no_graphs:
