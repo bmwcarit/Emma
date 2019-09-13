@@ -59,6 +59,7 @@ LIST_OF_SOURCE_FILE_PATHS = [           # "../../../*" since we change the worki
 
 def main():
     sc().info("Generating UML Class diagrams from the source files...")
+
     for sourceFilePath in LIST_OF_SOURCE_FILE_PATHS:
         sourceFileName = os.path.splitext(os.path.basename(sourceFilePath))[0]
         cwd = os.path.join("..", README_CALL_GRAPH_AND_UML_PATH)                    # The only way to specify the output directory of pyreverse
@@ -66,6 +67,7 @@ def main():
         # Note that pyreverse MUST be called via subprocess (do NOT import it as a module)
         # The main reason are licencing issues (GPLv2 is incompatible with GPLv3) (https://softwareengineering.stackexchange.com/questions/110380/call-gpl-software-from-non-gpl-software)
         # See also: https://github.com/TeamFlowerPower/kb/wiki/callGraphsUMLdiagrams
+
 
 if __name__ == "__main__":
     main()

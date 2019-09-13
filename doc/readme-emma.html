@@ -125,47 +125,45 @@ This is done with the <code>emma.py</code> script. The second step is to visuali
 </ul>
 <h2 id="usage">Usage</h2>
 <p>Section and object summaries of the specified mapfiles will be created.</p>
-<div class="codehilite"><pre><span></span>$ python emma.py --help
-usage: Emma Memory and Mapfile Analyser <span class="o">(</span>Emma<span class="o">)</span> <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>--version<span class="o">]</span> --project PROJECT
-                                           --mapfiles MAPFILES <span class="o">[</span>--dir DIR<span class="o">]</span>
-                                           <span class="o">[</span>--subdir SUBDIR<span class="o">]</span> <span class="o">[</span>--analyse_debug<span class="o">]</span>
-                                           <span class="o">[</span>--create_categories<span class="o">]</span>
-                                           <span class="o">[</span>--remove_unmatched<span class="o">]</span> <span class="o">[</span>--noprompt<span class="o">]</span>
-                                           <span class="o">[</span>--Werror<span class="o">]</span>
+<pre class="codehilite"><code>$ python emma.py --help
+usage: Emma Memory and Mapfile Analyser (Emma) [-h] [--version] --project PROJECT
+                                           --mapfiles MAPFILES [--dir DIR]
+                                           [--subdir SUBDIR] [--analyse_debug]
+                                           [--create_categories]
+                                           [--remove_unmatched] [--noprompt]
+                                           [--Werror]
 
-Analyser <span class="k">for</span> mapfiles from Greens Hills Linker <span class="o">(</span>other files are supported via
-configuration options<span class="o">)</span>.It creates a summary/overview about static memory usage
+Analyser for mapfiles from Greens Hills Linker (other files are supported via
+configuration options).It creates a summary/overview about static memory usage
 in form of a comma separated values file.
 
 optional arguments:
-  -h, --help           show this <span class="nb">help</span> message and <span class="nb">exit</span>
+  -h, --help           show this help message and exit
   --version            Display the version number.
   --project PROJECT    Path of directory holding the configuration.The project
                        name will be derived from the the name of this folder.
-                       <span class="o">(</span>default: None<span class="o">)</span>
+                       (default: None)
   --mapfiles MAPFILES  The folder containing the map files that need to be
-                       analysed. <span class="o">(</span>default: None<span class="o">)</span>
-  --dir DIR            Output folder holding the statistics. <span class="o">(</span>default: None<span class="o">)</span>
+                       analysed. (default: None)
+  --dir DIR            Output folder holding the statistics. (default: None)
   --subdir SUBDIR      User defined subdirectory name in the --dir folder.
-                       <span class="o">(</span>default: None<span class="o">)</span>
-  --analyse_debug      Include DWARF debug sections in analysis <span class="o">(</span>default:
-                       False<span class="o">)</span>
-  --create_categories  Create categories.json from keywords. <span class="o">(</span>default: False<span class="o">)</span>
+                       (default: None)
+  --analyse_debug      Include DWARF debug sections in analysis (default:
+                       False)
+  --create_categories  Create categories.json from keywords. (default: False)
   --remove_unmatched   Remove unmatched modules from categories.json.
-                       <span class="o">(</span>default: False<span class="o">)</span>
-  --noprompt           Exit fail on user prompt. <span class="o">(</span>default: False<span class="o">)</span>
-  --Werror             Treat all warnings as errors. <span class="o">(</span>default: False<span class="o">)</span>
+                       (default: False)
+  --noprompt           Exit fail on user prompt. (default: False)
+  --Werror             Treat all warnings as errors. (default: False)
 
-********* Marcel Schmalzl, Felix Mueller, Gergo Kocsis - <span class="m">2017</span>-2019 *********
-</pre></div>
+********* Marcel Schmalzl, Felix Mueller, Gergo Kocsis - 2017-2019 *********</code></pre>
 
 
 <h2 id="arguments">Arguments</h2>
 <h3 id="required-arguments">Required Arguments</h3>
-<div class="codehilite"><pre><span></span>--project PROJECT, -p PROJECT
+<pre class="codehilite"><code>--project PROJECT, -p PROJECT
 
---mapfiles MAPFILES, --map MAPFILES
-</pre></div>
+--mapfiles MAPFILES, --map MAPFILES</code></pre>
 
 
 <h3 id="optional-arguments">Optional Arguments</h3>
@@ -201,7 +199,7 @@ Both of the devices have a GHS compiler specific configuration and mapfiles.</li
 <p>An Emma project configuration consists of two parts: the generic configuration and the compiler specific configuration.</p>
 <h3 id="formal-definition-of-the-generic-configuration">Formal definition of the generic configuration</h3>
 <p>The generic part of the configuration contains the following files:</p>
-<div class="codehilite"><pre><span></span>+-- [&lt;PROJECT&gt;]
+<pre class="codehilite"><code>+-- [&lt;PROJECT&gt;]
 |   +-- [supplement]
 |   +-- globalConfig.json
 |   +-- addressSpaces*.json
@@ -210,8 +208,7 @@ Both of the devices have a GHS compiler specific configuration and mapfiles.</li
 |   +-- categoriesObjectsKeywords.json
 |   +-- categoriesSections.json
 |   +-- categoriesSectionsKeywords.json
-|   +-- &lt;COMPILER_SPECIFIC_CONFIGURATION_FILES&gt;
-</pre></div>
+|   +-- &lt;COMPILER_SPECIFIC_CONFIGURATION_FILES&gt;</code></pre>
 
 
 <p>The files containing the asterisk symbol can be freely named by the user because the actual file names will have to be
@@ -232,26 +229,25 @@ Furthermore the globalConfig.json assigns compiler specific config files to each
 For example if a GHS compiler was selected to the configId, then the compiler specific configuration part of this configId have to fulfill the requirements
 described in the <a href="#formal-definition-of-the-GHS-compiler-specific-configuration">Formal Definition of the GHS compiler specific configuration</a> chapter.</p>
 <p>The globalConfig.json has to have the following format:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;&lt;CONFIG_ID&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;compiler&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;COMPILER_NAME&gt;&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;addressSpacesPath&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;CONFIG_FILE&gt;&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;mapfiles&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;MAPFILES_REL_PATH&gt;&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;ignoreConfigID&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;BOOL&gt;&quot;</span><span class="p">,</span>
-        <span class="err">&lt;COMPILER_SPECIFIC_KEY_VALUE_PAIRS&gt;</span>
-    <span class="p">},</span>
-    <span class="err">.</span>
-    <span class="err">.</span>
-    <span class="err">.</span>
-    <span class="nt">&quot;&lt;CONFIG_ID&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;compiler&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;COMPILER_NAME&gt;&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;addressSpacesPath&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;CONFIG_FILE&gt;&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;mapfiles&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;MAPFILES_REL_PATH&gt;&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;ignoreConfigID&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;BOOL&gt;&quot;</span><span class="p">,</span>
-        <span class="err">&lt;COMPILER_SPECIFIC_KEY_VALUE_PAIRS&gt;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
+<pre class="codehilite"><code class="language-json">{
+    &quot;&lt;CONFIG_ID&gt;&quot;: {
+        &quot;compiler&quot;: &quot;&lt;COMPILER_NAME&gt;&quot;,
+        &quot;addressSpacesPath&quot;: &quot;&lt;CONFIG_FILE&gt;&quot;,
+        &quot;mapfiles&quot;: &quot;&lt;MAPFILES_REL_PATH&gt;&quot;,
+        &quot;ignoreConfigID&quot;: &quot;&lt;BOOL&gt;&quot;,
+        &lt;COMPILER_SPECIFIC_KEY_VALUE_PAIRS&gt;
+    },
+    .
+    .
+    .
+    &quot;&lt;CONFIG_ID&gt;&quot;: {
+        &quot;compiler&quot;: &quot;&lt;COMPILER_NAME&gt;&quot;,
+        &quot;addressSpacesPath&quot;: &quot;&lt;CONFIG_FILE&gt;&quot;,
+        &quot;mapfiles&quot;: &quot;&lt;MAPFILES_REL_PATH&gt;&quot;,
+        &quot;ignoreConfigID&quot;: &quot;&lt;BOOL&gt;&quot;,
+        &lt;COMPILER_SPECIFIC_KEY_VALUE_PAIRS&gt;
+    }
+}</code></pre>
 
 
 <p>The following rules apply:</p>
@@ -292,28 +288,27 @@ described in the <a href="#formal-definition-of-the-GHS-compiler-specific-config
 <h4 id="addressspacesjson"><code>addressSpaces*.json</code></h4>
 <p>The address spaces config files define the existing memory areas for the configIDs they were assigned to in the globalConfigs.json.</p>
 <p>These config files have to have the following format:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;offset&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;ADDRESS&gt;&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;memory&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;&lt;MEMORY_AREA&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;ADDRESS&gt;&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;ADDRESS&gt;&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;MEMORY_TYPE&gt;&quot;</span>
-        <span class="p">},</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="nt">&quot;&lt;MEMORY_AREA&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;ADDRESS&gt;&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;ADDRESS&gt;&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;MEMORY_TYPE&gt;&quot;</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;ignoreMemory&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;&lt;MEMORY_AREA&gt;&quot;</span><span class="p">,</span> <span class="err">...</span> <span class="s2">&quot;&lt;MEMORY_AREA&gt;&quot;</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
+<pre class="codehilite"><code class="language-json">{
+    &quot;offset&quot;: &quot;&lt;ADDRESS&gt;&quot;,
+    &quot;memory&quot;: {
+        &quot;&lt;MEMORY_AREA&gt;&quot;: {
+            &quot;start&quot;: &quot;&lt;ADDRESS&gt;&quot;,
+            &quot;end&quot;: &quot;&lt;ADDRESS&gt;&quot;,
+            &quot;type&quot;: &quot;&lt;MEMORY_TYPE&gt;&quot;
+        },
+        .
+        .
+        .
+        &quot;&lt;MEMORY_AREA&gt;&quot;: {
+            &quot;start&quot;: &quot;&lt;ADDRESS&gt;&quot;,
+            &quot;end&quot;: &quot;&lt;ADDRESS&gt;&quot;,
+            &quot;type&quot;: &quot;&lt;MEMORY_TYPE&gt;&quot;
+        }
+    },
+    &quot;ignoreMemory&quot;: [
+        &quot;&lt;MEMORY_AREA&gt;&quot;, ... &quot;&lt;MEMORY_AREA&gt;&quot;
+    ]
+}</code></pre>
 
 
 <p>The following rules apply:</p>
@@ -355,26 +350,25 @@ This function can be used for example to group the software components of one co
 The objects and sections will be first tried to be categorized by these files. If they could not be categorized, then the software will try
 to categorize them based on the <code>categoriesObjectsKeywords.json</code> and <code>categoriesSectionsKeywords.json</code> files.</p>
 <p>These config files have to have the following format:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;&lt;CATEGORY&gt;&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;&lt;NAME&gt;&quot;</span><span class="p">,</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="s2">&quot;&lt;NAME&gt;&quot;</span>
-    <span class="p">],</span>
-    <span class="err">.</span>
-    <span class="err">.</span>
-    <span class="err">.</span>
-    <span class="nt">&quot;&lt;CATEGORY&gt;&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;&lt;NAME&gt;&quot;</span><span class="p">,</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="s2">&quot;&lt;NAME&gt;&quot;</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
+<pre class="codehilite"><code class="language-json">{
+    &quot;&lt;CATEGORY&gt;&quot;: [
+        &quot;&lt;NAME&gt;&quot;,
+        .
+        .
+        .
+        &quot;&lt;NAME&gt;&quot;
+    ],
+    .
+    .
+    .
+    &quot;&lt;CATEGORY&gt;&quot;: [
+        &quot;&lt;NAME&gt;&quot;,
+        .
+        .
+        .
+        &quot;&lt;NAME&gt;&quot;
+    ]
+}</code></pre>
 
 
 <p>The following rules apply:</p>
@@ -396,23 +390,22 @@ This function can be used for example to group the software components of one co
 The objects and sections will only tried to be categorized by these files if the categorization by the <code>categoriesObjects.json</code> and <code>categoriesSections.json</code> files failed.
 If they could not be categorized, then the software will assign them to a category called <code>&lt;Emma_UnknownCategory&gt;</code> so they will be more visible in the results.</p>
 <p>These config files have to have the following format:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;&lt;CATEGORY&gt;&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;&lt;KEYWORD&gt;&quot;</span><span class="p">,</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="s2">&quot;&lt;KEYWORD&gt;&quot;</span>
-    <span class="p">],</span>
-    <span class="nt">&quot;&lt;CATEGORY&gt;&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;&lt;KEYWORD&gt;&quot;</span><span class="p">,</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="s2">&quot;&lt;KEYWORD&gt;&quot;</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
+<pre class="codehilite"><code class="language-json">{
+    &quot;&lt;CATEGORY&gt;&quot;: [
+        &quot;&lt;KEYWORD&gt;&quot;,
+        .
+        .
+        .
+        &quot;&lt;KEYWORD&gt;&quot;
+    ],
+    &quot;&lt;CATEGORY&gt;&quot;: [
+        &quot;&lt;KEYWORD&gt;&quot;,
+        .
+        .
+        .
+        &quot;&lt;KEYWORD&gt;&quot;
+    ]
+}</code></pre>
 
 
 <p>The following rules apply:</p>
@@ -428,11 +421,10 @@ If they could not be categorized, then the software will assign them to a catego
 </ul>
 <h3 id="formal-definition-of-the-ghs-compiler-specific-configuration">Formal Definition of the GHS compiler specific configuration</h3>
 <p>The GHS compiler specific part of the configuration contains the following files:</p>
-<div class="codehilite"><pre><span></span>+-- [&lt;PROJECT&gt;]
+<pre class="codehilite"><code>+-- [&lt;PROJECT&gt;]
 |   +-- &lt;GENERIC_CONFIGURATION_FILES&gt;
 |   +-- patterns*.json
-|   +-- virtualSections*.json
-</pre></div>
+|   +-- virtualSections*.json</code></pre>
 
 
 <p>The following dependencies exist within this type of a configuration:</p>
@@ -3325,22 +3317,21 @@ kJCIxdMAAAAASUVORK5CYII=
 <p>If you have virtual address spaces (VASes) defined. You need a <code>"monolith file"</code> pattern defined in <code>patterns*.json</code> in order to be able to translate virtual addresses back to physical addresses. In the same file you give each VAS a name. This name is later used to identify which section belongs to which VAS (defined in <code>virtualSections*.json</code>). The VAS names must match between those two files. This is needed in order to avoid name clashes of sections names between different VASes.</p>
 <h4 id="extensions-to-the-globalconfigjson">Extensions to the <code>globalConfig.json</code></h4>
 <p>The globalConfig.json has to have the following format <strong>for configId-s that have selected "GHS" as compiler</strong>:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;&lt;CONFIG_ID&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="err">&lt;GENERIC_KEY_VALUE_PAIRS&gt;,</span>
-        <span class="nt">&quot;patternsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;CONFIG_FILE&gt;&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;virtualSectionsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;CONFIG_FILE&gt;&quot;</span>
-    <span class="p">},</span>
-    <span class="err">.</span>
-    <span class="err">.</span>
-    <span class="err">.</span>
-    <span class="nt">&quot;&lt;CONFIG_ID&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="err">&lt;GENERIC_KEY_VALUE_PAIRS&gt;,</span>
-        <span class="nt">&quot;patternsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;CONFIG_FILE&gt;&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;virtualSectionsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;CONFIG_FILE&gt;&quot;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
+<pre class="codehilite"><code class="language-json">{
+    &quot;&lt;CONFIG_ID&gt;&quot;: {
+        &lt;GENERIC_KEY_VALUE_PAIRS&gt;,
+        &quot;patternsPath&quot;: &quot;&lt;CONFIG_FILE&gt;&quot;,
+        &quot;virtualSectionsPath&quot;: &quot;&lt;CONFIG_FILE&gt;&quot;
+    },
+    .
+    .
+    .
+    &quot;&lt;CONFIG_ID&gt;&quot;: {
+        &lt;GENERIC_KEY_VALUE_PAIRS&gt;,
+        &quot;patternsPath&quot;: &quot;&lt;CONFIG_FILE&gt;&quot;,
+        &quot;virtualSectionsPath&quot;: &quot;&lt;CONFIG_FILE&gt;&quot;
+    }
+}</code></pre>
 
 
 <p>The following rules apply:</p>
@@ -3359,33 +3350,32 @@ kJCIxdMAAAAASUVORK5CYII=
 <p>The patterns config files define regex patterns for finding the mapfiles, monolith files and processing their content.
 They belong to the <code>configID</code> they were assigned to in the <code>globalConfigs.json</code>.</p>
 <p>These config files have to have the following format:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;mapfiles&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;&lt;SW_NAME&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">,</span> <span class="err">...</span> <span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">],</span>
-            <span class="nt">&quot;VAS&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;VAS_NAME&gt;&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;UniquePatternSections&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;UniquePatternObjects&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;memRegionExcludes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;MEMORY_AREA&gt;&quot;</span><span class="p">,</span> <span class="err">...</span> <span class="s2">&quot;&lt;MEMORY_AREA&gt;&quot;</span><span class="p">]</span>
-        <span class="p">},</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="nt">&quot;&lt;SW_NAME&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">,</span> <span class="err">...</span> <span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">],</span>
-            <span class="nt">&quot;VAS&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;VAS_NAME&gt;&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;UniquePatternSections&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;UniquePatternObjects&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;memRegionExcludes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;MEMORY_AREA&gt;&quot;</span><span class="p">,</span> <span class="err">...</span> <span class="s2">&quot;&lt;MEMORY_AREA&gt;&quot;</span><span class="p">]</span>
-        <span class="p">},</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;monoliths&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;&lt;MONILITH_NAME&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">,</span> <span class="err">...</span> <span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
+<pre class="codehilite"><code class="language-json">{
+    &quot;mapfiles&quot;: {
+        &quot;&lt;SW_NAME&gt;&quot;: {
+            &quot;regex&quot;: [&quot;&lt;REGEX_PATTERN&gt;&quot;, ... &quot;&lt;REGEX_PATTERN&gt;&quot;],
+            &quot;VAS&quot;: &quot;&lt;VAS_NAME&gt;&quot;,
+            &quot;UniquePatternSections&quot;: &quot;&lt;REGEX_PATTERN&gt;&quot;,
+            &quot;UniquePatternObjects&quot;: &quot;&lt;REGEX_PATTERN&gt;&quot;,
+            &quot;memRegionExcludes&quot;: [&quot;&lt;MEMORY_AREA&gt;&quot;, ... &quot;&lt;MEMORY_AREA&gt;&quot;]
+        },
+        .
+        .
+        .
+        &quot;&lt;SW_NAME&gt;&quot;: {
+            &quot;regex&quot;: [&quot;&lt;REGEX_PATTERN&gt;&quot;, ... &quot;&lt;REGEX_PATTERN&gt;&quot;],
+            &quot;VAS&quot;: &quot;&lt;VAS_NAME&gt;&quot;,
+            &quot;UniquePatternSections&quot;: &quot;&lt;REGEX_PATTERN&gt;&quot;,
+            &quot;UniquePatternObjects&quot;: &quot;&lt;REGEX_PATTERN&gt;&quot;,
+            &quot;memRegionExcludes&quot;: [&quot;&lt;MEMORY_AREA&gt;&quot;, ... &quot;&lt;MEMORY_AREA&gt;&quot;]
+        },
+    },
+    &quot;monoliths&quot;: {
+        &quot;&lt;MONILITH_NAME&gt;&quot;: {
+            &quot;regex&quot;: [&quot;&lt;REGEX_PATTERN&gt;&quot;, ... &quot;&lt;REGEX_PATTERN&gt;&quot;]
+        }
+    }
+}</code></pre>
 
 
 <p>The following rules apply:</p>
@@ -3444,24 +3434,23 @@ a virtual address spaces defined in the <code>patterns*.json</code>file. This is
 and virtual sections as well and Emma needs to identify the virtual ones and assign them to a specific virtual address space.
 If your configuration does not use virtual address spaces, the <code>virtualSections*.json</code> file is not needed.</p>
 <p>This config file have to have the following format:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;&lt;VAS_NAME&gt;&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;&lt;SECTION_NAME&gt;&quot;</span><span class="p">,</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="s2">&quot;&lt;SECTION_NAME&gt;&quot;</span>
-    <span class="p">],</span>
-    <span class="err">...</span>
-    <span class="nt">&quot;&lt;VAS_NAME&gt;&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;&lt;SECTION_NAME&gt;&quot;</span><span class="p">,</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="s2">&quot;&lt;SECTION_NAME&gt;&quot;</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
+<pre class="codehilite"><code class="language-json">{
+    &quot;&lt;VAS_NAME&gt;&quot;: [
+        &quot;&lt;SECTION_NAME&gt;&quot;,
+        .
+        .
+        .
+        &quot;&lt;SECTION_NAME&gt;&quot;
+    ],
+    ...
+    &quot;&lt;VAS_NAME&gt;&quot;: [
+        &quot;&lt;SECTION_NAME&gt;&quot;,
+        .
+        .
+        .
+        &quot;&lt;SECTION_NAME&gt;&quot;
+    ]
+}</code></pre>
 
 
 <p>The following rules apply:</p>
@@ -3478,10 +3467,9 @@ If your configuration does not use virtual address spaces, the <code>virtualSect
 </ul>
 <h2 id="output-files">Output Files</h2>
 <p>The output Files will be saved to the memStats folder of the respective project. The filename will have this form: </p>
-<div class="codehilite"><pre><span></span>&lt;PROJECT_NAME&gt;_Section_Summary_TIMESTAMP.csv
+<pre class="codehilite"><code class="language-bash">&lt;PROJECT_NAME&gt;_Section_Summary_TIMESTAMP.csv
 &lt;PROJECT_NAME&gt;_Object_Summary_TIMESTAMP.csv
-&lt;PROJECT_NAME&gt;_Objects_in_Sections_TIMESTAMP.csv
-</pre></div>
+&lt;PROJECT_NAME&gt;_Objects_in_Sections_TIMESTAMP.csv</code></pre>
 
 
 <h3 id="section-summary">Section Summary</h3>
@@ -6961,10 +6949,9 @@ This might sound counter-intuitive at the first spot. However we can see memory 
 </ul>
 <h2 id="examples">Examples</h2>
 <p>Create a Mapfile Summary for <PROJECT>:</p>
-<div class="codehilite"><pre><span></span>emma.py --project ..<span class="se">\&lt;</span>PROJECT&gt; <span class="se">\</span>
---mapfiles ..<span class="se">\M</span>yMapfiles <span class="se">\</span>
---dir ..<span class="se">\M</span>yMapfiles<span class="se">\r</span>esults
-</pre></div>
+<pre class="codehilite"><code class="language-bash">emma.py --project ..\&lt;PROJECT&gt; \
+--mapfiles ..\MyMapfiles \
+--dir ..\MyMapfiles\results</code></pre>
 
 
 <h3 id="matching-object-name-and-category-using-categorieskeywordsjson">Matching object name and category using <code>categoriesKeywords.json</code></h3>
@@ -6992,9 +6979,8 @@ This might sound counter-intuitive at the first spot. However we can see memory 
 <h2 id="technical-details">Technical Details</h2>
 <h3 id="ghs-monolith-file-generation">GHS Monolith file generation</h3>
 <p>Execute this to generate the monolith files (you need to have the ELF file for this step).</p>
-<div class="codehilite"><pre><span></span>gdump.exe -virtual_mapping -no_trunc_sec_names Application.elf &gt;&gt; monolith.map
-gdump.exe -map             -no_trunc_sec_names Application.elf &gt;&gt; monolith.map
-</pre></div>
+<pre class="codehilite"><code class="language-bash">gdump.exe -virtual_mapping -no_trunc_sec_names Application.elf &gt;&gt; monolith.map
+gdump.exe -map             -no_trunc_sec_names Application.elf &gt;&gt; monolith.map</code></pre>
 
 
 <p>By default long names will be truncated. This can lead to inaccurate results. In order to prevent this use <code>-no_trunc_sec_names</code>.</p>

@@ -118,44 +118,43 @@ code { background-color: #F6F8FA; }
 <h2 id="process">Process</h2>
 <p>After analysing the mapfiles with the <code>emma.py</code> script, one can visualise them using <code>emma_vis.py</code>.</p>
 <h2 id="usage">Usage</h2>
-<div class="codehilite"><pre><span></span>$ python emma_vis.py --help
-usage: Emma Visualiser <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>--version<span class="o">]</span> --projectDir PROJECTDIR <span class="o">[</span>--quiet<span class="o">]</span>
-                    <span class="o">[</span>--append<span class="o">]</span> <span class="o">[</span>--inOutDir INOUTDIR<span class="o">]</span> <span class="o">[</span>--subDir SUBDIR<span class="o">]</span>
-                    <span class="o">[</span>--overview<span class="o">]</span> <span class="o">[</span>--categorised_image_csv<span class="o">]</span> <span class="o">[</span>--noprompt<span class="o">]</span>
+<pre class="codehilite"><code>$ python emma_vis.py --help
+usage: Emma Visualiser [-h] [--version] --projectDir PROJECTDIR [--quiet]
+                    [--append] [--inOutDir INOUTDIR] [--subDir SUBDIR]
+                    [--overview] [--categorised_image_csv] [--noprompt]
 
-Data aggregation and visualisation tool <span class="k">for</span> Emma Memory and Mapfile Analyser
-<span class="o">(</span>Emma<span class="o">)</span>.
+Data aggregation and visualisation tool for Emma Memory and Mapfile Analyser
+(Emma).
 
 optional arguments:
--h, --help            show this <span class="nb">help</span> message and <span class="nb">exit</span>
+-h, --help            show this help message and exit
 --version             Display the version number.
 --projectDir PROJECTDIR, -p PROJECTDIR
                         Path to directory holding the config files. The
                         project name will be derived from this folder name,
-                        <span class="o">(</span>default: None<span class="o">)</span>
+                        (default: None)
 --quiet, -q           Automatically accepts last modified .csv file in
-                        ./memStats folder <span class="o">(</span>default: False<span class="o">)</span>
---append              Append reports to file in ./results folder <span class="o">(</span>default:
-                        False<span class="o">)</span>
+                        ./memStats folder (default: False)
+--append              Append reports to file in ./results folder (default:
+                        False)
 --inOutDir INOUTDIR, -i INOUTDIR
-                        Path containing the memStats directory <span class="o">(</span>-&gt; Emma
-                        output<span class="o">)</span>. If not given the <span class="sb">`</span>project<span class="sb">`</span> directory will be
-                        used. <span class="o">(</span>default: None<span class="o">)</span>
---subDir SUBDIR       Sub-directory of <span class="sb">`</span>inOutDir<span class="sb">`</span> where the Emma Visualiser
+                        Path containing the memStats directory (-&gt; Emma
+                        output). If not given the `project` directory will be
+                        used. (default: None)
+--subDir SUBDIR       Sub-directory of `inOutDir` where the Emma Visualiser
                         results will be stored. If not given results will be
-                        stored in <span class="sb">`</span>inOutDir<span class="sb">`</span>. <span class="o">(</span>default: None<span class="o">)</span>
---overview            Create a .html overview. <span class="o">(</span>default: False<span class="o">)</span>
+                        stored in `inOutDir`. (default: None)
+--overview            Create a .html overview. (default: False)
 --categorised_image_csv, -cat_img
                         Save a .csv of categories found inside the image
-                        summary <span class="o">(</span>default: False<span class="o">)</span>
---noprompt            Exit program with an error <span class="k">if</span> a user prompt occurs<span class="p">;</span>
-                        useful <span class="k">for</span> CI systems <span class="o">(</span>default: False<span class="o">)</span>
+                        summary (default: False)
+--noprompt            Exit program with an error if a user prompt occurs;
+                        useful for CI systems (default: False)
 
-Copyright <span class="o">(</span>C<span class="o">)</span> <span class="m">2019</span> The Emma authors License GPL-3.0: GNU GPL version <span class="m">3</span>
+Copyright (C) 2019 The Emma authors License GPL-3.0: GNU GPL version 3
 &lt;https://gnu.org/licenses/gpl.html&gt;. This is free software: you are free to
 change and redistribute it. There is NO WARRANTY, to the extent permitted by
-law.
-</pre></div>
+law.</code></pre>
 
 
 <h2 id="arguments-in-detail">Arguments in detail</h2>
@@ -232,18 +231,17 @@ Here, only the ones described that are used by the Emma Visualiser exclusively.<
 Besides this it defines a threshold value as well that will be displayed on the diagrams. This threshold can be for example
 prescribed by your project requirements in order to ensure there will be available memory areas for future updates.</p>
 <p>The config file needs to have the following format:</p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;Project Threshold in %&quot;</span><span class="p">:</span> <span class="err">&lt;THRESHOLD_VALUE&gt;</span><span class="p">,</span>
+<pre class="codehilite"><code class="language-json">{
+    &quot;Project Threshold in %&quot;: &lt;THRESHOLD_VALUE&gt;,
 
-    <span class="nt">&quot;Budgets&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">[</span><span class="s2">&quot;&lt;CONFIG_ID&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;MEMORY_TYPE&gt;&quot;</span><span class="p">,</span> <span class="err">&lt;AVAILABLE_MEMORY&gt;</span><span class="p">],</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="err">.</span>
-        <span class="p">[</span><span class="s2">&quot;&lt;CONFIG_ID&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;MEMORY_TYPE&gt;&quot;</span><span class="p">,</span> <span class="err">&lt;AVAILABLE_MEMORY&gt;</span><span class="p">]</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
+    &quot;Budgets&quot;: [
+        [&quot;&lt;CONFIG_ID&gt;&quot;, &quot;&lt;MEMORY_TYPE&gt;&quot;, &lt;AVAILABLE_MEMORY&gt;],
+        .
+        .
+        .
+        [&quot;&lt;CONFIG_ID&gt;&quot;, &quot;&lt;MEMORY_TYPE&gt;&quot;, &lt;AVAILABLE_MEMORY&gt;]
+    ]
+}</code></pre>
 
 
 <p>The following rules apply:</p>
@@ -282,8 +280,7 @@ This is completely user defined, Emma and its components are not relying on thes
 </ul>
 <h2 id="examples">Examples</h2>
 <p>After the Image Summary has been created with emma.py and the memStats CSV files were saved to the directory <code>../[PROJECT]/results/memStats</code>, it can be visualised using:</p>
-<div class="codehilite"><pre><span></span>python emma_vis.py --project ..<span class="se">\&lt;</span>PROJECT&gt; --dir ..<span class="se">\[</span>PROJECT<span class="o">]</span><span class="se">\r</span>esults --quiet --overview
-</pre></div>
+<pre class="codehilite"><code class="language-bash">python emma_vis.py --project ..\&lt;PROJECT&gt; --dir ..\[PROJECT]\results --quiet --overview</code></pre>
 
 
 <h3 id="calling-graph-emma-visualiser">Calling Graph Emma Visualiser</h3>
