@@ -79,7 +79,7 @@ def main(arguments=""):
     }
 
     # Dispatch emma modules
-    emmaModuleLUT[parsedArguments._invoked_emma_module](parsedArguments)                    # pylint: disable=W0212
+    emmaModuleLUT[parsedArguments._invoked_emma_module](parsedArguments)                    # pylint: disable=protected-access
                                                                                             # We do not have to check if the LUT entry exists since argparse does that already for us
 
 

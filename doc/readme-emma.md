@@ -15,7 +15,7 @@ This tool creates a summary/overview about static memory usage in form of a comm
 
 ## Process
 Using the Mapfile Analyser is a two step process. The first step is to extract the required information from the mapfiles and save it to .csv files.
-This is done with the `emma.py` script. The second step is to visualise the data. This document explains the first part only, the visualisation is documented in the Emma visualiser readme document.
+This is done with the `Emma.py a` script. The second step is to visualise the data. This document explains the first part only, the visualisation is documented in the Emma visualiser readme document.
 
 ## Limitations
 The Emma is only suitable for analyzing projects where the devices have a single linear physical address space:
@@ -28,7 +28,7 @@ The Emma is only suitable for analyzing projects where the devices have a single
 ## Usage
 Section and object summaries of the specified mapfiles will be created.
 
-    $ python emma.py --help
+    $ python Emma.py a --help
     usage: Emma Memory and Mapfile Analyser (Emma) [-h] [--version] --project PROJECT
                                                --mapfiles MAPFILES [--dir DIR]
                                                [--subdir SUBDIR] [--analyse_debug]
@@ -92,14 +92,14 @@ The memory analysis will be executed based on the project configuration. In orde
 This chapter explains the role and functionality of each part of the configuration and illustrates all the settings that can be used.
 Based on this description the user will have to create his/her own configuration.
 
-Creating a configuration is done by writing several JSON files (if you are not familiar with JSON, please visit https://www.json.org).
+Creating a configuration is done by writing several JSON files (if you are not familiar with JSON, please visit [https://www.json.org](https://www.json.org)).
 This chapter will go trough the topic by formally defining the format, rules and the functionality of the config files.
-There are practical example projects available in the **doc** folder. These projects will lead you step by step trough the process of
+There are practical example projects available in the **`doc`** folder. These projects will lead you step by step trough the process of
 creating a configuration and they also contain map files that can be analyzed.
 
 Currently the following example projects are available:
 
-* **doc/test_project** - A Test Project that illustrates a system with a hardware that consists of two devices: an MCU and an SOC.
+* **`doc/test_project`** - A project that illustrates a system with a hardware that consists of two devices: an MCU and an SOC.
 Both of the devices have a GHS compiler specific configuration and mapfiles.
 
 An Emma project configuration consists of two parts: the generic configuration and the compiler specific configuration.
@@ -238,7 +238,7 @@ The following rules apply:
     * It is optional, not including it or including it as an empty array means none of the `<MEMORY_AREA>`s are ignored
 
 #### `budgets.json`
-The budgets config file belongs to the Emma Visualiser. For a description, please see: **doc/readme-vis.md**.
+The budgets config file belongs to the Emma Visualiser. For a description, please see: **`doc/readme-vis.md`**.
 
 #### `categoriesObjects.json` and `categoriesSections.json`
 The categories config files are used to categorize objects and sections to user defined categories by using their full names.
@@ -553,7 +553,7 @@ In places there is some specific terminology used which is explained in the foll
 Create a Mapfile Summary for <PROJECT>:
 
     :::bash
-    emma.py --project ..\<PROJECT> \
+    Emma.py a --project ..\<PROJECT> \
     --mapfiles ..\MyMapfiles \
     --dir ..\MyMapfiles\results
 
