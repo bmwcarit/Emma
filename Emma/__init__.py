@@ -16,6 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
+class SUBPARSER_STRINGS:
+    ANALYSER: str = "a"
+    VISUALISER: str = "v"
+    DELTAS: str = "d"
+
 
 VERSION_MAJOR = "3"
 VERSION_MINOR = "1"

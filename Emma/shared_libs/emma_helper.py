@@ -346,3 +346,18 @@ class Prompt:
             result = int(text)
 
         return result
+
+def parseGivenArgStrOrStdIn(arguments: str, parser):
+    """
+    Either parse the arguments string if it is not empty or (the default case) parse the data from sys.argv
+    :param arguments: [str] Argument string to parse (empty string if std-in should be parsed)
+    :param parser: The set-up parser (i.e. after you added all arguments to it)
+    :return: [Namespace] parsed arguments
+    """
+    #
+    if arguments == "":
+        parsedArguments = parser.parse_args()
+    else:
+        # Arguments were passed to this function (e.g. for unit testing)
+        parsedArguments = parser.parse_args(arguments)
+    return parsedArguments

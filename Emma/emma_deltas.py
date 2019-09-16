@@ -86,27 +86,33 @@ def parseArgs(arguments=""):
     :return: Argparse object
     """
     parser = initParser()
-
-    # We will either parse the arguments string if it is not empty,
-    # or (in the default case) the data from sys.argv
-    if "" == arguments:
-        parsedArguments = parser.parse_args()
-    else:
-        # Arguments were passed to this function (e.g. for unit testing)
-        parsedArguments = parser.parse_args(arguments)
-
+    parsedArguments = Emma.shared_libs.emma_helper.parseGivenArgStrOrStdIn(arguments, parser)
     return parsedArguments
 
 
-def main(args):
-    if args.infiles and args.outfile is not None:
-        candidates = args.infiles
-    elif args.project:
-        Emma.shared_libs.emma_helper.checkIfFolderExists(args.project)
-        fileSelector = Emma.emma_delta_libs.FileSelector.FileSelector(projectDir=args.project)
+def main(arguments):
+    """
+    Emma deltas application
+    :param arguments: parsed arguments
+    :return: None
+    """
+    # Setup SCout
+    sc(invVerbosity=-1, actionWarning=(lambda : sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda : sys.exit(-10))
+
+    sc().header("Emma Memory and Mapfile Analyser - Deltas", symbol="/")
+
+    # Start and display time measurement
+    TIME_START = timeit.default_timer()
+    sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
+
+    if arguments.infiles and arguments.outfile is not None:
+        candidates = arguments.infiles
+    elif arguments.project:
+        Emma.shared_libs.emma_helper.checkIfFolderExists(arguments.project)
+        fileSelector = Emma.emma_delta_libs.FileSelector.FileSelector(projectDir=arguments.project)
         filePresenter = Emma.emma_delta_libs.FilePresenter.FilePresenter(fileSelector=fileSelector)
         candidates = filePresenter.chooseCandidates()
-    elif not args.r:
+    elif not arguments.r:
         rootpath = Emma.emma_delta_libs.RootSelector.selectRoot()
         Emma.emma_delta_libs.RootSelector.saveNewRootpath(rootpath)
         fileSelector = Emma.emma_delta_libs.FileSelector.FileSelector(projectDir=rootpath)
@@ -115,9 +121,13 @@ def main(args):
     else:
         sc().error("No matching arguments.")
 
-    delta = Emma.emma_delta_libs.Delta.Delta(files=candidates, outfile=args.outfile)
+    delta = Emma.emma_delta_libs.Delta.Delta(files=candidates, outfile=arguments.outfile)
     delta.tocsv()
-    sc().info("Saved delta to " + args.outfile)
+    sc().info("Saved delta to " + arguments.outfile)
+
+    # Stop and display time measurement
+    TIME_END = timeit.default_timer()
+    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " + "{0:.2f}".format(TIME_END - TIME_START) + "s)")
 
 
 def runEmmaDeltas():
@@ -126,23 +136,10 @@ def runEmmaDeltas():
     :return: None
     """
     # Parsing the command line arguments
-    ARGS = parseArgs()
-
-    # Setup SCout
-    sc(invVerbosity=-1, actionWarning=(lambda : sys.exit(-10) if ARGS.Werror is not None else None), actionError=lambda : sys.exit(-10))
-
-    sc().header("Emma Memory and Mapfile Analyser - Deltas", symbol="/")
-
-    # Start and display time measurement
-    TIME_START = timeit.default_timer()
-    sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
+    parsedArguments = parseArgs()
 
     # Execute Emma Deltas
-    main(ARGS)
-
-    # Stop and display time measurement
-    TIME_END = timeit.default_timer()
-    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " + "{0:.2f}".format(TIME_END - TIME_START) + "s)")
+    main(parsedArguments)
 
 
 if __name__ == "__main__":

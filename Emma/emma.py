@@ -31,10 +31,28 @@ import Emma.emma_libs.memoryManager
 
 
 def main(arguments):
+    """
+    Emma application
+    :param arguments: parsed arguments
+    :return: None
+    """
+    # Setup SCout
+    sc(invVerbosity=-1, actionWarning=(lambda: sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda: sys.exit(-10))
+
+    sc().header("Emma Memory and Mapfile Analyser", symbol="/")
+
+    # Start and display time measurement
+    TIME_START = timeit.default_timer()
+    sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
+
     memoryManager = Emma.emma_libs.memoryManager.MemoryManager(*processArguments(arguments))
     memoryManager.readConfiguration()
     memoryManager.processMapfiles()
     memoryManager.createReports()
+
+    # Stop and display time measurement
+    TIME_END = timeit.default_timer()
+    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " "{0:.2f}".format(TIME_END - TIME_START) + "s)")
 
 
 def initParser():
@@ -125,15 +143,7 @@ def parseArgs(arguments=""):
     :return: Parsed arguments
     """
     parser = initParser()
-
-    # We will either parse the arguments string if it is not empty,
-    # or (in the default case) the data from sys.argv
-    if arguments == "":
-        parsedArguments = parser.parse_args()
-    else:
-        # Arguments were passed to this function (e.g. for unit testing)
-        parsedArguments = parser.parse_args(arguments)
-
+    parsedArguments = Emma.shared_libs.emma_helper.parseGivenArgStrOrStdIn(arguments, parser)
     return parsedArguments
 
 
@@ -171,23 +181,10 @@ def runEmma():
     :return: None
     """
     # Parsing the command line arguments
-    ARGS = parseArgs()
-
-    # Setup SCout
-    sc(invVerbosity=-1, actionWarning=(lambda: sys.exit(-10) if ARGS.Werror is not None else None), actionError=lambda: sys.exit(-10))
-
-    sc().header("Emma Memory and Mapfile Analyser", symbol="/")
-
-    # Start and display time measurement
-    TIME_START = timeit.default_timer()
-    sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
+    parsedArguments = parseArgs()
 
     # Execute Emma
-    main(ARGS)
-
-    # Stop and display time measurement
-    TIME_END = timeit.default_timer()
-    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " "{0:.2f}".format(TIME_END - TIME_START) + "s)")
+    main(parsedArguments)
 
 
 if __name__ == "__main__":
