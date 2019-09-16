@@ -18,12 +18,12 @@
 
 
 ## Process
-After analysing the mapfiles with the `emma.py` script, one can visualise them using `emma_vis.py`.
+After analysing the mapfiles with the `Emma.py a` script one can visualise them using `Emma.py v`.
 
 
 ## Usage
 
-    $ python emma_vis.py --help
+    $ python Emma.py v --help
     usage: Emma Visualiser [-h] [--version] --projectDir PROJECTDIR [--quiet]
                         [--append] [--inOutDir INOUTDIR] [--subDir SUBDIR]
                         [--overview] [--categorised_image_csv] [--noprompt]
@@ -166,10 +166,10 @@ Output files are:
 
 
 ## Examples
-After the Image Summary has been created with emma.py and the memStats CSV files were saved to the directory `../[PROJECT]/results/memStats`, it can be visualised using:
+After the Image Summary has been created with `Emma.py a` and the memStats CSV files were saved to the directory `../[PROJECT]/results/memStats`, it can be visualised using:
 
     :::bash
-    python emma_vis.py --project ..\<PROJECT> --dir ..\[PROJECT]\results --quiet --overview
+    python Emma.py v --project ..\<PROJECT> --dir ..\[PROJECT]\results --quiet --overview
 
 ### Calling Graph Emma Visualiser
 <!-- We use onerror to make images visible when viewing the content using GitHub Pages etc. on the other side reading the markdown file using an editor should kept intact -->

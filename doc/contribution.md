@@ -68,7 +68,7 @@ See also [here](https://help.github.com/en/articles/requesting-a-pull-request-re
 ## Coding guidelines
 Generally [PEP-8](https://github.com/python/peps/blob/master/pep-0008.txt) or the [Google style guide](https://github.com/google/styleguide/blob/gh-pages/pyguide.md) apply. However we deviate slightly from this (see the following sections). 
 
-**If in doubt run [pylint](https://www.pylint.org/) by using our pylint configuration file ([`.pylintrc`](../.pylintrc)).**
+**If in doubt run [pylint](https://www.pylint.org/) by using our pylint configuration file (`.pylintrc`).**
 
 ### Style
 * Naming conventions
@@ -94,7 +94,7 @@ Generally [PEP-8](https://github.com/python/peps/blob/master/pep-0008.txt) or th
         * `map file` is always written as `mapfile`
 * `TODO`, `FIXME` and similar tags should be in the format: `# TODO: This is my TODO (<author>)`
     * First letter in the comment is a majuscule
-    * The comment ends with the name of the author or with an unique and consistent abbreviation/alias/username/pseudonym (preferably your initials if still available; if you are unsure check the [CONTRIBUTORS](../CONTRIBUTORS) file)
+    * The comment ends with the name of the author or with an unique and consistent abbreviation/alias/username/pseudonym (preferably your initials if still available; if you are unsure check the `CONTRIBUTORS` file)
 
 ### Path handling
 Use `os.path.normpath()` where appropriate. Using `/` and `\` can cause problems between OSes (even on Windows with WSL) and strange things could happen. Also prefer `joinPath()` (in `shared_libs.Emma_helper`) instetad of `os.path.join()`.

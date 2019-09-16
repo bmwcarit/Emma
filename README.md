@@ -31,8 +31,6 @@ The Emma visualiser helps you to create nice plots and reports in a `.png` and `
 The whole Emma tool suite contains command line options making it convenient to be **run on a build server** like `--Werror` (treat all warnings as errors) or `--no-prompt` (exit and fail on user prompts; user prompts can happen when ambiguous configurations appear such as multiple matches for one configured map files).
 
 ------------------------
-<br>
-
 <!-- We use onerror to make images visible when viewing the content using GitHub Pages etc. on the other side reading the markdown file using an editor should kept intact -->
 <div align="center"> <img src="./doc/images/architecture.png" onerror="this.onerror=null;this.src='images/architecture.png';" width="100%"> </div>
 
@@ -60,28 +58,44 @@ The following figure shows a possible workflow using Emma:
 
 
 ## Quick Start Guide
-At this point we want to give you a brief overview what to do in the below two scenarios. If you want to play around go to [(project files are already present)](#Project-files-are-already-present) and use our example projects in [`./doc/test_project*`](./doc/).
+At this point we want to give you a brief overview what to do in the below two scenarios. If you want to play around go to [(project files are already present)](#Project-files-are-already-present) and use our example projects in `./doc/test_project*`.
 
 * if the Emma *project is already set-up* (JSON files were created) and you want to analyse your software with newly generated mapfiles proceed to [-> Project files are already present](#Project-files-are-already-present) or
 * you *start* your analysis *from scratch* and need to do configure Emma before you use it then go to [-> Project files have to be created](#project-files-that-have-to-be-created).
 
-Example projects (including Emma* outputs/results) can be found in [`./doc/test_project*`](./doc/).
+Example projects (including Emma* outputs/results) can be found in `./doc/test_project*`.
+
+*Since version 3.1* Emma can be called in two ways where the following variant is recommended:
+
+```bash
+python Emma.py a --project doc/test_project --mapfiles doc/test_project/mapfiles --noprompt
+```
+
+The following table provides an overview how you may call Emma:
+
+| Emma module | Top level sub-command (tlsc) (`python Emma.py` <\tlsc\>) | Module (`python -m` + \<module\> \<options\>) |
+| ----------- | -------------------------------------------------------- | --------------------------------------------- |
+| Analyser    | `a`                                                      | `Emma.emma`                                   |
+| Visualiser  | `v`                                                      | `Emma.emma_vis`                               |
+| Deltas      | `d`                                                      | `Emma.emma_deltas`                            |
+
 
 ------------------------
 
+
 ### Project files are already present
-Try `python emma.py --help` to see all possible options or refer to the documentation (`./doc/*`).
+Try `python Emma.py a --help` to see all possible options or refer to the documentation (`./doc/*`).
 
 1. Create intermediate `.csv` from mapfiles with Emma:
 
 ```bash
-python emma.py -p .\MyProjectFolder --map .\MyProjectFolder\mapfiles --dir .\MyProjectFolder\analysis --subdir Analysis_1
+python Emma.py a -p .\MyProjectFolder --map .\MyProjectFolder\mapfiles --dir .\MyProjectFolder\analysis --subdir Analysis_1
 ```
 
 2. Generate reports and graphs with Emma Visualiser:
 
 ```bash
-python emma_vis.py -p .\MyProjectFolder --dir .\MyProjectFolder\analysis --subdir Analysis_1 -q 
+python Emma.py v -p .\MyProjectFolder --dir .\MyProjectFolder\analysis --subdir Analysis_1 -q 
 ```
 
 ### Project files that have to be created
@@ -94,7 +108,7 @@ To create a new project, the following files must be created:
 * `categoriesSections.json`
 * `categoriesSectionsKeywords.json`
 
-You will find example projects in [`./doc/test_project*`](./doc/). In-depth documentation can be found in the full documentation (see [`./doc/`](./doc/)).
+You will find example projects in `./doc/test_project*`. In-depth documentation can be found in the full documentation (see `./doc/`).
 
 A basic configuration can be short per file. For complex systems you can choose from many optional keywords/options that will provide you means to adjust your analysis as fine grained as you wish.
 
@@ -117,11 +131,11 @@ A `globalConfig.json` could look like this:
 
 
 ## Full documentation
-For the full documentation please refer to the [`./doc/`](./doc/) directory.
+For the full documentation please refer to the `./doc/` directory.
 
 
 ## Contribute
-We are glad if you want to participate. In [`./doc/contribution.md`](doc/contribution.md) you will find a guide telling you everything you need to know including coding conventions and more.
+We are glad if you want to participate. In `./doc/contribution.md` you will find a guide telling you everything you need to know including coding conventions and more.
 
 ## [Mailing List](https://groups.google.com/forum/#!forum/emma-dev)
 
@@ -144,7 +158,7 @@ emma-dev (. at) googlegroups.com
 
 **Dependencies needed to generate documentation:**
 
-Utility scripts in [`./doc/`](doc) need additional dependencies. As a normal user you can ignore this.
+Utility scripts in `./doc/` need additional dependencies. As a normal user you can ignore this.
 
 | Library (version)        | pip package name                                    | Licence                              | URL                                                                                                                                                |
 |--------------------------|-----------------------------------------------------|--------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -153,7 +167,7 @@ Utility scripts in [`./doc/`](doc) need additional dependencies. As a normal use
 
 Please refer to the [gprof2dot project site](https://github.com/jrfonseca/gprof2dot) and install **its dependencies (this has to be done even if you install Emma via pip)**.
 
-Note that those modules are invoked via subprocess calls within the [./genDoc/](genDoc/) scripts.
+Note that those modules are invoked via subprocess calls within the ./genDoc/ scripts.
 
 **Dependencies used for documentation on GitHub pages (separate, independent branch `gh-pages`):**
 
@@ -173,4 +187,4 @@ Utility scripts used to build GitHub pages documentation. As a normal user you c
 | pygmentize (v2.2.0+)                | Auto-generated .css file                                      | Yes                 | BSD-2-Clause             | [http://pygments.org/download/](http://pygments.org/download/); [https://bitbucket.org/birkenfeld/pygments-main/issues/1496/question-licence-of-auto-generated-css](https://bitbucket.org/birkenfeld/pygments-main/issues/1496/question-licence-of-auto-generated-css)             |
 | toHumanReadable (--)                | Code snippet                                                  | No                  | MIT                      | [https://github.com/TeamFlowerPower/kb/wiki/humanReadable](https://github.com/TeamFlowerPower/kb/wiki/humanReadable)                                                                                                                                                               |
 
-For the full documentation please refer to the [`./doc/`](doc) directory.
+For the full documentation please refer to the `./doc/` directory.
