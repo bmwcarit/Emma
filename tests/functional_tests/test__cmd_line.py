@@ -130,7 +130,7 @@ class CmdEmma(TestHelper):
 
     def test_help(self):
         """
-        Check that `--help` does not raise an exeption but exits with SystemExit(0)
+        Check that `--help` does not raise an exception but exits with SystemExit(0)
         """
         with self.assertRaises(SystemExit) as context:
             args = Emma.emma.parseArgs(["--help"])
@@ -139,7 +139,7 @@ class CmdEmma(TestHelper):
 
     def test_unrecognisedArgs(self):
         """
-        Check that an unexpected argument does raise an exeption
+        Check that an unexpected argument does raise an exception
         """
         with self.assertRaises(SystemExit) as context:
             args = Emma.emma.parseArgs(["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesFolder, "--dir", self.cmdLineTestOutputFolder, "--blahhhhhh"])
@@ -216,7 +216,7 @@ class CmdEmmaVis(TestHelper):
 
     def test_help(self):
         """
-        Check that `--help` does not raise an exeption but exits with SystemExit(0)
+        Check that `--help` does not raise an exception but exits with SystemExit(0)
         """
         with self.assertRaises(SystemExit) as context:
             args = Emma.emma_vis.parseArgs(["--help"])
@@ -225,7 +225,7 @@ class CmdEmmaVis(TestHelper):
 
     def test_unrecognisedArgs(self):
         """
-        Check that an unexpected argument does raise an exeption
+        Check that an unexpected argument does raise an exception
         """
         with self.assertRaises(SystemExit) as context:
             args = Emma.emma_vis.parseArgs(["--project", self.cmdLineTestProjectFolder, "overview", "--dir", self.cmdLineTestOutputFolder, "--blahhhhhh", "--noprompt", "--quiet"])
