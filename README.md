@@ -10,6 +10,7 @@
 
 > Conduct static (i.e. worst case) memory consumption analyses based on arbitrary linker map files. It produces extensive `.csv` files which are easy to filter and post-process. Optionally `.html` and markdown reports as well as neat figures help you visualising your results.
 
+<!-- We use onerror to make images visible when viewing the content using GitHub Pages etc. on the other side reading the markdown file using an editor should kept intact -->
 <div align="center"> <img src="./doc/images/architecture.png" onerror="this.onerror=null;this.src='images/architecture.png';" width="100%"> </div>
 
 Given a **map file input** (Green Hills map files are the default but others - like GCC - are supported via configuration options; examples are enclosed) Emma **map**s the addresses of sections (aka images) and/or objects (aka modules) **to memory regions** (all addresses given via map files must be known during compile time). Those memory regions are classified into two levels of granularity respectively. The first level defines arbitrary groups based on your personal taste (however using names similar to those defined by your microcontroller vendor makes most sense). Later each of those regions (second level) are assigned to one of four generalised predefined memory regions (those are: `INT_RAM`, `INT_FLASH`, `EXT_RAM`, `EXT_FLASH`). In case of **virtual memory** objects and sections lying within virtual address spaces (VASes) get **translated back into physical memory**. This is depicted in the figure above (lower part).
@@ -31,8 +32,6 @@ The Emma visualiser helps you to create nice plots and reports in a `.png` and `
 The whole Emma tool suite contains command line options making it convenient to be **run on a build server** like `--Werror` (treat all warnings as errors) or `--no-prompt` (exit and fail on user prompts; user prompts can happen when ambiguous configurations appear such as multiple matches for one configured map files).
 
 ------------------------
-<!-- We use onerror to make images visible when viewing the content using GitHub Pages etc. on the other side reading the markdown file using an editor should kept intact -->
-<div align="center"> <img src="./doc/images/architecture.png" onerror="this.onerror=null;this.src='images/architecture.png';" width="100%"> </div>
 
 
 ## Installation
