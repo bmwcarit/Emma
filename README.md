@@ -64,19 +64,19 @@ At this point we want to give you a brief overview what to do in the below two s
 
 Example projects (including Emma* outputs/results) can be found in `./doc/test_project*`.
 
-*Since version 3.1* Emma can be called in two ways where the following variant is recommended:
+*Since version 3.1* Emma can be called in two ways (if you want to run it from the installation folder) where the following variant is recommended:
 
 ```bash
 python Emma.py a --project doc/test_project --mapfiles doc/test_project/mapfiles --noprompt
 ```
 
-The following table provides an overview how you may call Emma:
+The following table provides an overview how you call Emma:
 
-| Emma module | Top level sub-command (tlsc) (`python Emma.py` <\tlsc\>) | Module (`python -m` + \<module\> \<options\>) |
-| ----------- | -------------------------------------------------------- | --------------------------------------------- |
-| Analyser    | `a`                                                      | `Emma.emma`                                   |
-| Visualiser  | `v`                                                      | `Emma.emma_vis`                               |
-| Deltas      | `d`                                                      | `Emma.emma_deltas`                            |
+| Emma module | Entry point + \<options\>) (if installed via `pip`) | Top level sub-command (tlsc) (`python Emma.py` \<tlsc\>) | Module (`python -m` + \<module\> \<options\>) |
+| ----------- | --------------------------------------------------- | -------------------------------------------------------- | --------------------------------------------- |
+| Analyser    | `emma`                                              | `a`                                                      | `Emma.emma`                                   |
+| Visualiser  | `emma_vis`                                          | `v`                                                      | `Emma.emma_vis`                               |
+| Deltas      | `emma_deltas`                                       | `d`                                                      | `Emma.emma_deltas`                            |
 
 
 ------------------------
@@ -134,7 +134,7 @@ For the full documentation please refer to the `./doc/` directory.
 
 
 ## Contribute
-We are glad if you want to participate. In `./doc/contribution.md` you will find a guide telling you everything you need to know including coding conventions and more.
+We are glad if you want to participate. In `./doc/dev-guide.md` you will find a guide telling you everything you need to know including coding conventions and more.
 
 ## [Mailing List](https://groups.google.com/forum/#!forum/emma-dev)
 

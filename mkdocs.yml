@@ -42,6 +42,6 @@ nav:
   - Home: index.md                           # Symlink must have a different name than actual file (which we link to)
   - Emma: readme-emma.md
   - Emma Visualiser: readme-vis.md
-  - Test project: test_project/readme.md
-  - Contribute: contribution.md
+  - Test Project: test_project/readme.md
+  - Developer Guide: dev-guide.md
 #  - "Emma Deltas": "readme-deltas.md"
