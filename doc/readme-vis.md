@@ -6,7 +6,6 @@
 
 ## Requirements
 * Python 3.6 or higher
-	* Tested with 3.6.1rc1; 3.7.0, 3.7.1
 * Python libraries
 	* pypiscout 2.0 or higher: (`pip3 install pypiscout`)
 	* Pandas 0.22 or higher: (`pip3 install pandas`)
@@ -19,48 +18,6 @@
 
 ## Process
 After analysing the mapfiles with the `Emma.py a` script one can visualise them using `Emma.py v`.
-
-
-## Usage
-
-    $ python Emma.py v --help
-    usage: Emma Visualiser [-h] [--version] --projectDir PROJECTDIR [--quiet]
-                        [--append] [--inOutDir INOUTDIR] [--subDir SUBDIR]
-                        [--overview] [--categorised_image_csv] [--noprompt]
-
-    Data aggregation and visualisation tool for Emma Memory and Mapfile Analyser
-    (Emma).
-
-    optional arguments:
-    -h, --help            show this help message and exit
-    --version             Display the version number.
-    --projectDir PROJECTDIR, -p PROJECTDIR
-                            Path to directory holding the config files. The
-                            project name will be derived from this folder name,
-                            (default: None)
-    --quiet, -q           Automatically accepts last modified .csv file in
-                            ./memStats folder (default: False)
-    --append              Append reports to file in ./results folder (default:
-                            False)
-    --inOutDir INOUTDIR, -i INOUTDIR
-                            Path containing the memStats directory (-> Emma
-                            output). If not given the `project` directory will be
-                            used. (default: None)
-    --subDir SUBDIR       Sub-directory of `inOutDir` where the Emma Visualiser
-                            results will be stored. If not given results will be
-                            stored in `inOutDir`. (default: None)
-    --overview            Create a .html overview. (default: False)
-    --categorised_image_csv, -cat_img
-                            Save a .csv of categories found inside the image
-                            summary (default: False)
-    --noprompt            Exit program with an error if a user prompt occurs;
-                            useful for CI systems (default: False)
-
-    Copyright (C) 2019 The Emma authors License GPL-3.0: GNU GPL version 3
-    <https://gnu.org/licenses/gpl.html>. This is free software: you are free to
-    change and redistribute it. There is NO WARRANTY, to the extent permitted by
-    law.
-
 
 
 ## Arguments in detail

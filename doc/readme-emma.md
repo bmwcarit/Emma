@@ -7,7 +7,6 @@ This tool creates a summary/overview about static memory usage in form of a comm
 
 ## Requirements
 * Python 3.6 or higher
-    * Tested with 3.6.1rc1; 3.7.0, 3.7.1
 * Python libraries
     * pypiscout 2.0 or higher: (`pip3 install pypiscout`)
 * Tested on Windows and Linux systems
@@ -24,42 +23,6 @@ The Emma is only suitable for analyzing projects where the devices have a single
     start at address 0x0000. Devices based on architectures like this can not be analyzed with Emma.
 * Devices that use for example the ARMv6M architecture have a single linear address space.
     Devices based on architectures like this can be analyzed with Emma.
-
-## Usage
-Section and object summaries of the specified mapfiles will be created.
-
-    $ python Emma.py a --help
-    usage: Emma Memory and Mapfile Analyser (Emma) [-h] [--version] --project PROJECT
-                                               --mapfiles MAPFILES [--dir DIR]
-                                               [--subdir SUBDIR] [--analyse_debug]
-                                               [--create_categories]
-                                               [--remove_unmatched] [--noprompt]
-                                               [--Werror]
-
-    Analyser for mapfiles from Greens Hills Linker (other files are supported via
-    configuration options).It creates a summary/overview about static memory usage
-    in form of a comma separated values file.
-
-    optional arguments:
-      -h, --help           show this help message and exit
-      --version            Display the version number.
-      --project PROJECT    Path of directory holding the configuration.The project
-                           name will be derived from the the name of this folder.
-                           (default: None)
-      --mapfiles MAPFILES  The folder containing the map files that need to be
-                           analysed. (default: None)
-      --dir DIR            Output folder holding the statistics. (default: None)
-      --subdir SUBDIR      User defined subdirectory name in the --dir folder.
-                           (default: None)
-      --analyse_debug      Include DWARF debug sections in analysis (default:
-                           False)
-      --create_categories  Create categories.json from keywords. (default: False)
-      --remove_unmatched   Remove unmatched modules from categories.json.
-                           (default: False)
-      --noprompt           Exit fail on user prompt. (default: False)
-      --Werror             Treat all warnings as errors. (default: False)
-
-    ********* Marcel Schmalzl, Felix Mueller, Gergo Kocsis - 2017-2019 *********
 
 
 ## Arguments
