@@ -37,8 +37,8 @@ setuptools.setup(
     maintainer="The Emma Authors",
     maintainer_email="emma-dev@googlegroups.com",
     url="https://github.com/bmwcarit/Emma",
-    package_dir={"": "Emma"},
-    packages=setuptools.find_namespace_packages(where="Emma"),                  # Recursively find package files (i.e. sub-folders, ...)
+    # package_dir={"": "Emma"},
+    packages=setuptools.find_namespace_packages(),                  # Recursively find package files (i.e. sub-folders, ...)
     python_requires=Emma.PYTHON_REQ_VERSION,
     install_requires=["Pygments",
                       "Markdown",
@@ -57,6 +57,8 @@ setuptools.setup(
     entry_points={                                              # Make Emma available as independent scripts
         "console_scripts": [
             "emma=emma:runEmma",
+            "emma1=Emma.emma:runEmma",
+            "emma2=Emma.Emma.emma:runEmma",
             "emma_vis=emma_vis:runEmmaVis",
             "emma_deltas=emma_vis:runEmmaDeltas"
         ],
