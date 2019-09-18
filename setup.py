@@ -37,7 +37,7 @@ setuptools.setup(
     maintainer="The Emma Authors",
     maintainer_email="emma-dev@googlegroups.com",
     url="https://github.com/bmwcarit/Emma",
-    # package_dir={"": "Emma"},
+    package_dir={"": "Emma"},
     packages=setuptools.find_namespace_packages(),                  # Recursively find package files (i.e. sub-folders, ...)
     python_requires=Emma.PYTHON_REQ_VERSION,
     install_requires=["Pygments",
