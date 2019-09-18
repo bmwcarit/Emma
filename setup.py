@@ -56,9 +56,9 @@ setuptools.setup(
                     },
     entry_points={                                              # Make Emma available as independent scripts
         "console_scripts": [
-            "emma=Emma.emma:runEmma",
-            "emma_vis=Emma.emma_vis:runEmmaVis",
-            "emma_deltas=Emma.emma_vis:runEmmaDeltas"
+            "emma=emma:runEmma",
+            "emma_vis=emma_vis:runEmmaVis",
+            "emma_deltas=emma_vis:runEmmaDeltas"
         ],
     },
     keywords=[
