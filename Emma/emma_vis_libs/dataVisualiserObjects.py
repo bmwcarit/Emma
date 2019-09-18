@@ -26,12 +26,12 @@ import pandas
 import matplotlib.pyplot
 from pypiscout.SCout_Logger import Logger as sc
 
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import Emma.shared_libs.emma_helper
-import Emma.emma_vis_libs.dataVisualiser
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import shared_libs.emma_helper
+import emma_vis_libs.dataVisualiser
 
 
-class ModuleConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
+class ModuleConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
     """
     Class for module data. The module summary inherits everything from the image summary, but since the image summary
     does not have categories or the like they need to be added here.
@@ -49,7 +49,7 @@ class ModuleConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
     def plotByCategorisedModules(self, plotShow=True):
         figure = self.displayConsumptionByCategorisedModules(self.consumptionByCategorisedModules)
         filename = self.project + MEMORY_ESTIMATION_PARTITION_OF_ALLOCATED_MEMORY_PICTURE_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION
-        Emma.shared_libs.emma_helper.saveMatplotlibPicture(figure, os.path.join(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
+        shared_libs.emma_helper.saveMatplotlibPicture(figure, os.path.join(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
         if plotShow:
             matplotlib.pyplot.show()
 
@@ -59,7 +59,7 @@ class ModuleConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
         :return: dataframe of grouped memStats
         """
         # Resolve the containment/overlap/duplicate flags
-        usedByModules = Emma.emma_vis_libs.dataVisualiser.removeDataWithFlags(self.data).reset_index()
+        usedByModules = emma_vis_libs.dataVisualiser.removeDataWithFlags(self.data).reset_index()
 
         # Calculate memory used by modules
         usedByModules = usedByModules[[SIZE_DEC, CONFIG_ID, MEM_TYPE]]                  # Extract sizeDec, memType and configID

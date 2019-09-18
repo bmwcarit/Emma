@@ -27,12 +27,12 @@ import datetime
 import pandas
 
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "Emma"))
 # pylint: disable=wrong-import-position
 # Rationale: This module needs to access modules that are above them in the folder structure.
 
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import Emma.emma
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import emma
 
 class EmmaTestProject(unittest.TestCase):
     # pylint: disable=invalid-name
@@ -65,8 +65,8 @@ class EmmaTestProject(unittest.TestCase):
         os.mkdir(self.resultsFolder)
 
         # Running the test_project to create the CSV tables
-        arguments = Emma.emma.parseArgs(["--project", testProjectFolder, "--mapfile", mapfilesFolder, "--dir", self.resultsFolder])
-        Emma.emma.main(arguments)
+        arguments = emma.parseArgs(["--project", testProjectFolder, "--mapfile", mapfilesFolder, "--dir", self.resultsFolder])
+        emma.main(arguments)
 
         for _, directories, files in os.walk(self.memStatsFolder):
             # The result folder shall have 0 subdirectories and three summary files

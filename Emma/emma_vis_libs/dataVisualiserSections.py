@@ -25,12 +25,12 @@ import pandas
 import matplotlib.pyplot
 from pypiscout.SCout_Logger import Logger as sc
 
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import Emma.shared_libs.emma_helper
-import Emma.emma_vis_libs.dataVisualiser
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import shared_libs.emma_helper
+import emma_vis_libs.dataVisualiser
 
 
-class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
+class ImageConsumptionList(emma_vis_libs.dataVisualiser.Visualiser):
     """
     Class holding the image data from .csv Memstats, plus methods for printing/plotting,
     file writing and .md/.html creation
@@ -45,14 +45,14 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
 
     def __appendStatsConsumption(self, groupedAccIndexedPrint, filename):
         # self.resultsPath is not used here because the reports should appear in the top level results folder
-        path = Emma.shared_libs.emma_helper.joinPath(self.projectPath, "results")
-        Emma.shared_libs.emma_helper.mkDirIfNeeded(path)
+        path = shared_libs.emma_helper.joinPath(self.projectPath, "results")
+        shared_libs.emma_helper.mkDirIfNeeded(path)
 
         # Prepare data for export (reset index and add timestamp)
         saved = groupedAccIndexedPrint.reset_index()
         saved.insert(0, "timestamp", self.statsTimestamp)
 
-        filePath = Emma.shared_libs.emma_helper.joinPath(path, filename + ".csv")
+        filePath = shared_libs.emma_helper.joinPath(path, filename + ".csv")
         headersNeeded = not os.path.isfile(filePath)
         saved.to_csv(filePath,
                      sep=";",
@@ -70,7 +70,7 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
         """
 
         # Resolve the containment/overlap/duplicate flags
-        groupedByMemType = Emma.emma_vis_libs.dataVisualiser.removeDataWithFlags(self.data)
+        groupedByMemType = emma_vis_libs.dataVisualiser.removeDataWithFlags(self.data)
 
         # "Select" data that we really use
         groupedByMemType = groupedByMemType[[SIZE_DEC] + [self.header[i] for i in indices]]          # Get only columns we need
@@ -93,7 +93,7 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
         """
 
         # Resolve the containment/overlap/duplicate flags
-        groupedByMemType = Emma.emma_vis_libs.dataVisualiser.removeDataWithFlags(self.data)
+        groupedByMemType = emma_vis_libs.dataVisualiser.removeDataWithFlags(self.data)
 
         # "Select" data that we really use
         groupedByMemType = groupedByMemType[[SIZE_DEC] + [self.header[i] for i in indices]]          # Get only columns we need
@@ -196,13 +196,13 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
             if i >= len(barGraph.patches) / 2:
                 # Show budgets annotations in kiB
                 barGraph.annotate(
-                    s=Emma.shared_libs.emma_helper.toHumanReadable(int(self.consumptionByMemType[BUDGET][i % (len(barGraph.patches) / 2)])),  # Format of budget text
+                    s=shared_libs.emma_helper.toHumanReadable(int(self.consumptionByMemType[BUDGET][i % (len(barGraph.patches) / 2)])),  # Format of budget text
                     xy=(bar.get_x(), 100),                                                                         # Location of budget annotation, set to 100 so the annotation appears at the 100% line
                     color="#505359")
             else:
                 # Show percentage and absolute value
                 annotationUsagePercentage = "{:.1f} %".format(bar.get_height())
-                annotationUsageAbsoluteValue = Emma.shared_libs.emma_helper.toHumanReadable(int(self.consumptionByMemType[self.header[5]][i]))
+                annotationUsageAbsoluteValue = shared_libs.emma_helper.toHumanReadable(int(self.consumptionByMemType[self.header[5]][i]))
                 barGraph.annotate(
                     s=annotationUsagePercentage + "\n" + annotationUsageAbsoluteValue,
                     xy=(bar.get_x(), bar.get_height() + 0.01),
@@ -247,7 +247,7 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
 
         myfigure = self.displayConsumptionByMemType()
         filename = self.project + MEMORY_ESTIMATION_BY_PERCENTAGES_PICTURE_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION
-        Emma.shared_libs.emma_helper.saveMatplotlibPicture(myfigure, os.path.join(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
+        shared_libs.emma_helper.saveMatplotlibPicture(myfigure, os.path.join(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
         if plotShow:
             matplotlib.pyplot.show()              # Show plots after results in console output are shown
 
@@ -257,13 +257,13 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
         """
 
         self.plotByMemType(plotShow=False)  # Re-write .png to ensure up-to-date overview
-        markdownFilePath = Emma.shared_libs.emma_helper.joinPath(self.resultsPath, self.project + "-Memory_Overview_" + self.statsTimestamp.replace(" ", "") + ".md")
+        markdownFilePath = shared_libs.emma_helper.joinPath(self.resultsPath, self.project + "-Memory_Overview_" + self.statsTimestamp.replace(" ", "") + ".md")
 
         try:
             with open(markdownFilePath, 'w') as markdown:
                 markdown.write("Memory Estimation Overview - " + self.project + "\n==========================\n\n")
 
-                markdown.write("<div align=\"center\"> <img src=\"" +Emma.shared_libs.emma_helper.joinPath(self.project + MEMORY_ESTIMATION_BY_PERCENTAGES_PICTURE_NAME_FIX_PART + self.statsTimestamp + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION) + "\" width=\"1000\"> </div>")
+                markdown.write("<div align=\"center\"> <img src=\"" +shared_libs.emma_helper.joinPath(self.project + MEMORY_ESTIMATION_BY_PERCENTAGES_PICTURE_NAME_FIX_PART + self.statsTimestamp + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION) + "\" width=\"1000\"> </div>")
 
                 markdown.write("\n")
 
@@ -285,14 +285,14 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
         :param markdownFilePath: The path of the Markdown file to which the data will be appended to
         :return: nothing
         """
-        supplementDirPath =Emma.shared_libs.emma_helper.joinPath(self.projectPath, SUPPLEMENT)
+        supplementDirPath =shared_libs.emma_helper.joinPath(self.projectPath, SUPPLEMENT)
         supplementFiles = []
 
         with open(markdownFilePath, 'a') as markdown:
             if os.path.isdir(supplementDirPath):
                 for supplementRootPath, directories, filesInSupplementDir in os.walk(supplementDirPath):
                     for aSupplementFile in filesInSupplementDir:
-                        aAbsSupplementFilePath =Emma.shared_libs.emma_helper.joinPath(supplementRootPath, aSupplementFile)
+                        aAbsSupplementFilePath =shared_libs.emma_helper.joinPath(supplementRootPath, aSupplementFile)
                         supplementFiles.append(aAbsSupplementFilePath)
             else:
                 sc().error(f"Supplement path (`{supplementDirPath}`) is not a directory!")

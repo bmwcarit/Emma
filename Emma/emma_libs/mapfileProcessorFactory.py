@@ -19,8 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import Emma.emma_libs.ghsMapfileProcessor
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import emma_libs.ghsMapfileProcessor
 
 
 def createSpecificMapfileProcesor(compiler, **kwargs):
@@ -34,7 +34,7 @@ def createSpecificMapfileProcesor(compiler, **kwargs):
 
     mapfileProcessor = None
     if COMPILER_NAME_GHS == compiler:
-        mapfileProcessor = Emma.emma_libs.ghsMapfileProcessor.GhsMapfileProcessor(**kwargs)
+        mapfileProcessor = emma_libs.ghsMapfileProcessor.GhsMapfileProcessor(**kwargs)
     else:
         sc().error("Unexpected compiler value: " + compiler)
 

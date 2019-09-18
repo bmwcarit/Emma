@@ -32,7 +32,7 @@ import markdown.extensions.fenced_code
 import markdown.extensions.toc
 import markdown.extensions.tables
 
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 
 
 def checkIfFolderExists(folderName):

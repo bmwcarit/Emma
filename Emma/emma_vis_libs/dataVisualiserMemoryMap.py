@@ -25,12 +25,12 @@ import os
 import pandas
 import matplotlib.pyplot
 
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import Emma.emma_vis_libs.dataVisualiser
-import Emma.shared_libs.emma_helper
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import emma_vis_libs.dataVisualiser
+import shared_libs.emma_helper
 
 
-class MemoryMap(Emma.emma_vis_libs.dataVisualiser.Visualiser):
+class MemoryMap(emma_vis_libs.dataVisualiser.Visualiser):
     def __init__(self, projectPath, fileToUse, resultsPath):
         super().__init__(fileToUse, resultsPath, projectPath)
         self.projectPath = projectPath
@@ -42,7 +42,7 @@ class MemoryMap(Emma.emma_vis_libs.dataVisualiser.Visualiser):
         :param plotShow: [bool] if True: open window showing the plots
         :return: None
         """
-        data = Emma.emma_vis_libs.dataVisualiser.removeDataWithFlags(sourceData=self.data, rmContained=True, rmDuplicate=True)
+        data = emma_vis_libs.dataVisualiser.removeDataWithFlags(sourceData=self.data, rmContained=True, rmDuplicate=True)
 
         # Calculate memory used by category
         byCategory = data[[SIZE_DEC, CONFIG_ID, MEM_TYPE, CATEGORY]]
@@ -58,7 +58,7 @@ class MemoryMap(Emma.emma_vis_libs.dataVisualiser.Visualiser):
         categoryByPercentage[PERCENTAGE] = 100 * categoryByPercentage[SIZE_DEC_BY_CATEGORY].astype(float).fillna(0.0) / categoryByPercentage[SIZE_DEC].astype(float).fillna(0.0)
         categoryByPercentage = categoryByPercentage.drop([SIZE_DEC, SIZE_DEC_BY_CATEGORY], 1)
 
-        configIDs = Emma.emma_vis_libs.dataVisualiser.getConfigIDsFromDf(categoryByPercentage)
+        configIDs = emma_vis_libs.dataVisualiser.getConfigIDsFromDf(categoryByPercentage)
         grouped = categoryByPercentage.groupby([CONFIG_ID])
         for configID in configIDs:
             groupedByConfigID = grouped.get_group(configID).groupby([MEM_TYPE, CATEGORY]).sum()
@@ -75,7 +75,7 @@ class MemoryMap(Emma.emma_vis_libs.dataVisualiser.Visualiser):
                 matplotlib.pyplot.legend(loc='lower left', bbox_to_anchor=(-0.4, -0.2), ncol=2, fontsize=8)
 
                 filename = self.project + "_" + configID + "_" + memType + "_" + self.statsTimestamp + ".png"
-                matplotlib.pyplot.savefig(Emma.shared_libs.emma_helper.joinPath(self.resultsPath, filename), dpi=MEMORY_ESTIMATION_PICTURE_DPI, transparent=False, bbox_inches="tight")
+                matplotlib.pyplot.savefig(shared_libs.emma_helper.joinPath(self.resultsPath, filename), dpi=MEMORY_ESTIMATION_PICTURE_DPI, transparent=False, bbox_inches="tight")
             if plotShow:
                 matplotlib.pyplot.show()
         return

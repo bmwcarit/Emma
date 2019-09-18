@@ -24,14 +24,14 @@ import collections
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import Emma.shared_libs.emma_helper
-import Emma.emma_libs.mapfileProcessor
-import Emma.emma_libs.ghsMapfileRegexes
-import Emma.emma_libs.memoryEntry
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import shared_libs.emma_helper
+import emma_libs.mapfileProcessor
+import emma_libs.ghsMapfileRegexes
+import emma_libs.memoryEntry
 
 
-class GhsMapfileProcessor(Emma.emma_libs.mapfileProcessor.MapfileProcessor):
+class GhsMapfileProcessor(emma_libs.mapfileProcessor.MapfileProcessor):
     """
     A class to handle mapfile processing for GHS specific mapfiles.
     """
@@ -48,8 +48,8 @@ class GhsMapfileProcessor(Emma.emma_libs.mapfileProcessor.MapfileProcessor):
         """
         self.analyseDebug = analyseDebug
 
-        sectionCollection = self.__importData(configId, configuration, Emma.emma_libs.ghsMapfileRegexes.ImageSummaryPattern())
-        objectCollection = self.__importData(configId, configuration, Emma.emma_libs.ghsMapfileRegexes.ModuleSummaryPattern())
+        sectionCollection = self.__importData(configId, configuration, emma_libs.ghsMapfileRegexes.ImageSummaryPattern())
+        objectCollection = self.__importData(configId, configuration, emma_libs.ghsMapfileRegexes.ModuleSummaryPattern())
 
         return sectionCollection, objectCollection
 
@@ -149,7 +149,7 @@ class GhsMapfileProcessor(Emma.emma_libs.mapfileProcessor.MapfileProcessor):
                     compilerSpecificData["vasSectionName"] = vasSectionName
 
                     # Creating a MemEntry object from the data that we got from the mapfile
-                    memEntry = Emma.emma_libs.memoryEntry.MemEntry(configID=configId,
+                    memEntry = emma_libs.memoryEntry.MemEntry(configID=configId,
                                                               mapfileName=mapfileName,
                                                               addressStart=physicalAddress,
                                                               addressLength=addressLength,
@@ -168,7 +168,7 @@ class GhsMapfileProcessor(Emma.emma_libs.mapfileProcessor.MapfileProcessor):
         return result
 
     @staticmethod
-    def __getRegexPattern(defaultPattern: Emma.emma_libs.ghsMapfileRegexes.RegexPatternBase, mapfileEntry):
+    def __getRegexPattern(defaultPattern: emma_libs.ghsMapfileRegexes.RegexPatternBase, mapfileEntry):
         """
         Function to determine whether the default regex patterns can be used for the mapfile processing or a unique pattern was configured in the configuration.
         :param defaultPattern: The default regex patterns that shall be used if no unique pattern was defined for the mapfile.
@@ -177,18 +177,18 @@ class GhsMapfileProcessor(Emma.emma_libs.mapfileProcessor.MapfileProcessor):
         """
         regexPattern = defaultPattern
 
-        if isinstance(defaultPattern, Emma.emma_libs.ghsMapfileRegexes.ImageSummaryPattern):
+        if isinstance(defaultPattern, emma_libs.ghsMapfileRegexes.ImageSummaryPattern):
             if UNIQUE_PATTERN_SECTIONS in mapfileEntry.keys():
                 # Create new instance of pattern class when a unique pattern is needed
-                sectionPattern = Emma.emma_libs.ghsMapfileRegexes.ImageSummaryPattern()
+                sectionPattern = emma_libs.ghsMapfileRegexes.ImageSummaryPattern()
                 # If a unique regex pattern is needed, e.g. when the mapfile has a different format and cannot be parsed with the default pattern
                 # Overwrite default pattern with unique one
                 sectionPattern.pattern = mapfileEntry[UNIQUE_PATTERN_SECTIONS]
                 regexPattern = sectionPattern
-        elif isinstance(defaultPattern, Emma.emma_libs.ghsMapfileRegexes.ModuleSummaryPattern):
+        elif isinstance(defaultPattern, emma_libs.ghsMapfileRegexes.ModuleSummaryPattern):
             if UNIQUE_PATTERN_OBJECTS in mapfileEntry.keys():
                 # Create new instance of pattern class when a unique pattern is needed
-                objectPattern = Emma.emma_libs.ghsMapfileRegexes.ModuleSummaryPattern()
+                objectPattern = emma_libs.ghsMapfileRegexes.ModuleSummaryPattern()
                 # If a unique regex pattern is needed, e.g. when the mapfile has a different format and cannot be parsed with the default pattern
                 # Overwrite default pattern with unique one
                 objectPattern.pattern = mapfileEntry[UNIQUE_PATTERN_OBJECTS]
@@ -224,8 +224,8 @@ class GhsMapfileProcessor(Emma.emma_libs.mapfileProcessor.MapfileProcessor):
         monolithIndexSize = 3
         monolithIndexSectionName = 4
         # Converting the received start address and size to decimal
-        _, elementVirtualStartAddress = Emma.shared_libs.emma_helper.unifyAddress(elementVirtualStartAddress)
-        _, elementSize = Emma.shared_libs.emma_helper.unifyAddress(elementSize)
+        _, elementVirtualStartAddress = shared_libs.emma_helper.unifyAddress(elementVirtualStartAddress)
+        _, elementSize = shared_libs.emma_helper.unifyAddress(elementSize)
         # Setting up the return values with default values
         elementPhysicalStartAddress = None
         virtualSectionName = None

@@ -23,8 +23,8 @@ import sys
 
 from pypiscout.SCout_Logger import Logger as sc
 
-import Emma.shared_libs.emma_helper
-import Emma.shared_libs.stringConstants
+import shared_libs.emma_helper
+import shared_libs.stringConstants
 
 
 def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool, append: bool, noprompt: bool) -> str:
@@ -39,8 +39,8 @@ def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool
     :return: file name to use
     """
     fileToUse = None
-    path = Emma.shared_libs.emma_helper.joinPath(inOutPath, Emma.shared_libs.stringConstants.OUTPUT_DIR)
-    lastModifiedFiles = Emma.shared_libs.emma_helper.lastModifiedFilesInDir(path, ".csv")            # Newest file is last element
+    path = shared_libs.emma_helper.joinPath(inOutPath, shared_libs.stringConstants.OUTPUT_DIR)
+    lastModifiedFiles = shared_libs.emma_helper.lastModifiedFilesInDir(path, ".csv")            # Newest file is last element
 
     # Check if no files were found
     if len(lastModifiedFiles) < 1:
@@ -78,8 +78,8 @@ def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool
                 sc().warning("Invalid input.")
 
         # Check if the fixed file name portions are within the found file name
-        if Emma.shared_libs.stringConstants.FILE_IDENTIFIER_OBJECT_SUMMARY is Emma.shared_libs.emma_helper.evalSummary(lastModifiedFiles[-1]):
-            sc().warning("Last modified file is a " + Emma.shared_libs.stringConstants.FILE_IDENTIFIER_OBJECT_SUMMARY + "\n")
+        if shared_libs.stringConstants.FILE_IDENTIFIER_OBJECT_SUMMARY is shared_libs.emma_helper.evalSummary(lastModifiedFiles[-1]):
+            sc().warning("Last modified file is a " + shared_libs.stringConstants.FILE_IDENTIFIER_OBJECT_SUMMARY + "\n")
 
     if fileToUse is None:
         sc().error("No file containing '" + subStringIdentifier + "' found in " + path)

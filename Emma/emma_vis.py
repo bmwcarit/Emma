@@ -28,15 +28,14 @@ import pandas
 
 from pypiscout.SCout_Logger import Logger as sc
 
-import Emma
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import Emma.shared_libs.emma_helper
-import Emma.emma_vis_libs.dataVisualiserSections
-import Emma.emma_vis_libs.dataVisualiserObjects
-import Emma.emma_vis_libs.dataVisualiserCategorisedSections
-import Emma.emma_vis_libs.dataVisualiserMemoryMap
-import Emma.emma_vis_libs.dataReports
-import Emma.emma_vis_libs.helper
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import shared_libs.emma_helper
+import emma_vis_libs.dataVisualiserSections
+import emma_vis_libs.dataVisualiserObjects
+import emma_vis_libs.dataVisualiserCategorisedSections
+import emma_vis_libs.dataVisualiserMemoryMap
+import emma_vis_libs.dataReports
+import emma_vis_libs.helper
 
 
 # Set display settings for unwrapped console output (pandas)
@@ -60,36 +59,36 @@ def main(arguments):
     TIME_START = timeit.default_timer()
     sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
 
-    imageFile = Emma.emma_vis_libs.helper.getLastModFileOrPrompt(FILE_IDENTIFIER_SECTION_SUMMARY, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt)
-    moduleFile = Emma.emma_vis_libs.helper.getLastModFileOrPrompt(FILE_IDENTIFIER_OBJECT_SUMMARY, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt)
-    objectsInSectionsFile = Emma.emma_vis_libs.helper.getLastModFileOrPrompt(FILE_IDENTIFIER_OBJECTS_IN_SECTIONS, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt)
+    imageFile = emma_vis_libs.helper.getLastModFileOrPrompt(FILE_IDENTIFIER_SECTION_SUMMARY, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt)
+    moduleFile = emma_vis_libs.helper.getLastModFileOrPrompt(FILE_IDENTIFIER_OBJECT_SUMMARY, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt)
+    objectsInSectionsFile = emma_vis_libs.helper.getLastModFileOrPrompt(FILE_IDENTIFIER_OBJECTS_IN_SECTIONS, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt)
 
-    resultsPath = Emma.shared_libs.emma_helper.joinPath(arguments.inOutPath, OUTPUT_DIR_VISUALISER)        # We don't have to check the existance of this path since this was done during parseArgs
-    Emma.shared_libs.emma_helper.mkDirIfNeeded(resultsPath)
+    resultsPath = shared_libs.emma_helper.joinPath(arguments.inOutPath, OUTPUT_DIR_VISUALISER)        # We don't have to check the existance of this path since this was done during parseArgs
+    shared_libs.emma_helper.mkDirIfNeeded(resultsPath)
 
     # Init classes for summaries
-    consumptionObjectsInSections = Emma.emma_vis_libs.dataVisualiserMemoryMap.MemoryMap(projectPath=arguments.projectDir,
+    consumptionObjectsInSections = emma_vis_libs.dataVisualiserMemoryMap.MemoryMap(projectPath=arguments.projectDir,
                                                                                         fileToUse=objectsInSectionsFile,
                                                                                         resultsPath=resultsPath)
     consumptionObjectsInSections.plotPieChart(plotShow=False)
 
     # Image Summary object
     sc().info("Analysing", imageFile)
-    consumptionImage = Emma.emma_vis_libs.dataVisualiserSections.ImageConsumptionList(projectPath=arguments.projectDir,
+    consumptionImage = emma_vis_libs.dataVisualiserSections.ImageConsumptionList(projectPath=arguments.projectDir,
                                                                                       fileToUse=imageFile,
                                                                                       resultsPath=resultsPath)
 
     # Module Summary object
     sc().info("Analysing", moduleFile)
     try:
-        consumptionModule = Emma.emma_vis_libs.dataVisualiserObjects.ModuleConsumptionList(projectPath=arguments.projectDir,
+        consumptionModule = emma_vis_libs.dataVisualiserObjects.ModuleConsumptionList(projectPath=arguments.projectDir,
                                                                                            fileToUse=moduleFile,
                                                                                            resultsPath=resultsPath)
     except ValueError:
         sc().error("Data does not contain any module/object entry - exiting...")
 
     # Object for visualisation fo image and module summary
-    categorisedImage = Emma.emma_vis_libs.dataVisualiserCategorisedSections.CategorisedImageConsumptionList(resultsPath=resultsPath,
+    categorisedImage = emma_vis_libs.dataVisualiserCategorisedSections.CategorisedImageConsumptionList(resultsPath=resultsPath,
                                                                                                             projectPath=arguments.projectDir,
                                                                                                             statsTimestamp=consumptionImage.statsTimestamp,
                                                                                                             imageSumObj=consumptionImage,
@@ -114,7 +113,7 @@ def main(arguments):
     if arguments.append:
         sc().info("Appending report...")
         consumptionImage.writeReportToFile()
-        report = Emma.emma_vis_libs.dataReports.Reports(projectPath=arguments.projectDir)
+        report = emma_vis_libs.dataReports.Reports(projectPath=arguments.projectDir)
         report.plotNdisplay(plotShow=False)
 
     # Create a Markdown overview document and add all parts to it
@@ -124,7 +123,7 @@ def main(arguments):
         consumptionModule.appendModuleConsumptionToMarkdownOverview(markdownFilePath)
         consumptionImage.appendSupplementToMarkdownOverview(markdownFilePath)
         sc().info("Generating html report...")
-        Emma.shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdownFilePath, (os.path.splitext(markdownFilePath)[0] + ".html"))
+        shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdownFilePath, (os.path.splitext(markdownFilePath)[0] + ".html"))
 
     # Stop and display time measurement
     TIME_END = timeit.default_timer()
@@ -147,7 +146,7 @@ def initParser():
         "--version",
         help="Display the version number.",
         action="version",
-        version="%(prog)s, Version: " + Emma.EMMA_VISUALISER_VERSION
+        version="%(prog)s, Version: " + EMMA_VISUALISER_VERSION
     )
     parser.add_argument(
         "--projectDir",
@@ -208,7 +207,7 @@ def parseArgs(arguments=""):
     """
     parser = initParser()
 
-    parsedArguments = Emma.shared_libs.emma_helper.parseGivenArgStrOrStdIn(arguments, parser)
+    parsedArguments = shared_libs.emma_helper.parseGivenArgStrOrStdIn(arguments, parser)
 
     # Prepare final paths
     parsedArguments.inOutPath = ""
@@ -217,24 +216,24 @@ def parseArgs(arguments=""):
     if parsedArguments.projectDir is None:                  # This should not happen since it is a required argument
         sc().error("No project path given. Exiting...")
     else:
-        parsedArguments.projectDir = Emma.shared_libs.emma_helper.joinPath(parsedArguments.projectDir)           # Unify path
-        Emma.shared_libs.emma_helper.checkIfFolderExists(parsedArguments.projectDir)
+        parsedArguments.projectDir = shared_libs.emma_helper.joinPath(parsedArguments.projectDir)           # Unify path
+        shared_libs.emma_helper.checkIfFolderExists(parsedArguments.projectDir)
 
         parsedArguments.inOutPath = parsedArguments.projectDir
     if parsedArguments.inOutDir is None:
         parsedArguments.inOutDir = parsedArguments.projectDir
     else:
-        parsedArguments.inOutDir = Emma.shared_libs.emma_helper.joinPath(parsedArguments.inOutDir)               # Unify path
-        Emma.shared_libs.emma_helper.checkIfFolderExists(parsedArguments.inOutDir)
+        parsedArguments.inOutDir = shared_libs.emma_helper.joinPath(parsedArguments.inOutDir)               # Unify path
+        shared_libs.emma_helper.checkIfFolderExists(parsedArguments.inOutDir)
 
         parsedArguments.inOutPath = parsedArguments.inOutDir
         if parsedArguments.subDir is None:
             parsedArguments.subDir = ""
         else:
-            parsedArguments.subDir = Emma.shared_libs.emma_helper.joinPath(parsedArguments.subDir)               # Unify path
+            parsedArguments.subDir = shared_libs.emma_helper.joinPath(parsedArguments.subDir)               # Unify path
 
-            joinedInputPath = Emma.shared_libs.emma_helper.joinPath(parsedArguments.inOutDir, parsedArguments.subDir)
-            Emma.shared_libs.emma_helper.checkIfFolderExists(joinedInputPath)
+            joinedInputPath = shared_libs.emma_helper.joinPath(parsedArguments.inOutDir, parsedArguments.subDir)
+            shared_libs.emma_helper.checkIfFolderExists(joinedInputPath)
             parsedArguments.inOutPath = joinedInputPath
 
     # Clean-up paths
