@@ -28,15 +28,15 @@ import os
 import pandas
 import matplotlib.pyplot
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import shared_libs.emma_helper
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.shared_libs.emma_helper
 
 
 class Reports:
     def __init__(self, projectPath):
         self.projectPath = projectPath
         self.project = os.path.split(projectPath)[-1]
-        self.reportFilePath = shared_libs.emma_helper.joinPath(projectPath, "results", self.project + "-Memory_Report_by_configID-memType.csv")
+        self.reportFilePath = Emma.shared_libs.emma_helper.joinPath(projectPath, "results", self.project + "-Memory_Report_by_configID-memType.csv")
         self.data = pandas.read_csv(self.reportFilePath, sep=";").drop_duplicates(subset=[TIMESTAMP, CONFIG_ID, MEM_TYPE])  # TODO: This is a temporary fix, we actually want to not append duplicates to the csv in the first place (FM)
 
     def plotNdisplay(self, plotShow=True):

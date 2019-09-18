@@ -20,13 +20,13 @@ import argparse
 import sys
 import os
 
-sys.path.append(os.path.abspath("Emma"))
+# sys.path.append(os.path.abspath("Emma"))
 
-import emma
-import emma_vis
-import emma_deltas
-import shared_libs.emma_helper
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.emma
+import Emma.emma_vis
+import Emma.emma_deltas
+import Emma.shared_libs.emma_helper
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 
 
 def initParser():
@@ -47,21 +47,24 @@ def initParser():
         action="version",
         version="%(prog)s, Version: " + EMMA_VERSION
     )
-    subparser = topLevelParser.add_subparsers(dest="_invoked_emma_module")       # Use `dest` to introduce a variable in order to check which sub parser was invoked
+    subparser = topLevelParser.add_subparsers(dest="_invoked_emma_module")  # Use `dest` to introduce a variable in order to check which sub parser was invoked
     subparser.add_parser(
         SUBPARSER_STRINGS.ANALYSER,                                         # Sub parser name which will be written in `invoked_emma_module`
-        parents=[emma.initParser()],
-        add_help=False,
+        parents=[Emma.emma.initParser()],
+        help="Emma Analyser",
+        conflict_handler="resolve",                                         # Since there are conflicting help messages of the top level and sub parsersr
     )
     subparser.add_parser(
         SUBPARSER_STRINGS.VISUALISER,
-        parents=[emma_vis.initParser()],
-        add_help=False,
+        parents=[Emma.emma_vis.initParser()],
+        help="Emma Visualiser",
+        conflict_handler="resolve",                                         # Since there are conflicting help messages of the top level and sub parsersr
     )
     subparser.add_parser(
         SUBPARSER_STRINGS.DELTAS,
-        parents=[emma_deltas.initParser()],
-        add_help=False,
+        parents=[Emma.emma_deltas.initParser()],
+        help="Emma Deltas",
+        conflict_handler="resolve",                                         # Since there are conflicting help messages of the top level and sub parsersr
     )
     return topLevelParser
 
@@ -73,16 +76,20 @@ def main(arguments=""):
     :return: None
     """
     parser = initParser()
-    parsedArguments = shared_libs.emma_helper.parseGivenArgStrOrStdIn(arguments, parser)
+    parsedArguments = Emma.shared_libs.emma_helper.parseGivenArgStrOrStdIn(arguments, parser)
 
     emmaModuleLUT = {
-        SUBPARSER_STRINGS.ANALYSER: emma.main,
-        SUBPARSER_STRINGS.VISUALISER: emma_vis.main,
-        SUBPARSER_STRINGS.DELTAS: emma_deltas.main
+        SUBPARSER_STRINGS.ANALYSER: Emma.emma.main,
+        SUBPARSER_STRINGS.VISUALISER: Emma.emma_vis.main,
+        SUBPARSER_STRINGS.DELTAS: Emma.emma_deltas.main
     }
 
-    # Dispatch emma modules
-    emmaModuleLUT[parsedArguments._invoked_emma_module](parsedArguments)                    # pylint: disable=protected-access
+    # Display the top level help message if no argument is given
+    if parsedArguments._invoked_emma_module == None:                                        # pylint: disable=protected-access
+        parser.print_help()
+    else:
+        # Dispatch emma modules
+        emmaModuleLUT[parsedArguments._invoked_emma_module](parsedArguments)                # pylint: disable=protected-access
                                                                                             # We do not have to check if the LUT entry exists since argparse does that already for us
 
 

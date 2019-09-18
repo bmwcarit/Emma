@@ -22,13 +22,13 @@ import os
 from pypiscout.SCout_Logger import Logger as sc
 import graphviz
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import shared_libs.emma_helper
-import emma_libs.memoryEntry
-import emma_libs.configuration
-import emma_libs.mapfileProcessorFactory
-import emma_libs.memoryMap
-import emma_libs.categorisation
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.shared_libs.emma_helper
+import Emma.emma_libs.memoryEntry
+import Emma.emma_libs.configuration
+import Emma.emma_libs.mapfileProcessorFactory
+import Emma.emma_libs.memoryMap
+import Emma.emma_libs.categorisation
 
 
 class MemoryManager:
@@ -58,7 +58,7 @@ class MemoryManager:
         # Processing the command line arguments and storing it into the settings member
         self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt)
         # Check whether the configuration and the mapfiles folders exist
-        shared_libs.emma_helper.checkIfFolderExists(self.settings.mapfilesPath)
+        Emma.shared_libs.emma_helper.checkIfFolderExists(self.settings.mapfilesPath)
         self.configuration = None                   # The configuration is empty at this moment, it can be read in with another method
         # memoryContent [dict(list(memEntry))]
         # Each key of this dict represents a configID; dict values are lists of consumerCollections
@@ -72,13 +72,13 @@ class MemoryManager:
         :return: None
         """
         # Reading in the configuration
-        self.configuration = emma_libs.configuration.Configuration()
+        self.configuration = Emma.emma_libs.configuration.Configuration()
         self.configuration.readConfiguration(self.settings.configurationPath, self.settings.mapfilesPath, self.settings.noPrompt)
         # Creating the categorisation object
-        self.categorisation = emma_libs.categorisation.Categorisation(shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_OBJECTS_JSON),
-                                                                           shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_KEYWORDS_OBJECTS_JSON),
-                                                                           shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_SECTIONS_JSON),
-                                                                           shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_KEYWORDS_SECTIONS_JSON),
+        self.categorisation = Emma.emma_libs.categorisation.Categorisation(Emma.shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_OBJECTS_JSON),
+                                                                           Emma.shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_KEYWORDS_OBJECTS_JSON),
+                                                                           Emma.shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_SECTIONS_JSON),
+                                                                           Emma.shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_KEYWORDS_SECTIONS_JSON),
                                                                            self.settings.noPrompt
                                                                            )
 
@@ -103,7 +103,7 @@ class MemoryManager:
 
                 # Creating a mapfile processor based on the compiler that was defined for the configId
                 usedCompiler = self.configuration.globalConfig[configId]["compiler"]
-                mapfileProcessor = emma_libs.mapfileProcessorFactory.createSpecificMapfileProcesor(usedCompiler)
+                mapfileProcessor = Emma.emma_libs.mapfileProcessorFactory.createSpecificMapfileProcesor(usedCompiler)
 
                 # Importing the mapfile contents for the configId with the created mapfile processor
                 sectionCollection, objectCollection = mapfileProcessor.processMapfiles(configId, self.configuration.globalConfig[configId], self.settings.analyseDebug)
@@ -115,15 +115,15 @@ class MemoryManager:
                 self.categorisation.manageCategoriesFiles(self.settings.createCategories, self.settings.removeUnmatched, sectionCollection, objectCollection)
 
                 # Resolving the duplicate, containment and Overlap in the consumerCollections
-                emma_libs.memoryMap.resolveDuplicateContainmentOverlap(sectionCollection, emma_libs.memoryEntry.SectionEntry)
-                emma_libs.memoryMap.resolveDuplicateContainmentOverlap(objectCollection, emma_libs.memoryEntry.ObjectEntry)
+                Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(sectionCollection, Emma.emma_libs.memoryEntry.SectionEntry)
+                Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(objectCollection, Emma.emma_libs.memoryEntry.ObjectEntry)
 
                 # Storing the consumer collections
                 self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY] = sectionCollection
                 self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY] = objectCollection
 
                 # Creating a common consumerCollection
-                self.memoryContent[configId][FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = emma_libs.memoryMap.calculateObjectsInSections(self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY],
+                self.memoryContent[configId][FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = Emma.emma_libs.memoryMap.calculateObjectsInSections(self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY],
                                                                                                                                    self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY])
         else:
             sc().error("The configuration needs to be loaded before processing the mapfiles!")
@@ -159,8 +159,8 @@ class MemoryManager:
 
             # Creating reports from the consumer collections
             for collectionType in consumerCollections:
-                reportPath = emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType)
-                emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
+                reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType)
+                Emma.emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
                 sc().info("A report was stored:", os.path.abspath(reportPath))
 
         # def createDotReports():
@@ -187,16 +187,16 @@ class MemoryManager:
         #     # Creating reports from the consumer collections
         #     for memEntryRow in consumerCollections["Section_Summary"]:
         #         fqn = memEntryRow.getFQN(sep="/")
-        #         size = shared_libs.emma_helper.toHumanReadable(memEntryRow.addressLength) if (memEntryRow.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else ""
+        #         size = Emma.shared_libs.emma_helper.toHumanReadable(memEntryRow.addressLength) if (memEntryRow.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else ""
         #         # resultsLst.append({"path": fqn, "count": size})
         #         resultsLst.append({"path": fqn, "count": memEntryRow.addressLength})
         #     for memEntryRow in consumerCollections["Object_Summary"]:
         #         fqn = memEntryRow.getFQN(sep="/")
-        #         size = shared_libs.emma_helper.toHumanReadable(memEntryRow.addressLength) if (memEntryRow.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else ""
+        #         size = Emma.shared_libs.emma_helper.toHumanReadable(memEntryRow.addressLength) if (memEntryRow.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else ""
         #         # resultsLst.append({"path": fqn, "count": size})
         #         resultsLst.append({"path": fqn, "count": memEntryRow.addressLength})
         #
-        #     shared_libs.emma_helper.writeJson("testTeamScaleJSON.json", resultsLst)
+        #     Emma.shared_libs.emma_helper.writeJson("testTeamScaleJSON.json", resultsLst)
 
         if self.memoryContent is not None:
             # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separted string) (MSc)

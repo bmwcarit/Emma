@@ -24,9 +24,9 @@ import argparse
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import shared_libs.emma_helper
-import emma_libs.memoryManager
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.shared_libs.emma_helper
+import Emma.emma_libs.memoryManager
 
 
 def main(arguments):
@@ -44,7 +44,7 @@ def main(arguments):
     TIME_START = timeit.default_timer()
     sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
 
-    memoryManager = emma_libs.memoryManager.MemoryManager(*processArguments(arguments))
+    memoryManager = Emma.emma_libs.memoryManager.MemoryManager(*processArguments(arguments))
     memoryManager.readConfiguration()
     memoryManager.processMapfiles()
     memoryManager.createReports()
@@ -142,7 +142,7 @@ def parseArgs(arguments=""):
     :return: Parsed arguments
     """
     parser = initParser()
-    parsedArguments = shared_libs.emma_helper.parseGivenArgStrOrStdIn(arguments, parser)
+    parsedArguments = Emma.shared_libs.emma_helper.parseGivenArgStrOrStdIn(arguments, parser)
     return parsedArguments
 
 
@@ -152,20 +152,20 @@ def processArguments(arguments):
     :param arguments: The command line arguments, that is the result of the parser.parse_args().
     :return: The setting values.
     """
-    projectName = shared_libs.emma_helper.projectNameFromPath(shared_libs.emma_helper.joinPath(arguments.project))
-    configurationPath = shared_libs.emma_helper.joinPath(arguments.project)
-    mapfilesPath = shared_libs.emma_helper.joinPath(arguments.mapfiles)
+    projectName = Emma.shared_libs.emma_helper.projectNameFromPath(Emma.shared_libs.emma_helper.joinPath(arguments.project))
+    configurationPath = Emma.shared_libs.emma_helper.joinPath(arguments.project)
+    mapfilesPath = Emma.shared_libs.emma_helper.joinPath(arguments.mapfiles)
 
     # If an output directory was not specified then the result will be stored to the project folder
     if arguments.dir is None:
         directory = arguments.project
     else:
         # Get paths straight (only forward slashes)
-        directory = shared_libs.emma_helper.joinPath(arguments.dir)
+        directory = Emma.shared_libs.emma_helper.joinPath(arguments.dir)
     # Get paths straight (only forward slashes) or set it to empty if it was empty
-    subDir = shared_libs.emma_helper.joinPath(arguments.subdir) if arguments.subdir is not None else ""
+    subDir = Emma.shared_libs.emma_helper.joinPath(arguments.subdir) if arguments.subdir is not None else ""
 
-    outputPath = shared_libs.emma_helper.joinPath(directory, subDir, OUTPUT_DIR)
+    outputPath = Emma.shared_libs.emma_helper.joinPath(directory, subDir, OUTPUT_DIR)
     analyseDebug = arguments.analyse_debug
     createCategories = arguments.create_categories
     removeUnmatched = arguments.remove_unmatched

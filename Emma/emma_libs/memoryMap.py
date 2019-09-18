@@ -24,8 +24,8 @@ import datetime
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import shared_libs.emma_helper
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.shared_libs.emma_helper
 
 
 # Timestamp for the report file names
@@ -263,9 +263,9 @@ def createReportPath(outputPath, projectName, reportName):
     :param reportName: The name of the report.
     :return: The created path string.
     """
-    shared_libs.emma_helper.mkDirIfNeeded(outputPath)
+    Emma.shared_libs.emma_helper.mkDirIfNeeded(outputPath)
     memStatsFileName = projectName + "_" + reportName + "_" + TIMESTAMP + ".csv"
-    return shared_libs.emma_helper.joinPath(outputPath, memStatsFileName)
+    return Emma.shared_libs.emma_helper.joinPath(outputPath, memStatsFileName)
 
 
 def collectCompilerSpecificHeaders(consumerCollection):
@@ -319,7 +319,7 @@ def writeReportToDisk(reportPath, consumerCollection):
                 row.addressStart if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
                 row.addressEnd() if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
                 row.addressLength if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
-                shared_libs.emma_helper.toHumanReadable(row.addressLength) if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
+                Emma.shared_libs.emma_helper.toHumanReadable(row.addressLength) if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
                 row.sectionName,
                 row.objectName,
                 row.configID

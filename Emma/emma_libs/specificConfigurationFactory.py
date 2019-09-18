@@ -19,8 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import emma_libs.ghsConfiguration
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.emma_libs.ghsConfiguration
 
 
 def createSpecificConfiguration(compiler, **kwargs):
@@ -34,7 +34,7 @@ def createSpecificConfiguration(compiler, **kwargs):
 
     configuration = None
     if COMPILER_NAME_GHS == compiler:
-        configuration = emma_libs.ghsConfiguration.GhsConfiguration(**kwargs)
+        configuration = Emma.emma_libs.ghsConfiguration.GhsConfiguration(**kwargs)
     else:
         sc().error("Unexpected compiler value: " + compiler)
 

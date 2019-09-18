@@ -23,13 +23,13 @@ import re
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import shared_libs.emma_helper
-import emma_libs.specificConfiguration
-import emma_libs.ghsMapfileRegexes
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.shared_libs.emma_helper
+import Emma.emma_libs.specificConfiguration
+import Emma.emma_libs.ghsMapfileRegexes
 
 
-class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
+class GhsConfiguration(Emma.emma_libs.specificConfiguration.SpecificConfiguration):
     """
     Class to handle a GHS compiler specific configuration.
     """
@@ -48,15 +48,15 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         """
         # Loading the patterns*.json
         if "patternsPath" in configuration:
-            patternsPath = shared_libs.emma_helper.joinPath(configurationPath, configuration["patternsPath"])
-            configuration["patterns"] = shared_libs.emma_helper.readJson(patternsPath)
+            patternsPath = Emma.shared_libs.emma_helper.joinPath(configurationPath, configuration["patternsPath"])
+            configuration["patterns"] = Emma.shared_libs.emma_helper.readJson(patternsPath)
         else:
             sc().error("Missing patternsPath definition in the globalConfig,json for the configId: " + configId + "!")
 
         # Loading the virtualSections*.json if the file is present (only needed in case of VAS-es)
         if "virtualSectionsPath" in configuration:
-            virtualSectionsPath = shared_libs.emma_helper.joinPath(configurationPath, configuration["virtualSectionsPath"])
-            configuration["virtualSections"] = shared_libs.emma_helper.readJson(virtualSectionsPath)
+            virtualSectionsPath = Emma.shared_libs.emma_helper.joinPath(configurationPath, configuration["virtualSectionsPath"])
+            configuration["virtualSections"] = Emma.shared_libs.emma_helper.readJson(virtualSectionsPath)
 
         # Loading the mapfiles
         GhsConfiguration.__addMapfilesToConfiguration(mapfilesPath, configuration)
@@ -144,7 +144,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                 # For every regex pattern defined for this entry
                 for regex in configuration["patterns"][fileType][entry]["regex"]:
                     # We will try to match the current file with its path and add it to the found files if it matched
-                    searchCandidate = shared_libs.emma_helper.joinPath(path, file)
+                    searchCandidate = Emma.shared_libs.emma_helper.joinPath(path, file)
                     if re.search(regex, searchCandidate):
                         foundFiles.append(os.path.abspath(searchCandidate))
                 # If we have found any file for this file type
@@ -198,10 +198,10 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
                 else:
                     # Let the user choose the index of the correct file
                     sc().info("Choose the index of the desired monolith file")
-                    mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx()
+                    mapfileIndexChosen = Emma.shared_libs.emma_helper.Prompt.idx()
                     while not 0 <= mapfileIndexChosen < numMonolithFiles:               # Accept only values within the range [0, numMonolithFiles)
                         sc().warning("Invalid value; try again:")
-                        mapfileIndexChosen = shared_libs.emma_helper.Prompt.idx()
+                        mapfileIndexChosen = Emma.shared_libs.emma_helper.Prompt.idx()
             elif numMonolithFiles < 1:
                 sc().error("No monolith file found but needed for processing")
 
@@ -225,9 +225,9 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
             :return: list of lists
             """
             table = []  # "headers": virtual, physical, size, section
-            monolithPattern = emma_libs.ghsMapfileRegexes.UpperMonolithPattern()
+            monolithPattern = Emma.emma_libs.ghsMapfileRegexes.UpperMonolithPattern()
             for line in monolithContent:
-                match = re.search(emma_libs.ghsMapfileRegexes.UpperMonolithPattern().pattern, line)
+                match = re.search(Emma.emma_libs.ghsMapfileRegexes.UpperMonolithPattern().pattern, line)
                 if match:
                     table.append([
                         int(match.group(monolithPattern.Groups.virtualAdress), 16),
@@ -274,7 +274,7 @@ class GhsConfiguration(emma_libs.specificConfiguration.SpecificConfiguration):
         foundInMonolith = []
 
         # Extract sections from monolith file
-        monolithPattern = emma_libs.ghsMapfileRegexes.UpperMonolithPattern()
+        monolithPattern = Emma.emma_libs.ghsMapfileRegexes.UpperMonolithPattern()
 
         # Check if a monolith was loaded to this configID that can be checked
         # In case there was no monolith loaded, the configuration does not need it so the check is passed
