@@ -26,9 +26,9 @@ import pandas
 import matplotlib.pyplot
 from pypiscout.SCout_Logger import Logger as sc
 
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import Emma.shared_libs.emma_helper
-import Emma.emma_vis_libs.dataVisualiser
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import shared_libs.emma_helper
+import emma_vis_libs.dataVisualiser
 
 
 class CategorisedImageConsumptionList:
@@ -44,9 +44,9 @@ class CategorisedImageConsumptionList:
 
         # Data attributes
         self.imageSumObj = imageSumObj
-        self.imageData = Emma.emma_vis_libs.dataVisualiser.removeDataWithFlags(imageSumObj.data)
+        self.imageData = emma_vis_libs.dataVisualiser.removeDataWithFlags(imageSumObj.data)
         self.moduleSumObj = moduleSumObj
-        self.moduleData = Emma.emma_vis_libs.dataVisualiser.removeDataWithFlags(moduleSumObj.data)
+        self.moduleData = emma_vis_libs.dataVisualiser.removeDataWithFlags(moduleSumObj.data)
 
         # Attributes created from data
         self.__categorisedImage = self.__categoriseImage()
@@ -147,7 +147,7 @@ class CategorisedImageConsumptionList:
             # Show budgets annotations in kiB
             barWidth = [p.get_width() for p in barGraph.patches][0]
             annotationUsagePercentage = "{:.1f} %".format(self.imageSumObj.consumptionByMemType[USED_PERCENT][i])
-            annotationUsageAbsoluteValue = Emma.shared_libs.emma_helper.toHumanReadable(int(self.imageSumObj.consumptionByMemType[SIZE_DEC][i]))
+            annotationUsageAbsoluteValue = shared_libs.emma_helper.toHumanReadable(int(self.imageSumObj.consumptionByMemType[SIZE_DEC][i]))
             barGraph.annotate(s=annotationUsagePercentage + "\n" + annotationUsageAbsoluteValue,
                               xy=(i-barWidth/2, self.imageSumObj.consumptionByMemType[USED_PERCENT][i] + 0.01),         # Make annotation on the left side of each bar, xy= accepts a tuple of XY location
                               color="#505359")
@@ -202,7 +202,7 @@ class CategorisedImageConsumptionList:
     #     figure = self.displayUsedByModulesInImage()
     #     filename = self.project + MEMORY_ESTIMATION_BY_MODULES_PICTURE_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + "." + MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION
     #
-    #     Emma.shared_libs.emma_helper.saveMatplotlibPicture(figure, Emma.shared_libs.emma_helper.joinPath(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
+    #     shared_libs.emma_helper.saveMatplotlibPicture(figure, shared_libs.emma_helper.joinPath(self.resultsPath, filename), MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION, MEMORY_ESTIMATION_PICTURE_DPI, False)
     #
     #     if plotShow:
     #         matplotlib.pyplot.show()  # Show plots after results in console output are shown
@@ -213,7 +213,7 @@ class CategorisedImageConsumptionList:
         :return: nothing
         """
         filename = self.project + MEMORY_ESTIMATION_CATEGORISED_IMAGE_CVS_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + ".csv"
-        self.__categorisedImage.to_csv(Emma.shared_libs.emma_helper.joinPath(self.resultsPath, filename), sep=";", mode="w", index=True)
+        self.__categorisedImage.to_csv(shared_libs.emma_helper.joinPath(self.resultsPath, filename), sep=";", mode="w", index=True)
 
 
     # FIXME: This function is never uses (MSc)
@@ -252,7 +252,7 @@ class CategorisedImageConsumptionList:
     #         formatted[k].sort(key=lambda s: s.lower())
     #
     #     # Merge existing sectionCategories with our newly found categories
-    #     oldCategoriesSectionsPath = Emma.shared_libs.emma_helper.joinPath(self.projectPath + "categoriesSections.json")
+    #     oldCategoriesSectionsPath = shared_libs.emma_helper.joinPath(self.projectPath + "categoriesSections.json")
     #     try:
     #         with open(oldCategoriesSectionsPath, "r") as fp:
     #             oldCategories = json.load(fp)

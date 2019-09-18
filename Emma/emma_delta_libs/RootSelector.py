@@ -21,8 +21,8 @@ import os
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import Emma.shared_libs.emma_helper
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import shared_libs.emma_helper
 
 
 def selectRoot() -> str:
@@ -30,14 +30,14 @@ def selectRoot() -> str:
     Propmpts the user for the root path of the project for the delta analysis
     :return: project root path
     """
-    deltaConfigPath: str = Emma.shared_libs.emma_helper.joinPath("./", DELTA_CONFIG)
+    deltaConfigPath: str = shared_libs.emma_helper.joinPath("./", DELTA_CONFIG)
     if os.path.isfile(deltaConfigPath):
-        rootpath = Emma.shared_libs.emma_helper.readJson(deltaConfigPath)[DELTA_LATEST_PATH]
+        rootpath = shared_libs.emma_helper.readJson(deltaConfigPath)[DELTA_LATEST_PATH]
         sc().info("Using " + rootpath + " as project.")
     else:
         rootpath = input("Enter project root path >")
 
-    Emma.shared_libs.emma_helper.checkIfFolderExists(rootpath)
+    shared_libs.emma_helper.checkIfFolderExists(rootpath)
     return rootpath
 
 
@@ -46,4 +46,4 @@ def saveNewRootpath(rootpath: str) -> None:
     Adds the path to the .deltaconfig file for future use
     :param rootpath: path to add
     """
-    Emma.shared_libs.emma_helper.writeJson(Emma.shared_libs.emma_helper.joinPath("./", DELTA_CONFIG), {DELTA_LATEST_PATH: rootpath})
+    shared_libs.emma_helper.writeJson(shared_libs.emma_helper.joinPath("./", DELTA_CONFIG), {DELTA_LATEST_PATH: rootpath})

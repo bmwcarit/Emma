@@ -23,8 +23,8 @@ import typing
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import Emma.shared_libs.emma_helper
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import shared_libs.emma_helper
 
 
 class FileSelector:
@@ -33,8 +33,8 @@ class FileSelector:
     """
     def __init__(self, projectDir: str):
         self.__projectDir: str = projectDir
-        self.__path: str = Emma.shared_libs.emma_helper.joinPath(projectDir, OUTPUT_DIR)
-        self.__versionCandidates: typing.List[str] = [f for f in os.listdir(self.__path) if os.path.isdir(Emma.shared_libs.emma_helper.joinPath(self.__path, f))]
+        self.__path: str = shared_libs.emma_helper.joinPath(projectDir, OUTPUT_DIR)
+        self.__versionCandidates: typing.List[str] = [f for f in os.listdir(self.__path) if os.path.isdir(shared_libs.emma_helper.joinPath(self.__path, f))]
         # self.__versionCandidates stores the list of files for the analysis
 
     def getCandidates(self) -> typing.List[str]:
@@ -43,14 +43,14 @@ class FileSelector:
     def selectFiles(self, indices: typing.List[int], filetype: str) -> typing.List[str]:
         memStatsCandidates: typing.List[str] = []
         for i in indices:
-            path = Emma.shared_libs.emma_helper.joinPath(self.__path, self.__versionCandidates[i], OUTPUT_DIR)
+            path = shared_libs.emma_helper.joinPath(self.__path, self.__versionCandidates[i], OUTPUT_DIR)
             lastModifiedFile: str = self.__fileToUse(filetype, path)
             memStatsCandidates.append(lastModifiedFile)
         return memStatsCandidates
 
     def __fileToUse(self, subStringIdentifier: str, path: str) -> str:
         fileToUse = None
-        lastModifiedFiles: typing.List[str] = Emma.shared_libs.emma_helper.lastModifiedFilesInDir(path, ".csv")  # Newest/youngest file is last element
+        lastModifiedFiles: typing.List[str] = shared_libs.emma_helper.lastModifiedFilesInDir(path, ".csv")  # Newest/youngest file is last element
 
         if not lastModifiedFiles:
             sc().error("No matching Files in: " + path)

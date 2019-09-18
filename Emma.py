@@ -17,13 +17,16 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 import argparse
+import sys
+import os
 
-import Emma
-import Emma.emma
-import Emma.emma_vis
-import Emma.emma_deltas
-import Emma.shared_libs.emma_helper
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+sys.path.append(os.path.abspath("Emma"))
+
+import emma
+import emma_vis
+import emma_deltas
+import shared_libs.emma_helper
+from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 
 
 def initParser():
@@ -42,22 +45,22 @@ def initParser():
         "--version",
         help="Display the version number.",
         action="version",
-        version="%(prog)s, Version: " + Emma.EMMA_VERSION
+        version="%(prog)s, Version: " + EMMA_VERSION
     )
     subparser = topLevelParser.add_subparsers(dest="_invoked_emma_module")       # Use `dest` to introduce a variable in order to check which sub parser was invoked
     subparser.add_parser(
-        Emma.SUBPARSER_STRINGS.ANALYSER,                                         # Sub parser name which will be written in `invoked_emma_module`
-        parents=[Emma.emma.initParser()],
+        SUBPARSER_STRINGS.ANALYSER,                                         # Sub parser name which will be written in `invoked_emma_module`
+        parents=[emma.initParser()],
         add_help=False,
     )
     subparser.add_parser(
-        Emma.SUBPARSER_STRINGS.VISUALISER,
-        parents=[Emma.emma_vis.initParser()],
+        SUBPARSER_STRINGS.VISUALISER,
+        parents=[emma_vis.initParser()],
         add_help=False,
     )
     subparser.add_parser(
-        Emma.SUBPARSER_STRINGS.DELTAS,
-        parents=[Emma.emma_deltas.initParser()],
+        SUBPARSER_STRINGS.DELTAS,
+        parents=[emma_deltas.initParser()],
         add_help=False,
     )
     return topLevelParser
@@ -70,12 +73,12 @@ def main(arguments=""):
     :return: None
     """
     parser = initParser()
-    parsedArguments = Emma.shared_libs.emma_helper.parseGivenArgStrOrStdIn(arguments, parser)
+    parsedArguments = shared_libs.emma_helper.parseGivenArgStrOrStdIn(arguments, parser)
 
     emmaModuleLUT = {
-        Emma.SUBPARSER_STRINGS.ANALYSER: Emma.emma.main,
-        Emma.SUBPARSER_STRINGS.VISUALISER: Emma.emma_vis.main,
-        Emma.SUBPARSER_STRINGS.DELTAS: Emma.emma_deltas.main
+        SUBPARSER_STRINGS.ANALYSER: emma.main,
+        SUBPARSER_STRINGS.VISUALISER: emma_vis.main,
+        SUBPARSER_STRINGS.DELTAS: emma_deltas.main
     }
 
     # Dispatch emma modules
