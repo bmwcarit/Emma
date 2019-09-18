@@ -66,11 +66,7 @@ install:
 .emma-testing-script:
     - &emma-tests
         - pushd tests
-        - pushd functional_tests
         - python -m unittest -v
-        - popd
-        - pushd unit_tests
-        - popd
         - popd
     - &emma-deploy
         - pushd tests
