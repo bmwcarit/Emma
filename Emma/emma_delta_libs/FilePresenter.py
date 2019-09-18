@@ -17,14 +17,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 
-import sys
 import os
 import typing
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import emma_delta_libs.FileSelector
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.emma_delta_libs.FileSelector
 
 
 class FilePresenter:
@@ -38,8 +37,8 @@ class FilePresenter:
         2: FILE_IDENTIFIER_OBJECTS_IN_SECTIONS
     }
 
-    def __init__(self, fileSelector: emma_delta_libs.FileSelector):
-        self.__fileSelector: emma_delta_libs.FileSelector = fileSelector
+    def __init__(self, fileSelector: Emma.emma_delta_libs.FileSelector):
+        self.__fileSelector: Emma.emma_delta_libs.FileSelector = fileSelector
 
     def chooseCandidates(self) -> typing.List[str]:
         # TODO: Validate all inputs (FM)

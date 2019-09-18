@@ -29,8 +29,8 @@ import matplotlib.style
 
 from pypiscout.SCout_Logger import Logger as sc
 
-from shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-import shared_libs.emma_helper
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+import Emma.shared_libs.emma_helper
 
 
 def removeDataWithFlags(sourceData, rmContained=True, rmDuplicate=True, rmOverlap=True):
@@ -83,7 +83,7 @@ class Visualiser:
         self.projectPath = projectPath
         self.project = os.path.split(projectPath)[-1]
         self.memStatsFile = fileToUse
-        self.statsTimestamp = shared_libs.emma_helper.getTimestampFromFilename(fileToUse)  # This is the timestamp parsed from the module/image summary filename
+        self.statsTimestamp = Emma.shared_libs.emma_helper.getTimestampFromFilename(fileToUse)  # This is the timestamp parsed from the module/image summary filename
         self.resultsPath = resultsPath
         self.projectThreshold = None
         # default header
@@ -107,7 +107,7 @@ class Visualiser:
         self.data = pandas.DataFrame(columns=self.header)
         matplotlib.style.use("ggplot")      # Pycharm might claim there is no reference 'style' in `__init__.py` (you can ignore this)(https://stackoverflow.com/a/23839976/4773274)
         self.budgets = ""
-        self.budgetsFilename = shared_libs.emma_helper.joinPath(self.projectPath, "budgets.json")
+        self.budgetsFilename = Emma.shared_libs.emma_helper.joinPath(self.projectPath, "budgets.json")
 
         if not self.__readMemStatsFile():
             raise ValueError("No data")
@@ -121,7 +121,7 @@ class Visualiser:
         self.budgets = None
         self.projectThreshold = None
 
-        filepath = shared_libs.emma_helper.joinPath(self.projectPath, "budgets.json")
+        filepath = Emma.shared_libs.emma_helper.joinPath(self.projectPath, "budgets.json")
         try:
             with open(filepath, "r") as fp:
                 budgets = json.load(fp)
