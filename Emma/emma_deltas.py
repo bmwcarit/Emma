@@ -50,7 +50,7 @@ def initParser():
         "--version",
         help="Display the version number.",
         action="version",
-        version="%(prog)s, Version: " + EMMA_DELTAS_VERSION
+        version="%(prog)s, Version: " + Emma.EMMA_DELTAS_VERSION
     )
     parser.add_argument(
         "--infiles",
