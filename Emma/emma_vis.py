@@ -28,6 +28,7 @@ import pandas
 
 from pypiscout.SCout_Logger import Logger as sc
 
+import Emma
 from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import Emma.shared_libs.emma_helper
 import Emma.emma_vis_libs.dataVisualiserSections
@@ -146,7 +147,7 @@ def initParser():
         "--version",
         help="Display the version number.",
         action="version",
-        version="%(prog)s, Version: " + EMMA_VISUALISER_VERSION
+        version="%(prog)s, Version: " + Emma.EMMA_VISUALISER_VERSION
     )
     parser.add_argument(
         "--projectDir",

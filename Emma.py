@@ -17,11 +17,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 import argparse
-import sys
-import os
 
-# sys.path.append(os.path.abspath("Emma"))
-
+import Emma
 import Emma.emma
 import Emma.emma_vis
 import Emma.emma_deltas
@@ -45,23 +42,23 @@ def initParser():
         "--version",
         help="Display the version number.",
         action="version",
-        version="%(prog)s, Version: " + EMMA_VERSION
+        version="%(prog)s, Version: " + Emma.EMMA_VERSION
     )
     subparser = topLevelParser.add_subparsers(dest="_invoked_emma_module")  # Use `dest` to introduce a variable in order to check which sub parser was invoked
     subparser.add_parser(
-        SUBPARSER_STRINGS.ANALYSER,                                         # Sub parser name which will be written in `invoked_emma_module`
+        Emma.SUBPARSER_STRINGS.ANALYSER,                                         # Sub parser name which will be written in `invoked_emma_module`
         parents=[Emma.emma.initParser()],
         help="Emma Analyser",
         conflict_handler="resolve",                                         # Since there are conflicting help messages of the top level and sub parsersr
     )
     subparser.add_parser(
-        SUBPARSER_STRINGS.VISUALISER,
+        Emma.SUBPARSER_STRINGS.VISUALISER,
         parents=[Emma.emma_vis.initParser()],
         help="Emma Visualiser",
         conflict_handler="resolve",                                         # Since there are conflicting help messages of the top level and sub parsersr
     )
     subparser.add_parser(
-        SUBPARSER_STRINGS.DELTAS,
+        Emma.SUBPARSER_STRINGS.DELTAS,
         parents=[Emma.emma_deltas.initParser()],
         help="Emma Deltas",
         conflict_handler="resolve",                                         # Since there are conflicting help messages of the top level and sub parsersr
@@ -79,9 +76,9 @@ def main(arguments=""):
     parsedArguments = Emma.shared_libs.emma_helper.parseGivenArgStrOrStdIn(arguments, parser)
 
     emmaModuleLUT = {
-        SUBPARSER_STRINGS.ANALYSER: Emma.emma.main,
-        SUBPARSER_STRINGS.VISUALISER: Emma.emma_vis.main,
-        SUBPARSER_STRINGS.DELTAS: Emma.emma_deltas.main
+        Emma.SUBPARSER_STRINGS.ANALYSER: Emma.emma.main,
+        Emma.SUBPARSER_STRINGS.VISUALISER: Emma.emma_vis.main,
+        Emma.SUBPARSER_STRINGS.DELTAS: Emma.emma_deltas.main
     }
 
     # Display the top level help message if no argument is given

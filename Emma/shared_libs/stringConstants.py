@@ -18,20 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 # Emma Memory and Mapfile Analyser - string constants
 
-VERSION_MAJOR = "3"
-VERSION_MINOR = "1"
-EMMA_VERSION = ".".join([VERSION_MAJOR, VERSION_MINOR])
-EMMA_VISUALISER_VERSION = EMMA_VERSION
-EMMA_DELTAS_VERSION = EMMA_VERSION
 
-PYTHON_REQ_VERSION = ">=3.6"
-
-# ##########################
-
-class SUBPARSER_STRINGS:
-    ANALYSER: str = "a"
-    VISUALISER: str = "v"
-    DELTAS: str = "d"
 ADDR_END_DEC = "addrEndDec"
 ADDR_END_HEX = "addrEndHex"
 ADDR_END_HEX_ORIGINAL = "addrEndHexOriginal"

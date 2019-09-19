@@ -24,6 +24,7 @@ import argparse
 
 from pypiscout.SCout_Logger import Logger as sc
 
+import Emma
 from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import Emma.shared_libs.emma_helper
 import Emma.emma_libs.memoryManager
@@ -71,7 +72,7 @@ def initParser():
         "--version",
         help="Display the version number.",
         action="version",
-        version="%(prog)s, Version: " + EMMA_VERSION
+        version="%(prog)s, Version: " + Emma.EMMA_VERSION
     )
     parser.add_argument(
         "--verbosity",
