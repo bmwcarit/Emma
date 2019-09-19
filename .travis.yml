@@ -118,7 +118,9 @@ jobs:
                 github_token: $GITHUB_TOKEN
                 local_dir: site
                 on:
-                    branch: master
+                    tags: true
+#                on:
+#                    branch: master
               # Deploy on PyPi database
               - provider: pypi
 #                server: https://test.pypi.org/legacy/       # Activate for testing
