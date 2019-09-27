@@ -190,7 +190,7 @@ The following rules apply:
         * "EXT_RAM" - external RAM
         * "INT_FLASH" - internal Flash
         * "EXT_FLASH" - external Flash     
-* The **offset** is a global address offset applied to all addresses in the file
+* **offset**: a global address offset applied to addresses of all memories. If the address is non-virtual (=> DMA) the offset is subtracted from it otherwise normal address translation (virtual -> physical) is applied.
 * **memory** is a JSON object that defines the memory areas
 * Each memory area is a JSON object that has three elements:
     * start - start address
