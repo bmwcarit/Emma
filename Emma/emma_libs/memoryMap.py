@@ -189,7 +189,7 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
             # S          |--------------|            or:       |-----|
             # O          |--------------|                    |--------|
             #       <= --^              ^-- >=
-            # FIXME: Is the right case valid? (MSc) --------^^^^^^^^^^^^
+            #                                                ^^^^^^^^^^^^---- should normally not appear
             if objectContainerElement.addressStart <= sectionCopy.addressStart and (sectionCopy.addressStart + sectionCopy.addressLength) <= (objectContainerElement.addressStart + objectContainerElement.addressLength):
                 # This object is overlapping the section completely. This means that all the following objects will be
                 # outside the section, so we can continue with the next section.
