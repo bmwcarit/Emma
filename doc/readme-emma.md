@@ -306,7 +306,10 @@ In `globalConfig.json`, you need to reference (ref relations on the picture):
 
 `memRegionExcludes`: You can exclude certain memory regions with this keyword in `patterns*.json`. In order to do this the memory regions/tags must match with those defined in `addressSpaces*.json`.
 
-If you have virtual address spaces (VASes) defined. You need a `"monolith file"` pattern defined in `patterns*.json` in order to be able to translate virtual addresses back to physical addresses. In the same file you give each VAS a name. This name is later used to identify which section belongs to which VAS (defined in `virtualSections*.json`). The VAS names must match between those two files. This is needed in order to avoid name clashes of sections names between different VASes.
+If you have virtual address spaces (VASes) defined. You need a "monolith file" pattern defined in `patterns*.json` in order to be able to translate virtual addresses back to physical addresses. In the same file you give each VAS a name. This name is later used to identify which section belongs to which VAS (defined in `virtualSections*.json`). *The VAS names must match between those two files.* This is needed in order to avoid name clashes of sections names between different VASes.
+
+If you are unsure what VASes you have check out the `.int` ("integrate") files (the `.ael` files might also be of your interest).
+
 
 #### Extensions to the `globalConfig.json`
 
