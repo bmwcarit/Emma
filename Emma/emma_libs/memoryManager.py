@@ -159,7 +159,7 @@ class MemoryManager:
 
             # Creating reports from the consumer collections
             for collectionType in consumerCollections:
-                reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType)
+                reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath,self.settings.projectName, collectionType)
                 Emma.emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
                 sc().info("A report was stored:", os.path.abspath(reportPath))
 
@@ -180,7 +180,7 @@ class MemoryManager:
         #
         #     print(graph.source)
 
-        # def createTeamScaleReports():
+        # def createTeamScaleReportsTest():
         #     consumerCollections = consumerCollections2GlobalList()
         #     resultsLst = []
         #
@@ -198,10 +198,52 @@ class MemoryManager:
         #
         #     Emma.shared_libs.emma_helper.writeJson("testTeamScaleJSON.json", resultsLst)
 
+
+        # def createTeamScaleReports():
+        #     consumerCollections = consumerCollections2GlobalList()
+        #     resultsLst = []
+        #     import random
+        #
+        #     def buildPath(aMemEntryRow):
+        #         return "/".join([aMemEntryRow.configID, aMemEntryRow.memType, aMemEntryRow.memTypeTag, aMemEntryRow.sectionName]) + ("/" + aMemEntryRow.getObjName() if aMemEntryRow.getObjName() != "" else "")
+        #
+        #     # Creating reports from the consumer collections
+        #     for memEntryRow in consumerCollections["Section_Summary"]:
+        #         resultsLst.append({"path": buildPath(memEntryRow), "count": memEntryRow.addressLength + random.randint(-500,1054651)})
+        #     for memEntryRow in consumerCollections["Object_Summary"]:
+        #         resultsLst.append({"path": buildPath(memEntryRow), "count": memEntryRow.addressLength + random.randint(-500,1051551)})
+        #
+        #     # Write to file
+        #     reportPath = Emma.emma_libs.memoryMap.createReportPath(outputPath=self.settings.outputPath, projectName=self.settings.projectName, reportName="TeamScale", fileExtension="json")
+        #     Emma.shared_libs.emma_helper.writeJson(reportPath, resultsLst)
+
+
+        def createTeamScaleReportsCommon():
+            consumerCollections = consumerCollections2GlobalList()
+            consumptionConfigIDMemTypeCatSecObj = []
+            consumptionConfigIDCat = []
+            import random
+
+            def buildPath(aMemEntryRow):
+                import html
+                return html.escape("/".join([aMemEntryRow.configID + " :: " + aMemEntryRow.memType, aMemEntryRow.category, aMemEntryRow.sectionName]) + ("/" + aMemEntryRow.getObjName() if aMemEntryRow.getObjName() != "" else ""))
+
+            # Creating reports from the consumer collections
+            for memEntryRow in consumerCollections["Section_Summary"]:
+                consumptionConfigIDMemTypeCatSecObj.append({"path": buildPath(memEntryRow), "count": memEntryRow.addressLength  + random.randint(0,14651)})
+            for memEntryRow in consumerCollections["Object_Summary"]:
+                consumptionConfigIDMemTypeCatSecObj.append({"path": buildPath(memEntryRow), "count": memEntryRow.addressLength  + random.randint(0,14651)})
+
+            # Write to file
+            reportPath = Emma.emma_libs.memoryMap.createReportPath(outputPath=self.settings.outputPath, projectName=self.settings.projectName, reportName="TeamScale", fileExtension="json")
+            Emma.shared_libs.emma_helper.writeJson(reportPath, consumptionConfigIDMemTypeCatSecObj)
+
+
         if self.memoryContent is not None:
             # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separted string) (MSc)
             createStandardReports()
             # createDotReports()
             # createTeamScaleReports()
+            createTeamScaleReportsCommon()
         else:
             sc().error("The mapfiles need to be processed before creating the reports!")

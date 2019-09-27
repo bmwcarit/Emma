@@ -255,16 +255,17 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
     return objectsInSections
 
 
-def createReportPath(outputPath, projectName, reportName):
+def createReportPath(outputPath, projectName, reportName, fileExtension="csv"):
     """
     Function to create a string representing the path of a report.
+    :param fileExtension: extension WITHOUT "." -> e.g. "csv"
     :param outputPath: The folder where the report will be.
     :param projectName: The name of the project.
     :param reportName: The name of the report.
     :return: The created path string.
     """
     Emma.shared_libs.emma_helper.mkDirIfNeeded(outputPath)
-    memStatsFileName = projectName + "_" + reportName + "_" + TIMESTAMP + ".csv"
+    memStatsFileName = projectName + "_" + reportName + "_" + TIMESTAMP + "." + fileExtension
     return Emma.shared_libs.emma_helper.joinPath(outputPath, memStatsFileName)
 
 

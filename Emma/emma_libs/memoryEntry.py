@@ -223,6 +223,14 @@ class MemEntry:
         """
         return self.configID + sep + self.mapfile + sep + self.sectionName + (sep + self.objectName if self.objectName != "" and self.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and self.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else "")
 
+    def getObjName(self):
+        """
+        Returns the object name
+        If it is a section, section entry or section reserve an empty string is returned
+        :return: [str] object name or "" if is section, section entry or section reserve
+        """
+        return self.objectName if self.objectName != "" and self.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and self.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else ""
+
 
 class MemEntryHandler(abc.ABC):
     """
