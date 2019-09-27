@@ -126,7 +126,7 @@ class Configuration:
             for memoryToIgnore in addressSpaces[IGNORE_MEMORY]:
                 if addressSpaces["memory"][memoryToIgnore]:
                     addressSpaces["memory"].pop(memoryToIgnore)
-                    sc().info("The memory entry \"" + memoryToIgnore + "\" of the \"" + path + "\" is marked to be ignored...")
+                    sc().info("Memory entry \"" + memoryToIgnore + "\" defined in \"" + path + "\" is marked to be ignored...")
                 else:
                     sc().error("The key " + memoryToIgnore + " which is in the ignore list, does not exist in the memory object of " + path)
 

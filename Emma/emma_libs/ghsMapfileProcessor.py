@@ -131,15 +131,20 @@ class GhsMapfileProcessor(Emma.emma_libs.mapfileProcessor.MapfileProcessor):
                                          + " (size: " + str(int(lineComponents.group(regexPatternData.Groups.size), 16)) + " B)! Section not found in VAS or outside address range.")
                             # We will not store this element and continue with the next one
                             continue
-                    # In case the mapfile contains phyisical addresses, no translation is needed, we are just reading the address that is in the mapfile
+                        elif physicalAddress < 0:
+                            sc().debug(f"Address {hex(physicalAddress)} < 0 after address translation (virtual -> physical) was performed.")                                                                                            # Debug message since we check the size a few lines later
+                    # In case the mapfile contains physical addresses, no translation is needed, we are just reading the address that is in the mapfile
                     else:
-                        physicalAddress = int(lineComponents.group(regexPatternData.Groups.origin), 16) - offset
-
+                        physicalAddressNoOffset = int(lineComponents.group(regexPatternData.Groups.origin), 16)
+                        physicalAddress = physicalAddressNoOffset - offset
+                        if physicalAddress < 0:
+                            sc().debug(f"Offset calculation ({hex(physicalAddressNoOffset)} [orig] - {hex(offset)} [offset] -> {hex(physicalAddress)}) returned an address < 0 (file: {os.path.basename(mapfilePath)}:{lineNumber}).")  # Debug message since we check the size a few lines later
                     # Determining the addressLength
                     addressLength = int(lineComponents.group(regexPatternData.Groups.size), 16)
                     # Check whether the address is valid
                     if addressLength < 0:
-                        sc().warning("Negative addressLength found.")
+                        sc().warning("Negative address length found.")
+
 
                     # Creating the compiler specific data that we will store in the memEntry
                     # This will be a collections.OrderedDict as the MemEntry requires it
