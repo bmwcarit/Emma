@@ -236,6 +236,8 @@ class GhsConfiguration(Emma.emma_libs.specificConfiguration.SpecificConfiguratio
                         int(match.group(monolithPattern.Groups.size), 16),
                         match.group(monolithPattern.Groups.section)
                     ])
+            if len(table) <= 0:
+                sc().error("No entry in the monolith file was found! Please check the content of the monolith file and/or the regex'es.")
             return table
 
         # Load and register Monoliths
