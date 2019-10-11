@@ -128,9 +128,9 @@ class UpperMonolithPattern(RegexPatternBase):
         super().__init__()
         self.pattern = re.compile(r"""
         # one-liner for testing: ^\s*0x[0-9a-fA-F]{8}\s+0x[0-9a-fA-F]{8}\s*0x[0-9a-fA-F]{8}\s+.+$
-        (?:^\s*0x)(?P<virtual>[0-9a-fA-F]{8})                   # Virtual address
-        (?:\s+0x)(?P<physical>[0-9a-fA-F]{8})                   # Physical address
-        (?:\s+0x)(?P<size>[0-9a-fA-F]{8})                       # Size address
+        (?:^\s*0x)(?P<virtual>[0-9a-fA-F]{8,16})                   # Virtual address
+        (?:\s+0x)(?P<physical>[0-9a-fA-F]{8,16})                   # Physical address
+        (?:\s+0x)(?P<size>[0-9a-fA-F]{8,16})                       # Size address
         (?:\s+)(?P<section>.+)(?:$)                             # Section
         """, re.X)
 
