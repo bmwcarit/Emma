@@ -222,6 +222,7 @@ class MemEntry:
         :param sep: [string]="::" separator in FQN
         :return: [string] FQN
         """
+        # This is used inline in memoryMap.py::resolveDuplicateContainmentOverlap()
         return f"{self.configID}{sep}{self.mapfile}{sep}{self.sectionName}{sep}{self.objectName}" if self.objectName != "" and self.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and self.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{self.configID}{sep}{self.mapfile}{sep}{self.sectionName}"
 
 
