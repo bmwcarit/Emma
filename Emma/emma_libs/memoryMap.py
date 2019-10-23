@@ -65,7 +65,8 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
                     if actualElement.addressStart == otherElement.addressStart and actualElement.addressLength == otherElement.addressLength:
                         # Setting the actualElement´s duplicateFlag if it was not already set
                         if actualElement.duplicateFlag is None:
-                            actualElement.duplicateFlag =  otherElement.getFQN()
+                            # Inlining .getFQN() brings additional speed-up
+                            actualElement.duplicateFlag = f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}::{otherElement.objectName}" if otherElement.objectName != "" and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}"
                         # Setting the actualElement to zero addressLength if this was not the first element of the duplicates
                         # This is needed to include only one of the duplicate elements with the real size in the report and not to distort the results
                         if otherElement.duplicateFlag is not None:
@@ -79,7 +80,8 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
                             if actualElement.addressStart >= otherElement.addressStart and (actualElement.addressStart + actualElement.addressLength) <= (otherElement.addressStart + otherElement.addressLength):
                                 # Setting the actualElement´s containmentFlag if it was not already set
                                 if actualElement.containmentFlag is None:
-                                    actualElement.containmentFlag = otherElement.getFQN()
+                                    # Inlining .getFQN() brings additional speed-up
+                                    actualElement.containmentFlag = f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}::{otherElement.objectName}" if otherElement.objectName != "" and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}"
                                     # Setting the actualElement to zero addressLength because this was contained by the otherElement
                                     # This is needed to include only one of these elements with the real size in the report and not to distort the results
                                     actualElement.addressLength = 0
@@ -90,7 +92,8 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
                                 else:
                                     # Case 5: actualElement is overlapped by otherElement: otherElement starts before and ends inside actualElement
                                     if actualElement.addressStart > otherElement.addressStart and (actualElement.addressStart + actualElement.addressLength) > (otherElement.addressStart + otherElement.addressLength):
-                                        actualElement.overlapFlag =  otherElement.getFQN()
+                                        # Inlining .getFQN() brings additional speed-up
+                                        actualElement.overlapFlag =  f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}::{otherElement.objectName}" if otherElement.objectName != "" and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}"
                                         # Adjusting the addresses and length of the actualElement: reducing its size by the overlapping part
                                         newAddressStart = otherElement.addressStart + otherElement.addressLength
                                         sizeOfOverlappingPart = newAddressStart - actualElement.addressStart
@@ -99,10 +102,6 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
                                     # Case X: SW error, unhandled case...
                                     else:
                                         sc().error("MemoryManager::resolveOverlap(): Case X: SW error, unhandled case...")
-    # Clean-up temp members
-    # consumerCollection = list(map(lambda: del )
-    # blah
-    # consumerCollection = [del(element.FQE) for element in consumerCollection]
 
 
 def calculateObjectsInSections(sectionContainer, objectContainer):
