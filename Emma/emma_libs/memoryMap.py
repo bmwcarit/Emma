@@ -48,14 +48,17 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
     :param memEntryHandler: A subclass of the MemEntryHandler class.
     :return: None
     """
-    for actualElement in consumerCollection:
-        for otherElement in consumerCollection:
+    for actualElementIndex, actualElement in enumerate(consumerCollection):
+        for otherElementIndex, otherElement in enumerate(consumerCollection):
             # Don't compare element with itself and only compare the same configID
-            if not memEntryHandler.isEqual(actualElement, otherElement):
+            if actualElementIndex != otherElementIndex:
 
-                # Case 0: actualElement and otherElement are completely separated : the otherElement begins only after the actualElement or the actualElement begins only after the otherElement
-                if (actualElement.addressStart + actualElement.addressLength) <= otherElement.addressStart or actualElement.addressStart >= (otherElement.addressStart + otherElement.addressLength):
-                    # There is not much to do here...
+                # Case 0: actualElement and otherElement are completely separated
+                # Case 0.0: The actualElement begins after the otherElement
+                if (actualElement.addressStart + actualElement.addressLength) <= otherElement.addressStart:
+                    break
+                # Case 0.1: The actualElement begins after the otherElement The otherElement begins only AFTER the actualElement
+                if actualElement.addressStart >= (otherElement.addressStart + otherElement.addressLength):
                     pass
                 else:
                     # Case 1: actualElement and otherElement are duplicates
@@ -96,6 +99,10 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
                                     # Case X: SW error, unhandled case...
                                     else:
                                         sc().error("MemoryManager::resolveOverlap(): Case X: SW error, unhandled case...")
+    # Clean-up temp members
+    # consumerCollection = list(map(lambda: del )
+    # blah
+    # consumerCollection = [del(element.FQE) for element in consumerCollection]
 
 
 def calculateObjectsInSections(sectionContainer, objectContainer):

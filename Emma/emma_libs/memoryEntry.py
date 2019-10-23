@@ -215,13 +215,14 @@ class MemEntry:
             result = addressStart + addressLength - 1
 
         return result
+
     def getFQN(self, sep="::"):
         """
         Creates a fully qualified name (FQN) based on row attributes (length vary if it is an object or section)
         :param sep: [string]="::" separator in FQN
         :return: [string] FQN
         """
-        return self.configID + sep + self.mapfile + sep + self.sectionName + (sep + self.objectName if self.objectName != "" and self.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and self.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else "")
+        return f"{self.configID}{sep}{self.mapfile}{sep}{self.sectionName}{sep}{self.objectName}" if self.objectName != "" and self.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and self.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{self.configID}{sep}{self.mapfile}{sep}{self.sectionName}"
 
 
 class MemEntryHandler(abc.ABC):
