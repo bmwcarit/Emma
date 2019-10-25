@@ -33,15 +33,14 @@ try:
     Options.docstrings = True
     Options.fast_fail = True
 
-
-    extentions = cythonize(
+    extensions = cythonize(
         [
             setuptools.Extension("Emma.emma_libs.memoryMap", sources=["Emma/emma_libs/memoryMap.py"]),
             setuptools.Extension("Emma.emma_libs.memoryEntry", sources=["Emma/emma_libs/memoryEntry.py"])
         ]
     )
 except ImportError:
-    extentions = None
+    extensions = None
 
 
 setuptools.setup(
@@ -80,7 +79,7 @@ setuptools.setup(
             "emma_deltas=Emma.emma_vis:runEmmaDeltas"
         ],
     },
-    ext_modules=extentions,                                     # Needed for Cython
+    ext_modules=extensions,                                     # Needed for Cython
     keywords=[
         "memory-analysis",
         "mapfile",
