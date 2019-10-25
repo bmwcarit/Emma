@@ -95,7 +95,6 @@ class MemoryManager:
 
             # Processing the mapfiles for every configId
             for configId in self.configuration.globalConfig:
-
                 # Creating the configId in the memory content
                 self.memoryContent[configId] = {}
 

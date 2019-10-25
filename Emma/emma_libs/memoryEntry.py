@@ -233,7 +233,7 @@ class MemEntryHandler(abc.ABC):
     def __eq__(self, other):
         raise NotImplementedError("This member shall not be used, use the isEqual() instead!")
 
-    # Removed staticmethod due to Cython bug
+    # FIXME: Removed @staticmethod due to Cython bug (MSc)
     @abc.abstractmethod
     def isEqual(first, second):
         """
@@ -243,7 +243,7 @@ class MemEntryHandler(abc.ABC):
         :return: True if the first and second objects are equal, false otherwise.
         """
 
-    # Removed staticmethod due to Cython bug
+    # FIXME: Removed @staticmethod due to Cython bug (MSc)
     @abc.abstractmethod
     def getName(memEntry):
         """
