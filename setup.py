@@ -19,11 +19,34 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 # Emma Memory and Mapfile Analyser - setup file
 
 
-import setuptools
+import setuptools                               # Must be before Cython import
+
 import Emma
+
 
 with open("README.md", "r") as fp:
     long_description = fp.read()
+
+try:
+    from Cython.Compiler import Options
+    from Cython.Build import cythonize
+    Options.docstrings = True
+    Options.fast_fail = True
+
+
+    extentions = cythonize(
+        [
+            setuptools.Extension(
+                "Emma.emma_libs.memoryMap", sources=["Emma/emma_libs/memoryMap.pyx", "Emma/emma_libs/memoryMap.py"]
+            ),
+            setuptools.Extension(
+                "Emma.emma_libs.memoryEntry", sources=["Emma/emma_libs/memoryMap.py"]
+            )
+        ]
+    )
+except ImportError:
+    extentions = None
+
 
 setuptools.setup(
     name="pypiemma",
@@ -37,7 +60,8 @@ setuptools.setup(
     maintainer="The Emma Authors",
     maintainer_email="emma-dev@googlegroups.com",
     url="https://github.com/bmwcarit/Emma",
-    packages=setuptools.find_namespace_packages(),                  # Recursively find package files (i.e. sub-folders, ...)
+    zip_safe=False,                                             # Needed for Cython
+    packages=setuptools.find_namespace_packages(),              # Recursively find package files (i.e. sub-folders, ...)
     python_requires=Emma.PYTHON_REQ_VERSION,
     install_requires=["Pygments",
                       "Markdown",
@@ -60,6 +84,7 @@ setuptools.setup(
             "emma_deltas=Emma.emma_vis:runEmmaDeltas"
         ],
     },
+    ext_modules=extentions,                                     # Needed for Cython
     keywords=[
         "memory-analysis",
         "mapfile",
