@@ -36,12 +36,8 @@ try:
 
     extentions = cythonize(
         [
-            setuptools.Extension(
-                "Emma.emma_libs.memoryMap", sources=["Emma/emma_libs/memoryMap.pyx", "Emma/emma_libs/memoryMap.py"]
-            ),
-            setuptools.Extension(
-                "Emma.emma_libs.memoryEntry", sources=["Emma/emma_libs/memoryMap.py"]
-            )
+            setuptools.Extension("Emma.emma_libs.memoryMap", sources=["Emma/emma_libs/memoryMap.py"]),
+            setuptools.Extension("Emma.emma_libs.memoryEntry", sources=["Emma/emma_libs/memoryEntry.py"])
         ]
     )
 except ImportError:
