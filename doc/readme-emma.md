@@ -11,16 +11,28 @@ This tool creates a summary/overview about static memory usage in form of a comm
     * pypiscout 2.0 or higher: (`pip3 install pypiscout`)
 * Tested on Windows and Linux systems
 
+<details closed>
+<summary>Optional: Cython</summary>
+For bigger projects escpecially the number of objects will grow. We provide an optional Cython implementation which can speed-up your analysis (you will gain typically about **30 % speed-up**).
+
+For now we do not provide the binaries with Emma, hence you have to compile (make sure a suitable compiler is installed) it yourself (don't worry it is quick and easy):
+
+Install the `Cython` package (`pip install Cython`) and (in the Emma top level folder) execute (MSVC is recommended on Windows):
+
+```
+python setup.py build_ext --inplace --compiler=msvc
+```
+</details>
+
 
 ## Process
 Using the Mapfile Analyser is a two step process. The first step is to extract the required information from the mapfiles and save it to .csv files.
 This is done with the `Emma.py a` script. The second step is to visualise the data. This document explains the first part only, the visualisation is documented in the Emma visualiser readme document.
 
 ## Limitations
-The Emma is only suitable for analyzing projects where the devices have a single linear physical address space:
+The devices must have a single linear physical address space:
 
-* Devices that use for example the Intel 8051 architecture have separate code and data address spaces that both
-    start at address 0x0000. Devices based on architectures like this can not be analyzed with Emma.
+* Devices that use for example a Intel 8051 architecture have separate code and data address spaces that both start at address `0x0000`. Devices based on architectures like this can not entirely analysed with Emma.
 * Devices that use for example the ARMv6M architecture have a single linear address space.
     Devices based on architectures like this can be analyzed with Emma.
 
