@@ -41,7 +41,7 @@ class MemoryManager:
         """
         Settings that influence the operation of the MemoryManager object.
         """
-        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt):
+        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap):
             self.projectName = projectName
             self.configurationPath = configurationPath
             self.mapfilesPath = mapfilesPath
@@ -50,13 +50,14 @@ class MemoryManager:
             self.createCategories = createCategories
             self.removeUnmatched = removeUnmatched
             self.noPrompt = noPrompt
+            self.noResolveOverlap = noResolveOverlap
 
-    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt):
+    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap):
         # pylint: disable=too-many-arguments
         # Rationale: We need to initialize the Settings, so the number of arguments are needed.
 
         # Processing the command line arguments and storing it into the settings member
-        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt)
+        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap)
         # Check whether the configuration and the mapfiles folders exist
         Emma.shared_libs.emma_helper.checkIfFolderExists(self.settings.mapfilesPath)
         self.configuration = None                   # The configuration is empty at this moment, it can be read in with another method
@@ -114,14 +115,19 @@ class MemoryManager:
                 self.categorisation.manageCategoriesFiles(self.settings.createCategories, self.settings.removeUnmatched, sectionCollection, objectCollection)
 
                 # Resolving the duplicate, containment and Overlap in the consumerCollections
-                Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(sectionCollection, Emma.emma_libs.memoryEntry.SectionEntry)
-                Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(objectCollection, Emma.emma_libs.memoryEntry.ObjectEntry)
+
+                if not self.settings.noResolveOverlap:
+                    sc().info("Resolving section overlaps. This may take some time...")
+                    Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(sectionCollection, Emma.emma_libs.memoryEntry.SectionEntry)
+                    sc().info("Resolving object overlaps. This may take some time...")
+                    Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(objectCollection, Emma.emma_libs.memoryEntry.ObjectEntry)
 
                 # Storing the consumer collections
                 self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY] = sectionCollection
                 self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY] = objectCollection
 
                 # Creating a common consumerCollection
+                sc().info("Calculating objects in sections. This may take some time...")
                 self.memoryContent[configId][FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = Emma.emma_libs.memoryMap.calculateObjectsInSections(self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY],
                                                                                                                                    self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY])
         else:
