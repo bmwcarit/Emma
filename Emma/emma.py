@@ -37,7 +37,7 @@ def main(arguments):
     :return: None
     """
     # Setup SCout
-    sc(invVerbosity=-1, actionWarning=(lambda: sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda: sys.exit(-10))
+    sc(invVerbosity=arguments.verbosity, actionWarning=(lambda: sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda: sys.exit(-10))
 
     sc().header("Emma Memory and Mapfile Analyser", symbol="/")
 
