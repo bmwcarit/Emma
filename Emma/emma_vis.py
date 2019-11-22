@@ -52,7 +52,7 @@ def main(arguments):
     :return: None
     """
     # Setup SCout
-    sc(invVerbosity=-1, actionWarning=(lambda : sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda : sys.exit(-10))
+    sc(invVerbosity=arguments.verbosity, actionWarning=(lambda : sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda : sys.exit(-10))
 
     sc().header("Emma Memory and Mapfile Analyser - Visualiser", symbol="/")
 
@@ -148,6 +148,13 @@ def initParser():
         help="Display the version number.",
         action="version",
         version="%(prog)s, Version: " + Emma.EMMA_VISUALISER_VERSION
+    )
+    parser.add_argument(
+        "--verbosity",
+        "-v",
+        action='count',
+        default=0,
+        help="Adjust verbosity of console output. DECREASE verbosity by adding more `v`s"
     )
     parser.add_argument(
         "--projectDir",
