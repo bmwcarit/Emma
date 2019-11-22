@@ -73,7 +73,7 @@ python Emma.py a --project doc/test_project --mapfiles doc/test_project/mapfiles
 
 The following table provides an overview how you call Emma:
 
-| Emma module | Entry point + \<options\>) (if installed via `pip`) | Top level sub-command (tlsc) (`python Emma.py` \<tlsc\>) | Module (`python -m` + \<module\> \<options\>) |
+| Emma module | Entry point + \<options\> (if installed via `pip`) | Top level sub-command (tlsc) (`python Emma.py` \<tlsc\>) | Module (`python -m` + \<module\> \<options\>) |
 | ----------- | --------------------------------------------------- | -------------------------------------------------------- | --------------------------------------------- |
 | Analyser    | `emma`                                              | `a`                                                      | `Emma.emma`                                   |
 | Visualiser  | `emma_vis`                                          | `v`                                                      | `Emma.emma_vis`                               |
