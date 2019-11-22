@@ -133,6 +133,12 @@ def initParser():
         action="store_true",
         default=False
     )
+    parser.add_argument(
+        "--noResolveOverlap",
+        help="Do not resolve overlaps in summaries (mostly useful for debugging the Emma configuration; ObjectsInSections will be untouched from this flag)",
+        action="store_true",
+        default=False
+    )
     return parser
 
 
@@ -171,8 +177,10 @@ def processArguments(arguments):
     createCategories = arguments.create_categories
     removeUnmatched = arguments.remove_unmatched
     noPrompt = arguments.noprompt
+    noResolveOverlap = arguments.noResolveOverlap
+    # TODO: It would be more convenient if arguments which are not modified are passed without manually modifying the code (MSc)
 
-    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt
+    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap
 
 
 def runEmma():
