@@ -77,7 +77,6 @@ def initParser():
     parser.add_argument(
         "--verbosity",
         "-v",
-        action='count',
         default=0,
         help="Adjust verbosity of console output. DECREASE verbosity by adding more `v`s"
     )

@@ -88,7 +88,7 @@ class GhsMapfileProcessor(Emma.emma_libs.mapfileProcessor.MapfileProcessor):
             # Storing the list of ignored memory areas to this mapfile
             # This will be a necessary parameter for the MapfileProcessor::fillOutMemoryRegionsAndMemoryTypes()
             if "memRegionExcludes" in configuration["patterns"]["mapfiles"][mapfile]:
-                memoryRegionsToExcludeFromMapfiles[mapfileName] = configuration["patterns"]["mapfiles"][mapfile]["memRegionExcludes"]
+                memoryRegionsToExcludeFromMapfiles[mapfileName] = configuration["patterns"]["mapfiles"][mapfile][MEM_REGION_TO_EXCLUDE]
 
             # If there is a VAS defined for the mapfile, then the addresses found in it are virtual addresses, otherwise they are physical addresses
             mapfileContainsVirtualAddresses = ("VAS" in configuration["patterns"]["mapfiles"][mapfile])
