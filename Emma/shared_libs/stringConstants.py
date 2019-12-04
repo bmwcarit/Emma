@@ -96,6 +96,7 @@ SUPPLEMENT = "supplement"
 UNKNOWN_MEM_REGION = "<Emma_UnknownMemRegion>"
 UNKNOWN_MEM_TYPE = "<Emma_UnknownMemType>"
 UNKNOWN_CATEGORY = "<Emma_UnknownCategory>"
+UNKNOWN_ENTRY_NAME = "<Emma_UnknownName>"
 
 # The HTML Template that will be used during the conversion of .md files to .html
 # The CSS in the header has two parts:
