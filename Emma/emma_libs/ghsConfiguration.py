@@ -77,7 +77,11 @@ class GhsConfiguration(Emma.emma_libs.specificConfiguration.SpecificConfiguratio
         """
         result = False
         if GhsConfiguration.__checkNumberOfFoundMapfiles(configId, configuration):
-            if GhsConfiguration.__checkMonolithSections(configuration, self.noPrompt):
+            # Check only the monolith configuration if a monolith file is configured to be used
+            if "monoliths" in configuration["patterns"]:
+                if GhsConfiguration.__checkMonolithSections(configuration, self.noPrompt):
+                    result = True
+            else:
                 result = True
         return result
 
@@ -267,19 +271,18 @@ class GhsConfiguration(Emma.emma_libs.specificConfiguration.SpecificConfiguratio
         # Rationale: The code quality would not increase significantly from fewer local variables.
         """
         The function collects the VAS sections from the monolith files and from the global config and from the monolith mapfile.
-        :param configuration: Configuration thats monolith sections need to be checked.
+        :param configuration: Configuration whose monolith sections need to be checked.
         :param noprompt: True if no user prompts shall be made, False otherwise, in which case a program exit will be made.
         :return: True if the monolith sections were ok, False otherwise.
         """
-        result = False
         foundInConfigID = []
         foundInMonolith = []
 
         # Extract sections from monolith file
         monolithPattern = Emma.emma_libs.ghsMapfileRegexes.UpperMonolithPattern()
 
-        # Check if a monolith was loaded to this configID that can be checked
-        # In case there was no monolith loaded, the configuration does not need it so the check is passed
+        # Check if a monolith was loaded for this configID
+        # In case there was no monolith loaded -> the configuration does not need it, so the check is passed
         if configuration["monolithLoaded"]:
             for entry in configuration["patterns"]["monoliths"]:
                 try:
@@ -310,9 +313,9 @@ class GhsConfiguration(Emma.emma_libs.specificConfiguration.SpecificConfiguratio
                     text = input("> ")
                 if text != "y":
                     sys.exit(-10)
-            else:
-                result = True
-        else:
             result = True
+        else:
+            # Monolith file could not be loaded
+            result = False
 
         return result

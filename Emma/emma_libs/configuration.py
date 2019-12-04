@@ -52,6 +52,7 @@ class Configuration:
         sc().info("Imported " + str(len(self.globalConfig)) + " global config entries:" + str(list(self.globalConfig.keys())))
 
         # Processing the generic configuration parts for all the configId
+        configIDsToRemove = []
         for configId in self.globalConfig:
             # Processing the addressSpaces*.json
             if "addressSpacesPath" in self.globalConfig[configId]:
@@ -77,11 +78,14 @@ class Configuration:
                 self.specificConfigurations[configId].readConfiguration(configurationPath, mapfilesPathForThisConfigId, configId, self.globalConfig[configId])
                 # Validating the the configuration
                 if not self.specificConfigurations[configId].checkConfiguration(configId, self.globalConfig[configId]):
-                    sc().warning("The specificConfiguration object of the configId \"" +
-                                 configId + "\" reported that the configuration is invalid!\n" +
-                                 "The configId \"" + configId + "\" will not be analysed!")
+                    sc().warning("The specificConfiguration object of the configId \"" + configId + "\" reported that the configuration is invalid!\n" + "The configId \"" + configId + "\" will not be analysed!")
+                    configIDsToRemove.append(configId)
             else:
                 sc().error("The configuration of the configID \"" + configId + "\" does not contain a \"compiler\" key!")
+
+        # Remove unwanted configIDs
+        for configId in configIDsToRemove:
+            self.globalConfig.pop(configId, None)
 
     @staticmethod
     def __readGlobalConfigJson(path):

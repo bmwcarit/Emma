@@ -46,7 +46,7 @@ def initParser():
     )
     subparser = topLevelParser.add_subparsers(dest="_invoked_emma_module")  # Use `dest` to introduce a variable in order to check which sub parser was invoked
     subparser.add_parser(
-        Emma.SUBPARSER_STRINGS.ANALYSER,                                         # Sub parser name which will be written in `invoked_emma_module`
+        Emma.SUBPARSER_STRINGS.ANALYSER,                                    # Sub parser name which will be written in `invoked_emma_module`
         parents=[Emma.emma.initParser()],
         help="Emma Analyser",
         conflict_handler="resolve",                                         # Since there are conflicting help messages of the top level and sub parsersr

@@ -103,7 +103,7 @@ class MapfileProcessor(abc.ABC):
                         # Then we store the memoryRegion data in the element
                         element.memTypeTag = memoryRegion
                         element.memType = memoryCandidates[memoryRegion]["type"]
-                        # If this region is not excluded for the mapfile the element belongs to then we will keep it
+                        # If this region (-> tag) is not excluded for the mapfile the element belongs to then we will keep it
                         if not isElementMarkedAsExcluded(memoryRegionsToExcludeFromMapfiles, element):
                             listOfElementsToKeep.append(element)
                         else:
