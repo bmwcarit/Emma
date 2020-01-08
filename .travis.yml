@@ -8,10 +8,6 @@ language: python
 #    - LINUX_MAIN_DIST=xenial
 #    - PYTHON_MAIN_VERSION=3.7
 
-allow_failures:
-    - python: nightly
-    - python: 3.7-dev
-
 git:
     submodules: false
 
@@ -134,4 +130,6 @@ jobs:
 #                    branch: 18-pip-database                 # Activate for testing
 #          after_failure: tree -a -I .git ../
 
-
+    allow_failures:
+        - python: nightly
+        - python: 3.7-dev
