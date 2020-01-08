@@ -595,6 +595,29 @@ In order to get the device tree - and therefore the real physical addresses of y
 dtc -I dtb -O dts dev-tree.dtb > decompiled-dev-tree.dts
 ```
 
+### GHS map command converter
+If you allocate memory dynamically during runtime you would like to analyse that state and a strict static analysis is not very useful since you miss out a lot of memory which is indeed allocated but you cannot see it in the static view.
+
+To solve this problem you can do the following:
+
+1. Run the GHS `map` command on the target during a debug session
+2. Save the output
+3. Convert it via the Emma `tools/ghs-map-converter` to a GHS mapfile alike format
+4. and add it as a map file in the Emma config
+    1. The addresses of the map command are physical - no address translation / VAS needs to be configured
+    2. Note: In combination with device trees you will loose information (and potentialy you have to add a pseudo memory region like stated below) since it cannot be mapped to the physical hardware anymore since you get only virtual dummy addresses from `gdump.exe -virtual_mapping` command.
+
+The dummy entry of `addressSpaces*.json` may look like this:
+
+```json
+"memory": {
+    "Pseudo_Memory": {
+        "start": "0x0000000000000000",
+        "end": "0xffffffffffffffff",
+        "type": "EXT_RAM"
+    }
+}
+```
 
 ### Class diagram Emma
 <div align="center"> <img src="images/emmaClassDiagram.png" width="1000"> </div>
