@@ -90,7 +90,7 @@ class Categorisation:
         if os.path.exists(path):
             categoriesJson = Emma.shared_libs.emma_helper.readJson(path)
         else:
-            categoriesJson = None
+            categoriesJson = {}
             sc().wwarning("No " + os.path.basename(path) + " file found. The categorisation based thereof will be skipped.")
         return categoriesJson
 

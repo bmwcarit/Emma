@@ -88,7 +88,7 @@ class MemoryManager:
         A method to process the mapfiles.
         :return: None
         """
-        # If the configuration was already loaded
+        # Check if the configuration loaded
         if self.configuration is not None:
 
             # We will create an empty memory content that will be filled now
@@ -115,21 +115,22 @@ class MemoryManager:
                 self.categorisation.manageCategoriesFiles(self.settings.createCategories, self.settings.removeUnmatched, sectionCollection, objectCollection)
 
                 # Resolving the duplicate, containment and Overlap in the consumerCollections
+                if not self.settings.createCategories:
+                    if not self.settings.noResolveOverlap:
+                        sc().info("Resolving section overlaps. This may take some time...")
+                        Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(sectionCollection, Emma.emma_libs.memoryEntry.SectionEntry)
+                        sc().info("Resolving object overlaps. This may take some time...")
+                        Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(objectCollection, Emma.emma_libs.memoryEntry.ObjectEntry)
 
-                if not self.settings.noResolveOverlap:
-                    sc().info("Resolving section overlaps. This may take some time...")
-                    Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(sectionCollection, Emma.emma_libs.memoryEntry.SectionEntry)
-                    sc().info("Resolving object overlaps. This may take some time...")
-                    Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(objectCollection, Emma.emma_libs.memoryEntry.ObjectEntry)
+                    # Storing the consumer collections
+                    self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY] = sectionCollection
+                    self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY] = objectCollection
 
-                # Storing the consumer collections
-                self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY] = sectionCollection
-                self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY] = objectCollection
-
-                # Creating a common consumerCollection
-                sc().info("Calculating objects in sections. This may take some time...")
-                self.memoryContent[configId][FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = Emma.emma_libs.memoryMap.calculateObjectsInSections(self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY],
-                                                                                                                                   self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY])
+                    # Creating a common consumerCollection
+                    sc().info("Calculating objects in sections. This may take some time...")
+                    self.memoryContent[configId][FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = Emma.emma_libs.memoryMap.calculateObjectsInSections(self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY], self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY])
+                else:
+                    sc().info("No results were generated since categorisation option is active.")
         else:
             sc().error("The configuration needs to be loaded before processing the mapfiles!")
 
