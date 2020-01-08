@@ -469,15 +469,25 @@ The output Files will be saved to the memStats folder of the respective project.
 ```
 
 ### Section Summary
-
 The file `<PROJECT_NAME>_Section_Summary_<TIMESTAMP>.csv` contains the sections from the mapfiles.
 
 ### Object Summary
-
 The file `<PROJECT_NAME>_Object_Summary_<TIMESTAMP>.csv` contains the objects from the mapfiles.
 
-### Objects in Sections
-"Objects in sections" provides ways to obtain a finer granularity of the categorisation result. Therefore categorised sections containing (smaller) objects of a different category got split up and result into a more accurate categorisation. As a result you will get output files in form of a `.csv` file which sets you up to do later processing on this data easily. In this file additional information is added like:
+### Overlap resolution
+Generally all overlaps will get resolved by Emma with default settings. However Objects in Sections can be disabled via command line argument. The general process works as follows:
+
+Objects/sections that are "touching" or overlapping each other in some way (see the above figure) are resolved in all three reports (object summary, section summary and "Objects in Sections"). Therefore the "weaker" section/object is split (and has therefore a reduced by size after each step). A section/object is considered "weaker" if its *start* address is higher.
+
+<div align="center"> <img src="images/objectsInSectionsResolution.png" width="800"> </div>
+
+1. All overlaps between sections and sections are resolved and between objects and objects. This will be the results of two reports.
+2. Then they will be merged together which will result in "Objects in Sections". This results in the third report created by Emma. Here some "virtual" sections are introduced and overlaps between sections and objects are considered.
+
+As a result you will get output files in form of a `.csv` file which sets you up to do later processing on this data easily.
+
+#### Objects in Sections
+"Objects in sections" provides ways to obtain a finer granularity of the categorisation result. Therefore categorised sections containing (smaller) objects of a different category got split up and result into a more accurate categorisation. In this `.csv` file additional information is added like:
 
 * Overlaps (of sections/objects)
 * Containments (e.g. sections containing objects)
@@ -489,11 +499,7 @@ The file `<PROJECT_NAME>_Object_Summary_<TIMESTAMP>.csv` contains the objects fr
 
 The file `<PROJECT_NAME>_Objects_in_Sections_<TIMESTAMP>.csv` is the result of the "merge" of the objects and the sections file.
 
-Objects/sections that are "touching" or overlapping each other in some way (see the above figure) are resolved in this step. Therefore the "weaker" section/object is split (and has therefore a reduced by size after each step).
-
-This is done so that the file represents a continuous and refined memory mapping. Furthermore it is checked whether sections/objects overlap, contain or duplicate each other.
-
-The information on such occurrences can be observed in the rightmost columns:
+The information on such occurrences can be observed in columns of the Emma report:
 
 * `overlapFlag`: Overlaps with the stated section ("overlapped by X" means X is an object/section which has a lower start address and therefore overlaps the current element)
 * `containmentFlag`: Is contained by the stated section
@@ -510,8 +516,8 @@ This might sound counter-intuitive at the first spot. However we can see memory 
 At the end you will find three remaining "types":
 
 1. **Real objects:** (Un)modified objects due to the above actions
-2. **Section reserves:** Resolved sections minus resolved objects; this is what remains when you resolve all "touching" occurrences and subtract objects from sections that we obtain (multiple) smaller sections
-3. **Section entry:** The original section size (without any modification); this is a pure virtual entry and has a size of `0` bytes; these are the only `0` byte sections which are a result of the Emma processing
+2. **Section reserves (`<Emma_SectionReserve>`):** Resolved sections minus resolved objects. A section that describes the unused part of a section that was not filled up with objects. This is what remains when you resolve all "touching" occurrences and subtract objects from sections that we obtain (multiple) smaller sections
+3. **Section entry (`<Emma_SectionEntry>`):** The original section size (without any modification); this is a pure virtual entry and has a size of `0` bytes; these are the only `0` byte sections which are a result of the Emma processing. Note that section-section overlaps might (depending on the chosen Emma command line flags) already be resolved at this stage and are considered as original section size.
 
 Section names for section reserves and entries are `<Emma_SectionReserve>` and `<Emma_SectionEntry>` respectively. The `<Emma_xxxx>` pattern shows you names introduced by Emma.
 

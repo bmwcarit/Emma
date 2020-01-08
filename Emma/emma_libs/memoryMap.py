@@ -106,11 +106,11 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
 
 def calculateObjectsInSections(sectionContainer, objectContainer):
     """
-    Creating a list of MemEntry objects from two lists of MemEntry objects that are representing the sections and objects.
+    Creates a list of MemEntry objects from the sections and objects (represented by two lists of MemEntry objects).
     These two lists will merged together.
     From sections, new elements will be created:
         - Section entry: A MemEntry object that describes the section but does not use memory space.
-        - Section reserce: A MemEntry object that describes the unused part of a section that was not filled up with objects.
+        - Section reserve: A MemEntry object that describes the unused part of a section that was not filled up with objects.
 
     :param sectionContainer: A list of MemEntry objects. It must be ordered increasingly based on the startAddress attribute of the elements.
                              The overlapping, containing, duplicate sections must be are already edited and the addresses and lengths corrected.
