@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import os
 
 from pypiscout.SCout_Logger import Logger as sc
-import graphviz
+# import graphviz
 
 from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import Emma.shared_libs.emma_helper
@@ -186,28 +186,32 @@ class MemoryManager:
         #
         #     print(graph.source)
 
-        # def createTeamScaleReports():
-        #     consumerCollections = consumerCollections2GlobalList()
-        #     resultsLst = []
-        #
-        #     # Creating reports from the consumer collections
-        #     for memEntryRow in consumerCollections["Section_Summary"]:
-        #         fqn = memEntryRow.getFQN(sep="/")
-        #         size = Emma.shared_libs.emma_helper.toHumanReadable(memEntryRow.addressLength) if (memEntryRow.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else ""
-        #         # resultsLst.append({"path": fqn, "count": size})
-        #         resultsLst.append({"path": fqn, "count": memEntryRow.addressLength})
-        #     for memEntryRow in consumerCollections["Object_Summary"]:
-        #         fqn = memEntryRow.getFQN(sep="/")
-        #         size = Emma.shared_libs.emma_helper.toHumanReadable(memEntryRow.addressLength) if (memEntryRow.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else ""
-        #         # resultsLst.append({"path": fqn, "count": size})
-        #         resultsLst.append({"path": fqn, "count": memEntryRow.addressLength})
-        #
-        #     Emma.shared_libs.emma_helper.writeJson("testTeamScaleJSON.json", resultsLst)
+        def createTeamScaleReports():
+            """
+            Write JSON output that can be imported in TeamScale
+            :return: None
+            """
+            consumerCollections = consumerCollections2GlobalList()
+            resultsLst = []
+
+            # Creating reports from the consumer collections
+            for memEntryRow in consumerCollections["Section_Summary"]:
+                fqn = memEntryRow.getFQN(sep="/")
+                size = Emma.shared_libs.emma_helper.toHumanReadable(memEntryRow.addressLength) if (memEntryRow.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else ""
+                # resultsLst.append({"path": fqn, "count": size})
+                resultsLst.append({"path": fqn, "count": memEntryRow.addressLength})
+            for memEntryRow in consumerCollections["Object_Summary"]:
+                fqn = memEntryRow.getFQN(sep="/")
+                size = Emma.shared_libs.emma_helper.toHumanReadable(memEntryRow.addressLength) if (memEntryRow.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else ""
+                # resultsLst.append({"path": fqn, "count": size})
+                resultsLst.append({"path": fqn, "count": memEntryRow.addressLength})
+
+            Emma.shared_libs.emma_helper.writeJson("testTeamScaleJSON.json", resultsLst)
 
         if self.memoryContent is not None:
             # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separted string) (MSc)
             createStandardReports()
             # createDotReports()
-            # createTeamScaleReports()
+            createTeamScaleReports()
         else:
             sc().error("The mapfiles need to be processed before creating the reports!")
