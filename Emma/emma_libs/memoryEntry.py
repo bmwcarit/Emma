@@ -73,7 +73,7 @@ class MemEntry:
         elif addressLength is not None and addressEnd is None:
             self.setAddressesGivenLength(addressLength)
         else:
-            sc().warning("MemEntry: addressLength AND addressEnd were both given. The addressLength will be used.")
+            sc().wwarning("MemEntry: addressLength AND addressEnd were both given. The addressLength will be used.")
             self.setAddressesGivenLength(addressLength)
 
         self.sectionName = sectionName

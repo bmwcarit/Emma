@@ -154,7 +154,7 @@ class GhsConfiguration(Emma.emma_libs.specificConfiguration.SpecificConfiguratio
                 # If we have found any file for this file type
                 if foundFiles:
                     # We will add it to the configuration and also check whether more than one file was found to this pattern
-                    configuration["patterns"][fileType][entry]["associatedFilename"] = foundFiles[0]
+                    configuration["patterns"][fileType][entry]["associatedFilename"] = foundFiles[0]            # Take only the first match and warn afterwards
                     sc().info(LISTING_INDENT + "Found " + fileType + ": ", foundFiles[0])
                     if len(foundFiles) > 1:
                         sc().warning("Ambiguous regex pattern in '" + configuration["patternsPath"] + "'. Selected '" + foundFiles[0] + "'. Regex matched: " + "".join(foundFiles))
@@ -204,7 +204,7 @@ class GhsConfiguration(Emma.emma_libs.specificConfiguration.SpecificConfiguratio
                     sc().info("Choose the index of the desired monolith file")
                     mapfileIndexChosen = Emma.shared_libs.emma_helper.Prompt.idx()
                     while not 0 <= mapfileIndexChosen < numMonolithFiles:               # Accept only values within the range [0, numMonolithFiles)
-                        sc().warning("Invalid value; try again:")
+                        sc().wwarning("Invalid value; try again:")
                         mapfileIndexChosen = Emma.shared_libs.emma_helper.Prompt.idx()
             elif numMonolithFiles < 1:
                 sc().error("No monolith file found but needed for processing")
