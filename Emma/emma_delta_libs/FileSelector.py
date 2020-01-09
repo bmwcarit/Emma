@@ -34,8 +34,7 @@ class FileSelector:
     def __init__(self, projectDir: str):
         self.__projectDir: str = projectDir
         self.__path: str = Emma.shared_libs.emma_helper.joinPath(projectDir, OUTPUT_DIR)
-        self.__versionCandidates: typing.List[str] = [f for f in os.listdir(self.__path) if os.path.isdir(shared_libs.emma_helper.joinPath(self.__path, f))]
-        # self.__versionCandidates stores the list of files for the analysis
+        self.__versionCandidates: typing.List[str] = [f for f in os.listdir(self.__path) if os.path.isdir(Emma.shared_libs.emma_helper.joinPath(self.__path, f))]       # Store the list of files for the analysis
 
     def getCandidates(self) -> typing.List[str]:
         return self.__versionCandidates

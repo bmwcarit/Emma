@@ -46,4 +46,4 @@ def saveNewRootpath(rootpath: str) -> None:
     Adds the path to the .deltaconfig file for future use
     :param rootpath: path to add
     """
-    Emma.shared_libs.emma_helper.writeJson(shared_libs.emma_helper.joinPath("./", DELTA_CONFIG), {DELTA_LATEST_PATH: rootpath})
+    Emma.shared_libs.emma_helper.writeJson(Emma.shared_libs.emma_helper.joinPath("./", DELTA_CONFIG), {DELTA_LATEST_PATH: rootpath})
