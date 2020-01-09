@@ -79,7 +79,7 @@ def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool
 
         # Check if the fixed file name portions are within the found file name
         if Emma.shared_libs.stringConstants.FILE_IDENTIFIER_OBJECT_SUMMARY is Emma.shared_libs.emma_helper.evalSummary(lastModifiedFiles[-1]):
-            sc().warning("Last modified file is a " + Emma.shared_libs.stringConstants.FILE_IDENTIFIER_OBJECT_SUMMARY + "\n")
+            sc().wwarning("Last modified file is a " + Emma.shared_libs.stringConstants.FILE_IDENTIFIER_OBJECT_SUMMARY + "\n")
 
     if fileToUse is None:
         sc().error("No file containing '" + subStringIdentifier + "' found in " + path)

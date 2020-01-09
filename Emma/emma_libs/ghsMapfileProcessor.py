@@ -127,7 +127,7 @@ class GhsMapfileProcessor(Emma.emma_libs.mapfileProcessor.MapfileProcessor):
                         if physicalAddress is None:
                             warningSectionName = lineComponents.group(regexPatternData.Groups.section).rstrip()
                             warningObjectName = ("::" + lineComponents.group(regexPatternData.Groups.module).rstrip()) if hasattr(regexPatternData.Groups, "module") else ""
-                            sc().warning("Address translation failed for the element: " + f"{configId}::{mapfileName}:{lineNumber}::{warningSectionName}" + ("::"  + warningObjectName if warningObjectName != "" else "")
+                            sc().wwarning("Address translation failed for the element: " + f"{configId}::{mapfileName}:{lineNumber}::{warningSectionName}" + ("::"  + warningObjectName if warningObjectName != "" else "")
                                          + " (size: " + str(int(lineComponents.group(regexPatternData.Groups.size), 16)) + " B)! Section name not found in VAS or outside address range.")
                             # We will not store this element and continue with the next one
                             continue
