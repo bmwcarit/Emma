@@ -45,92 +45,6 @@ pandas.set_option('display.max_columns', 500)
 pandas.set_option('display.expand_frame_repr', False)
 
 
-def main(arguments):
-    """
-    Emma visualiser application
-    :param arguments: parsed arguments
-    :return: None
-    """
-    # Setup SCout
-    sc(invVerbosity=arguments.verbosity, actionWarning=(lambda : sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda : sys.exit(-10))
-
-    sc().header("Emma Memory and Mapfile Analyser - Visualiser", symbol="/")
-
-    # Start and display time measurement
-    TIME_START = timeit.default_timer()
-    sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
-
-    imageFile = Emma.emma_vis_libs.helper.getLastModFileOrPrompt(FILE_IDENTIFIER_SECTION_SUMMARY, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt)
-    moduleFile = Emma.emma_vis_libs.helper.getLastModFileOrPrompt(FILE_IDENTIFIER_OBJECT_SUMMARY, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt)
-    objectsInSectionsFile = Emma.emma_vis_libs.helper.getLastModFileOrPrompt(FILE_IDENTIFIER_OBJECTS_IN_SECTIONS, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt)
-
-    resultsPath = Emma.shared_libs.emma_helper.joinPath(arguments.inOutPath, OUTPUT_DIR_VISUALISER)        # We don't have to check the existance of this path since this was done during parseArgs
-    Emma.shared_libs.emma_helper.mkDirIfNeeded(resultsPath)
-
-    # Init classes for summaries
-    consumptionObjectsInSections = Emma.emma_vis_libs.dataVisualiserMemoryMap.MemoryMap(projectPath=arguments.projectDir,
-                                                                                        fileToUse=objectsInSectionsFile,
-                                                                                        resultsPath=resultsPath)
-    consumptionObjectsInSections.plotPieChart(plotShow=False)
-
-    # Image Summary object
-    sc().info("Analysing", imageFile)
-    consumptionImage = Emma.emma_vis_libs.dataVisualiserSections.ImageConsumptionList(projectPath=arguments.projectDir,
-                                                                                      fileToUse=imageFile,
-                                                                                      resultsPath=resultsPath)
-
-    # Module Summary object
-    sc().info("Analysing", moduleFile)
-    try:
-        consumptionModule = Emma.emma_vis_libs.dataVisualiserObjects.ModuleConsumptionList(projectPath=arguments.projectDir,
-                                                                                           fileToUse=moduleFile,
-                                                                                           resultsPath=resultsPath)
-    except ValueError:
-        sc().error("Data does not contain any module/object entry - exiting...")
-
-    # Object for visualisation fo image and module summary
-    categorisedImage = Emma.emma_vis_libs.dataVisualiserCategorisedSections.CategorisedImageConsumptionList(resultsPath=resultsPath,
-                                                                                                            projectPath=arguments.projectDir,
-                                                                                                            statsTimestamp=consumptionImage.statsTimestamp,
-                                                                                                            imageSumObj=consumptionImage,
-                                                                                                            moduleSumObj=consumptionModule)
-
-    # Do prints and plots
-    consumptionImage.plotByMemType(plotShow=False)
-
-    # Prevent out of memory errors (-> `AssertionError: Unexpected exception: In RendererAgg: Out of memory`)
-    gc.collect()
-
-    sc().info("\n", consumptionImage.calcConsumptionByMemType())
-
-    # FIXME: Deactivated; colours of legend in figure not correct - possibly this figure is not even needed/useful (MSc)
-    # categorisedImage.plotNdisplay(plotShow=False)
-
-    # Save the categorised sections as csv
-    if arguments.categorised_image_csv:
-        categorisedImage.categorisedImagetoCSV()
-
-    # Write each report to file if append mode in parsedArguments is selected
-    if arguments.append:
-        sc().info("Appending report...")
-        consumptionImage.writeReportToFile()
-        report = Emma.emma_vis_libs.dataReports.Reports(projectPath=arguments.projectDir)
-        report.plotNdisplay(plotShow=False)
-
-    # Create a Markdown overview document and add all parts to it
-    if arguments.overview:
-        sc().info("Generating markdown report...")
-        markdownFilePath = consumptionImage.createMarkdownOverview()
-        consumptionModule.appendModuleConsumptionToMarkdownOverview(markdownFilePath)
-        consumptionImage.appendSupplementToMarkdownOverview(markdownFilePath)
-        sc().info("Generating html report...")
-        Emma.shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdownFilePath, (os.path.splitext(markdownFilePath)[0] + ".html"))
-
-    # Stop and display time measurement
-    TIME_END = timeit.default_timer()
-    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " + "{0:.2f}".format(TIME_END - TIME_START) + "s)")
-
-
 def initParser():
     """
     Prepare the parser for Emma
@@ -214,41 +128,127 @@ def parseArgs(arguments=""):
     :return: Argparse object
     """
     parser = initParser()
-
     parsedArguments = Emma.shared_libs.emma_helper.parseGivenArgStrOrStdIn(arguments, parser)
+    return parsedArguments
 
+
+def processArguments(arguments):
+    """
+    Function to extract the settings values from the command line arguments.
+    :param arguments: The command line arguments, that is the result of the parser.parse_args().
+    :return: The setting values.
+    """
     # Prepare final paths
-    parsedArguments.inOutPath = ""
+    arguments.inOutPath = ""
 
     # Check given paths
-    if parsedArguments.projectDir is None:                  # This should not happen since it is a required argument
+    if arguments.projectDir is None:                  # This should not happen since it is a required argument
         sc().error("No project path given. Exiting...")
     else:
-        parsedArguments.projectDir = Emma.shared_libs.emma_helper.joinPath(parsedArguments.projectDir)           # Unify path
-        Emma.shared_libs.emma_helper.checkIfFolderExists(parsedArguments.projectDir)
+        arguments.projectDir = Emma.shared_libs.emma_helper.joinPath(arguments.projectDir)           # Unify path
+        Emma.shared_libs.emma_helper.checkIfFolderExists(arguments.projectDir)
 
-        parsedArguments.inOutPath = parsedArguments.projectDir
-    if parsedArguments.inOutDir is None:
-        parsedArguments.inOutDir = parsedArguments.projectDir
+        arguments.inOutPath = arguments.projectDir
+    if arguments.inOutDir is None:
+        arguments.inOutDir = arguments.projectDir
     else:
-        parsedArguments.inOutDir = Emma.shared_libs.emma_helper.joinPath(parsedArguments.inOutDir)               # Unify path
-        Emma.shared_libs.emma_helper.checkIfFolderExists(parsedArguments.inOutDir)
+        arguments.inOutDir = Emma.shared_libs.emma_helper.joinPath(arguments.inOutDir)               # Unify path
+        Emma.shared_libs.emma_helper.checkIfFolderExists(arguments.inOutDir)
 
-        parsedArguments.inOutPath = parsedArguments.inOutDir
-        if parsedArguments.subDir is None:
-            parsedArguments.subDir = ""
+        arguments.inOutPath = arguments.inOutDir
+        if arguments.subDir is None:
+            arguments.subDir = ""
         else:
-            parsedArguments.subDir = Emma.shared_libs.emma_helper.joinPath(parsedArguments.subDir)               # Unify path
+            arguments.subDir = Emma.shared_libs.emma_helper.joinPath(arguments.subDir)               # Unify path
 
-            joinedInputPath = Emma.shared_libs.emma_helper.joinPath(parsedArguments.inOutDir, parsedArguments.subDir)
+            joinedInputPath = Emma.shared_libs.emma_helper.joinPath(arguments.inOutDir, arguments.subDir)
             Emma.shared_libs.emma_helper.checkIfFolderExists(joinedInputPath)
-            parsedArguments.inOutPath = joinedInputPath
+            arguments.inOutPath = joinedInputPath
 
     # Clean-up paths
-    del parsedArguments.subDir
-    del parsedArguments.inOutDir
+    del arguments.subDir
+    del arguments.inOutDir
 
-    return parsedArguments
+    return arguments.verbosity, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt, arguments.projectDir, arguments.categorised_image_csv, arguments.overview  
+
+
+def main(arguments):
+    """
+    Emma visualiser application
+    :param arguments: parsed arguments
+    :return: None
+    """
+    verbosity, inOutPath, quiet, append, noprompt, projectDir, categorised_image_csv, overview = processArguments(arguments)
+
+    # Setup SCout
+    sc(invVerbosity=verbosity, actionWarning=(lambda: sys.exit(-10) if Werror is not None else None), actionError=lambda: sys.exit(-10))
+
+    sc().header("Emma Memory and Mapfile Analyser - Visualiser", symbol="/")
+
+    # Start and display time measurement
+    TIME_START = timeit.default_timer()
+    sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
+
+    imageFile = Emma.emma_vis_libs.helper.getLastModFileOrPrompt(FILE_IDENTIFIER_SECTION_SUMMARY, inOutPath, quiet, append, noprompt)
+    moduleFile = Emma.emma_vis_libs.helper.getLastModFileOrPrompt(FILE_IDENTIFIER_OBJECT_SUMMARY, inOutPath, quiet, append, noprompt)
+    objectsInSectionsFile = Emma.emma_vis_libs.helper.getLastModFileOrPrompt(FILE_IDENTIFIER_OBJECTS_IN_SECTIONS, inOutPath, quiet, append, noprompt)
+
+    resultsPath = Emma.shared_libs.emma_helper.joinPath(inOutPath, OUTPUT_DIR_VISUALISER)        # We don't have to check the existance of this path since this was done during parseArgs
+
+    Emma.shared_libs.emma_helper.mkDirIfNeeded(resultsPath)
+
+    # Init classes for summaries
+    consumptionObjectsInSections = Emma.emma_vis_libs.dataVisualiserMemoryMap.MemoryMap(projectPath=projectDir, fileToUse=objectsInSectionsFile, resultsPath=resultsPath)
+    consumptionObjectsInSections.plotPieChart(plotShow=False)
+
+    # Image Summary object
+    sc().info("Analysing", imageFile)
+    consumptionImage = Emma.emma_vis_libs.dataVisualiserSections.ImageConsumptionList(projectPath=projectDir, fileToUse=imageFile, resultsPath=resultsPath)
+
+    # Module Summary object
+    sc().info("Analysing", moduleFile)
+    try:
+        consumptionModule = Emma.emma_vis_libs.dataVisualiserObjects.ModuleConsumptionList(projectPath=projectDir, fileToUse=moduleFile, resultsPath=resultsPath)
+    except ValueError:
+        sc().error("Data does not contain any module/object entry - exiting...")
+
+    # Object for visualisation fo image and module summary
+    categorisedImage = Emma.emma_vis_libs.dataVisualiserCategorisedSections.CategorisedImageConsumptionList(resultsPath=resultsPath, projectPath=projectDir, statsTimestamp=consumptionImage.statsTimestamp, imageSumObj=consumptionImage, moduleSumObj=consumptionModule)
+
+    # Do prints and plots
+    consumptionImage.plotByMemType(plotShow=False)
+
+    # Prevent out of memory errors (-> `AssertionError: Unexpected exception: In RendererAgg: Out of memory`)
+    gc.collect()
+
+    sc().info("\n", consumptionImage.calcConsumptionByMemType())
+
+    # FIXME: Deactivated; colours of legend in figure not correct - possibly this figure is not even needed/useful (MSc)
+    # categorisedImage.plotNdisplay(plotShow=False)
+
+    # Save the categorised sections as csv
+    if categorised_image_csv:
+        categorisedImage.categorisedImagetoCSV()
+
+    # Write each report to file if append mode in parsedArguments is selected
+    if append:
+        sc().info("Appending report...")
+        consumptionImage.writeReportToFile()
+        report = Emma.emma_vis_libs.dataReports.Reports(projectPath=projectDir)
+        report.plotNdisplay(plotShow=False)
+
+    # Create a Markdown overview document and add all parts to it
+    if overview:
+        sc().info("Generating markdown report...")
+        markdownFilePath = consumptionImage.createMarkdownOverview()
+        consumptionModule.appendModuleConsumptionToMarkdownOverview(markdownFilePath)
+        consumptionImage.appendSupplementToMarkdownOverview(markdownFilePath)
+        sc().info("Generating html report...")
+        Emma.shared_libs.emma_helper.convertMarkdownFileToHtmlFile(markdownFilePath, (os.path.splitext(markdownFilePath)[0] + ".html"))
+
+    # Stop and display time measurement
+    TIME_END = timeit.default_timer()
+    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " + "{0:.2f}".format(TIME_END - TIME_START) + "s)")
 
 
 def runEmmaVis():

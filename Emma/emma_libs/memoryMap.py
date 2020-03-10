@@ -296,7 +296,6 @@ def writeReportToDisk(reportPath, consumerCollection):
     :param reportPath: A path of the CSV that needs to be created.
     :param consumerCollection: A list of MemEntry objects.
     """
-
     # Opening the file
     with open(reportPath, "w") as fp:
         # The writer object that will be used for creating the CSV data

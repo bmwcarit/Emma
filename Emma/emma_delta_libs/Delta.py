@@ -36,6 +36,7 @@ class Delta:
 
         self.__lhs: pandas.DataFrame = pandas.read_csv(self.__inFilePaths[0], index_col=3, sep=";")
         self.__rhs: pandas.DataFrame = pandas.read_csv(self.__inFilePaths[1], index_col=3, sep=";")
+
         self.__delta: pandas.DataFrame = self.__buildDelta()
 
     def __buildDelta(self) -> pandas.DataFrame:
@@ -47,13 +48,15 @@ class Delta:
         DELTA_SIZE_DEC = "Delta sizeDec"
         DELTA_PERCENTAGE = "Delta %"
         DELTA_HUMAN_READABLE = "Delta"
-
         lhs = self.__lhs.reset_index().set_index([CONFIG_ID, MEM_TYPE, MEM_TYPE_TAG, MAPFILE, SECTION_NAME])
         rhs = self.__rhs.reset_index().set_index([CONFIG_ID, MEM_TYPE, MEM_TYPE_TAG, MAPFILE, SECTION_NAME])
         delta = lhs.join(rhs, lsuffix=LHS_SUFFIX, rsuffix=RHS_SUFFIX)
+        # Convert byte values back to int
+        delta[SIZE_DEC + LHS_SUFFIX] = delta[SIZE_DEC + LHS_SUFFIX].fillna(0).astype(int)
+        delta[SIZE_DEC + RHS_SUFFIX] = delta[SIZE_DEC + RHS_SUFFIX].fillna(0).astype(int)
 
         delta[DELTA_SIZE_DEC] = delta[SIZE_DEC + LHS_SUFFIX] - delta[SIZE_DEC + RHS_SUFFIX]
-        delta[DELTA_HUMAN_READABLE] = delta[DELTA_SIZE_DEC].apply(shared_libs.emma_helper.toHumanReadable)
+        delta[DELTA_HUMAN_READABLE] = delta[DELTA_SIZE_DEC].apply(Emma.shared_libs.emma_helper.toHumanReadable)
         delta[DELTA_PERCENTAGE] = delta[DELTA_SIZE_DEC] / delta[SIZE_DEC + LHS_SUFFIX]
 
         return delta

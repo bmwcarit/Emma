@@ -308,9 +308,10 @@ def toHumanReadable(num, suffix='B'):     # pylint: disable=inconsistent-return-
     """
     Converts a number into a human readable format: humanReadableSize(168963795964) -> ' 157.36 GiB'
     Note: we use binary prefixes (-> 1kiB = 1024 Byte)
+    We expect data type to be int (-> we do not expect "half" bytes) or reasonable convertible to int
 
     MIT License toHumanReadable
-    Copyright (c) 2019 Marcel Schmalzl, Steve Göring
+    Copyright (c) 2019,2020 Marcel Schmalzl, Steve Göring
     https://github.com/TeamFlowerPower/kb/wiki/humanReadable
 
     :param num: Number to convert
@@ -321,8 +322,8 @@ def toHumanReadable(num, suffix='B'):     # pylint: disable=inconsistent-return-
     bit_10 = 10
     num_tmp = num
     for prefix in UNIT_PREFIXES:
-        if num_tmp > 1024:
-            num_tmp = num_tmp >> bit_10
+        if abs(num_tmp) > 1024:
+            num_tmp >>= bit_10
             count += 1
         else:
             return "{: .2f} {}{}".format(num/2**(count*bit_10), prefix, suffix)
