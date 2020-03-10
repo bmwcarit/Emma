@@ -43,26 +43,35 @@ class FilePresenter:
     def chooseCandidates(self) -> typing.List[str]:
         # TODO: Validate all inputs (FM)
         self.__printFileType()
-        try:
-            filetype: str = self.__filetypes[int(input("Choose File type >\n"))]
-        except KeyError:
-            sc().error("Select valid Summary.\n")
+        while True:
+            selectedNumber = int((input("Choose File type >\n")))
+            if selectedNumber in self.__filetypes:
+                filetype: str = self.__filetypes[selectedNumber]
+                break
+            else:
+                print("Select valid number.\n")
 
-        candidates: typing.List[str] = self.__fileSelector.getCandidates()
+        candidates: typing.Dict = self.__fileSelector.getCandidates(filetype)
         self.__printCandidates(candidates)
-        indices: str = input("Select two indices seperated by one space >")
-        indices: typing.List[str] = indices.split(" ")
-        indices: typing.List[int] = [int(i) for i in indices]
-        if len(indices) <= 1:
-            sc().error("Select more than one file.")
 
-        selectedFiles: typing.List[str] = self.__fileSelector.selectFiles(indices, filetype)
+        while True:
+            indices: str = input("Select two indices separated by one space >")
+            indices: typing.List[str] = indices.split(" ")
+            if len(indices) == 2:
+                if int(indices[0])in candidates and int(indices[1]) in candidates:
+                    break
+                else:
+                    print("select 2 of the numbers presented above")
+            else:
+                print("Select exactly 2 files.")
+
+        selectedFiles: typing.List[str] = self.__fileSelector.selectFiles(indices)
         self.__printSelectedFiles(selectedFiles)
         return selectedFiles
 
-    def __printCandidates(self, candidates: typing.List[str]) -> None:
-        for i, candidate in enumerate(candidates):
-            string = "    " + str(i) + ": " + candidate
+    def __printCandidates(self, candidates) -> None:
+        for i, candidate in candidates.items():
+            string = "    " + str(i) + ": " + candidates[i]
             print(string)
 
     def __printSelectedFiles(self, paths: typing.List[str]) -> None:

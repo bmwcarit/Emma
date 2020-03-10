@@ -103,8 +103,7 @@ def main(arguments):
     :param arguments: parsed arguments
     :return: None
     """
-    # Setup SCout
-    sc(invVerbosity=arguments.verbosity, actionWarning=(lambda : sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda : sys.exit(-10))
+    sc(invVerbosity=arguments.verbosity, actionWarning=(lambda : sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda: sys.exit(-10))
 
     sc().header("Emma Memory and Mapfile Analyser - Deltas", symbol="/")
 
@@ -128,7 +127,7 @@ def main(arguments):
     else:
         sc().error("No matching arguments.")
 
-    delta = Emma.emma_delta_libs.Delta.Delta(files=candidates, outfile=arguments.outfile)
+    delta = Emma.emma_delta_libs.Delta.Delta(files=candidates, outfile=arguments.outfile + 'analysed.csv')
     delta.tocsv()
     sc().info("Saved delta to " + arguments.outfile)
 
