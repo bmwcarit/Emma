@@ -66,7 +66,6 @@ def initParser():
     parser.add_argument(
         "--verbosity",
         "-v",
-        action='count',
         default=0,
         help="Adjust verbosity of console output. DECREASE verbosity by adding more `v`s"
     )
@@ -109,6 +108,12 @@ def initParser():
         "--categorised_image_csv",
         "-cat_img",
         help="Save a .csv of categories found inside the image summary",
+        action="store_true",
+        default=False
+    )
+    parser.add_argument(
+        "--Werror",
+        help="Treat all warnings as errors.",
         action="store_true",
         default=False
     )
@@ -169,7 +174,7 @@ def processArguments(arguments):
     del arguments.subDir
     del arguments.inOutDir
 
-    return arguments.verbosity, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt, arguments.projectDir, arguments.categorised_image_csv, arguments.overview
+    return arguments.verbosity, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt, arguments.projectDir, arguments.categorised_image_csv, arguments.overview, arguments.Werror
 
 
 def main(arguments):
@@ -178,10 +183,10 @@ def main(arguments):
     :param arguments: parsed arguments
     :return: None
     """
-    verbosity, inOutPath, quiet, append, noprompt, projectDir, categorised_image_csv, overview = processArguments(arguments)
+    verbosity, inOutPath, quiet, append, noprompt, projectDir, categorised_image_csv, overview, Werror = processArguments(arguments)
 
     # Setup SCout
-    sc(invVerbosity=verbosity, actionWarning=(lambda: sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda: sys.exit(-10))
+    sc(invVerbosity=verbosity, actionWarning=(lambda: sys.exit(-10) if Werror is not None else None), actionError=lambda: sys.exit(-10))
 
     sc().header("Emma Memory and Mapfile Analyser - Visualiser", symbol="/")
 
