@@ -21,7 +21,7 @@ import sys
 import timeit
 import datetime
 import argparse
-
+import os
 from pypiscout.SCout_Logger import Logger as sc
 
 import Emma
@@ -103,17 +103,27 @@ def main(arguments):
     :param arguments: parsed arguments
     :return: None
     """
-    sc(invVerbosity=arguments.verbosity, actionWarning=(lambda : sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda: sys.exit(-10))
+    sc(invVerbosity=arguments.verbosity, actionWarning=(lambda: sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda: sys.exit(-10))
 
     sc().header("Emma Memory and Mapfile Analyser - Deltas", symbol="/")
 
     # Start and display time measurement
     TIME_START = timeit.default_timer()
     sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
+    if arguments.r:
+        sc().info("The configuration file will be deleted")
+        os.remove("./" + DELTA_CONFIG)
+        if arguments.project is None:
+            sys.exit()
+        else:
+            # Do nothing -> normal first run
+            pass
 
     if arguments.infiles and arguments.outfile is not None:
         candidates = arguments.infiles
     elif arguments.project:
+        rootpath = Emma.emma_delta_libs.RootSelector.selectRoot()           # TODO: rewrite the config file (Daria)
+        Emma.emma_delta_libs.RootSelector.saveNewRootpath(rootpath)
         Emma.shared_libs.emma_helper.checkIfFolderExists(arguments.project)
         fileSelector = Emma.emma_delta_libs.FileSelector.FileSelector(projectDir=arguments.project)
         filePresenter = Emma.emma_delta_libs.FilePresenter.FilePresenter(fileSelector=fileSelector)

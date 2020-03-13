@@ -41,16 +41,22 @@ class FilePresenter:
         self.__fileSelector: Emma.emma_delta_libs.FileSelector = fileSelector
 
     def chooseCandidates(self) -> typing.List[str]:
+        """
+        Select two files for the further analysis
+        :return: list with chosen filenames
+        """
         # TODO: Validate all inputs (FM)
         self.__printFileType()
         while True:
-            selectedNumber = int((input("Choose File type >\n")))
-            if selectedNumber in self.__filetypes:
-                filetype: str = self.__filetypes[selectedNumber]
-                break
+            selectedNumber = (input("Choose File type >\n"))
+            if len(str(selectedNumber)) == 1:
+                if int(selectedNumber) in self.__filetypes:                      # pylint: disable=no-else-break
+                    filetype: str = self.__filetypes[int(selectedNumber)]
+                    break
+                else:
+                    sc().warning("Select valid number.\n")
             else:
-                print("Select valid number.\n")
-
+                sc().warning("Select valid number.\n")
         candidates: typing.Dict = self.__fileSelector.getCandidates(filetype)
         self.__printCandidates(candidates)
 
@@ -58,25 +64,27 @@ class FilePresenter:
             indices: str = input("Select two indices separated by one space >")
             indices: typing.List[str] = indices.split(" ")
             if len(indices) == 2:
-                if int(indices[0])in candidates and int(indices[1]) in candidates:
+                if int(indices[0]) in candidates and int(indices[1]) in candidates:      # pylint: disable=no-else-break
                     break
                 else:
-                    print("select 2 of the numbers presented above")
+                    sc().warning("select two of the numbers presented above")
             else:
-                print("Select exactly 2 files.")
+                sc().warning("Select exactly two files.")
 
         selectedFiles: typing.List[str] = self.__fileSelector.selectFiles(indices)
         self.__printSelectedFiles(selectedFiles)
         return selectedFiles
 
-    def __printCandidates(self, candidates) -> None:
-        for i, candidate in candidates.items():
+    @staticmethod
+    def __printCandidates(candidates) -> None:
+        for i in candidates:
             string = "    " + str(i) + ": " + candidates[i]
             print(string)
 
-    def __printSelectedFiles(self, paths: typing.List[str]) -> None:
+    @staticmethod
+    def __printSelectedFiles( paths: typing.List[str]) -> None:
         sc().info("Selected files:")
-        for i, path in enumerate(paths):
+        for path in paths:
             pathSplit: typing.List[str] = os.path.split(path)
             version: str = os.path.split(os.path.split(pathSplit[0])[0])[1]
             file: str = pathSplit[1]

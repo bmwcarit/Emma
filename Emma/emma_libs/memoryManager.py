@@ -90,7 +90,6 @@ class MemoryManager:
         """
         # Check if the configuration loaded
         if self.configuration is not None:
-
             # We will create an empty memory content that will be filled now
             self.memoryContent = {}
 
@@ -114,8 +113,9 @@ class MemoryManager:
                 # Updating the categorisation files from the categorisation keywords and remove the unmatched one based on the settings
                 self.categorisation.manageCategoriesFiles(self.settings.createCategories, self.settings.removeUnmatched, sectionCollection, objectCollection)
 
-                # Resolving the duplicate, containment and Overlap in the consumerCollections
+                # Do not resolve duplicate, containment and overlap when createCategories is active
                 if not self.settings.createCategories:
+                    # Resolving the duplicate, containment and overlap in the consumerCollections
                     if not self.settings.noResolveOverlap:
                         sc().info("Resolving section overlaps. This may take some time...")
                         Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(sectionCollection, Emma.emma_libs.memoryEntry.SectionEntry)
@@ -130,7 +130,7 @@ class MemoryManager:
                     sc().info("Calculating objects in sections. This may take some time...")
                     self.memoryContent[configId][FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = Emma.emma_libs.memoryMap.calculateObjectsInSections(self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY], self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY])
                 else:
-                    sc().info("No results were generated since categorisation option is active.")
+                    pass
         else:
             sc().error("The configuration needs to be loaded before processing the mapfiles!")
 
@@ -155,7 +155,6 @@ class MemoryManager:
                     consumerCollections[collectionType].extend(self.memoryContent[configId][collectionType])
             return consumerCollections
 
-
         def createStandardReports():
             """
             Create Section, Object and ObjectsInSections reports
@@ -165,7 +164,7 @@ class MemoryManager:
 
             # Creating reports from the consumer collections
             for collectionType in consumerCollections:
-                reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType)
+                reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType, "csv")
                 Emma.emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
                 sc().info("A report was stored:", os.path.abspath(reportPath))
 
@@ -197,16 +196,12 @@ class MemoryManager:
             # Creating reports from the consumer collections
             for memEntryRow in consumerCollections["Section_Summary"]:
                 fqn = memEntryRow.getFQN(sep="/")
-                size = Emma.shared_libs.emma_helper.toHumanReadable(memEntryRow.addressLength) if (memEntryRow.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else ""
-                # resultsLst.append({"path": fqn, "count": size})
                 resultsLst.append({"path": fqn, "count": memEntryRow.addressLength})
             for memEntryRow in consumerCollections["Object_Summary"]:
                 fqn = memEntryRow.getFQN(sep="/")
-                size = Emma.shared_libs.emma_helper.toHumanReadable(memEntryRow.addressLength) if (memEntryRow.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else ""
-                # resultsLst.append({"path": fqn, "count": size})
                 resultsLst.append({"path": fqn, "count": memEntryRow.addressLength})
-
-            Emma.shared_libs.emma_helper.writeJson("testTeamScaleJSON.json", resultsLst)
+            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, TEAMSCALE_PREFIX, "json")
+            Emma.shared_libs.emma_helper.writeJson(reportPath, resultsLst)
 
         if self.memoryContent is not None:
             # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separted string) (MSc)

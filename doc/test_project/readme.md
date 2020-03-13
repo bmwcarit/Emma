@@ -3,7 +3,7 @@ This is an imaginary system, the mapfiles were created by hand and they are foll
 The goal of the project is to present a simple system without any complicated parts in order
 to introduce the new users step-by-step to creating an Emma configuration.
 
-The project can be analyzed by running the following commands from the Emma top-level folder:
+The project can be analysed by running the following commands from the Emma top-level folder:
 
 Emma:
 
