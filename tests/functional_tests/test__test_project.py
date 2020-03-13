@@ -71,16 +71,19 @@ class EmmaTestProject(unittest.TestCase):
         for _, directories, files in os.walk(self.memStatsFolder):
             # The result folder shall have 0 subdirectories and three summary files
             self.assertEqual(len(directories), 0)
-            self.assertEqual(len(files), 3)
+            self.assertEqual(len(files), 4)
 
         # Setting up the file name related variables
         projectName = "test_project"
         timeStampLength = len(datetime.datetime.now().strftime("%Y-%m-%d-%Hh%Ms%S"))
         reportFileExtension = ".csv"
+        teamScaleFileExtension = ".json"
         reportFileExtensionLength = len(reportFileExtension)
+        teamScaletFileExtensionLength = len(teamScaleFileExtension)
         imageSummaryFileNameFixPart = projectName + "_" + FILE_IDENTIFIER_SECTION_SUMMARY + "_"
         moduleSummaryFileNameFixPart = projectName + "_" + FILE_IDENTIFIER_OBJECT_SUMMARY + "_"
         objectsInSectionsFileNameFixPart = projectName + "_" + FILE_IDENTIFIER_OBJECTS_IN_SECTIONS + "_"
+        teamScaleFileNameFixPart = projectName + "_" + TEAMSCALE_PREFIX + "_"
 
         # Checking whether the expected report names are there and setting up the variables with their paths
         for file in os.listdir(self.memStatsFolder):
@@ -90,6 +93,8 @@ class EmmaTestProject(unittest.TestCase):
                 self.moduleSummaryPath = os.path.join(self.memStatsFolder, file)
             elif objectsInSectionsFileNameFixPart == file[:-(timeStampLength + reportFileExtensionLength)]:
                 self.objectsInSectionsPath = os.path.join(self.memStatsFolder, file)
+            elif teamScaleFileNameFixPart == file[:-(timeStampLength + teamScaletFileExtensionLength)]:
+                self.teamScaleReportPath = os.path.join(self.memStatsFolder, file)
             else:
                 raise EnvironmentError("Unexpected file: " + os.path.join(self.memStatsFolder, file))
 
@@ -261,6 +266,7 @@ class EmmaTestProject(unittest.TestCase):
         expectedMcuIntFlashData = self.ExpectedDataTypeData("INT_FLASH", 32, 393336)
         expectedMcuIntRamData = self.ExpectedDataTypeData("INT_RAM", 8, 134656)
         expectedMcuData = self.ExpectedConfigIdData("MCU", 40, [expectedMcuIntFlashData, expectedMcuIntRamData])
+
 
         # Define the expected data of the SOC configId
         expectedSocExtRamData = self.ExpectedDataTypeData("EXT_RAM", 59, 6164824)

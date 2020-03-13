@@ -34,7 +34,7 @@ The devices must have a single linear physical address space:
 
 * Devices that use for example a Intel 8051 architecture have separate code and data address spaces that both start at address `0x0000`. Devices based on architectures like this can not entirely analysed with Emma.
 * Devices that use for example the ARMv6M architecture have a single linear address space.
-    Devices based on architectures like this can be analyzed with Emma.
+    Devices based on architectures like this can be analysed with Emma.
 
 
 ## Arguments
@@ -70,7 +70,7 @@ Based on this description the user will have to create his/her own configuration
 Creating a configuration is done by writing several JSON files (if you are not familiar with JSON, please visit [https://www.json.org](https://www.json.org)).
 This chapter will go trough the topic by formally defining the format, rules and the functionality of the configuration files.
 There are practical example projects available in the **`doc`** folder. These projects will lead you step by step trough the process of
-creating a configuration and they also contain map files that can be analyzed.
+creating a configuration and they also contain map files that can be analysed.
 
 Currently the following example projects are available:
 
@@ -457,7 +457,7 @@ The following rules apply:
     * `<SECTION_NAME>` is a string
 * The `<VAS_NAME>` keys are the ones that were defined in the `patterns*.json`
 * Every `<VAS_NAME>` key has an array as value that lists the sections that belong to the virtual address space 
-* There are no rules for the assignment, this needs to be done intuitively based on the project being analyzed
+* There are no rules for the assignment, this needs to be done intuitively based on the project being analysed
 
 ## Output Files
 The output Files will be saved to the memStats folder of the respective project. The filename will have this form: 

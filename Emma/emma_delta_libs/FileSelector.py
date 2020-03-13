@@ -17,15 +17,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 
-import sys
 import os
 import typing
 
-from pypiscout.SCout_Logger import Logger as sc
 
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+from Emma.shared_libs.stringConstants import *                 # pylint: disable=unused-wildcard-import,wildcard-import
 import Emma.shared_libs.emma_helper
-
+from pypiscout.SCout_Logger import Logger as sc
 
 class FileSelector:
     """
@@ -37,17 +35,28 @@ class FileSelector:
         self.__versionCandidates = {}
 
     def getCandidates(self, filetype: str):
+        """
+        Find files according to the chosen filetype
+        :param filetype: chosen filetype
+        :return: list of files that can be processed
+        """
         index = 0
         for file in os.listdir(self.__path):
             if filetype in file:
                 index += 1
                 self.__versionCandidates[index] = file
-
+        if len(self.__versionCandidates) == 0:
+            sc().error("No matching files in " + self.__path)
         return self.__versionCandidates
 
     def selectFiles(self, indices: typing.List[int]) -> typing.List[str]:
+        """
+        Find and return files by selected indices
+        :param indices: list with indices of 2 chosen files
+        :return: list of chosen filenames
+        """
         memStatsCandidates: typing.List[str] = []
         for i in indices:
             candidate = Emma.shared_libs.emma_helper.joinPath(self.__path, self.__versionCandidates[int(i)])
-            memStatsCandidates.append(candidate)            
+            memStatsCandidates.append(candidate)
         return memStatsCandidates
