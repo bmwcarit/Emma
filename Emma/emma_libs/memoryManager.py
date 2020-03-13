@@ -193,13 +193,21 @@ class MemoryManager:
             consumerCollections = consumerCollections2GlobalList()
             resultsLst = []
 
+            def _createTeamScalePath(memEntryRow):
+                """
+                Return TeamScale path in the format configID::memType::category::section::object
+                :param memEntryRow:
+                :return: [str] TeamScale path 
+                """
+                sep = "::"
+                r = memEntryRow
+                return f"{r.configID}{sep}{r.memType}{sep}{r.category}{sep}{r.sectionName}{sep}{r.objectName}" if r.objectName != "" and r.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and r.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{r.configID}{sep}{r.memType}{sep}{r.category}{sep}{r.sectionName}"
+
             # Creating reports from the consumer collections
             for memEntryRow in consumerCollections["Section_Summary"]:
-                fqn = memEntryRow.getFQN(sep="/")
-                resultsLst.append({"path": fqn, "count": memEntryRow.addressLength})
+                resultsLst.append({"path": _createTeamScalePath(memEntryRow), "count": memEntryRow.addressLength})
             for memEntryRow in consumerCollections["Object_Summary"]:
-                fqn = memEntryRow.getFQN(sep="/")
-                resultsLst.append({"path": fqn, "count": memEntryRow.addressLength})
+                resultsLst.append({"path": _createTeamScalePath(memEntryRow), "count": memEntryRow.addressLength})
             reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, TEAMSCALE_PREFIX, "json")
             Emma.shared_libs.emma_helper.writeJson(reportPath, resultsLst)
 
