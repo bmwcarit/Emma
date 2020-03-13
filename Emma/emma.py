@@ -48,7 +48,10 @@ def main(arguments):
     memoryManager = Emma.emma_libs.memoryManager.MemoryManager(*processArguments(arguments))
     memoryManager.readConfiguration()
     memoryManager.processMapfiles()
-    memoryManager.createReports()
+    if memoryManager.settings.createCategories:
+        sc().info("No results were generated since categorisation option is active.")
+    else:
+        memoryManager.createReports()
 
     # Stop and display time measurement
     TIME_END = timeit.default_timer()

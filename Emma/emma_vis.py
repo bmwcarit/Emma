@@ -169,7 +169,7 @@ def processArguments(arguments):
     del arguments.subDir
     del arguments.inOutDir
 
-    return arguments.verbosity, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt, arguments.projectDir, arguments.categorised_image_csv, arguments.overview  
+    return arguments.verbosity, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt, arguments.projectDir, arguments.categorised_image_csv, arguments.overview
 
 
 def main(arguments):
@@ -181,7 +181,7 @@ def main(arguments):
     verbosity, inOutPath, quiet, append, noprompt, projectDir, categorised_image_csv, overview = processArguments(arguments)
 
     # Setup SCout
-    sc(invVerbosity=verbosity, actionWarning=(lambda: sys.exit(-10) if Werror is not None else None), actionError=lambda: sys.exit(-10))
+    sc(invVerbosity=verbosity, actionWarning=(lambda: sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda: sys.exit(-10))
 
     sc().header("Emma Memory and Mapfile Analyser - Visualiser", symbol="/")
 
