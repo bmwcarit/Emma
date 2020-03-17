@@ -317,13 +317,15 @@ def writeReportToDisk(reportPath, consumerCollection):
 
         # Writing the data lines to the file
         for row in consumerCollection:
+            # Flag for report creation if duplicate, containment or overlap occured
+            duplicateContainmentOverlapHappened = True if any([row.overlapFlag, row.containmentFlag, row.duplicateFlag]) else False
             # Collecting the first part of the static data for the current row
             rowData = [
-                row.addressStartHex() if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
-                row.addressEndHex() if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
-                row.addressLengthHex() if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
-                row.addressStart if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
-                row.addressEnd() if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
+                "" if (row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY or duplicateContainmentOverlapHappened and row.addressLength == 0) else row.addressStartHex(),
+                "" if (row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY or duplicateContainmentOverlapHappened and row.addressLength == 0) else row.addressEndHex(),
+                "" if (row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) else row.addressLengthHex(),
+                "" if (row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY or duplicateContainmentOverlapHappened and row.addressLength == 0) else row.addressStart,
+                "" if (row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY or duplicateContainmentOverlapHappened and row.addressLength == 0) else row.addressEnd(),
                 row.addressLength if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
                 Emma.shared_libs.emma_helper.toHumanReadable(row.addressLength) if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
                 row.sectionName,
@@ -346,11 +348,11 @@ def writeReportToDisk(reportPath, consumerCollection):
                 row.duplicateFlag,
                 row.containingOthersFlag,
                 # Addresses are modified in case of overlapping so we will post the original values so that the changes can be seen
-                row.addressStartHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or (row.overlapFlag is not None)) else "",
-                row.addressEndHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or (row.overlapFlag is not None)) else "",
+                row.addressStartHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or duplicateContainmentOverlapHappened) else "",
+                row.addressEndHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or duplicateContainmentOverlapHappened) else "",
                 # Lengths are modified in case of overlapping, containment and duplication so we will post the original values so that the changes can be seen
-                row.addressLengthHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or (row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
-                row.addressLengthOriginal if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or (row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
+                row.addressLengthHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or duplicateContainmentOverlapHappened) else "",
+                row.addressLengthOriginal if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or duplicateContainmentOverlapHappened) else "",
                 # FQN
                 row.getFQN()
             ])
