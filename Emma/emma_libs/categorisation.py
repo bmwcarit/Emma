@@ -90,8 +90,8 @@ class Categorisation:
         if os.path.exists(path):
             categoriesJson = Emma.shared_libs.emma_helper.readJson(path)
         else:
-            categoriesJson = None
-            sc().warning("There was no " + os.path.basename(path) + " file found, the categorization based on this will be skipped.")
+            categoriesJson = {}
+            sc().wwarning("No " + os.path.basename(path) + " file found. The categorisation based thereof will be skipped.")
         return categoriesJson
 
     def __fillOutSectionCategories(self, sectionCollection):

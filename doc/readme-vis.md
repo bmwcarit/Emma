@@ -73,18 +73,19 @@ prescribed by your project requirements in order to ensure there will be availab
 
 The config file needs to have the following format:
 
-    :::json
-    {
-        "Project Threshold in %": <THRESHOLD_VALUE>,
+```json
+{
+    "Project Threshold in %": <THRESHOLD_VALUE>,
 
-        "Budgets": [
-            ["<CONFIG_ID>", "<MEMORY_TYPE>", <AVAILABLE_MEMORY>],
-            .
-            .
-            .
-            ["<CONFIG_ID>", "<MEMORY_TYPE>", <AVAILABLE_MEMORY>]
-        ]
-    }
+    "Budgets": [
+        ["<CONFIG_ID>", "<MEMORY_TYPE>", <AVAILABLE_MEMORY>],
+        .
+        .
+        .
+        ["<CONFIG_ID>", "<MEMORY_TYPE>", <AVAILABLE_MEMORY>]
+    ]
+}
+```
 
 The following rules apply:
 
@@ -125,8 +126,9 @@ Output files are:
 ## Examples
 After the Image Summary has been created with `Emma.py a` and the memStats CSV files were saved to the directory `../[PROJECT]/results/memStats`, it can be visualised using:
 
-    :::bash
-    python Emma.py v --project ..\<PROJECT> --dir ..\[PROJECT]\results --quiet --overview
+```bash
+python Emma.py v --project ..\<PROJECT> --dir ..\[PROJECT]\results --quiet --overview
+```
 
 ### Calling Graph Emma Visualiser
 <!-- We use onerror to make images visible when viewing the content using GitHub Pages etc. on the other side reading the markdown file using an editor should kept intact -->

@@ -17,15 +17,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 
-import sys
 import os
 import typing
 
-from pypiscout.SCout_Logger import Logger as sc
 
-from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
+from Emma.shared_libs.stringConstants import *                 # pylint: disable=unused-wildcard-import,wildcard-import
 import Emma.shared_libs.emma_helper
-
+from pypiscout.SCout_Logger import Logger as sc
 
 class FileSelector:
     """
@@ -34,33 +32,31 @@ class FileSelector:
     def __init__(self, projectDir: str):
         self.__projectDir: str = projectDir
         self.__path: str = Emma.shared_libs.emma_helper.joinPath(projectDir, OUTPUT_DIR)
-        self.__versionCandidates: typing.List[str] = [f for f in os.listdir(self.__path) if os.path.isdir(shared_libs.emma_helper.joinPath(self.__path, f))]
-        # self.__versionCandidates stores the list of files for the analysis
+        self.__versionCandidates = {}
 
-    def getCandidates(self) -> typing.List[str]:
+    def getCandidates(self, filetype: str):
+        """
+        Find files according to the chosen filetype
+        :param filetype: chosen filetype
+        :return: list of files that can be processed
+        """
+        index = 0
+        for file in os.listdir(self.__path):
+            if filetype in file:
+                index += 1
+                self.__versionCandidates[index] = file
+        if len(self.__versionCandidates) == 0:
+            sc().error("No matching files in " + self.__path)
         return self.__versionCandidates
 
-    def selectFiles(self, indices: typing.List[int], filetype: str) -> typing.List[str]:
+    def selectFiles(self, indices: typing.List[int]) -> typing.List[str]:
+        """
+        Find and return files by selected indices
+        :param indices: list with indices of 2 chosen files
+        :return: list of chosen filenames
+        """
         memStatsCandidates: typing.List[str] = []
         for i in indices:
-            path = Emma.shared_libs.emma_helper.joinPath(self.__path, self.__versionCandidates[i], OUTPUT_DIR)
-            lastModifiedFile: str = self.__fileToUse(filetype, path)
-            memStatsCandidates.append(lastModifiedFile)
+            candidate = Emma.shared_libs.emma_helper.joinPath(self.__path, self.__versionCandidates[int(i)])
+            memStatsCandidates.append(candidate)
         return memStatsCandidates
-
-    def __fileToUse(self, subStringIdentifier: str, path: str) -> str:
-        fileToUse = None
-        lastModifiedFiles: typing.List[str] = Emma.shared_libs.emma_helper.lastModifiedFilesInDir(path, ".csv")  # Newest/youngest file is last element
-
-        if not lastModifiedFiles:
-            sc().error("No matching Files in: " + path)
-
-        # Backwards iterate over file list (so newest file will be first)
-        for i in range(len(lastModifiedFiles) - 1, -1, -1):
-            # Select module/image summary .csv file
-            if subStringIdentifier in lastModifiedFiles[i]:
-                fileToUse = lastModifiedFiles[i]
-                # Exit in first match which is the newest file as we are backwards iterating
-                break
-
-        return fileToUse

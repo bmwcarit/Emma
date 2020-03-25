@@ -52,6 +52,7 @@ class Configuration:
         sc().info("Imported " + str(len(self.globalConfig)) + " global config entries:" + str(list(self.globalConfig.keys())))
 
         # Processing the generic configuration parts for all the configId
+        configIDsToRemove = []
         for configId in self.globalConfig:
             # Processing the addressSpaces*.json
             if "addressSpacesPath" in self.globalConfig[configId]:
@@ -77,11 +78,14 @@ class Configuration:
                 self.specificConfigurations[configId].readConfiguration(configurationPath, mapfilesPathForThisConfigId, configId, self.globalConfig[configId])
                 # Validating the the configuration
                 if not self.specificConfigurations[configId].checkConfiguration(configId, self.globalConfig[configId]):
-                    sc().warning("The specificConfiguration object of the configId \"" +
-                                 configId + "\" reported that the configuration is invalid!\n" +
-                                 "The configId \"" + configId + "\" will not be analysed!")
+                    sc().warning("The specificConfiguration of the configId \"" + configId + "\" is invalid!\n" + "The configId \"" + configId + "\" will not be analysed!")
+                    configIDsToRemove.append(configId)
             else:
                 sc().error("The configuration of the configID \"" + configId + "\" does not contain a \"compiler\" key!")
+
+        # Remove unwanted configIDs
+        for configId in configIDsToRemove:
+            self.globalConfig.pop(configId, None)
 
     @staticmethod
     def __readGlobalConfigJson(path):
@@ -126,7 +130,7 @@ class Configuration:
             for memoryToIgnore in addressSpaces[IGNORE_MEMORY]:
                 if addressSpaces["memory"][memoryToIgnore]:
                     addressSpaces["memory"].pop(memoryToIgnore)
-                    sc().info("The memory entry \"" + memoryToIgnore + "\" of the \"" + path + "\" is marked to be ignored...")
+                    sc().debug("Memory entry \"" + memoryToIgnore + "\" defined in \"" + path + "\" is marked to be ignored...")
                 else:
                     sc().error("The key " + memoryToIgnore + " which is in the ignore list, does not exist in the memory object of " + path)
 

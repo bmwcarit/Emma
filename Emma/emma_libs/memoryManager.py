@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 import os
 
 from pypiscout.SCout_Logger import Logger as sc
-import graphviz
+# import graphviz
 
 from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import Emma.shared_libs.emma_helper
@@ -41,7 +41,7 @@ class MemoryManager:
         """
         Settings that influence the operation of the MemoryManager object.
         """
-        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt):
+        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap):
             self.projectName = projectName
             self.configurationPath = configurationPath
             self.mapfilesPath = mapfilesPath
@@ -50,13 +50,14 @@ class MemoryManager:
             self.createCategories = createCategories
             self.removeUnmatched = removeUnmatched
             self.noPrompt = noPrompt
+            self.noResolveOverlap = noResolveOverlap
 
-    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt):
+    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap):
         # pylint: disable=too-many-arguments
         # Rationale: We need to initialize the Settings, so the number of arguments are needed.
 
         # Processing the command line arguments and storing it into the settings member
-        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt)
+        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap)
         # Check whether the configuration and the mapfiles folders exist
         Emma.shared_libs.emma_helper.checkIfFolderExists(self.settings.mapfilesPath)
         self.configuration = None                   # The configuration is empty at this moment, it can be read in with another method
@@ -87,15 +88,13 @@ class MemoryManager:
         A method to process the mapfiles.
         :return: None
         """
-        # If the configuration was already loaded
+        # Check if the configuration loaded
         if self.configuration is not None:
-
             # We will create an empty memory content that will be filled now
             self.memoryContent = {}
 
             # Processing the mapfiles for every configId
             for configId in self.configuration.globalConfig:
-
                 # Creating the configId in the memory content
                 self.memoryContent[configId] = {}
 
@@ -114,17 +113,24 @@ class MemoryManager:
                 # Updating the categorisation files from the categorisation keywords and remove the unmatched one based on the settings
                 self.categorisation.manageCategoriesFiles(self.settings.createCategories, self.settings.removeUnmatched, sectionCollection, objectCollection)
 
-                # Resolving the duplicate, containment and Overlap in the consumerCollections
-                Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(sectionCollection, Emma.emma_libs.memoryEntry.SectionEntry)
-                Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(objectCollection, Emma.emma_libs.memoryEntry.ObjectEntry)
+                # Do not resolve duplicate, containment and overlap when createCategories is active
+                if not self.settings.createCategories:
+                    # Resolving the duplicate, containment and overlap in the consumerCollections
+                    if not self.settings.noResolveOverlap:
+                        sc().info("Resolving section overlaps. This may take some time...")
+                        Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(sectionCollection, Emma.emma_libs.memoryEntry.SectionEntry)
+                        sc().info("Resolving object overlaps. This may take some time...")
+                        Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(objectCollection, Emma.emma_libs.memoryEntry.ObjectEntry)
 
-                # Storing the consumer collections
-                self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY] = sectionCollection
-                self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY] = objectCollection
+                    # Storing the consumer collections
+                    self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY] = sectionCollection
+                    self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY] = objectCollection
 
-                # Creating a common consumerCollection
-                self.memoryContent[configId][FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = Emma.emma_libs.memoryMap.calculateObjectsInSections(self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY],
-                                                                                                                                   self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY])
+                    # Creating a common consumerCollection
+                    sc().info("Calculating objects in sections. This may take some time...")
+                    self.memoryContent[configId][FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = Emma.emma_libs.memoryMap.calculateObjectsInSections(self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY], self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY])
+                else:
+                    pass
         else:
             sc().error("The configuration needs to be loaded before processing the mapfiles!")
 
@@ -149,7 +155,6 @@ class MemoryManager:
                     consumerCollections[collectionType].extend(self.memoryContent[configId][collectionType])
             return consumerCollections
 
-
         def createStandardReports():
             """
             Create Section, Object and ObjectsInSections reports
@@ -159,7 +164,7 @@ class MemoryManager:
 
             # Creating reports from the consumer collections
             for collectionType in consumerCollections:
-                reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType)
+                reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType, "csv")
                 Emma.emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
                 sc().info("A report was stored:", os.path.abspath(reportPath))
 
@@ -180,28 +185,36 @@ class MemoryManager:
         #
         #     print(graph.source)
 
-        # def createTeamScaleReports():
-        #     consumerCollections = consumerCollections2GlobalList()
-        #     resultsLst = []
-        #
-        #     # Creating reports from the consumer collections
-        #     for memEntryRow in consumerCollections["Section_Summary"]:
-        #         fqn = memEntryRow.getFQN(sep="/")
-        #         size = Emma.shared_libs.emma_helper.toHumanReadable(memEntryRow.addressLength) if (memEntryRow.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else ""
-        #         # resultsLst.append({"path": fqn, "count": size})
-        #         resultsLst.append({"path": fqn, "count": memEntryRow.addressLength})
-        #     for memEntryRow in consumerCollections["Object_Summary"]:
-        #         fqn = memEntryRow.getFQN(sep="/")
-        #         size = Emma.shared_libs.emma_helper.toHumanReadable(memEntryRow.addressLength) if (memEntryRow.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else ""
-        #         # resultsLst.append({"path": fqn, "count": size})
-        #         resultsLst.append({"path": fqn, "count": memEntryRow.addressLength})
-        #
-        #     Emma.shared_libs.emma_helper.writeJson("testTeamScaleJSON.json", resultsLst)
+        def createTeamScaleReports():
+            """
+            Write JSON output that can be imported in TeamScale
+            :return: None
+            """
+            consumerCollections = consumerCollections2GlobalList()
+            resultsLst = []
+
+            def _createTeamScalePath(memEntryRow):
+                """
+                Return TeamScale path in the format configID::memType::category::section::object
+                :param memEntryRow:
+                :return: [str] TeamScale path 
+                """
+                sep = "::"
+                r = memEntryRow
+                return f"{r.configID}{sep}{r.memType}{sep}{r.category}{sep}{r.sectionName}{sep}{r.objectName}" if r.objectName != "" and r.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and r.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{r.configID}{sep}{r.memType}{sep}{r.category}{sep}{r.sectionName}"
+
+            # Creating reports from the consumer collections
+            for memEntryRow in consumerCollections["Section_Summary"]:
+                resultsLst.append({"path": _createTeamScalePath(memEntryRow), "count": memEntryRow.addressLength})
+            for memEntryRow in consumerCollections["Object_Summary"]:
+                resultsLst.append({"path": _createTeamScalePath(memEntryRow), "count": memEntryRow.addressLength})
+            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, TEAMSCALE_PREFIX, "json")
+            Emma.shared_libs.emma_helper.writeJson(reportPath, resultsLst)
 
         if self.memoryContent is not None:
             # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separted string) (MSc)
             createStandardReports()
             # createDotReports()
-            # createTeamScaleReports()
+            createTeamScaleReports()
         else:
             sc().error("The mapfiles need to be processed before creating the reports!")

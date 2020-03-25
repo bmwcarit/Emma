@@ -37,7 +37,7 @@ def main(arguments):
     :return: None
     """
     # Setup SCout
-    sc(invVerbosity=-1, actionWarning=(lambda: sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda: sys.exit(-10))
+    sc(invVerbosity=arguments.verbosity, actionWarning=(lambda: sys.exit(-10) if arguments.Werror is not None else None), actionError=lambda: sys.exit(-10))
 
     sc().header("Emma Memory and Mapfile Analyser", symbol="/")
 
@@ -48,7 +48,10 @@ def main(arguments):
     memoryManager = Emma.emma_libs.memoryManager.MemoryManager(*processArguments(arguments))
     memoryManager.readConfiguration()
     memoryManager.processMapfiles()
-    memoryManager.createReports()
+    if memoryManager.settings.createCategories:
+        sc().info("No results were generated since categorisation option is active.")
+    else:
+        memoryManager.createReports()
 
     # Stop and display time measurement
     TIME_END = timeit.default_timer()
@@ -77,7 +80,6 @@ def initParser():
     parser.add_argument(
         "--verbosity",
         "-v",
-        action='count',
         default=0,
         help="Adjust verbosity of console output. DECREASE verbosity by adding more `v`s"
     )
@@ -133,6 +135,12 @@ def initParser():
         action="store_true",
         default=False
     )
+    parser.add_argument(
+        "--noResolveOverlap",
+        help="Do not resolve overlaps in summaries (mostly useful for debugging the Emma configuration; ObjectsInSections will be untouched from this flag)",
+        action="store_true",
+        default=False
+    )
     return parser
 
 
@@ -171,8 +179,10 @@ def processArguments(arguments):
     createCategories = arguments.create_categories
     removeUnmatched = arguments.remove_unmatched
     noPrompt = arguments.noprompt
+    noResolveOverlap = arguments.noResolveOverlap
+    # TODO: It would be more convenient if arguments which are not modified are passed without manually modifying the code (MSc)
 
-    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt
+    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap
 
 
 def runEmma():

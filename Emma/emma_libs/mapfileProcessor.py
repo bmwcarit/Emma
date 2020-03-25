@@ -70,8 +70,7 @@ class MapfileProcessor(abc.ABC):
             :return: None
             """
             objectName = ("::" + memEntry.objectName) if hasattr(memEntry, "module") else ""
-            loggerLevel(f"Element: {memEntry.configID}::{memEntry.mapfile}::{memEntry.sectionName}" + ("::"  + memEntry.objectName if memEntry.objectName != "" else "")
-                        + f" `(size: " + str(memEntry.addressLength) + f" B, starts @{memEntry.addressStartHex()}) was removed. Reason: " + reason)
+            loggerLevel(f"Removed {memEntry.getFQN()} (@ {memEntry.addressStartHex()}, length {memEntry.addressLength}). Reason: " + reason)
 
         def isElementMarkedAsExcluded(excludedMemoryRegionsFromMapfiles, memEntry):
             """
@@ -104,7 +103,7 @@ class MapfileProcessor(abc.ABC):
                         # Then we store the memoryRegion data in the element
                         element.memTypeTag = memoryRegion
                         element.memType = memoryCandidates[memoryRegion]["type"]
-                        # If this region is not excluded for the mapfile the element belongs to then we will keep it
+                        # If this region (-> tag) is not excluded for the mapfile the element belongs to then we will keep it
                         if not isElementMarkedAsExcluded(memoryRegionsToExcludeFromMapfiles, element):
                             listOfElementsToKeep.append(element)
                         else:
@@ -119,6 +118,6 @@ class MapfileProcessor(abc.ABC):
                     listOfElementsToKeep.append(element)
                 # If we have to remove it, then we will print a report
                 else:
-                    printElementRemovalMessage(element, sc().warning, "It does not belong to any of the memory regions!")
+                    printElementRemovalMessage(element, sc().warning, "It does not belong to any memory region!")
         # Overwriting the content of the list of memory entry objects with the elements that we will keep
         listOfMemEntryObjects[:] = listOfElementsToKeep

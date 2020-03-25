@@ -43,6 +43,19 @@ pip3 install pypiemma
 
 Dependencies: Python 3.6 or higher; `pip3 install Pygments Markdown matplotlib pandas pypiscout`
 
+<details closed>
+<summary>Optional: Cython</summary>
+For bigger projects escpecially the number of objects will grow. We provide an optional Cython implementation which can speed-up your analysis (you will gain typically about **30 % speed-up**).
+
+For now we do not provide the binaries with Emma, hence you have to compile (make sure a suitable compiler is installed) it yourself (don't worry it is quick and easy):
+
+Install the `Cython` package (`pip install Cython`) and (in the Emma top level folder) execute (MSVC is recommended on Windows):
+
+```
+python setup.py build_ext --inplace --compiler=msvc
+```
+</details>
+
 
 ## General Workflow
 The following figure shows a possible workflow using Emma:
@@ -155,7 +168,7 @@ emma-dev (. at) googlegroups.com
 | SCout (v1.8+)        | [pypiscout](https://pypi.org/project/pypiscout/)    | MIT                                  | [https://github.com/holzkohlengrill/SCout](https://github.com/holzkohlengrill/SCout)                                                                                                         |
 
 
-**Dependencies needed to generate documentation:**
+**Optional dependencies:**
 
 Utility scripts in `./doc/` need additional dependencies. As a normal user you can ignore this.
 
@@ -163,12 +176,13 @@ Utility scripts in `./doc/` need additional dependencies. As a normal user you c
 |--------------------------|-----------------------------------------------------|--------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
 | gprof2dot (v2017.9.19+)  | [gprof2dot](https://pypi.org/project/gprof2dot/)    | LGPL-3.0                             | [https://github.com/jrfonseca/gprof2dot](https://github.com/jrfonseca/gprof2dot)                                                                   |
 | pylint (v2.3.1+)         | [pylint](https://pypi.org/project/pylint/)          | GPL-2.0                              | [https://github.com/PyCQA/pylint](https://github.com/PyCQA/pylint)                                                                                 |
+| Cython (v0.29.13+)       | [Cython](https://pypi.org/project/Cython/)          | Apache-2.0                           | [https://cython.org/](https://cython.org/)                                                                                                         |
 
 Please refer to the [gprof2dot project site](https://github.com/jrfonseca/gprof2dot) and install **its dependencies (this has to be done even if you install Emma via pip)**.
 
 Note that those modules are invoked via subprocess calls within the ./genDoc/ scripts.
 
-**Dependencies used for documentation on GitHub pages (separate, independent branch `gh-pages`):**
+**Dependencies used to generate documentation for GitHub pages (separate, independent branch `gh-pages`):**
 
 Utility scripts used to build GitHub pages documentation. As a normal user you can ignore this.
 

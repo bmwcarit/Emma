@@ -73,7 +73,7 @@ class MemEntry:
         elif addressLength is not None and addressEnd is None:
             self.setAddressesGivenLength(addressLength)
         else:
-            sc().warning("MemEntry: addressLength AND addressEnd were both given. The addressLength will be used.")
+            sc().wwarning("MemEntry: addressLength AND addressEnd were both given. The addressLength will be used.")
             self.setAddressesGivenLength(addressLength)
 
         self.sectionName = sectionName
@@ -215,13 +215,15 @@ class MemEntry:
             result = addressStart + addressLength - 1
 
         return result
+
     def getFQN(self, sep="::"):
         """
         Creates a fully qualified name (FQN) based on row attributes (length vary if it is an object or section)
         :param sep: [string]="::" separator in FQN
         :return: [string] FQN
         """
-        return self.configID + sep + self.mapfile + sep + self.sectionName + (sep + self.objectName if self.objectName != "" and self.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and self.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else "")
+        # This is used inline in memoryMap.py::resolveDuplicateContainmentOverlap()
+        return f"{self.configID}{sep}{self.mapfile}{sep}{self.sectionName}{sep}{self.objectName}" if self.objectName != "" and self.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and self.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{self.configID}{sep}{self.mapfile}{sep}{self.sectionName}"
 
 
 class MemEntryHandler(abc.ABC):
@@ -231,7 +233,7 @@ class MemEntryHandler(abc.ABC):
     def __eq__(self, other):
         raise NotImplementedError("This member shall not be used, use the isEqual() instead!")
 
-    @staticmethod
+    # FIXME: Removed @staticmethod due to Cython bug (MSc)
     @abc.abstractmethod
     def isEqual(first, second):
         """
@@ -241,7 +243,7 @@ class MemEntryHandler(abc.ABC):
         :return: True if the first and second objects are equal, false otherwise.
         """
 
-    @staticmethod
+    # FIXME: Removed @staticmethod due to Cython bug (MSc)
     @abc.abstractmethod
     def getName(memEntry):
         """

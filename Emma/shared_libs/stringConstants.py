@@ -76,6 +76,7 @@ SIZE_HUMAN_READABLE = "sizeHumanReadable"
 MEM_TYPE_TAG = "tag"
 TIMESTAMP = "timestamp"
 TOTAL_USED_PERCENT = "Total used [%]"
+TEAMSCALE_PREFIX = "TeamScaleJSON"
 UNIQUE_PATTERN_SECTIONS = "UniquePatternSections"
 UNIQUE_PATTERN_OBJECTS = "UniquePatternObjects"
 USED_BYTE = "Used [Byte]"
@@ -96,6 +97,7 @@ SUPPLEMENT = "supplement"
 UNKNOWN_MEM_REGION = "<Emma_UnknownMemRegion>"
 UNKNOWN_MEM_TYPE = "<Emma_UnknownMemType>"
 UNKNOWN_CATEGORY = "<Emma_UnknownCategory>"
+UNKNOWN_ENTRY_NAME = "<Emma_UnknownName>"
 
 # The HTML Template that will be used during the conversion of .md files to .html
 # The CSS in the header has two parts:
