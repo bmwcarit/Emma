@@ -29,7 +29,7 @@ import Emma.emma_libs.configuration
 import Emma.emma_libs.mapfileProcessorFactory
 import Emma.emma_libs.memoryMap
 import Emma.emma_libs.categorisation
-
+# import svgwrite
 
 class MemoryManager:
     """
@@ -95,6 +95,7 @@ class MemoryManager:
 
             # Processing the mapfiles for every configId
             for configId in self.configuration.globalConfig:
+                print(configId)
                 # Creating the configId in the memory content
                 self.memoryContent[configId] = {}
 
@@ -114,13 +115,14 @@ class MemoryManager:
                 self.categorisation.manageCategoriesFiles(self.settings.createCategories, self.settings.removeUnmatched, sectionCollection, objectCollection)
 
                 # Do not resolve duplicate, containment and overlap when createCategories is active
+
                 if not self.settings.createCategories:
                     # Resolving the duplicate, containment and overlap in the consumerCollections
                     if not self.settings.noResolveOverlap:
                         sc().info("Resolving section overlaps. This may take some time...")
-                        Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(sectionCollection, Emma.emma_libs.memoryEntry.SectionEntry)
+                        Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(sectionCollection)
                         sc().info("Resolving object overlaps. This may take some time...")
-                        Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(objectCollection, Emma.emma_libs.memoryEntry.ObjectEntry)
+                        Emma.emma_libs.memoryMap.resolveDuplicateContainmentOverlap(objectCollection)
 
                     # Storing the consumer collections
                     self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY] = sectionCollection
@@ -133,6 +135,9 @@ class MemoryManager:
                     pass
         else:
             sc().error("The configuration needs to be loaded before processing the mapfiles!")
+
+
+
 
     def createReports(self):
         """
@@ -197,11 +202,11 @@ class MemoryManager:
                 """
                 Return TeamScale path in the format configID::memType::category::section::object
                 :param memEntryRow:
-                :return: [str] TeamScale path 
+                :return: [str] TeamScale path
                 """
                 sep = "::"
-                r = memEntryRow
-                return f"{r.configID}{sep}{r.memType}{sep}{r.category}{sep}{r.sectionName}{sep}{r.objectName}" if r.objectName != "" and r.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and r.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{r.configID}{sep}{r.memType}{sep}{r.category}{sep}{r.sectionName}"
+                row = memEntryRow
+                return f"{row.configID}{sep}{row.memType}{sep}{row.category}{sep}{row.sectionName}{sep}{row.objectName}" if row.objectName != "" and row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and row.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{row.configID}{sep}{row.memType}{sep}{row.category}{sep}{row.sectionName}"
 
             # Creating reports from the consumer collections
             for memEntryRow in consumerCollections["Section_Summary"]:
@@ -216,5 +221,7 @@ class MemoryManager:
             createStandardReports()
             # createDotReports()
             createTeamScaleReports()
+       #     createGraphics()
+            # TODO: visualisation with svgwrite (DP)
         else:
             sc().error("The mapfiles need to be processed before creating the reports!")

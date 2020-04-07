@@ -32,7 +32,7 @@ import Emma.shared_libs.emma_helper
 TIMESTAMP = datetime.datetime.now().strftime("%Y-%m-%d-%Hh%Ms%S")
 
 
-def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
+def resolveDuplicateContainmentOverlap(consumerCollection):
     # pylint: disable=too-many-nested-blocks, too-many-branches
     # Rationale: Because of the complexity of the task this function implements, reducing the number of nested blocks and branches is not possible.
     """
@@ -49,59 +49,64 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
     :return: None
     """
     for actualElementIndex, actualElement in enumerate(consumerCollection):
-        for otherElementIndex, otherElement in enumerate(consumerCollection):
-            # Don't compare element with itself and only compare the same configID
-            if actualElementIndex != otherElementIndex:
-
-                # Case 0: actualElement and otherElement are completely separated
-                # Case 0.0: The actualElement begins after the otherElement
-                if (actualElement.addressStart + actualElement.addressLength) <= otherElement.addressStart:
-                    break
-                # Case 0.1: The actualElement begins after the otherElement The otherElement begins only AFTER the actualElement
-                if actualElement.addressStart >= (otherElement.addressStart + otherElement.addressLength):
-                    pass
+        listOfDuplicates = []
+        duplicateCount = 0
+        actualElementaddressEnd = actualElement.addressStart + actualElement.addressLength
+        for otherElement in consumerCollection[actualElementIndex + 1:]:            # Compare only elements that go after the actual element
+            # Case 0: actualElement and otherElement are completely separated
+            # Case 0.0: The other element begins after the actual element
+            otherElementaddressEnd = otherElement.addressStart + otherElement.addressLength
+            if otherElement.addressStart >= actualElementaddressEnd:
+                break
+            # Case 0.1: the actual element begins after the other element
+            if actualElement.addressStart >= otherElementaddressEnd:
+                pass
+            else:
+                # Case 1: actualElement and otherElement are duplicates
+                if actualElement.addressStart == otherElement.addressStart and actualElement.addressLength == otherElement.addressLength:
+                    if actualElement.duplicateFlag is None:
+                        duplicateCount += 1
+                        # TODO: check if FQN already in the list (DP)
+                        # Inlining .getFQN() brings additional speed-up
+                        listOfDuplicates.append(f"{actualElement.configID}::{actualElement.mapfile}::{actualElement.sectionName}::{actualElement.objectName}" if actualElement.objectName != "" and actualElement.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and actualElement.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{actualElement.configID}::{actualElement.mapfile}::{actualElement.sectionName}")
+                    listOfDuplicates.append(f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}::{otherElement.objectName}" if otherElement.objectName != "" and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}")
+                    otherElement.addressLength = 0
                 else:
-                    # Case 1: actualElement and otherElement are duplicates
-                    if actualElement.addressStart == otherElement.addressStart and actualElement.addressLength == otherElement.addressLength:
-                        # Setting the actualElement´s duplicateFlag if it was not already set
-                        if actualElement.duplicateFlag is None:
-                            # Inlining .getFQN() brings additional speed-up
-                            actualElement.duplicateFlag = f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}::{otherElement.objectName}" if otherElement.objectName != "" and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}"
-                        # Setting the actualElement to zero addressLength if this was not the first element of the duplicates
-                        # This is needed to include only one of the duplicate elements with the real size in the report and not to distort the results
-                        if otherElement.duplicateFlag is not None:
-                            actualElement.addressLength = 0
+                    # Case 2: actualElement contains otherElement
+                    if actualElement.addressStart <= otherElement.addressStart and actualElementaddressEnd >= otherElementaddressEnd:
+                        actualElement.containingOthersFlag = True
+                        if otherElement.containmentFlag is None:
+                            otherElement.containmentFlag = f"{actualElement.configID}::{actualElement.mapfile}::{actualElement.sectionName}::{actualElement.objectName}" if actualElement.objectName != "" and actualElement.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY \
+                                       and actualElement.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE \
+                                    else f"{actualElement.configID}::{actualElement.mapfile}::{actualElement.sectionName}"
+                            otherElement.addressLength = 0
+                    # Case 3: actualElement is contained
+                    elif actualElement.addressStart >= otherElement.addressStart and actualElementaddressEnd <= otherElementaddressEnd:
+                        otherElement.containingOthersFlag = True
+                        actualElement.containmentFlag = f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}::{otherElement.objectName}" \
+                                    if otherElement.objectName != "" and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY \
+                                       and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE \
+                                    else f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}"
+                        actualElement.addressLength = 0
                     else:
-                        # Case 2: actualElement contains otherElement
-                        if actualElement.addressStart <= otherElement.addressStart and (actualElement.addressStart + actualElement.addressLength) >= (otherElement.addressStart + otherElement.addressLength):
-                            actualElement.containingOthersFlag = True
+                        # Case 4: actual element overlaps other element
+                        if actualElementaddressEnd < otherElementaddressEnd:
+                            actualElement.overlappingOthersFlag = True
+                            otherElement.overlapFlag = f"{actualElement.configID}::{actualElement.mapfile}::{actualElement.sectionName}::{actualElement.objectName}" if actualElement.objectName != "" and actualElement.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and actualElement.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{actualElement.configID}::{actualElement.mapfile}::{actualElement.sectionName}"
+                            newAddressStart = actualElementaddressEnd
+                            sizeOfOverlappingPart = newAddressStart - otherElement.addressStart
+                            otherElement.addressStart = newAddressStart
+                            otherElement.addressLength -= sizeOfOverlappingPart
+
+                            # Case X: SW error, unhandled case...
                         else:
-                            # Case 3: actualElement is contained by otherElement
-                            if actualElement.addressStart >= otherElement.addressStart and (actualElement.addressStart + actualElement.addressLength) <= (otherElement.addressStart + otherElement.addressLength):
-                                # Setting the actualElement´s containmentFlag if it was not already set
-                                if actualElement.containmentFlag is None:
-                                    # Inlining .getFQN() brings additional speed-up
-                                    actualElement.containmentFlag = f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}::{otherElement.objectName}" if otherElement.objectName != "" and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}"
-                                    # Setting the actualElement to zero addressLength because this was contained by the otherElement
-                                    # This is needed to include only one of these elements with the real size in the report and not to distort the results
-                                    actualElement.addressLength = 0
-                            else:
-                                # Case 4: actualElement overlaps otherElement: otherElement starts inside and ends outside actualElement
-                                if actualElement.addressStart < otherElement.addressStart and (actualElement.addressStart + actualElement.addressLength) < (otherElement.addressStart + otherElement.addressLength):
-                                    actualElement.overlappingOthersFlag = True
-                                else:
-                                    # Case 5: actualElement is overlapped by otherElement: otherElement starts before and ends inside actualElement
-                                    if actualElement.addressStart > otherElement.addressStart and (actualElement.addressStart + actualElement.addressLength) > (otherElement.addressStart + otherElement.addressLength):
-                                        # Inlining .getFQN() brings additional speed-up
-                                        actualElement.overlapFlag =  f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}::{otherElement.objectName}" if otherElement.objectName != "" and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}"
-                                        # Adjusting the addresses and length of the actualElement: reducing its size by the overlapping part
-                                        newAddressStart = otherElement.addressStart + otherElement.addressLength
-                                        sizeOfOverlappingPart = newAddressStart - actualElement.addressStart
-                                        actualElement.addressStart = newAddressStart
-                                        actualElement.addressLength -= sizeOfOverlappingPart
-                                    # Case X: SW error, unhandled case...
-                                    else:
-                                        sc().error("MemoryManager::resolveOverlap(): Case X: SW error, unhandled case...")
+                            sc().error("MemoryManager::resolveOverlap(): Case X: SW error, unhandled case...")
+        if len(listOfDuplicates) > 0:
+            actualElement.duplicateFlag = "\n".join(listOfDuplicates)
+            while duplicateCount != 0:
+                consumerCollection[actualElementIndex + duplicateCount].duplicateFlag = "\n".join(
+                    listOfDuplicates)
+                duplicateCount = duplicateCount - 1
 
 
 def calculateObjectsInSections(sectionContainer, objectContainer):

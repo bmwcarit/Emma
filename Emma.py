@@ -24,7 +24,9 @@ import Emma.emma_vis
 import Emma.emma_deltas
 import Emma.shared_libs.emma_helper
 from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
-
+import cProfile
+import pstats
+import io
 
 def initParser():
     """
@@ -90,5 +92,14 @@ def main(arguments=""):
                                                                                             # We do not have to check if the LUT entry exists since argparse does that already for us
 
 
+pr = cProfile.Profile()
+pr.enable()
+
 if __name__ == "__main__":
     main()
+pr.disable()
+s = io.StringIO()
+sortby = 'cumulative'
+ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+ps.print_stats()
+#print (s.getvalue())

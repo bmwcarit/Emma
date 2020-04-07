@@ -116,8 +116,11 @@ class MemEntry:
         :param other:  x<other calls x.__lt__(other)
         :return: boolean evaluation
         """
-        # TODO: Do we want to compare the length (shortest first) when address ist the same? (MSc)
-        return self.addressStart < other.addressStart
+        if self.addressStart != other.addressStart:
+            return self.addressStart < other.addressStart
+        else:
+            # Use shorter length if address is the same
+            return self.addressLength < other.addressLength
 
     def addressStartHex(self):
         """
