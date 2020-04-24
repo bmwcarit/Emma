@@ -38,26 +38,25 @@ install:
     # TODO: Separate installs per stage (to speed-up the job) (MSc)
     # General packages
     - sudo apt-get install tree
-    - pip install -U pylint
+    - pip3 install -U pylint
     - sudo apt-get install enchant          # needed for pyenchant
-    - pip install pyenchant                 # needed for pylint spell checking
-    - pip install -U coveralls
-    - pip install codacy-coverage
+    - pip3 install pyenchant                 # needed for pylint spell checking
+    - pip3 install coverage
     # Packages for Emma
-    - pip install -U Pygments Markdown matplotlib pandas pypiscout graphviz
+    - pip3 install -U Pygments Markdown matplotlib pandas pypiscout graphviz
     # Packages for Emma reports + html doc
     - sudo apt-get update
     - sudo apt-get install graphviz
-    - pip install -U gprof2dot
+    - pip3 install -U gprof2dot
     # Install pip deployment packages
-    - pip install --upgrade setuptools
-    - pip install --upgrade wheel
-    - pip install --upgrade twine
+    - pip3 install --upgrade setuptools
+    - pip3 install --upgrade wheel
+    - pip3 install --upgrade twine
     # Install mkdocs packages for GitHub pages deployment
-    - pip install mkdocs
-    - pip install mkdocs-material
+    - pip3 install mkdocs
+    - pip3 install mkdocs-material
     # List installed pip packages
-    - pip list
+    - pip3 list
 
 .emma-testing-script:
     - &emma-tests
@@ -96,9 +95,10 @@ jobs:
           <<: *linux-bionic-3-7
           script:
               - pushd ./tests/unit_tests
-              - coverage run -m unittest -v
-              - coverage report --omit="/home/travis/virtualenv/*","/home/travis/build/bmwcarit/Emma/tests/*"
-              - coverage xml
+              - coverage run --branch -m unittest -v
+              - coverage xml --omit="/home/travis/virtualenv/*","/home/travis/build/bmwcarit/Emma/tests/*" -o ./coverage.xml
+              - coverage report
+              - bash <(wget -q -O - https://coverage.codacy.com/get.sh) report -r ./coverage.xml
               - tree -a -I .git ./
               - popd
 
