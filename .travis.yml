@@ -21,7 +21,6 @@ git:
       os: linux
       dist: bionic
       python: 3.8
-      env: CODE_COV=true                # Only do code coverage once
 
     - &linux-bionic-3-7
       os: linux
