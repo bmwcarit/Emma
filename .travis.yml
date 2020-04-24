@@ -3,11 +3,6 @@
 sudo: true
 language: python
 
-#env:
-#  global:
-#    - LINUX_MAIN_DIST=xenial
-#    - PYTHON_MAIN_VERSION=3.7
-
 git:
     submodules: false
 
@@ -17,20 +12,29 @@ git:
       dist: bionic
       python: nightly
 
-    - &linux-bionic-3-7-dev
+    - &linux-bionic-3-8-dev
       os: linux
       dist: bionic
-      python: 3.7-dev
+      python: 3.8-dev
+
+    - &linux-bionic-3-8
+      os: linux
+      dist: bionic
+      python: 3.8
 
     - &linux-bionic-3-7
       os: linux
-      dist: xenial
+      dist: bionic
       python: 3.7
-      env: CODE_COV=true                # Only do code coverage once
-    - &linux-xenial-3-6
+
+    - &linux-bionic-3-6
       os: linux
-      dist: xenial
-      python: 3.6            # = min required version for Emma
+      dist: bionic
+      python: 3.6                       # = min required version for Emma
+
+    - &linux-reference                  # An alias to the main version we use for coverage, linting, ...
+      <<: *linux-bionic-3-8
+
     # Disabled since travis does not support python on windows
     # - os: windows
 
@@ -38,26 +42,25 @@ install:
     # TODO: Separate installs per stage (to speed-up the job) (MSc)
     # General packages
     - sudo apt-get install tree
-    - pip install -U pylint
-    - sudo apt-get install enchant          # needed for pyenchant
-    - pip install pyenchant                 # needed for pylint spell checking
-    - pip install -U coveralls
-    - pip install codacy-coverage
+    - pip3 install -U pylint
+    - sudo apt-get install enchant      # needed for pyenchant
+    - pip3 install pyenchant            # needed for pylint spell checking
+    - pip3 install coverage
     # Packages for Emma
-    - pip install -U Pygments Markdown matplotlib pandas pypiscout graphviz
+    - pip3 install -U Pygments Markdown matplotlib pandas pypiscout graphviz
     # Packages for Emma reports + html doc
     - sudo apt-get update
     - sudo apt-get install graphviz
-    - pip install -U gprof2dot
+    - pip3 install -U gprof2dot
     # Install pip deployment packages
-    - pip install --upgrade setuptools
-    - pip install --upgrade wheel
-    - pip install --upgrade twine
+    - pip3 install --upgrade setuptools
+    - pip3 install --upgrade wheel
+    - pip3 install --upgrade twine
     # Install mkdocs packages for GitHub pages deployment
-    - pip install mkdocs
-    - pip install mkdocs-material
+    - pip3 install mkdocs
+    - pip3 install mkdocs-material
     # List installed pip packages
-    - pip list
+    - pip3 list
 
 .emma-testing-script:
     - &emma-tests
@@ -69,7 +72,7 @@ install:
         - pushd unit_tests
         - python -m unittest -v
         - popd
-        - popd                   # Get back to the Emma root folder to do a successful deployment
+        - popd                          # Get back to the Emma root folder to do a successful deployment
 
 jobs:
     include:
@@ -77,36 +80,40 @@ jobs:
           <<: *linux-bionic-nightly
           script: *emma-tests
         - stage: testing
-          <<: *linux-bionic-3-7-dev
+          <<: *linux-bionic-3-8-dev
+          script: *emma-tests
+        - stage: testing
+          <<: *linux-bionic-3-8
           script: *emma-tests
         - stage: testing
           <<: *linux-bionic-3-7
           script: *emma-tests
         - stage: testing
-          <<: *linux-xenial-3-6
+          <<: *linux-bionic-3-6
           script: *emma-tests
 
         - stage: linting
-          <<: *linux-bionic-3-7
+          <<: *linux-reference
           script:
               - tree -a -I .git ./
               - find . -type f -name "*.py" -exec pylint -j 0 --exit-zero {} \;
 
         - stage: coverage
-          <<: *linux-bionic-3-7
+          <<: *linux-reference
           script:
               - pushd ./tests/unit_tests
-              - coverage run -m unittest -v
-              - coverage report --omit="/home/travis/virtualenv/*","/home/travis/build/bmwcarit/Emma/tests/*"
-              - coverage xml
+              - coverage run --branch -m unittest -v
+              - coverage xml --omit="/home/travis/virtualenv/*","/home/travis/build/bmwcarit/Emma/tests/*" -o ./coverage.xml
+              - coverage report
+              - bash <(wget -q -O - https://coverage.codacy.com/get.sh) report -r ./coverage.xml
               - tree -a -I .git ./
               - popd
 
         - stage: deployment
-          <<: *linux-bionic-3-7
+          <<: *linux-reference
           script: *emma-deploy
           before_deploy:
-              - mkdocs build --verbose --clean    # Build local version of the docs
+              - mkdocs build --verbose --clean              # Build local version of the docs
           deploy:
               # Deploy mkdocs (GitHub pages)
               - provider: pages
@@ -119,7 +126,7 @@ jobs:
 #                    branch: master
               # Deploy on PyPi database
               - provider: pypi
-#                server: https://test.pypi.org/legacy/       # Activate for testing
+#                server: https://test.pypi.org/legacy/      # Activate for testing
                 user: holzkohlengrill
                 password:
                     secure: deeDX2CmOp9H07QCgRRKAT8QBfHs3ZqE9kvpM1102+eelUWxiIkiuU5ewZXCCbMRumRvSLFUd4SZB+lQYs3svB4AVF2/u5NrcN5H+7Z0nczQeuXzdiZt8DY+lU3J2Va8VYNt5Gdj7wEie42ZqZRsYSZcV6emKUb8IxlxNFlGHe3ZgkTegPu4DlmWPnCLxe978LdKsTa4O/D/270AT0j7tYURTnnt1bNBnZXWHpli61bveAFkuJ5wwPYTh3eUWG02Oe3/ePEJIhErR5AhpQd5Xi4m0CFWh/P9RDvem3ySnU3xP4AK2qP3pGbw+IWnIYlXZAWu7YAuARgguI9yvyCRZlJFbMg3NXpXBUDWovD2A2tw/uxhnd3SR0jM3eCHluA0pSKUd3BHWkvOF0CR0hyLslnHvIX/IrnYLHhECqAqJESjxAYDz1OQY6f7b2INRU98BZkhXIYofch7bCfVXpGi8gR//840FTRP80mlGNB0J3wti8l5eoJTCiXO0mhzfGOQaegNDNlvfwse7rQXtka4GRlaNbQ3sLlkV80PA5bUn0U255lH6eH29kVQQnT0rUs6f2HID8HM6eiqdcKZ0mrVmIRO22dxQQoqOOiFboeLHCX8islvGT96yTubFEqVEnTRa/er+qCJjZUGEIqo9WHJAQEgXSU0MCMRrTLQ6DrMTog=
@@ -133,4 +140,7 @@ jobs:
     # Must be last point at this indentation level below include (see: https://travis-ci.community/t/why-allow-failures-didnt-work-for-this-build/5582/6 or https://github.com/svenfuchs/test-2/blob/dff1020f3a42159465967b9fa1b4d09f933c4da9/.travis.yml)
     allow_failures:
         - python: nightly
+        - python: 3.9-dev
+        - python: 3.8-dev
         - python: 3.7-dev
+        - python: 3.6-dev
