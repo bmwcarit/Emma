@@ -34,7 +34,7 @@ git:
       python: 3.6                       # = min required version for Emma
 
     - &linux-reference                  # An alias to the main version we use for coverage, linting, ...
-      <<: *linux-bionic-3-7
+      <<: *linux-bionic-3-8
 
     # Disabled since travis does not support python on windows
     # - os: windows
