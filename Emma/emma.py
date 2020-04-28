@@ -51,7 +51,7 @@ def main(arguments):
     if memoryManager.settings.createCategories:
         sc().info("No results were generated since categorisation option is active.")
     else:
-        memoryManager.createReports()
+        memoryManager.createReports(arguments.graphics)
 
     # Stop and display time measurement
     TIME_END = timeit.default_timer()
@@ -141,6 +141,14 @@ def initParser():
         action="store_true",
         default=False
     )
+
+    parser.add_argument(
+        '--graphics',
+        '-g',
+        help="plot sections and objects of a specified address area",
+        default=False,
+        action="store_true"
+    )
     return parser
 
 
@@ -180,9 +188,11 @@ def processArguments(arguments):
     removeUnmatched = arguments.remove_unmatched
     noPrompt = arguments.noprompt
     noResolveOverlap = arguments.noResolveOverlap
+    graphics = arguments.graphics
     # TODO: It would be more convenient if arguments which are not modified are passed without manually modifying the code (MSc)
 
-    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap
+    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, \
+           noPrompt, noResolveOverlap, graphics
 
 
 def runEmma():
