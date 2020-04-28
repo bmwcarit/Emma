@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
-
 import os
 
 from pypiscout.SCout_Logger import Logger as sc
@@ -29,12 +28,14 @@ import Emma.emma_libs.configuration
 import Emma.emma_libs.mapfileProcessorFactory
 import Emma.emma_libs.memoryMap
 import Emma.emma_libs.categorisation
+import svgwrite
 
 
 class MemoryManager:
     """
     A class to organize the processing of the configuration and the mapfiles and the storage of the created reports.
     """
+
     class Settings:
         # pylint: disable=too-many-instance-attributes, too-many-arguments, too-few-public-methods
         # Rationale: This class´s only purpose is to store settings, thus having too many members and parameters is not an error.
@@ -62,12 +63,12 @@ class MemoryManager:
         self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale, dryRun)
         # Check whether the configuration and the mapfiles folders exist
         Emma.shared_libs.emma_helper.checkIfFolderExists(self.settings.mapfilesPath)
-        self.configuration = None                   # The configuration is empty at this moment, it can be read in with another method
+        self.configuration = None  # The configuration is empty at this moment, it can be read in with another method
         # memoryContent [dict(list(memEntry))]
         # Each key of this dict represents a configID; dict values are lists of consumerCollections
         # consumerCollection: [list(memEntry)] lists of memEntry's; e.g. a Section_Summary which contains all memEnty objects per configID)
-        self.memoryContent = None                   # The memory content is empty at this moment, it can be loaded with another method
-        self.categorisation = None                  # The categorisation object does not exist yet, it can be created after reading in the configuration
+        self.memoryContent = None  # The memory content is empty at this moment, it can be loaded with another method
+        self.categorisation = None  # The categorisation object does not exist yet, it can be created after reading in the configuration
 
     def readConfiguration(self):
         """
@@ -97,6 +98,7 @@ class MemoryManager:
 
             # Processing the mapfiles for every configId
             for configId in self.configuration.globalConfig:
+                print(configId)
                 # Creating the configId in the memory content
                 self.memoryContent[configId] = {}
 
@@ -107,15 +109,19 @@ class MemoryManager:
                 mapfileProcessor = Emma.emma_libs.mapfileProcessorFactory.createSpecificMapfileProcesor(usedCompiler)
 
                 # Importing the mapfile contents for the configId with the created mapfile processor
-                sectionCollection, objectCollection = mapfileProcessor.processMapfiles(configId, self.configuration.globalConfig[configId], self.settings.analyseDebug)
+                sectionCollection, objectCollection = mapfileProcessor.processMapfiles(configId,
+                                                                                       self.configuration.globalConfig[configId],
+                                                                                       self.settings.analyseDebug)
 
                 # Filling out the categories in the consumerCollections
                 self.categorisation.fillOutCategories(sectionCollection, objectCollection)
 
                 # Updating the categorisation files from the categorisation keywords and remove the unmatched one based on the settings
-                self.categorisation.manageCategoriesFiles(self.settings.createCategories, self.settings.removeUnmatched, sectionCollection, objectCollection)
+                self.categorisation.manageCategoriesFiles(self.settings.createCategories, self.settings.removeUnmatched,
+                                                          sectionCollection, objectCollection)
 
                 # Do not resolve duplicate, containment and overlap when createCategories is active
+
                 if not self.settings.createCategories:
                     # Resolving the duplicate, containment and overlap in the consumerCollections
                     if not self.settings.noResolveOverlap:
@@ -130,7 +136,10 @@ class MemoryManager:
 
                     # Creating a common consumerCollection
                     sc().info("Calculating objects in sections. This may take some time...")
-                    self.memoryContent[configId][FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = Emma.emma_libs.memoryMap.calculateObjectsInSections(self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY], self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY])
+                    self.memoryContent[configId][
+                        FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = Emma.emma_libs.memoryMap.calculateObjectsInSections(
+                        self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY],
+                        self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY])
                 else:
                     pass
         else:
@@ -141,6 +150,7 @@ class MemoryManager:
         Creates the reports
         :return: None
         """
+
         def consumerCollections2GlobalList():
             """
             Concatenate each type of consumerCollection (memoryContent: dict(list(memEntry)) -> consumerCollection: list(list(memEntry)))
@@ -166,7 +176,8 @@ class MemoryManager:
 
             # Creating reports from the consumer collections
             for collectionType in consumerCollections:
-                reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType, "csv")
+                reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath,
+                                                                       self.settings.projectName, collectionType, "csv")
                 Emma.emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
                 sc().info("A report was stored:", os.path.abspath(reportPath))
 
@@ -186,6 +197,96 @@ class MemoryManager:
         #     graph.node('C', 'C', _attributes={'shape': 'triangle'})
         #
         #     print(graph.source)
+        def createGraphics(startPoint, endPoint):
+            """
+            plot sections and objects of a given memory area
+            :param startPoint: beginning of address area
+            :param endPoint: end of address area
+            """
+
+            def draw(image, elementstoPlot, startPoint, y, colour):
+                y1 = y
+                lastSectionPosition = 5
+                biggestEndAddress = 0
+                plottedElements = []
+
+                for index, element in enumerate(elementstoPlot):
+                    xAxeRectStart = element[0] - startPoint
+                    rectLength = element[2] - 1
+                    fontColour = "black"
+                    originalStartAddress = element[0]
+                    if len(str(element[1])) > 11:
+                        y1 = y1 + len(str(element[1])) - 10
+                    if element[0] < startPoint:
+                        xAxeRectStart = 0
+                        rectLength = element[1] - startPoint
+                        originalStartAddress = element[4]
+                        fontColour = "red"
+                    if index == 0:
+                        biggestEndAddress = element[1]
+                    else:
+                        if element[0] <= elementstoPlot[index - 1][0] or element[0] < elementstoPlot[index - 1][1]:
+                            y1 = y1 + 15
+                            plottedElements.append((element[1], y1))
+                            if y1 > lastSectionPosition:
+                                lastSectionPosition = y1
+                            if element[1] > biggestEndAddress:
+                                biggestEndAddress = element[1]
+                        elif element[0] < biggestEndAddress:
+                            for el in plottedElements:
+                                if element[0] < el[0] and y1 <= el[1]:
+                                    y1 = el[1] + 15
+                        else:
+                            y1 = y
+                            biggestEndAddress = element[1]
+                    image.add(image.rect((xAxeRectStart, y1), size=(rectLength, 10), stroke=colour, fill=colour, opacity='0.3'))
+                    if rectLength <= len(element[3]):
+                        image.add(image.text(element[3], insert=(xAxeRectStart, y1 - 1), font_size='2px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
+                        x_axe_start = xAxeRectStart + 1
+                        x_axe_end = element[1] - startPoint - 1
+                        if rectLength < 4:
+                            x_axe_end = element[1] - startPoint + 1
+
+                        image.add(image.text(hex(originalStartAddress), insert=(x_axe_start, y1),
+                                             font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(hex(element[1]), insert=(x_axe_end, y1),
+                                             font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        if y1 > lastSectionPosition:
+                            lastSectionPosition = y1
+                        plottedElements.append((element[1] + len(element[3]), y1))
+                    else:
+                        image.add(image.text(hex(originalStartAddress), insert=(xAxeRectStart + 1, y1), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(hex(element[1]), insert=(element[1] - startPoint - 1, y1), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(element[3], insert=(xAxeRectStart + 5, y1 + 2), font_size='2px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
+                        plottedElements.append((element[1], y1))
+                return lastSectionPosition
+
+            consumerCollections = consumerCollections2GlobalList()
+            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName,
+                                                                   str(hex(startPoint)) + '_' + str(hex(endPoint)), "svg")
+            sectionsToPlot = []
+            objectsToPlot = []
+            for sectionToPlot in consumerCollections["Section_Summary"]:
+                if sectionToPlot.addressLengthOriginal != 0:
+                    if startPoint <= sectionToPlot.addressStartOriginal < endPoint:
+                        sectionsToPlot.append((sectionToPlot.addressStartOriginal, sectionToPlot.addressEndOriginal(), sectionToPlot.addressLengthOriginal, sectionToPlot.getFQN()))
+                    elif sectionToPlot.addressEndOriginal() > startPoint and sectionToPlot.addressStartOriginal < endPoint:
+                        sectionsToPlot.append((0, sectionToPlot.addressEndOriginal(), sectionToPlot.addressLengthOriginal, sectionToPlot.getFQN(), sectionToPlot.addressStartOriginal))
+            for objectToPlot in consumerCollections["Object_Summary"]:
+                if objectToPlot.addressLengthOriginal != 0:
+                    if startPoint <= objectToPlot.addressStartOriginal < endPoint:
+                        objectsToPlot.append((objectToPlot.addressStartOriginal, objectToPlot.addressEndOriginal(),
+                                              objectToPlot.addressLengthOriginal, objectToPlot.getFQN()))
+                    elif objectToPlot.addressEndOriginal() > startPoint and objectToPlot.addressStartOriginal < endPoint:
+                        objectsToPlot.append((0, objectToPlot.addressEndOriginal(),
+                                              objectToPlot.addressLengthOriginal, objectToPlot.getFQN(), objectToPlot.addressStartOriginal))
+
+            image = svgwrite.Drawing(reportPath, size=(endPoint - startPoint, 3000))
+            # plot sections
+            y2 = draw(image, sectionsToPlot, startPoint, 5, "yellow") + 15
+            # plot objects
+            draw(image, objectsToPlot, startPoint, y2, "green")
+            image.save()
 
         def createTeamScaleReports():
             """
@@ -199,18 +300,19 @@ class MemoryManager:
                 """
                 Return TeamScale path in the format configID::memType::category::section::object
                 :param memEntryRow:
-                :return: [str] TeamScale path 
+                :return: [str] TeamScale path
                 """
                 sep = "::"
-                r = memEntryRow
-                return f"{r.configID}{sep}{r.memType}{sep}{r.category}{sep}{r.sectionName}{sep}{r.objectName}" if r.objectName != "" and r.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and r.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{r.configID}{sep}{r.memType}{sep}{r.category}{sep}{r.sectionName}"
+                row = memEntryRow
+                return f"{row.configID}{sep}{row.memType}{sep}{row.category}{sep}{row.sectionName}{sep}{row.objectName}" if row.objectName != "" and row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and row.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{row.configID}{sep}{row.memType}{sep}{row.category}{sep}{row.sectionName}"
 
             # Creating reports from the consumer collections
             for memEntryRow in consumerCollections["Section_Summary"]:
                 resultsLst.append({"path": _createTeamScalePath(memEntryRow), "count": memEntryRow.addressLength})
             for memEntryRow in consumerCollections["Object_Summary"]:
                 resultsLst.append({"path": _createTeamScalePath(memEntryRow), "count": memEntryRow.addressLength})
-            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, TEAMSCALE_PREFIX, "json")
+            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName,
+                                                                   TEAMSCALE_PREFIX, "json")
             Emma.shared_libs.emma_helper.writeJson(reportPath, resultsLst)
 
         if self.memoryContent is not None:
