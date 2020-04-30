@@ -285,20 +285,19 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
         :param markdownFilePath: The path of the Markdown file to which the data will be appended to
         :return: nothing
         """
-        supplementDirPath =Emma.shared_libs.emma_helper.joinPath(self.projectPath, SUPPLEMENT)
+        supplementDirPath = Emma.shared_libs.emma_helper.joinPath(self.projectPath, SUPPLEMENT)
         supplementFiles = []
-
-        with open(markdownFilePath, 'a') as markdown:
-            if os.path.isdir(supplementDirPath):
+        if os.path.isdir(supplementDirPath):
+            with open(markdownFilePath, 'a') as markdown:
                 for supplementRootPath, directories, filesInSupplementDir in os.walk(supplementDirPath):
                     for aSupplementFile in filesInSupplementDir:
-                        aAbsSupplementFilePath =Emma.shared_libs.emma_helper.joinPath(supplementRootPath, aSupplementFile)
+                        aAbsSupplementFilePath = Emma.shared_libs.emma_helper.joinPath(supplementRootPath, aSupplementFile)
                         supplementFiles.append(aAbsSupplementFilePath)
-            else:
-                sc().error(f"Supplement path (`{supplementDirPath}`) is not a directory!")
-            for supplementFile in supplementFiles:
-                try:
-                    with open(supplementFile, "r") as supplement:
-                        markdown.write(supplement.read())
-                except FileNotFoundError:                                                               # This case should hardly appear since the files were found milliseconds before
-                    sc().error(f"The file `{os.path.abspath(supplementFile)}` was not found!")
+                for supplementFile in supplementFiles:
+                    try:
+                        with open(supplementFile, "r") as supplement:
+                            markdown.write(supplement.read())
+                    except FileNotFoundError:                                                               # This case should hardly appear since the files were found milliseconds before
+                        sc().error(f"The file `{os.path.abspath(supplementFile)}` was not found!")
+        else:
+            sc().wwarning(f"The supplement folder does not exist in {self.projectPath}. Supplement files will not attached to the report")
