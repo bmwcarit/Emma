@@ -46,12 +46,23 @@ def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool
     if len(lastModifiedFiles) < 1:
         sc().error("No files in the specified directory:", os.path.abspath(path))
 
+    # check if there is only one file which can be analyzed
+    numberOfFiles = 0
+    for file in lastModifiedFiles:
+        if subStringIdentifier in file:
+            fileToUse = file
+            numberOfFiles += 1
+        if numberOfFiles > 1:
+            break
+    if numberOfFiles == 1:
+        return fileToUse
+
     # Get last modified file (we NOT ONLY need this for the quiet mode)
     # Backwards iterate over file list (so newest file will be first)
+
     for i in range(len(lastModifiedFiles) - 1, -1, -1):
         # Select module/image summary .csv file
         if subStringIdentifier in lastModifiedFiles[i]:
-            fileToUse = lastModifiedFiles[i]
             # Exit in first match which is the newest file as we are backwards iterating
             break
 
