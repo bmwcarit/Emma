@@ -144,8 +144,7 @@ def initParser():
 
     parser.add_argument(
         "--teamscale",
-        '-t',
-        help="create team scale reports",
+        help="Create team scale reports",
         default=False,
         action="store_true",
     )
@@ -188,10 +187,10 @@ def processArguments(arguments):
     removeUnmatched = arguments.remove_unmatched
     noPrompt = arguments.noprompt
     noResolveOverlap = arguments.noResolveOverlap
-    teamScale = arguments.teamscale
+    teamscale = arguments.teamscale
     # TODO: It would be more convenient if arguments which are not modified are passed without manually modifying the code (MSc)
 
-    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale
+    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamscale
 
 
 def runEmma():

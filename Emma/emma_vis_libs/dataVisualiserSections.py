@@ -300,4 +300,4 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
                     except FileNotFoundError:                                                               # This case should hardly appear since the files were found milliseconds before
                         sc().error(f"The file `{os.path.abspath(supplementFile)}` was not found!")
         else:
-            sc().wwarning(f"The supplement folder does not exist in {self.projectPath}. Supplement files will not attached to the report")
+            sc().wwarning(f"A supplement folder does not exist in {self.projectPath}. No supplement files will be attached to the report")
