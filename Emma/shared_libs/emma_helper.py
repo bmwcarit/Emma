@@ -138,7 +138,7 @@ def lastModifiedFilesInDir(path, extension, subStringIdentifier=None):
     """
     :param path: Directory the files are in
     :param extension: Only files with a specified extension are included
-    :param subStringIdentifier: type of files of interest (object_summary, section_summary, objects_in_sections)
+    :param subStringIdentifier: [str] Substring in file names to filter files; If None all files will be considered
     :return: Sorted list of modified files
     """
     result = []
@@ -146,8 +146,11 @@ def lastModifiedFilesInDir(path, extension, subStringIdentifier=None):
         directory = os.listdir(path)
         fileTimestamps = []
         for file in directory:
+            if subStringIdentifier is not None:
+                if subStringIdentifier not in file:
+                    continue
             file = joinPath(path, file)
-            if os.path.isfile(file) and file.endswith(extension) and subStringIdentifier in file:
+            if os.path.isfile(file) and file.endswith(extension):
                 time = os.path.getmtime(file)
                 fileTimestamps.append([time, file])
             # Python sorts always by first element for nested lists; we only need the last element (last change) and only its filename (>> [1])
