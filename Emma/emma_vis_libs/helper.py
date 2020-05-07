@@ -38,26 +38,16 @@ def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool
     :param noprompt: [bool]
     :return: file name to use
     """
-    fileToUse = None
     path = Emma.shared_libs.emma_helper.joinPath(inOutPath, Emma.shared_libs.stringConstants.OUTPUT_DIR)
-    lastModifiedFiles = Emma.shared_libs.emma_helper.lastModifiedFilesInDir(path, ".csv")            # Newest file is last element
-
+    lastModifiedFiles = Emma.shared_libs.emma_helper.lastModifiedFilesInDir(path, ".csv", subStringIdentifier)            # Newest file is last element
+    fileToUse = None
     # Check if no files were found
     if len(lastModifiedFiles) < 1:
         sc().error("No files in the specified directory:", os.path.abspath(path))
-
-    # check if there is only one file which can be analyzed
-    numberOfFiles = 0
-    lastModifiedFiles = sorted(lastModifiedFiles)
-    # Get last modified file (we NOT ONLY need this for the quiet mode)
-    # Backwards iterate over file list (so newest file will be first)
-    for i, file in enumerate(lastModifiedFiles):
-        # Select module/image summary .csv file
-        if subStringIdentifier in lastModifiedFiles[i]:
-            numberOfFiles += 1
-            fileToUse = lastModifiedFiles[i]
-    if numberOfFiles == 1:
-        return fileToUse
+    elif len(lastModifiedFiles) == 1:
+        return lastModifiedFiles[0]
+    else:
+        fileToUse = lastModifiedFiles[-1]
 
     if quiet:
         # Just use the last found file (we did this before)

@@ -134,28 +134,24 @@ def getColourValFromString(inputString):
     return hashedString.hexdigest()[len(hashedString.hexdigest())-6:]      # FIXME: stripping anything except the first 6 characters might fail in some cases >> investigate this further (MSc)
 
 
-def lastModifiedFilesInDir(path, extension):
+def lastModifiedFilesInDir(path, extension, subStringIdentifier=None):
     """
     :param path: Directory the files are in
     :param extension: Only files with a specified extension are included
+    :param subStringIdentifier: type of files of interest (object_summary, section_summary, objects_in_sections)
     :return: Sorted list of modified files
     """
     result = []
-
     if os.path.isdir(path):
         directory = os.listdir(path)
         fileTimestamps = []
-
         for file in directory:
             file = joinPath(path, file)
-
-            if os.path.isfile(file) and file.endswith(extension):
+            if os.path.isfile(file) and file.endswith(extension) and subStringIdentifier in file:
                 time = os.path.getmtime(file)
                 fileTimestamps.append([time, file])
-
-            # python sorts always by first element for nested lists; we only need the last element (last change) and only its filename (>> [1])
+            # Python sorts always by first element for nested lists; we only need the last element (last change) and only its filename (>> [1])
             result = [item[1] for item in sorted(fileTimestamps)]
-
     return result
 
 
