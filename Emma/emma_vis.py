@@ -204,7 +204,7 @@ def main(arguments):
 
     # Init classes for summaries
     sc().info("Analysing", objectsInSectionsFile)
-    consumptionObjectsInSections = Emma.emma_vis_libs.dataVisuayliserMemoryMap.MemoryMap(projectPath=projectDir, fileToUse=objectsInSectionsFile, resultsPath=resultsPath)
+    consumptionObjectsInSections = Emma.emma_vis_libs.dataVisualiserMemoryMap.MemoryMap(projectPath=projectDir, fileToUse=objectsInSectionsFile, resultsPath=resultsPath)
     consumptionObjectsInSections.plotPieChart(plotShow=False)
 
     # Image Summary object
