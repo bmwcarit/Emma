@@ -71,7 +71,7 @@ class EmmaTestProject(unittest.TestCase):
         for _, directories, files in os.walk(self.memStatsFolder):
             # The result folder shall have 0 subdirectories and three summary files
             self.assertEqual(len(directories), 0)
-            self.assertEqual(len(files), 4)
+            self.assertEqual(len(files), 3)
 
         # Setting up the file name related variables
         projectName = "test_project"

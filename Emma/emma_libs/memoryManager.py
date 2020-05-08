@@ -41,7 +41,7 @@ class MemoryManager:
         """
         Settings that influence the operation of the MemoryManager object.
         """
-        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap):
+        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale):
             self.projectName = projectName
             self.configurationPath = configurationPath
             self.mapfilesPath = mapfilesPath
@@ -51,13 +51,14 @@ class MemoryManager:
             self.removeUnmatched = removeUnmatched
             self.noPrompt = noPrompt
             self.noResolveOverlap = noResolveOverlap
+            self.teamScale = teamScale
 
-    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap):
+    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale):
         # pylint: disable=too-many-arguments
         # Rationale: We need to initialize the Settings, so the number of arguments are needed.
 
         # Processing the command line arguments and storing it into the settings member
-        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap)
+        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale)
         # Check whether the configuration and the mapfiles folders exist
         Emma.shared_libs.emma_helper.checkIfFolderExists(self.settings.mapfilesPath)
         self.configuration = None                   # The configuration is empty at this moment, it can be read in with another method
@@ -134,7 +135,7 @@ class MemoryManager:
         else:
             sc().error("The configuration needs to be loaded before processing the mapfiles!")
 
-    def createReports(self):
+    def createReports(self, teamscale=False):
         """
         Creates the reports
         :return: None
@@ -215,6 +216,7 @@ class MemoryManager:
             # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separted string) (MSc)
             createStandardReports()
             # createDotReports()
-            createTeamScaleReports()
+            if teamscale:
+                createTeamScaleReports()
         else:
             sc().error("The mapfiles need to be processed before creating the reports!")

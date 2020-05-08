@@ -203,6 +203,7 @@ def main(arguments):
     Emma.shared_libs.emma_helper.mkDirIfNeeded(resultsPath)
 
     # Init classes for summaries
+    sc().info("Analysing", objectsInSectionsFile)
     consumptionObjectsInSections = Emma.emma_vis_libs.dataVisualiserMemoryMap.MemoryMap(projectPath=projectDir, fileToUse=objectsInSectionsFile, resultsPath=resultsPath)
     consumptionObjectsInSections.plotPieChart(plotShow=False)
 
