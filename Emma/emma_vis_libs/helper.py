@@ -57,12 +57,11 @@ def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool
         pass
     elif not append:
         # If nothing specified AND append mode is OFF ask which file to use
-        pypiscout.SCout.info("Last modified file:")                                                            # Primitive SCout implementation since you must see what is going on if you get prompted
+        pypiscout.SCout.info(f"More than one report for {subStringIdentifier} is present. Last modified file is:")                                                            # Primitive SCout implementation since you must see what is going on if you get prompted
         pypiscout.SCout.info("\t" + fileToUse)
         pypiscout.SCout.info("`y` to accept; otherwise specify an absolute path (without quotes)")
         while True:
             text = input("> ")
-
             if text == "y":
                 break
             if text is not None and text != "" and os.path.isfile(text) and text.endswith(".csv"):
@@ -71,11 +70,6 @@ def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool
             else:
                 pypiscout.SCout.warning("Invalid input.")
 
-        # Check if the fixed file name portions are within the found file name
-        if Emma.shared_libs.stringConstants.FILE_IDENTIFIER_OBJECT_SUMMARY is Emma.shared_libs.emma_helper.evalSummary(lastModifiedFiles[-1]):
-            sc().wwarning("Last modified file is a " + Emma.shared_libs.stringConstants.FILE_IDENTIFIER_OBJECT_SUMMARY + "\n")
-
     if fileToUse is None:
         sc().error("No file containing '" + subStringIdentifier + "' found in " + path)
-
     return fileToUse
