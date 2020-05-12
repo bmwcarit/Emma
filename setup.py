@@ -63,7 +63,8 @@ setuptools.setup(
                       "matplotlib",
                       "pandas",
                       "pypiscout>=2.0",
-                      "graphviz"
+                      "graphviz",
+                      "svgwrite"
                       ],
     extras_require={"dev":                                      # Install dev version via `pip3 install pypiemma[dev]`
                         ["gprof2dot",

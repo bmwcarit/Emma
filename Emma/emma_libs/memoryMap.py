@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
-
 import csv
 import bisect
 import copy
@@ -35,34 +34,38 @@ TIMESTAMP = datetime.datetime.now().strftime("%Y-%m-%d-%Hh%Ms%S")
 def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
     # pylint: disable=too-many-nested-blocks, too-many-branches
     # Rationale: Because of the complexity of the task this function implements, reducing the number of nested blocks and branches is not possible.
-
     """
     Goes trough the consumerCollection and checks  and resolves all the elements for the following situations:
         - Duplicate
         - Containment
         - Overlap
 
-    :param consumerCollection: A list of MemEntry objects. It must be ordered increasingly based on the startAddress attribute of the elements.
-                               The elements of the list will be changed during the processing.
+    :param consumerCollection: A list of MemEntry objects. It must be:
+                                * sorted (ASCENDING) based on the startAddress attribute of the elements,
+                                * only contain elements of ONE configID.
+                                The elements of the list will be changed during the processing.
     :param memEntryHandler: A subclass of the MemEntryHandler class.
     :return: None
     """
-    for actualElement in consumerCollection:
-        for otherElement in consumerCollection:
-
+    for actualElementIndex, actualElement in enumerate(consumerCollection):
+        for otherElementIndex, otherElement in enumerate(consumerCollection):
             # Don't compare element with itself and only compare the same configID
-            if actualElement.equalConfigID(otherElement) and not memEntryHandler.isEqual(actualElement, otherElement):
+            if actualElementIndex != otherElementIndex:
 
-                # Case 0: actualElement and otherElement are completely separated : the otherElement begins only after the actualElement or the actualElement begins only after the otherElement
-                if (actualElement.addressStart + actualElement.addressLength) <= otherElement.addressStart or actualElement.addressStart >= (otherElement.addressStart + otherElement.addressLength):
-                    # There is not much to do here...
+                # Case 0: actualElement and otherElement are completely separated
+                # Case 0.0: The actualElement begins after the otherElement
+                if (actualElement.addressStart + actualElement.addressLength) <= otherElement.addressStart:
+                    break
+                # Case 0.1: The actualElement begins after the otherElement The otherElement begins only AFTER the actualElement
+                if actualElement.addressStart >= (otherElement.addressStart + otherElement.addressLength):
                     pass
                 else:
                     # Case 1: actualElement and otherElement are duplicates
                     if actualElement.addressStart == otherElement.addressStart and actualElement.addressLength == otherElement.addressLength:
                         # Setting the actualElement´s duplicateFlag if it was not already set
                         if actualElement.duplicateFlag is None:
-                            actualElement.duplicateFlag =  otherElement.configID + "::" + otherElement.mapfile + "::"  + otherElement.sectionName + ( "::"  + otherElement.objectName if otherElement.objectName != "" else "")
+                            # Inlining .getFQN() brings additional speed-up
+                            actualElement.duplicateFlag = f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}::{otherElement.objectName}" if otherElement.objectName != "" and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}"
                         # Setting the actualElement to zero addressLength if this was not the first element of the duplicates
                         # This is needed to include only one of the duplicate elements with the real size in the report and not to distort the results
                         if otherElement.duplicateFlag is not None:
@@ -76,7 +79,8 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
                             if actualElement.addressStart >= otherElement.addressStart and (actualElement.addressStart + actualElement.addressLength) <= (otherElement.addressStart + otherElement.addressLength):
                                 # Setting the actualElement´s containmentFlag if it was not already set
                                 if actualElement.containmentFlag is None:
-                                    actualElement.containmentFlag = otherElement.configID + "::" + otherElement.mapfile + "::"  + otherElement.sectionName + ( "::"  + otherElement.objectName if otherElement.objectName != "" else "")
+                                    # Inlining .getFQN() brings additional speed-up
+                                    actualElement.containmentFlag = f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}::{otherElement.objectName}" if otherElement.objectName != "" and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}"
                                     # Setting the actualElement to zero addressLength because this was contained by the otherElement
                                     # This is needed to include only one of these elements with the real size in the report and not to distort the results
                                     actualElement.addressLength = 0
@@ -87,7 +91,8 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
                                 else:
                                     # Case 5: actualElement is overlapped by otherElement: otherElement starts before and ends inside actualElement
                                     if actualElement.addressStart > otherElement.addressStart and (actualElement.addressStart + actualElement.addressLength) > (otherElement.addressStart + otherElement.addressLength):
-                                        actualElement.overlapFlag =  otherElement.configID + "::" + otherElement.mapfile + "::"  + otherElement.sectionName + ( "::"  + otherElement.objectName if otherElement.objectName != "" else "")
+                                        # Inlining .getFQN() brings additional speed-up
+                                        actualElement.overlapFlag =  f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}::{otherElement.objectName}" if otherElement.objectName != "" and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY and otherElement.objectName != OBJECTS_IN_SECTIONS_SECTION_RESERVE else f"{otherElement.configID}::{otherElement.mapfile}::{otherElement.sectionName}"
                                         # Adjusting the addresses and length of the actualElement: reducing its size by the overlapping part
                                         newAddressStart = otherElement.addressStart + otherElement.addressLength
                                         sizeOfOverlappingPart = newAddressStart - actualElement.addressStart
@@ -100,11 +105,11 @@ def resolveDuplicateContainmentOverlap(consumerCollection, memEntryHandler):
 
 def calculateObjectsInSections(sectionContainer, objectContainer):
     """
-    Creating a list of MemEntry objects from two lists of MemEntry objects that are representing the sections and objects.
+    Creates a list of MemEntry objects from the sections and objects (represented by two lists of MemEntry objects).
     These two lists will merged together.
     From sections, new elements will be created:
         - Section entry: A MemEntry object that describes the section but does not use memory space.
-        - Section reserce: A MemEntry object that describes the unused part of a section that was not filled up with objects.
+        - Section reserve: A MemEntry object that describes the unused part of a section that was not filled up with objects.
 
     :param sectionContainer: A list of MemEntry objects. It must be ordered increasingly based on the startAddress attribute of the elements.
                              The overlapping, containing, duplicate sections must be are already edited and the addresses and lengths corrected.
@@ -189,7 +194,7 @@ def calculateObjectsInSections(sectionContainer, objectContainer):
             # S          |--------------|            or:       |-----|
             # O          |--------------|                    |--------|
             #       <= --^              ^-- >=
-            # FIXME: Is the right case valid? (MSc) --------^^^^^^^^^^^^
+            #                                                ^^^^^^^^^^^^---- should normally not appear
             if objectContainerElement.addressStart <= sectionCopy.addressStart and (sectionCopy.addressStart + sectionCopy.addressLength) <= (objectContainerElement.addressStart + objectContainerElement.addressLength):
                 # This object is overlapping the section completely. This means that all the following objects will be
                 # outside the section, so we can continue with the next section.
@@ -265,7 +270,7 @@ def createReportPath(outputPath, projectName, reportName, fileExtension):
     :return: The created path string.
     """
     Emma.shared_libs.emma_helper.mkDirIfNeeded(outputPath)
-    memStatsFileName = projectName + "_" + reportName + "_" + TIMESTAMP + fileExtension
+    memStatsFileName = projectName + "_" + reportName + "_" + TIMESTAMP + "." + fileExtension
     return Emma.shared_libs.emma_helper.joinPath(outputPath, memStatsFileName)
 
 
@@ -291,7 +296,6 @@ def writeReportToDisk(reportPath, consumerCollection):
     :param reportPath: A path of the CSV that needs to be created.
     :param consumerCollection: A list of MemEntry objects.
     """
-
     # Opening the file
     with open(reportPath, "w") as fp:
         # The writer object that will be used for creating the CSV data
@@ -312,13 +316,15 @@ def writeReportToDisk(reportPath, consumerCollection):
 
         # Writing the data lines to the file
         for row in consumerCollection:
+            # Flag for report creation if duplicate, containment or overlap occured
+            duplicateContainmentOverlapHappened = True if any([row.overlapFlag, row.containmentFlag, row.duplicateFlag]) else False
             # Collecting the first part of the static data for the current row
             rowData = [
-                row.addressStartHex() if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
-                row.addressEndHex() if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
-                row.addressLengthHex() if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
-                row.addressStart if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
-                row.addressEnd() if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
+                "" if (row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY or duplicateContainmentOverlapHappened and row.addressLength == 0) else row.addressStartHex(),
+                "" if (row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY or duplicateContainmentOverlapHappened and row.addressLength == 0) else row.addressEndHex(),
+                "" if (row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) else row.addressLengthHex(),
+                "" if (row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY or duplicateContainmentOverlapHappened and row.addressLength == 0) else row.addressStart,
+                "" if (row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY or duplicateContainmentOverlapHappened and row.addressLength == 0) else row.addressEnd(),
                 row.addressLength if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
                 Emma.shared_libs.emma_helper.toHumanReadable(row.addressLength) if (row.objectName != OBJECTS_IN_SECTIONS_SECTION_ENTRY) else "",
                 row.sectionName,
@@ -341,14 +347,14 @@ def writeReportToDisk(reportPath, consumerCollection):
                 row.duplicateFlag,
                 row.containingOthersFlag,
                 # Addresses are modified in case of overlapping so we will post the original values so that the changes can be seen
-                row.addressStartHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or (row.overlapFlag is not None)) else "",
-                row.addressEndHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or (row.overlapFlag is not None)) else "",
+                row.addressStartHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or duplicateContainmentOverlapHappened) else "",
+                row.addressEndHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or duplicateContainmentOverlapHappened) else "",
                 # Lengths are modified in case of overlapping, containment and duplication so we will post the original values so that the changes can be seen
-                row.addressLengthHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or (row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
-                row.addressLengthOriginal if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or (row.overlapFlag is not None) or (row.containmentFlag is not None) or (row.duplicateFlag is not None)) else "",
+                row.addressLengthHexOriginal() if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or duplicateContainmentOverlapHappened) else "",
+                row.addressLengthOriginal if ((row.objectName == OBJECTS_IN_SECTIONS_SECTION_ENTRY) or duplicateContainmentOverlapHappened) else "",
                 # FQN
                 row.getFQN()
             ])
-
             # Writing the data to the file
+
             writer.writerow(rowData)
