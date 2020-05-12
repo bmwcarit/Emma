@@ -17,8 +17,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 import os
+from enum import IntEnum
 
 from pypiscout.SCout_Logger import Logger as sc
+import svgwrite
 # import graphviz
 
 from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
@@ -28,7 +30,18 @@ import Emma.emma_libs.configuration
 import Emma.emma_libs.mapfileProcessorFactory
 import Emma.emma_libs.memoryMap
 import Emma.emma_libs.categorisation
-import svgwrite
+
+
+class Element(IntEnum):
+    AddressStart = 0
+    AddressEnd = 1
+    AddressLength = 2
+    Fqn = 3
+    OriginalAddressStart = 4
+
+class PlottedElement(IntEnum):
+    AddressEnd = 0
+    yAxe = 1
 
 
 class MemoryManager:
@@ -63,12 +76,12 @@ class MemoryManager:
         self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale, dryRun)
         # Check whether the configuration and the mapfiles folders exist
         Emma.shared_libs.emma_helper.checkIfFolderExists(self.settings.mapfilesPath)
-        self.configuration = None  # The configuration is empty at this moment, it can be read in with another method
+        self.configuration = None           # The configuration is empty at this moment, it can be read in with another method
         # memoryContent [dict(list(memEntry))]
         # Each key of this dict represents a configID; dict values are lists of consumerCollections
         # consumerCollection: [list(memEntry)] lists of memEntry's; e.g. a Section_Summary which contains all memEnty objects per configID)
-        self.memoryContent = None  # The memory content is empty at this moment, it can be loaded with another method
-        self.categorisation = None  # The categorisation object does not exist yet, it can be created after reading in the configuration
+        self.memoryContent = None           # The memory content is empty at this moment, it can be loaded with another method
+        self.categorisation = None          # The categorisation object does not exist yet, it can be created after reading in the configuration
 
     def readConfiguration(self):
         """
@@ -98,7 +111,6 @@ class MemoryManager:
 
             # Processing the mapfiles for every configId
             for configId in self.configuration.globalConfig:
-                print(configId)
                 # Creating the configId in the memory content
                 self.memoryContent[configId] = {}
 
@@ -109,19 +121,15 @@ class MemoryManager:
                 mapfileProcessor = Emma.emma_libs.mapfileProcessorFactory.createSpecificMapfileProcesor(usedCompiler)
 
                 # Importing the mapfile contents for the configId with the created mapfile processor
-                sectionCollection, objectCollection = mapfileProcessor.processMapfiles(configId,
-                                                                                       self.configuration.globalConfig[configId],
-                                                                                       self.settings.analyseDebug)
+                sectionCollection, objectCollection = mapfileProcessor.processMapfiles(configId, self.configuration.globalConfig[configId], self.settings.analyseDebug)
 
                 # Filling out the categories in the consumerCollections
                 self.categorisation.fillOutCategories(sectionCollection, objectCollection)
 
                 # Updating the categorisation files from the categorisation keywords and remove the unmatched one based on the settings
-                self.categorisation.manageCategoriesFiles(self.settings.createCategories, self.settings.removeUnmatched,
-                                                          sectionCollection, objectCollection)
+                self.categorisation.manageCategoriesFiles(self.settings.createCategories, self.settings.removeUnmatched, sectionCollection, objectCollection)
 
                 # Do not resolve duplicate, containment and overlap when createCategories is active
-
                 if not self.settings.createCategories:
                     # Resolving the duplicate, containment and overlap in the consumerCollections
                     if not self.settings.noResolveOverlap:
@@ -148,6 +156,8 @@ class MemoryManager:
     def createReports(self, teamscale=False):
         """
         Creates the reports
+        :param image: create svg report if True
+        :param noprompt: no prompt is active if True
         :return: None
         """
 
@@ -176,8 +186,7 @@ class MemoryManager:
 
             # Creating reports from the consumer collections
             for collectionType in consumerCollections:
-                reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath,
-                                                                       self.settings.projectName, collectionType, "csv")
+                reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType, ".csv")
                 Emma.emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
                 sc().info("A report was stored:", os.path.abspath(reportPath))
 
@@ -197,7 +206,7 @@ class MemoryManager:
         #     graph.node('C', 'C', _attributes={'shape': 'triangle'})
         #
         #     print(graph.source)
-        def createGraphics(startPoint, endPoint):
+        def createSvgReport(startPoint, endPoint):
             """
             plot sections and objects of a given memory area
             :param startPoint: beginning of address area
@@ -205,87 +214,81 @@ class MemoryManager:
             """
 
             def draw(image, elementstoPlot, startPoint, y, colour):
-                y1 = y
+                yAxe = y
                 lastSectionPosition = 5
                 biggestEndAddress = 0
                 plottedElements = []
-
+                distanceBetweenElements = 15
                 for index, element in enumerate(elementstoPlot):
-                    xAxeRectStart = element[0] - startPoint
-                    rectLength = element[2] - 1
+                    xAxeRectStart = element[Element.AddressStart] - startPoint
+                    rectLength = element[Element.AddressLength] - 1
+                    originalStartAddress = element[Element.AddressStart]
                     fontColour = "black"
-                    originalStartAddress = element[0]
-                    if len(str(element[1])) > 11:
-                        y1 = y1 + len(str(element[1])) - 10
-                    if element[0] < startPoint:
+                    if len(str(element[Element.AddressEnd])) > 11 or len(str(originalStartAddress)) > 11:          # check if address start / end fits in the rectangle
+                        yAxe = yAxe + len(str(element[Element.AddressEnd])) - 10
+                    if element[Element.AddressStart] < startPoint:
                         xAxeRectStart = 0
-                        rectLength = element[1] - startPoint
-                        originalStartAddress = element[4]
+                        rectLength = element[Element.AddressEnd] - startPoint
+                        originalStartAddress = element[Element.OriginalAddressStart]
                         fontColour = "red"
                     if index == 0:
-                        biggestEndAddress = element[1]
+                        biggestEndAddress = element[Element.AddressEnd]
                     else:
-                        if element[0] <= elementstoPlot[index - 1][0] or element[0] < elementstoPlot[index - 1][1]:
-                            y1 = y1 + 15
-                            plottedElements.append((element[1], y1))
-                            if y1 > lastSectionPosition:
-                                lastSectionPosition = y1
-                            if element[1] > biggestEndAddress:
-                                biggestEndAddress = element[1]
-                        elif element[0] < biggestEndAddress:
+                        # check if the actual element is overlapped by the last element
+                        if element[Element.AddressStart] <= elementstoPlot[index-1][Element.AddressStart] or element[Element.AddressStart] < elementstoPlot[index-1][Element.AddressEnd]:
+                            yAxe = yAxe + distanceBetweenElements
+                            plottedElements.append((element[Element.AddressEnd], yAxe))
+                            if yAxe > lastSectionPosition:
+                                lastSectionPosition = yAxe
+                            if element[Element.AddressEnd] > biggestEndAddress:
+                                biggestEndAddress = element[Element.AddressEnd]
+                        elif element[Element.AddressStart] < biggestEndAddress:
                             for el in plottedElements:
-                                if element[0] < el[0] and y1 <= el[1]:
-                                    y1 = el[1] + 15
+                                if element[Element.AddressStart] < el[PlottedElement.AddressEnd] and yAxe <= el[PlottedElement.yAxe]:
+                                    yAxe = el[PlottedElement.yAxe] + distanceBetweenElements
                         else:
-                            y1 = y
-                            biggestEndAddress = element[1]
-                    image.add(image.rect((xAxeRectStart, y1), size=(rectLength, 10), stroke=colour, fill=colour, opacity='0.3'))
-                    if rectLength <= len(element[3]):
-                        image.add(image.text(element[3], insert=(xAxeRectStart, y1 - 1), font_size='2px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
-                        x_axe_start = xAxeRectStart + 1
-                        x_axe_end = element[1] - startPoint - 1
+                            yAxe = y
+                            biggestEndAddress = element[Element.AddressEnd]
+                    image.add(image.rect((xAxeRectStart, yAxe), size=(rectLength, 10), stroke=colour, fill=colour, opacity='0.3'))
+                    # check if the FQN fits in the rectangle
+                    if rectLength <= len(element[Element.Fqn]):
+                        image.add(image.text(element[Element.Fqn], insert=(xAxeRectStart, yAxe - 1), font_size='2px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
+                        xAxeStart = xAxeRectStart + 1
+                        xAxeEnd = element[Element.AddressEnd] - startPoint - 1
+                        # if the rectangle smaller than 4, then write the end address outside the rectangle
                         if rectLength < 4:
-                            x_axe_end = element[1] - startPoint + 1
-
-                        image.add(image.text(hex(originalStartAddress), insert=(x_axe_start, y1),
-                                             font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        image.add(image.text(hex(element[1]), insert=(x_axe_end, y1),
-                                             font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        if y1 > lastSectionPosition:
-                            lastSectionPosition = y1
-                        plottedElements.append((element[1] + len(element[3]), y1))
+                            xAxeEnd = element[Element.AddressEnd] - startPoint + 1
+                        image.add(image.text(hex(originalStartAddress), insert=(xAxeStart, yAxe), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(hex(element[Element.AddressEnd]), insert=(xAxeEnd, yAxe), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        if yAxe > lastSectionPosition:
+                            lastSectionPosition = yAxe
+                        plottedElements.append((element[Element.AddressEnd] + len(element[Element.Fqn]), yAxe))
                     else:
-                        image.add(image.text(hex(originalStartAddress), insert=(xAxeRectStart + 1, y1), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        image.add(image.text(hex(element[1]), insert=(element[1] - startPoint - 1, y1), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        image.add(image.text(element[3], insert=(xAxeRectStart + 5, y1 + 2), font_size='2px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
-                        plottedElements.append((element[1], y1))
+                        image.add(image.text(hex(originalStartAddress), insert=(xAxeRectStart + 1, yAxe), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(hex(element[Element.AddressEnd]), insert=(element[Element.AddressEnd] - startPoint - 1, yAxe), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(element[Element.Fqn], insert=(xAxeRectStart + 5, yAxe + 2), font_size='2px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
+                        plottedElements.append((element[Element.AddressEnd], yAxe))
                 return lastSectionPosition
 
             consumerCollections = consumerCollections2GlobalList()
-            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName,
-                                                                   str(hex(startPoint)) + '_' + str(hex(endPoint)), "svg")
-            sectionsToPlot = []
-            objectsToPlot = []
-            for sectionToPlot in consumerCollections["Section_Summary"]:
-                if sectionToPlot.addressLengthOriginal != 0:
-                    if startPoint <= sectionToPlot.addressStartOriginal < endPoint:
-                        sectionsToPlot.append((sectionToPlot.addressStartOriginal, sectionToPlot.addressEndOriginal(), sectionToPlot.addressLengthOriginal, sectionToPlot.getFQN()))
-                    elif sectionToPlot.addressEndOriginal() > startPoint and sectionToPlot.addressStartOriginal < endPoint:
-                        sectionsToPlot.append((0, sectionToPlot.addressEndOriginal(), sectionToPlot.addressLengthOriginal, sectionToPlot.getFQN(), sectionToPlot.addressStartOriginal))
-            for objectToPlot in consumerCollections["Object_Summary"]:
-                if objectToPlot.addressLengthOriginal != 0:
-                    if startPoint <= objectToPlot.addressStartOriginal < endPoint:
-                        objectsToPlot.append((objectToPlot.addressStartOriginal, objectToPlot.addressEndOriginal(),
-                                              objectToPlot.addressLengthOriginal, objectToPlot.getFQN()))
-                    elif objectToPlot.addressEndOriginal() > startPoint and objectToPlot.addressStartOriginal < endPoint:
-                        objectsToPlot.append((0, objectToPlot.addressEndOriginal(),
-                                              objectToPlot.addressLengthOriginal, objectToPlot.getFQN(), objectToPlot.addressStartOriginal))
+            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, str(hex(startPoint)) + '_' + str(hex(endPoint)), ".svg")
 
-            image = svgwrite.Drawing(reportPath, size=(endPoint - startPoint, 3000))
+            def getElementsToPlot(ElementName):
+                elementsToPlot = []
+                for elementToPlot in consumerCollections[ElementName]:
+                    if elementToPlot.addressLength != 0:
+                        if startPoint <= elementToPlot.addressStart < endPoint:
+                            elementsToPlot.append((elementToPlot.addressStart, elementToPlot.addressEnd(), elementToPlot.addressLength, elementToPlot.getFQN()))
+                        elif elementToPlot.addressEnd() > startPoint and elementToPlot.addressStart < endPoint:
+                            elementsToPlot.append((0, elementToPlot.addressEnd(), elementToPlot.addressLength, elementToPlot.getFQN(), elementToPlot.addressStart))
+                return elementsToPlot
+
+            imageHeight = 3000      # define some height of the image
+            image = svgwrite.Drawing(reportPath, size=(endPoint - startPoint, imageHeight))
             # plot sections
-            y2 = draw(image, sectionsToPlot, startPoint, 5, "yellow") + 15
+            y2 = draw(image, getElementsToPlot("Section_Summary"), startPoint, 5, "yellow") + 15
             # plot objects
-            draw(image, objectsToPlot, startPoint, y2, "green")
+            draw(image, getElementsToPlot("Object_Summary"), startPoint, y2, "green")
             image.save()
 
         def createTeamScaleReports():
@@ -311,8 +314,7 @@ class MemoryManager:
                 resultsLst.append({"path": _createTeamScalePath(memEntryRow), "count": memEntryRow.addressLength})
             for memEntryRow in consumerCollections["Object_Summary"]:
                 resultsLst.append({"path": _createTeamScalePath(memEntryRow), "count": memEntryRow.addressLength})
-            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName,
-                                                                   TEAMSCALE_PREFIX, "json")
+            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, TEAMSCALE_PREFIX, "json")
             Emma.shared_libs.emma_helper.writeJson(reportPath, resultsLst)
 
         if self.memoryContent is not None:

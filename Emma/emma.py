@@ -141,7 +141,6 @@ def initParser():
         action="store_true",
         default=False
     )
-
     parser.add_argument(
         "--teamscale",
         help="Create team scale reports",
