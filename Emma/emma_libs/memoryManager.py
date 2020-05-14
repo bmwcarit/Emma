@@ -20,6 +20,7 @@ import os
 from enum import IntEnum
 
 from pypiscout.SCout_Logger import Logger as sc
+import pypiscout.SCout
 import svgwrite
 # import graphviz
 
@@ -30,18 +31,6 @@ import Emma.emma_libs.configuration
 import Emma.emma_libs.mapfileProcessorFactory
 import Emma.emma_libs.memoryMap
 import Emma.emma_libs.categorisation
-
-
-class Element(IntEnum):
-    AddressStart = 0
-    AddressEnd = 1
-    AddressLength = 2
-    Fqn = 3
-    OriginalAddressStart = 4
-
-class PlottedElement(IntEnum):
-    AddressEnd = 0
-    yAxe = 1
 
 
 class MemoryManager:
@@ -55,7 +44,7 @@ class MemoryManager:
         """
         Settings that influence the operation of the MemoryManager object.
         """
-        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, svgReport):
+        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, memVis, memVisResolved):
             self.projectName = projectName
             self.configurationPath = configurationPath
             self.mapfilesPath = mapfilesPath
@@ -65,14 +54,15 @@ class MemoryManager:
             self.removeUnmatched = removeUnmatched
             self.noPrompt = noPrompt
             self.noResolveOverlap = noResolveOverlap
-            self.svgReport = svgReport
+            self.memVis = memVis
+            self.memVisResolved = memVisResolved
 
-    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, svgReport):
+    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, memVis, memVisResolved):
         # pylint: disable=too-many-arguments
         # Rationale: We need to initialize the Settings, so the number of arguments are needed.
 
         # Processing the command line arguments and storing it into the settings member
-        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, svgReport)
+        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, memVis, memVisResolved)
         # Check whether the configuration and the mapfiles folders exist
         Emma.shared_libs.emma_helper.checkIfFolderExists(self.settings.mapfilesPath)
         self.configuration = None           # The configuration is empty at this moment, it can be read in with another method
@@ -144,8 +134,7 @@ class MemoryManager:
 
                     # Creating a common consumerCollection
                     sc().info("Calculating objects in sections. This may take some time...")
-                    self.memoryContent[configId][
-                        FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = Emma.emma_libs.memoryMap.calculateObjectsInSections(
+                    self.memoryContent[configId][FILE_IDENTIFIER_OBJECTS_IN_SECTIONS] = Emma.emma_libs.memoryMap.calculateObjectsInSections(
                         self.memoryContent[configId][FILE_IDENTIFIER_SECTION_SUMMARY],
                         self.memoryContent[configId][FILE_IDENTIFIER_OBJECT_SUMMARY])
                 else:
@@ -153,14 +142,15 @@ class MemoryManager:
         else:
             sc().error("The configuration needs to be loaded before processing the mapfiles!")
 
-    def createReports(self, image=False, noprompt=False):
+    def createReports(self, memVis=False, memVisResolved=False, noprompt=False, noResolveOverlap=False):
         """
         Creates the reports
-        :param image: create svg report if True
-        :param noprompt: no prompt is active if True
+        :param memVis: Create svg report with unresolved overlaps if True
+        :param noprompt: No prompt is active if True
+        :param noResolveOverlap: no overlaps are resolved if True
+        :param memVisResolved: Create svg report visualising resolved overlaps if True
         :return: None
         """
-
         def consumerCollections2GlobalList():
             """
             Concatenate each type of consumerCollection (memoryContent: dict(list(memEntry)) -> consumerCollection: list(list(memEntry)))
@@ -186,7 +176,7 @@ class MemoryManager:
 
             # Creating reports from the consumer collections
             for collectionType in consumerCollections:
-                reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType, ".csv")
+                reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, collectionType, "csv")
                 Emma.emma_libs.memoryMap.writeReportToDisk(reportPath, consumerCollections[collectionType])
                 sc().info("A report was stored:", os.path.abspath(reportPath))
 
@@ -208,87 +198,116 @@ class MemoryManager:
         #     print(graph.source)
         def createSvgReport(startPoint, endPoint):
             """
-            plot sections and objects of a given memory area
+            Plot sections and objects of a given memory area
             :param startPoint: beginning of address area
             :param endPoint: end of address area
             """
+            class Element(IntEnum):
+                addressStart = 0
+                addressEnd = 1
+                addressLength = 2
+                fqn = 3
+                originalAddressStart = 4
 
-            def draw(image, elementstoPlot, startPoint, y, colour):
+            class PlottedElement(IntEnum):
+                addressEnd = 0
+                yAxe = 1
+
+            def drawElements(image, elementsToPlot, startPoint, y, colour):
+                """
+                :param image: svgwrite.Drawing object
+                :param elementsToPlot: [[addressStart, addressEnd, addressLength, fqn, originalAddressStart], ...] List of objects to plot (-> accessed via Element enum)
+                :param startPoint: Beginning of the address area
+                :param y: Start point on the y axis
+                :param colour: [str] Text colour (see HTML reference)
+                :return: None
+                """
                 yAxe = y
-                lastSectionPosition = 5
+                lastSectionPosition = 5             # Determine the deepest (with highest y value) section element, used to plot objects so they do not cross section elements; in pixel
                 biggestEndAddress = 0
                 plottedElements = []
                 distanceBetweenElements = 15
-                for index, element in enumerate(elementstoPlot):
-                    xAxeRectStart = element[Element.AddressStart] - startPoint
-                    rectLength = element[Element.AddressLength] - 1
-                    originalStartAddress = element[Element.AddressStart]
+                for index, element in enumerate(elementsToPlot):
+                    xAxeRectStart = element[Element.addressStart] - startPoint
+                    rectLength = element[Element.addressLength] - 1
+                    originalStartAddress = element[Element.addressStart]
                     fontColour = "black"
-                    if len(str(element[Element.AddressEnd])) > 11 or len(str(originalStartAddress)) > 11:          # check if address start / end fits in the rectangle
-                        yAxe = yAxe + len(str(element[Element.AddressEnd])) - 10
-                    if element[Element.AddressStart] < startPoint:
+                    if len(str(element[Element.addressEnd])) > 11 or len(str(originalStartAddress)) > 11:          # Check if address start / end fits in the rectangle, 11 (pixels) is the size of the rectangle
+                        yAxe = yAxe + len(str(element[Element.addressEnd])) - 10
+                    if element[Element.addressStart] < startPoint:
                         xAxeRectStart = 0
-                        rectLength = element[Element.AddressEnd] - startPoint
-                        originalStartAddress = element[Element.OriginalAddressStart]
+                        rectLength = element[Element.addressEnd] - startPoint
+                        originalStartAddress = element[Element.originalAddressStart]
                         fontColour = "red"
                     if index == 0:
-                        biggestEndAddress = element[Element.AddressEnd]
+                        biggestEndAddress = element[Element.addressEnd]
                     else:
-                        # check if the actual element is overlapped by the last element
-                        if element[Element.AddressStart] <= elementstoPlot[index-1][Element.AddressStart] or element[Element.AddressStart] < elementstoPlot[index-1][Element.AddressEnd]:
+                        # Check if the actual element is overlapped by the last element
+                        if element[Element.addressStart] <= elementsToPlot[index - 1][Element.addressStart] or element[Element.addressStart] < elementsToPlot[index - 1][Element.addressEnd]:
                             yAxe = yAxe + distanceBetweenElements
-                            plottedElements.append((element[Element.AddressEnd], yAxe))
+                            plottedElements.append((element[Element.addressEnd], yAxe))
                             if yAxe > lastSectionPosition:
                                 lastSectionPosition = yAxe
-                            if element[Element.AddressEnd] > biggestEndAddress:
-                                biggestEndAddress = element[Element.AddressEnd]
-                        elif element[Element.AddressStart] < biggestEndAddress:
-                            for el in plottedElements:
-                                if element[Element.AddressStart] < el[PlottedElement.AddressEnd] and yAxe <= el[PlottedElement.yAxe]:
-                                    yAxe = el[PlottedElement.yAxe] + distanceBetweenElements
+                            if element[Element.addressEnd] > biggestEndAddress:
+                                biggestEndAddress = element[Element.addressEnd]
+                        elif element[Element.addressStart] < biggestEndAddress:
+                            for plottedElement in plottedElements:
+                                if element[Element.addressStart] < plottedElement[PlottedElement.addressEnd] and yAxe <= plottedElement[PlottedElement.yAxe]:
+                                    yAxe = plottedElement[PlottedElement.yAxe] + distanceBetweenElements
                         else:
                             yAxe = y
-                            biggestEndAddress = element[Element.AddressEnd]
+                            biggestEndAddress = element[Element.addressEnd]
                     image.add(image.rect((xAxeRectStart, yAxe), size=(rectLength, 10), stroke=colour, fill=colour, opacity='0.3'))
-                    # check if the FQN fits in the rectangle
-                    if rectLength <= len(element[Element.Fqn]):
-                        image.add(image.text(element[Element.Fqn], insert=(xAxeRectStart, yAxe - 1), font_size='2px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
+                    # Check if the FQN fits in the rectangle
+                    if rectLength <= len(element[Element.fqn]):
+                        image.add(image.text(element[Element.fqn], insert=(xAxeRectStart, yAxe - 1), font_size='2px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
                         xAxeStart = xAxeRectStart + 1
-                        xAxeEnd = element[Element.AddressEnd] - startPoint - 1
-                        # if the rectangle smaller than 4, then write the end address outside the rectangle
+                        xAxeEnd = element[Element.addressEnd] - startPoint - 1
+                        # If the rectangle smaller than 4, then write the end address outside the rectangle
                         if rectLength < 4:
-                            xAxeEnd = element[Element.AddressEnd] - startPoint + 1
+                            xAxeEnd = element[Element.addressEnd] - startPoint + 1
                         image.add(image.text(hex(originalStartAddress), insert=(xAxeStart, yAxe), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        image.add(image.text(hex(element[Element.AddressEnd]), insert=(xAxeEnd, yAxe), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(hex(element[Element.addressEnd]), insert=(xAxeEnd, yAxe), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
                         if yAxe > lastSectionPosition:
                             lastSectionPosition = yAxe
-                        plottedElements.append((element[Element.AddressEnd] + len(element[Element.Fqn]), yAxe))
+                        plottedElements.append((element[Element.addressEnd] + len(element[Element.fqn]), yAxe))
                     else:
                         image.add(image.text(hex(originalStartAddress), insert=(xAxeRectStart + 1, yAxe), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        image.add(image.text(hex(element[Element.AddressEnd]), insert=(element[Element.AddressEnd] - startPoint - 1, yAxe), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        image.add(image.text(element[Element.Fqn], insert=(xAxeRectStart + 5, yAxe + 2), font_size='2px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
-                        plottedElements.append((element[Element.AddressEnd], yAxe))
+                        image.add(image.text(hex(element[Element.addressEnd]), insert=(element[Element.addressEnd] - startPoint - 1, yAxe), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(element[Element.fqn], insert=(xAxeRectStart + 5, yAxe + 2), font_size='2px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
+                        plottedElements.append((element[Element.addressEnd], yAxe))
                 return lastSectionPosition
 
             consumerCollections = consumerCollections2GlobalList()
-            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, str(hex(startPoint)) + '_' + str(hex(endPoint)), ".svg")
+            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, str(hex(startPoint)) + '-' + str(hex(endPoint)), "svg")
 
             def getElementsToPlot(ElementName):
                 elementsToPlot = []
-                for elementToPlot in consumerCollections[ElementName]:
-                    if elementToPlot.addressLength != 0:
-                        if startPoint <= elementToPlot.addressStart < endPoint:
-                            elementsToPlot.append((elementToPlot.addressStart, elementToPlot.addressEnd(), elementToPlot.addressLength, elementToPlot.getFQN()))
-                        elif elementToPlot.addressEnd() > startPoint and elementToPlot.addressStart < endPoint:
-                            elementsToPlot.append((0, elementToPlot.addressEnd(), elementToPlot.addressLength, elementToPlot.getFQN(), elementToPlot.addressStart))
+                if memVisResolved:
+                    for elementToPlot in consumerCollections[ElementName]:
+                        if elementToPlot.addressLength != 0:
+                            if startPoint <= elementToPlot.addressStart < endPoint:
+                                elementsToPlot.append((elementToPlot.addressStart, elementToPlot.addressEnd(), elementToPlot.addressLength, elementToPlot.getFQN()))
+                            elif elementToPlot.addressEnd() > startPoint and elementToPlot.addressStart < endPoint:
+                                elementsToPlot.append((0, elementToPlot.addressEnd(), elementToPlot.addressLength, elementToPlot.getFQN(), elementToPlot.addressStart))
+                if memVis:
+                    for elementToPlot in consumerCollections[ElementName]:
+                        if elementToPlot.addressLengthOriginal != 0:
+                            if startPoint <= elementToPlot.addressStartOriginal < endPoint:
+                                elementsToPlot.append((elementToPlot.addressStartOriginal, elementToPlot.addressEndOriginal(),
+                                                       elementToPlot.addressLengthOriginal, elementToPlot.getFQN()))
+                            elif elementToPlot.addressEndOriginal() > startPoint and elementToPlot.addressStartOriginal < endPoint:
+                                elementsToPlot.append((0, elementToPlot.addressEndOriginal(), elementToPlot.addressLengthOriginal,
+                                                       elementToPlot.getFQN(), elementToPlot.addressStartOriginal))
+
                 return elementsToPlot
 
-            imageHeight = 3000      # define some height of the image
+            imageHeight = 3000      # Define some height of the image
             image = svgwrite.Drawing(reportPath, size=(endPoint - startPoint, imageHeight))
-            # plot sections
-            y2 = draw(image, getElementsToPlot("Section_Summary"), startPoint, 5, "yellow") + 15
-            # plot objects
-            draw(image, getElementsToPlot("Object_Summary"), startPoint, y2, "green")
+            # Plot sections
+            y2 = drawElements(image, getElementsToPlot("Section_Summary"), startPoint, 5, "yellow") + 15        # distance 15 pixels from the lowest section element
+            # Plot objects
+            drawElements(image, getElementsToPlot("Object_Summary"), startPoint, y2, "green")
             image.save()
 
         def createTeamScaleReports():
@@ -321,17 +340,25 @@ class MemoryManager:
             # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separated string) (MSc)
             createStandardReports()
             createTeamScaleReports()
-
-            if image:
-                if noprompt:
-                    sc().wwarning("no prompt is active. No svg report will be created")
-                else:
-                    startRegion = input("Enter the start address of the region to be plotted (start with `0x` for hex; otherwise dec is assumed) \n")
-                    if "0x" in startRegion:
+            svgReport = False
+            if memVis or memVisResolved:
+                svgReport = True
+            if svgReport and noprompt:
+                sc().wwarning("No prompt is active. No SVG report will be created")
+            elif svgReport and noprompt is False:
+                while True:
+                    print("Enter the start address of the region to be plotted (start with `0x` for hex; otherwise dec is assumed):")
+                    startRegion = input("> ")
+                    if startRegion.startswith("0x"):
                         startRegion = int(startRegion, 16)
-                    endRegion = input("Enter the end address of the region to be plotted (start with `0x` for hex; otherwise dec is assumed) \n")
-                    if "0x" in endRegion:
+                    print("Enter the end address of the region to be plotted (start with `0x` for hex; otherwise dec is assumed):")
+                    endRegion = input("> ")
+                    if endRegion.startswith("0x"):
                         endRegion = int(endRegion, 16)
-                    createSvgReport(int(startRegion), int(endRegion))
+                    if str(startRegion).isdigit() and str(endRegion).isdigit():
+                        break
+                    else:
+                        sc().wwarning("The input is not valid number. Please enter the start and end address again \n")
+                createSvgReport(int(startRegion), int(endRegion))
         else:
             sc().error("The mapfiles need to be processed before creating the reports!")

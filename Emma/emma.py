@@ -51,7 +51,7 @@ def main(arguments):
     if memoryManager.settings.createCategories:
         sc().info("No results were generated since categorisation option is active.")
     else:
-        memoryManager.createReports(arguments.svgReport, arguments.noprompt)
+        memoryManager.createReports(arguments.memVis, arguments.memVisResolved, arguments.noprompt)
 
     # Stop and display time measurement
     TIME_END = timeit.default_timer()
@@ -142,12 +142,18 @@ def initParser():
         default=False
     )
     parser.add_argument(
-        '--svgReport',
-        '-g',
-        help="plot sections and objects of a specified address area",
+        '--memVis',
+        help="Plot unresolved view of sections and objects for a specified address area",
         default=False,
         action="store_true"
     )
+    parser.add_argument(
+        '--memVisResolved',
+        help="Plot figure visualising how Emma resolved the overlaps for a specified address area. Not possible if noResolveOverlap is active",
+        default=False,
+        action="store_true"
+    )
+
     return parser
 
 
@@ -181,17 +187,24 @@ def processArguments(arguments):
     # Get paths straight (only forward slashes) or set it to empty if it was empty
     subDir = Emma.shared_libs.emma_helper.joinPath(arguments.subdir) if arguments.subdir is not None else ""
 
+    if arguments.memVis and arguments.memVisResolved:
+        sc().error("Select either memVis or memVisResolved")
+    if arguments.memVisResolved and arguments.noResolveOverlap:
+        sc().error("View of resolved overlaps is not possible as noResolveOverlap is active")
+
     outputPath = Emma.shared_libs.emma_helper.joinPath(directory, subDir, OUTPUT_DIR)
     analyseDebug = arguments.analyse_debug
     createCategories = arguments.create_categories
     removeUnmatched = arguments.remove_unmatched
     noPrompt = arguments.noprompt
     noResolveOverlap = arguments.noResolveOverlap
-    svgReport = arguments.svgReport
+    memVis = arguments.memVis
+    memVisResolved = arguments.memVisResolved
+
     # TODO: It would be more convenient if arguments which are not modified are passed without manually modifying the code (MSc)
 
     return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, \
-           noPrompt, noResolveOverlap, svgReport
+           noPrompt, noResolveOverlap, memVis, memVisResolved
 
 
 def runEmma():

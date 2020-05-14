@@ -24,7 +24,7 @@ from pypiscout.SCout_Logger import Logger as sc
 import pypiscout.SCout
 
 import Emma.shared_libs.emma_helper
-import Emma.shared_libs.stringConstants
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 
 
 def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool, append: bool, noprompt: bool) -> str:
@@ -39,7 +39,7 @@ def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool
     :return: file name to use
     """
     fileToUse = None
-    path = Emma.shared_libs.emma_helper.joinPath(inOutPath, Emma.shared_libs.stringConstants.OUTPUT_DIR)
+    path = Emma.shared_libs.emma_helper.joinPath(inOutPath, OUTPUT_DIR)
     lastModifiedFiles = Emma.shared_libs.emma_helper.lastModifiedFilesInDir(path, ".csv")            # Newest file is last element
 
     # Check if no files were found
@@ -64,8 +64,8 @@ def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool
     elif not append:
         # If nothing specified AND append mode is OFF ask which file to use
         pypiscout.SCout.info("Last modified file:")                                                            # Primitive SCout implementation since you must see what is going on if you get prompted
-        pypiscout.SCout.info("\t" + fileToUse)
-        pypiscout.SCout.info("`y` to accept; otherwise specify an absolute path (without quotes)")
+        pypiscout.SCout.info(LISTING_INDENT + fileToUse)
+        print("`y` to accept; otherwise specify an absolute path (without quotes):")
         while True:
             text = input("> ")
 
@@ -78,8 +78,8 @@ def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool
                 pypiscout.SCout.warning("Invalid input.")
 
         # Check if the fixed file name portions are within the found file name
-        if Emma.shared_libs.stringConstants.FILE_IDENTIFIER_OBJECT_SUMMARY is Emma.shared_libs.emma_helper.evalSummary(lastModifiedFiles[-1]):
-            sc().wwarning("Last modified file is a " + Emma.shared_libs.stringConstants.FILE_IDENTIFIER_OBJECT_SUMMARY + "\n")
+        if FILE_IDENTIFIER_OBJECT_SUMMARY is Emma.shared_libs.emma_helper.evalSummary(lastModifiedFiles[-1]):
+            sc().wwarning("Last modified file is a " + FILE_IDENTIFIER_OBJECT_SUMMARY + "\n")
 
     if fileToUse is None:
         sc().error("No file containing '" + subStringIdentifier + "' found in " + path)

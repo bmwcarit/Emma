@@ -47,12 +47,11 @@ install:
     - pip3 install pyenchant            # needed for pylint spell checking
     - pip3 install coverage
     # Packages for Emma
-    - pip3 install -U Pygments Markdown matplotlib pandas pypiscout graphviz
+    - pip3 install -U Pygments Markdown matplotlib pandas pypiscout graphviz svgwrite
     # Packages for Emma reports + html doc
     - sudo apt-get update
     - sudo apt-get install graphviz
     - pip3 install -U gprof2dot
-    - pip3 install svgwrite
     # Install pip deployment packages
     - pip3 install --upgrade setuptools
     - pip3 install --upgrade wheel
