@@ -24,7 +24,7 @@ from pypiscout.SCout_Logger import Logger as sc
 import pypiscout.SCout
 
 import Emma.shared_libs.emma_helper
-import Emma.shared_libs.stringConstants
+from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 
 
 def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool, append: bool, noprompt: bool) -> str:

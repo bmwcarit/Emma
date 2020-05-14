@@ -154,6 +154,13 @@ def initParser():
         default=False,
         action="store_true",
     )
+    parser.add_argument(
+        '--memVisResolved',
+        help="Plot figure visualising how Emma resolved the overlaps for a specified address area. Not possible if noResolveOverlap is active",
+        default=False,
+        action="store_true"
+    )
+
     return parser
 
 
@@ -186,6 +193,11 @@ def processArguments(arguments):
         directory = Emma.shared_libs.emma_helper.joinPath(arguments.dir)
     # Get paths straight (only forward slashes) or set it to empty if it was empty
     subDir = Emma.shared_libs.emma_helper.joinPath(arguments.subdir) if arguments.subdir is not None else ""
+
+    if arguments.memVis and arguments.memVisResolved:
+        sc().error("Select either memVis or memVisResolved")
+    if arguments.memVisResolved and arguments.noResolveOverlap:
+        sc().error("View of resolved overlaps is not possible as noResolveOverlap is active")
 
     outputPath = Emma.shared_libs.emma_helper.joinPath(directory, subDir, OUTPUT_DIR)
     analyseDebug = arguments.analyseDebug

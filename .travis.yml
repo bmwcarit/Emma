@@ -52,7 +52,6 @@ install:
     - sudo apt-get update
     - sudo apt-get install graphviz
     - pip3 install -U gprof2dot
-    - pip3 install svgwrite
     # Install pip deployment packages
     - pip3 install -U setuptools
     - pip3 install -U wheel
