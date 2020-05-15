@@ -102,6 +102,7 @@ class CategorisedImageConsumptionList:
 
         return usedByModulesInImage
 
+    # FIXME: Function not used (DP)
     def __groupCategorisedImage(self):
         """
         Function to group __categorisedImage
@@ -111,7 +112,7 @@ class CategorisedImageConsumptionList:
         groupedImage = groupedImage.groupby([CONFIG_ID, MEM_TYPE, CATEGORY, SECTION_NAME, SECTION_SIZE_BYTE, OBJECT_NAME]).sum()
         return groupedImage
 
-    # FIXME: Colours of the legend are not working (MSc)
+    # FIXME: Colours of the legend are not working (MSc), function not used (DP)
     def displayUsedByModulesInImage(self):
         """
         Creates the figure for the plot.
@@ -164,6 +165,7 @@ class CategorisedImageConsumptionList:
 
         return barGraph.get_figure()
 
+    # FIXME: Function not used (DP)
     def printModulesInImage(self):
         """
         Print wrapper for self.__usedByModulesInImage
@@ -171,6 +173,7 @@ class CategorisedImageConsumptionList:
         """
         print(self.__usedByModulesInImage)
 
+    # FIXME: Function not used (DP)
     def printCategorisedImage(self):
         """
         Print wrapper for self.__usedByModulesInImage
@@ -178,6 +181,7 @@ class CategorisedImageConsumptionList:
         """
         print(self.__categorisedImage)
 
+    # FIXME: Function not used (DP)
     def appendCategorisedImageToMarkdownOverview(self, markdownFilePath):
         """
         Appends categorisedImage to the markdown file

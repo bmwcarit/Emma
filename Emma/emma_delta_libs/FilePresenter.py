@@ -82,15 +82,15 @@ class FilePresenter:
             print(string)
 
     @staticmethod
-    def __printSelectedFiles( paths: typing.List[str]) -> None:
+    def __printSelectedFiles(paths: typing.List[str]) -> None:
         sc().info("Selected files:")
         for path in paths:
             pathSplit: typing.List[str] = os.path.split(path)
             version: str = os.path.split(os.path.split(pathSplit[0])[0])[1]
             file: str = pathSplit[1]
             string = "    " + version + " - " + file
-            print(string)
+            sc().info(string)
 
     def __printFileType(self) -> None:
         for i, file in self.__filetypes.items():
-            print("    " + str(i) + ": " + file)
+            sc().info("    " + str(i) + ": " + file)
