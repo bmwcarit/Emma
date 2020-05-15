@@ -228,6 +228,7 @@ def main(arguments):
     gc.collect()
 
     sc().info("\n", consumptionImage.calcConsumptionByMemType())
+    sc().info("\n", consumptionImage.calcConsumptionByMemTypeDetailed())
 
     # FIXME: Deactivated; colours of legend in figure not correct - possibly this figure is not even needed/useful (MSc)
     # categorisedImage.plotNdisplay(plotShow=False)
