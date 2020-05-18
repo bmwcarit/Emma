@@ -195,9 +195,11 @@ def processArguments(arguments):
     subDir = Emma.shared_libs.emma_helper.joinPath(arguments.subdir) if arguments.subdir is not None else ""
 
     if arguments.memVis and arguments.memVisResolved:
-        sc().error("Select either memVis or memVisResolved")
+        sc().error("Select either `--memVis` or `--memVisResolved`")
     if arguments.memVisResolved and arguments.noResolveOverlap:
-        sc().error("View of resolved overlaps is not possible as noResolveOverlap is active")
+        sc().warning("Incompatible arguments `--noResolveOverlap` and `--memVisResolved` were found. SVG figure will depict the unresolved scenario.")
+        arguments.memVisResolved = False
+        arguments.memVis = True
 
     outputPath = Emma.shared_libs.emma_helper.joinPath(directory, subDir, OUTPUT_DIR)
     analyseDebug = arguments.analyseDebug

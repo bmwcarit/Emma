@@ -221,61 +221,70 @@ class MemoryManager:
                 :param colour: [str] Text colour (see HTML reference)
                 :return: None
                 """
-                yAxe = y
-                lastSectionPosition = 5             # Determine the deepest (with highest y value) section element, used to plot objects so they do not cross section elements; in pixel
-                biggestEndAddress = 0
+                currYLvl = y
+                biggestYSoFar = 5             # The highest y value section element, used to plot objects so they do not cross section elements; in pixel
+                biggestEndAddrSoFar = 0
                 plottedElements = []
-                distanceBetweenElements = 15
+                drawingOffset = 15
+                smallSpacing = 1
+                font_size = 2
                 for index, element in enumerate(elementsToPlot):
                     xAxeRectStart = element[Element.addressStart] - startPoint
                     rectLength = element[Element.addressLength] - 1
                     originalStartAddress = element[Element.addressStart]
                     fontColour = "black"
                     if len(str(element[Element.addressEnd])) > 11 or len(str(originalStartAddress)) > 11:          # Check if address start / end fits in the rectangle, 11 (pixels) is the size of the rectangle
-                        yAxe = yAxe + len(str(element[Element.addressEnd])) - 10
+                        currYLvl = currYLvl + len(str(element[Element.addressEnd])) - 10
                     if element[Element.addressStart] < startPoint:
                         xAxeRectStart = 0
                         rectLength = element[Element.addressEnd] - startPoint
                         originalStartAddress = element[Element.originalAddressStart]
                         fontColour = "red"
                     if index == 0:
-                        biggestEndAddress = element[Element.addressEnd]
+                        biggestEndAddrSoFar = element[Element.addressEnd]
                     else:
                         # Check if the actual element is overlapped by the last element
-                        if element[Element.addressStart] <= elementsToPlot[index - 1][Element.addressStart] or element[Element.addressStart] < elementsToPlot[index - 1][Element.addressEnd]:
-                            yAxe = yAxe + distanceBetweenElements
-                            plottedElements.append((element[Element.addressEnd], yAxe))
-                            if yAxe > lastSectionPosition:
-                                lastSectionPosition = yAxe
-                            if element[Element.addressEnd] > biggestEndAddress:
-                                biggestEndAddress = element[Element.addressEnd]
-                        elif element[Element.addressStart] < biggestEndAddress:
+                        startAddrPrevElement = elementsToPlot[index - 1][Element.addressStart]
+                        endAddrPrevElement = elementsToPlot[index - 1][Element.addressEnd]
+                        if element[Element.addressStart] <= startAddrPrevElement or element[Element.addressStart] < endAddrPrevElement:
+                            currYLvl = currYLvl + drawingOffset
+                            plottedElements.append((element[Element.addressEnd], currYLvl))
+                            if element[Element.addressEnd] > biggestEndAddrSoFar:
+                                biggestEndAddrSoFar = element[Element.addressEnd]
+                        elif element[Element.addressStart] < biggestEndAddrSoFar:
                             for plottedElement in plottedElements:
-                                if element[Element.addressStart] < plottedElement[PlottedElement.addressEnd] and yAxe <= plottedElement[PlottedElement.yAxe]:
-                                    yAxe = plottedElement[PlottedElement.yAxe] + distanceBetweenElements
+                                if element[Element.addressStart] < plottedElement[PlottedElement.addressEnd] and currYLvl <= plottedElement[PlottedElement.yAxe]:
+                                    currYLvl = plottedElement[PlottedElement.yAxe] + drawingOffset
+                        # No overlap
                         else:
-                            yAxe = y
-                            biggestEndAddress = element[Element.addressEnd]
-                    image.add(image.rect((xAxeRectStart, yAxe), size=(rectLength, 10), stroke=colour, fill=colour, opacity='0.3'))
-                    # Check if the FQN fits in the rectangle
+                            currYLvl = y
+                            biggestEndAddrSoFar = element[Element.addressEnd]
+                    # Plot new element
+                    image.add(image.rect((xAxeRectStart, currYLvl), size=(rectLength, 10), fill=colour))
+                    # Add metadata to drawn element
+
+                    # Check if the FQN fits in the rectangle (assumption: FQN is always longer than start, end addres + obj/sec length)
                     if rectLength <= len(element[Element.fqn]):
-                        image.add(image.text(element[Element.fqn], insert=(xAxeRectStart, yAxe - 1), font_size='2px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
-                        xAxeStart = xAxeRectStart + 1
-                        xAxeEnd = element[Element.addressEnd] - startPoint - 1
+                        image.add(image.text(element[Element.fqn], insert=(xAxeRectStart, currYLvl - smallSpacing), font_size='2px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
+                        # Prepare plot of start and end address
+                        xAxeStart = xAxeRectStart + smallSpacing            # Add spacing for start address (one px); rectangles do have no border
+                        xAxeEnd = element[Element.addressEnd] - startPoint - smallSpacing
                         # If the rectangle smaller than 4, then write the end address outside the rectangle
-                        if rectLength < 4:
-                            xAxeEnd = element[Element.addressEnd] - startPoint + 1
-                        image.add(image.text(hex(originalStartAddress), insert=(xAxeStart, yAxe), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        image.add(image.text(hex(element[Element.addressEnd]), insert=(xAxeEnd, yAxe), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        if yAxe > lastSectionPosition:
-                            lastSectionPosition = yAxe
-                        plottedElements.append((element[Element.addressEnd] + len(element[Element.fqn]), yAxe))
+                        if rectLength < font_size * 2:
+                            xAxeEnd = element[Element.addressEnd] - startPoint + smallSpacing
+                        image.add(image.text(hex(originalStartAddress), insert=(xAxeStart, currYLvl), font_size=str(font_size)+'px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(hex(element[Element.addressEnd]), insert=(xAxeEnd, currYLvl), font_size=str(font_size)+'px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        plottedElements.append((element[Element.addressEnd] + len(element[Element.fqn]), currYLvl))
+                    # FQN fits into element
                     else:
-                        image.add(image.text(hex(originalStartAddress), insert=(xAxeRectStart + 1, yAxe), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        image.add(image.text(hex(element[Element.addressEnd]), insert=(element[Element.addressEnd] - startPoint - 1, yAxe), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        image.add(image.text(element[Element.fqn], insert=(xAxeRectStart + 5, yAxe + 2), font_size='2px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
-                        plottedElements.append((element[Element.addressEnd], yAxe))
-                return lastSectionPosition
+                        image.add(image.text(hex(originalStartAddress), insert=(xAxeRectStart + smallSpacing, currYLvl), font_size=str(font_size)+'px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(hex(element[Element.addressEnd]), insert=(element[Element.addressEnd] - startPoint - smallSpacing, currYLvl), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(element[Element.fqn], insert=(xAxeRectStart + 5, currYLvl + 2), font_size=str(font_size)+'px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
+                        plottedElements.append((element[Element.addressEnd], currYLvl))
+                    # Update y level
+                    if currYLvl > biggestYSoFar:
+                        biggestYSoFar = currYLvl
+                return biggestYSoFar
 
             consumerCollections = consumerCollections2GlobalList()
             reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, str(hex(startPoint)) + '-' + str(hex(endPoint)), "svg")
@@ -304,9 +313,9 @@ class MemoryManager:
             imageHeight = 3000      # Define some height of the image
             image = svgwrite.Drawing(reportPath, size=(endPoint - startPoint, imageHeight))
             # Plot sections
-            y2 = drawElements(image, getElementsToPlot("Section_Summary"), startPoint, 5, "yellow") + 15        # distance 15 pixels from the lowest section element
+            y2 = drawElements(image, getElementsToPlot("Section_Summary"), startPoint, 5, svgwrite.rgb(255, 230, 128)) + 15        # distance 15 pixels from the lowest section element
             # Plot objects
-            drawElements(image, getElementsToPlot("Object_Summary"), startPoint, y2, "green")
+            drawElements(image, getElementsToPlot("Object_Summary"), startPoint, y2, svgwrite.rgb(198, 233, 175))
             image.save()
 
         def createTeamScaleReports():
