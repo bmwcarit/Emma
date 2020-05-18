@@ -230,14 +230,6 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
         title = self.project + "-Memory_Report_by_configID-memType"
         self.__appendStatsConsumption(self.consumptionByMemType, title)
 
-    def printStats(self):
-        """
-        Print all three consumption lists
-        """
-        print(self.consumptionByMemType)
-        print(self.consumptionByMemTypeDetailed)
-        print(self.consumptionByMemTypePerMap)
-
     def plotByMemType(self, plotShow=True):
         """
         function to display and save to file the figure created in self.displayConsumptionByMemType()

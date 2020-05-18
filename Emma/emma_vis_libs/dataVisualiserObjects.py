@@ -43,6 +43,7 @@ class ModuleConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
         self.project = os.path.split(projectPath)[-1]
         self.consumptionByCategorisedModules = self.calcConsumptionByCategorisedModules()
 
+    # FIXME: function not used (DP)
     def printCategorisedModules(self):
         print(self.consumptionByCategorisedModules)
 
