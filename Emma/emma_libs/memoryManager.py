@@ -20,7 +20,6 @@ import os
 from enum import IntEnum
 
 from pypiscout.SCout_Logger import Logger as sc
-import pypiscout.SCout
 import svgwrite
 # import graphviz
 
@@ -227,15 +226,15 @@ class MemoryManager:
                 biggestEndAddrSoFar = 0
                 plottedElements = []
                 drawingOffset = 15
-                smallSpacing = 1
-                font_size = 2
+                smallSpacing = 1        # Small spacing in px used for spacing between edges of the rectangle and start/ end address label
+                fontSize = 2
                 for index, element in enumerate(elementsToPlot):
                     xAxeRectStart = element[Element.addressStart] - startPoint
                     rectLength = element[Element.addressLength] - 1
                     originalStartAddress = element[Element.addressStart]
                     fontColour = "black"
-                    if len(str(element[Element.addressEnd])) > 11 or len(str(originalStartAddress)) > 11:          # Check if address start / end fits in the rectangle, 11 (pixels) is the size of the rectangle
-                        currYLvl = currYLvl + len(str(element[Element.addressEnd])) - 10
+                    if len(str(element[Element.addressEnd])) > 11 or len(str(originalStartAddress)) > 11:          # Check if address start / end fits in the rectangle, 11 (pixels) is the height of the rectangle
+                        currYLvl += len(str(element[Element.addressEnd])) - 11
                     if element[Element.addressStart] < startPoint:
                         xAxeRectStart = 0
                         rectLength = element[Element.addressEnd] - startPoint
@@ -264,23 +263,23 @@ class MemoryManager:
                     image.add(image.rect((xAxeRectStart, currYLvl), size=(rectLength, 10), fill=colour))
                     # Add metadata to drawn element
 
-                    # Check if the FQN fits in the rectangle (assumption: FQN is always longer than start, end addres + obj/sec length)
+                    # Check if the FQN fits in the rectangle (assumption: FQN is always longer than start, end address + obj/sec length)
                     if rectLength <= len(element[Element.fqn]):
-                        image.add(image.text(element[Element.fqn], insert=(xAxeRectStart, currYLvl - smallSpacing), font_size='2px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(element[Element.fqn], insert=(xAxeRectStart, currYLvl - smallSpacing), font_size=str(fontSize)+"px", writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
                         # Prepare plot of start and end address
                         xAxeStart = xAxeRectStart + smallSpacing            # Add spacing for start address (one px); rectangles do have no border
                         xAxeEnd = element[Element.addressEnd] - startPoint - smallSpacing
                         # If the rectangle smaller than 4, then write the end address outside the rectangle
-                        if rectLength < font_size * 2:
+                        if rectLength < fontSize * 2:
                             xAxeEnd = element[Element.addressEnd] - startPoint + smallSpacing
-                        image.add(image.text(hex(originalStartAddress), insert=(xAxeStart, currYLvl), font_size=str(font_size)+'px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        image.add(image.text(hex(element[Element.addressEnd]), insert=(xAxeEnd, currYLvl), font_size=str(font_size)+'px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(hex(originalStartAddress), insert=(xAxeStart, currYLvl), font_size=str(fontSize)+"px", writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(hex(element[Element.addressEnd]), insert=(xAxeEnd, currYLvl), font_size=str(fontSize)+"px", writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
                         plottedElements.append((element[Element.addressEnd] + len(element[Element.fqn]), currYLvl))
                     # FQN fits into element
                     else:
-                        image.add(image.text(hex(originalStartAddress), insert=(xAxeRectStart + smallSpacing, currYLvl), font_size=str(font_size)+'px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(hex(originalStartAddress), insert=(xAxeRectStart + smallSpacing, currYLvl), font_size=str(fontSize)+"px", writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
                         image.add(image.text(hex(element[Element.addressEnd]), insert=(element[Element.addressEnd] - startPoint - smallSpacing, currYLvl), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        image.add(image.text(element[Element.fqn], insert=(xAxeRectStart + 5, currYLvl + 2), font_size=str(font_size)+'px', writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(element[Element.fqn], insert=(xAxeRectStart + 5, currYLvl + 2), font_size=str(fontSize)+"px", writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
                         plottedElements.append((element[Element.addressEnd], currYLvl))
                     # Update y level
                     if currYLvl > biggestYSoFar:
@@ -314,7 +313,7 @@ class MemoryManager:
             imageHeight = 3000      # Define some height of the image
             image = svgwrite.Drawing(reportPath, size=(endPoint - startPoint, imageHeight))
             # Plot sections
-            y2 = drawElements(image, getElementsToPlot("Section_Summary"), startPoint, 5, svgwrite.rgb(255, 230, 128)) + 15        # distance 15 pixels from the lowest section element
+            y2 = drawElements(image, getElementsToPlot("Section_Summary"), startPoint, 5, svgwrite.rgb(255, 230, 128)) + 15        # Distance 15 px from the lowest section element
             # Plot objects
             drawElements(image, getElementsToPlot("Object_Summary"), startPoint, y2, svgwrite.rgb(198, 233, 175))
             image.save()
@@ -359,15 +358,26 @@ class MemoryManager:
                     print("Enter the start address of the region to be plotted (start with `0x` for hex; otherwise dec is assumed):")
                     startRegion = input("> ")
                     if startRegion.startswith("0x"):
-                        startRegion = int(startRegion, 16)
+                        try:
+                            startRegion = int(startRegion, 16)
+                        except ValueError:
+                            sc().wwarning("The input is not a valid hex number. Please enter the start and end address again: \n")
+                            continue
                     print("Enter the end address of the region to be plotted (start with `0x` for hex; otherwise dec is assumed):")
                     endRegion = input("> ")
                     if endRegion.startswith("0x"):
-                        endRegion = int(endRegion, 16)
+                        try:
+                            endRegion = int(endRegion, 16)
+                        except ValueError:
+                            sc().wwarning("The input is not a valid hex number. Please enter the start and end address again: \n")
+                            continue
                     if str(startRegion).isdigit() and str(endRegion).isdigit():
+                        startRegion = int(startRegion)
+                        endRegion = int(endRegion)
+                        # Exit while loop and continue when everything is O.K.
                         break
                     else:
-                        sc().wwarning("The input is not valid number. Please enter the start and end address again \n")
-                createSvgReport(int(startRegion), int(endRegion))
+                        sc().wwarning("The input is not a valid dec number. Please enter the start and end address again: \n")
+                createSvgReport(startRegion, endRegion)
         else:
             sc().error("The mapfiles need to be processed before creating the reports!")
