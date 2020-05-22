@@ -47,11 +47,11 @@ class GhsConfiguration(Emma.emma_libs.specificConfiguration.SpecificConfiguratio
         :return: None
         """
         # Loading the patterns*.json
-        if "patternsPath" in configuration:
-            patternsPath = Emma.shared_libs.emma_helper.joinPath(configurationPath, configuration["patternsPath"])
+        if PATTERNS_PATH in configuration:
+            patternsPath = Emma.shared_libs.emma_helper.joinPath(configurationPath, configuration[PATTERNS_PATH])
             configuration["patterns"] = Emma.shared_libs.emma_helper.readJson(patternsPath)
         else:
-            sc().error("Missing patternsPath definition in the globalConfig,json for the configId: " + configId + "!")
+            sc().error("Missing patternsPath definition in the globalConfig.json for the configId: " + configId + "!")
 
         # Loading the virtualSections*.json if the file is present (only needed in case of VAS-es)
         if "virtualSectionsPath" in configuration:

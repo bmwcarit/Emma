@@ -98,11 +98,11 @@ class MapfileProcessor(abc.ABC):
             for memoryRegion in memoryCandidates:
                 # If the element is in this memoryRegion
                 # For elements that do not have addressEnd the addressStart comparison is enough
-                if int(memoryCandidates[memoryRegion]["start"], 16) <= element.addressStart:
-                    if element.addressEnd() is None or (element.addressEnd() <= int(memoryCandidates[memoryRegion]["end"], 16)):
+                if int(memoryCandidates[memoryRegion][START], 16) <= element.addressStart:
+                    if element.addressEnd() is None or (element.addressEnd() <= int(memoryCandidates[memoryRegion][END], 16)):
                         # Then we store the memoryRegion data in the element
                         element.memTypeTag = memoryRegion
-                        element.memType = memoryCandidates[memoryRegion]["type"]
+                        element.memType = memoryCandidates[memoryRegion][TYPE]
                         # If this region (-> tag) is not excluded for the mapfile the element belongs to then we will keep it
                         if not isElementMarkedAsExcluded(memoryRegionsToExcludeFromMapfiles, element):
                             listOfElementsToKeep.append(element)

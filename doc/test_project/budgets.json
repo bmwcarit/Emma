@@ -3,7 +3,7 @@
 
 
     "Budgets": [
-        ["MCU", "INT_RAM",    262144],
+        ["MCU", "INT_RAM",    "262144"],
         ["MCU", "EXT_RAM",         0],
         ["MCU", "INT_FLASH",  524288],
         ["MCU", "EXT_FLASH",       0],
