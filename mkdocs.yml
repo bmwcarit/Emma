@@ -6,12 +6,15 @@ copyright: The Emma Authors
 docs_dir: doc
 use_directory_urls: False
 theme:
+    features:
+      - tabs
+      - instant
     name: material
     palette:
         primary: "Black"
         accent: "Amber"
-    logo:
-        icon: "🔍"
+    icon:
+        logo: "🔍"
     font: false
     language: "en"
     highlightjs: true
@@ -22,7 +25,7 @@ theme:
 
 extra:
   social:
-    - type: 'github'
+    - icon: 'github'
       link: 'https://github.com/bmwcarit/Emma'
 
 #google_analytics:
