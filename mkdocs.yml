@@ -14,7 +14,8 @@ theme:
         primary: "Black"
         accent: "Amber"
     icon:
-        logo: material/search
+        logo: material/magnify
+    #favicon: images/blah.png
     font: false
     language: "en"
     highlightjs: true
@@ -25,7 +26,7 @@ theme:
 
 extra:
   social:
-    - icon: 'github'
+    - icon: octicons/mark-github
       link: 'https://github.com/bmwcarit/Emma'
 
 #google_analytics:
