@@ -120,10 +120,10 @@ jobs:
                 skip_cleanup: true
                 github_token: $GITHUB_TOKEN
                 local_dir: site
-                on:
-                    tags: true
 #                on:
-#                    branch: master
+#                    tags: true
+                on:
+                    branch: 61-mkdocs-material-fix
               # Deploy on PyPi database
               - provider: pypi
 #                server: https://test.pypi.org/legacy/      # Activate for testing
