@@ -14,7 +14,7 @@ theme:
         primary: "Black"
         accent: "Amber"
     icon:
-        logo: "🔍"
+        logo: material/search
     font: false
     language: "en"
     highlightjs: true
