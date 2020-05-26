@@ -191,8 +191,8 @@ Utility scripts used to build GitHub pages documentation. As a normal user you c
 
 | Library (version)             | pip package name                                                  | Licence                              | URL                                                                                                                                                |
 |-------------------------------|-------------------------------------------------------------------|--------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| MkDocs (v1.0.4+)              | [mkdocs](https://pypi.org/project/mkdocs/)                        | BSD-3Clause                          | [https://github.com/mkdocs/mkdocs](https://github.com/mkdocs/mkdocs)                                                                               |
-| Material for MkDocs (v4.4.1+) | [mkdocs-material](https://pypi.org/project/mkdocs-material/)      | MIT                                  | [https://github.com/squidfunk/mkdocs-material](https://github.com/squidfunk/mkdocs-material)                                                       |
+| MkDocs (v1.1.2+)              | [mkdocs](https://pypi.org/project/mkdocs/)                        | BSD-3Clause                          | [https://github.com/mkdocs/mkdocs](https://github.com/mkdocs/mkdocs)                                                                               |
+| Material for MkDocs (v5.2.1+) | [mkdocs-material](https://pypi.org/project/mkdocs-material/)      | MIT                                  | [https://github.com/squidfunk/mkdocs-material](https://github.com/squidfunk/mkdocs-material)                                                       |
 
 
 

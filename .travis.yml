@@ -44,21 +44,21 @@ install:
     - sudo apt-get install tree
     - pip3 install -U pylint
     - sudo apt-get install enchant      # needed for pyenchant
-    - pip3 install pyenchant            # needed for pylint spell checking
-    - pip3 install coverage
+    - pip3 install -U pyenchant         # needed for pylint spell checking
+    - pip3 install -U coverage
     # Packages for Emma
-    - pip3 install -U Pygments Markdown matplotlib pandas pypiscout graphviz
+    - pip3 install -U Pygments Markdown matplotlib pandas "pypiscout>=2.0" graphviz
     # Packages for Emma reports + html doc
     - sudo apt-get update
     - sudo apt-get install graphviz
     - pip3 install -U gprof2dot
     # Install pip deployment packages
-    - pip3 install --upgrade setuptools
-    - pip3 install --upgrade wheel
-    - pip3 install --upgrade twine
+    - pip3 install -U setuptools
+    - pip3 install -U wheel
+    - pip3 install -U twine
     # Install mkdocs packages for GitHub pages deployment
-    - pip3 install mkdocs
-    - pip3 install mkdocs-material
+    - pip3 install -U "mkdocs>=1.1.2"
+    - pip3 install -U "mkdocs-material>=5.2.1"
     # List installed pip packages
     - pip3 list
 
@@ -120,10 +120,10 @@ jobs:
                 skip_cleanup: true
                 github_token: $GITHUB_TOKEN
                 local_dir: site
-                on:
-                    tags: true
 #                on:
-#                    branch: master
+#                    tags: true
+                on:
+                    branch: 61-mkdocs-material-fix
               # Deploy on PyPi database
               - provider: pypi
 #                server: https://test.pypi.org/legacy/       # Activate for testing
