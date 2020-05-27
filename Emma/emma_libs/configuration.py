@@ -59,7 +59,7 @@ class Configuration:
                 addressSpacesPath = Emma.shared_libs.emma_helper.joinPath(configurationPath, self.globalConfig[configId][ADDR_SPACES_PATH])
                 self.globalConfig[configId]["addressSpaces"] = Configuration.__readAddressSpacesJson(addressSpacesPath)
             else:
-                sc().error("The " + configId + " does not have the key: " + ADDR_SPACES_PATH)
+                sc().error(f"The {configId} does not have the key: {ADDR_SPACES_PATH}.")
 
             # Setting up the mapfile search paths for the configId
             # TODO: add option for recursive search (MSc)
@@ -69,40 +69,40 @@ class Configuration:
                 mapfilesPathForThisConfigId = mapfilesPath
             Emma.shared_libs.emma_helper.checkIfFolderExists(mapfilesPathForThisConfigId)
 
+            # Check if globalConfig file contains a patternsPath key
             if PATTERNS_PATH in self.globalConfig[configId]:
                 patternsPath = Emma.shared_libs.emma_helper.joinPath(configurationPath, self.globalConfig[configId][PATTERNS_PATH])
+                # Process patterns*.json
                 self.globalConfig[configId]["patterns"] = Emma.shared_libs.emma_helper.readJson(patternsPath)
-                for MapfilePath in self.globalConfig[configId]["patterns"]["mapfiles"].keys():
-                    if REGEX not in self.globalConfig[configId]["patterns"]["mapfiles"][MapfilePath]:
-                        sc().error("The key " + REGEX + " does not exist in " + patternsPath)
+                for mapfilePath in self.globalConfig[configId]["patterns"]["mapfiles"].keys():
+                    # Check the correctness of patterns files
+                    if REGEX not in self.globalConfig[configId]["patterns"]["mapfiles"][mapfilePath]:
+                        sc().error(f"The key {REGEX} does not exist in {patternsPath}.")
                     else:
-                        if type(self.globalConfig[configId]["patterns"]["mapfiles"][MapfilePath][REGEX]) != list:
-                            sc().error("the value of the regex in " + patternsPath + " is not a list")
+                        if type(self.globalConfig[configId]["patterns"]["mapfiles"][mapfilePath][REGEX]) != list:
+                            sc().error(f"The value of the regex in {patternsPath} is not a list.")
                         else:
-                            if len(self.globalConfig[configId]["patterns"]["mapfiles"][MapfilePath][REGEX]) < 1:
-                                sc().error("the list of the regex in " + patternsPath + " must contain at least one element")
+                            if len(self.globalConfig[configId]["patterns"]["mapfiles"][mapfilePath][REGEX]) < 1:
+                                sc().error(f"The list of the regex in {patternsPath} must contain at least one element.")
                             else:
-                                for element in self.globalConfig[configId]["patterns"]["mapfiles"][MapfilePath][REGEX]:
+                                for element in self.globalConfig[configId]["patterns"]["mapfiles"][mapfilePath][REGEX]:
                                     if type(element) != str:
-                                        sc().error("the element of the regex list in " + patternsPath + " must be a str")
+                                        sc().error(f"The element of the regex list in  {patternsPath}  must be a str.")
             else:
-                sc().error(
-                    "Missing patternsPath definition in the globalConfig.json for the configId: " + configId + "!")
+                sc().error(f"Missing patternsPath definition in the globalConfig.json for the configId: {configId} !")
             # Creating the SpecificConfiguration object
             if COMPILER in self.globalConfig[configId]:
                 usedCompiler = self.globalConfig[configId][COMPILER]
                 self.specificConfigurations[configId] = Emma.emma_libs.specificConfigurationFactory.createSpecificConfiguration(usedCompiler, noPrompt=noPrompt)
                 # Processing the compiler dependent parts of the configuration
-                sc().info("Processing the mapfiles of the configID \"" + configId + "\"")
+                sc().info(f"Processing the mapfiles of the configID \"{configId}\"")
                 self.specificConfigurations[configId].readConfiguration(configurationPath, mapfilesPathForThisConfigId, configId, self.globalConfig[configId])
                 # Validating the the configuration
                 if not self.specificConfigurations[configId].checkConfiguration(configId, self.globalConfig[configId]):
                     sc().warning("The specificConfiguration of the configId \"" + configId + "\" is invalid!\n" + "The configId \"" + configId + "\" will not be analysed!")
                     configIDsToRemove.append(configId)
             else:
-                sc().error("The configuration of the configID \"" + configId + "\" does not contain a \"compiler\" key!")
-
-            # Loading the patterns*.json
+                sc().error(f"The configuration of the configID \"{configId}\" does not contain a \"compiler\" key!")
 
         # Remove unwanted configIDs
         for configId in configIDsToRemove:
@@ -146,21 +146,23 @@ class Configuration:
         addressSpaces = Emma.shared_libs.emma_helper.readJson(path)
         for memType in addressSpaces["memory"].keys():
             if START not in addressSpaces["memory"][memType].keys():
-                sc().error("The " + path + " does not have the key: " + START)
+                sc().error(f"The {path} does not have the key: {START}")
             else:
                 try:
-                    int(addressSpaces["memory"][memType][START], 16)
+                    startAddress = addressSpaces["memory"][memType][START]
+                    int(startAddress, 16)
                 except ValueError:
-                    sc().error("the start address " + addressSpaces["memory"][memType][START] + " in " + path + " is not valid")
+                    sc().error(f"The start address {startAddress} in {path} is not valid.")
             if END not in addressSpaces["memory"][memType].keys():
-                sc().error("The " + path + " does not have the key: " + END)
+                sc().error(f"The {path} does not have the key: {END}.")
             else:
                 try:
-                    int(addressSpaces["memory"][memType][END], 16)
+                    endAddress = addressSpaces["memory"][memType][END]
+                    int(endAddress, 16)
                 except ValueError:
-                    sc().error("the end address " + addressSpaces["memory"][memType][END] + " in " + path + " is not valid")
+                    sc().error(f"The end address {endAddress} in {path} is not valid.")
             if TYPE not in addressSpaces["memory"][memType].keys():
-                sc().error("The " + path + " does not have the key: " + TYPE)
+                sc().error(f"The {path} does not have the key: {TYPE}.")
         # Removing the imported memory entries if they are listed in the IGNORE_MEMORY
         if IGNORE_MEMORY in addressSpaces.keys():
             for memoryToIgnore in addressSpaces[IGNORE_MEMORY]:
@@ -168,6 +170,6 @@ class Configuration:
                     addressSpaces["memory"].pop(memoryToIgnore)
                     sc().debug("Memory entry \"" + memoryToIgnore + "\" defined in \"" + path + "\" is marked to be ignored...")
                 else:
-                    sc().error("The key " + memoryToIgnore + " which is in the ignore list, does not exist in the memory object of " + path)
+                    sc().error(f"The key {memoryToIgnore} which is in the ignore list, does not exist in the memory object of {path}.")
 
         return addressSpaces
