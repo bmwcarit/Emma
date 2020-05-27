@@ -238,7 +238,6 @@ class MemoryManager:
                         xAxeRectStart = 0
                         rectLength = element[Element.addressEnd] - startPoint
                         originalStartAddress = element[Element.originalAddressStart]
-                        fontColour = "red"
                     if index == 0:
                         biggestEndAddrSoFar = element[Element.addressEnd]
                     else:
@@ -259,7 +258,14 @@ class MemoryManager:
                             currYLvl = y
                             biggestEndAddrSoFar = element[Element.addressEnd]
                     # Plot new element
-                    image.add(image.rect((xAxeRectStart, currYLvl), size=(rectLength, 10), fill=colour))
+                    if originalStartAddress < startPoint and rectLength > 3:
+                        xAxeRectStart += 3
+                        rectLength -= 3
+                        image.add(image.rect((xAxeRectStart, currYLvl), size=(rectLength, 10), fill=colour))
+                        # Add a shape visualising that the start address of a drawing object is smaller than given start point
+                        image.add(image.path(d="M 0 " + str(currYLvl + 5) + " L" + str(xAxeRectStart + 0.1) + " " + str(currYLvl) + " L " + str(xAxeRectStart + 0.1) + " " + str(currYLvl + 10), fill=colour))
+                    else:
+                        image.add(image.rect((xAxeRectStart, currYLvl), size=(rectLength, 10), fill=colour))
                     # Add metadata to drawn element
 
                     # Check if the FQN fits in the rectangle (assumption: FQN is always longer than start, end address + obj/sec length)
@@ -276,8 +282,13 @@ class MemoryManager:
                         plottedElements.append((element[Element.addressEnd] + len(element[Element.fqn]), currYLvl))
                     # FQN fits into element
                     else:
+                        # Check if address end of a drawing object is bigger than end point
+                        if element[Element.addressEnd] > endPoint:
+                            xAxeEnd = endPoint - startPoint - smallSpacing
+                        else:
+                            xAxeEnd = element[Element.addressEnd] - startPoint - smallSpacing
                         image.add(image.text(hex(originalStartAddress), insert=(xAxeRectStart + smallSpacing, currYLvl), font_size=str(fontSize)+"px", writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        image.add(image.text(hex(element[Element.addressEnd]), insert=(element[Element.addressEnd] - startPoint - smallSpacing, currYLvl), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(hex(element[Element.addressEnd]), insert=(xAxeEnd, currYLvl), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
                         image.add(image.text(element[Element.fqn], insert=(xAxeRectStart + 5, currYLvl + 2), font_size=str(fontSize)+"px", writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
                         plottedElements.append((element[Element.addressEnd], currYLvl))
                     # Update y level
