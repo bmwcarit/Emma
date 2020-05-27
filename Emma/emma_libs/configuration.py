@@ -89,20 +89,20 @@ class Configuration:
                                     if type(element) != str:
                                         sc().error(f"The element of the regex list in  {patternsPath}  must be a str.")
             else:
-                sc().error(f"Missing patternsPath definition in the globalConfig.json for the configId: {configId} !")
+                sc().error(f"Missing patternsPath definition in the globalConfig.json for the configId: {configId}!")
             # Creating the SpecificConfiguration object
             if COMPILER in self.globalConfig[configId]:
                 usedCompiler = self.globalConfig[configId][COMPILER]
                 self.specificConfigurations[configId] = Emma.emma_libs.specificConfigurationFactory.createSpecificConfiguration(usedCompiler, noPrompt=noPrompt)
                 # Processing the compiler dependent parts of the configuration
-                sc().info(f"Processing the mapfiles of the configID \"{configId}\"")
+                sc().info(f"Processing the mapfiles of the configID `{configId}`")
                 self.specificConfigurations[configId].readConfiguration(configurationPath, mapfilesPathForThisConfigId, configId, self.globalConfig[configId])
                 # Validating the the configuration
                 if not self.specificConfigurations[configId].checkConfiguration(configId, self.globalConfig[configId]):
                     sc().warning("The specificConfiguration of the configId \"" + configId + "\" is invalid!\n" + "The configId \"" + configId + "\" will not be analysed!")
                     configIDsToRemove.append(configId)
             else:
-                sc().error(f"The configuration of the configID \"{configId}\" does not contain a \"compiler\" key!")
+                sc().error(f"The configuration of the configID `{configId}` does not contain a `compiler` key!")
 
         # Remove unwanted configIDs
         for configId in configIDsToRemove:
