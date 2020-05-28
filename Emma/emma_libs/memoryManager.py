@@ -141,7 +141,7 @@ class MemoryManager:
         else:
             sc().error("The configuration needs to be loaded before processing the mapfiles!")
 
-    def createReports(self, memVis=False, memVisResolved=False, noprompt=False, noResolveOverlap=False):
+    def createReports(self, memVis=False, memVisResolved=False, noprompt=False):
         """
         Creates the reports
         :param memVis: Create svg report with unresolved overlaps if True
@@ -263,7 +263,8 @@ class MemoryManager:
                         xAxeRectStart += 3
                         rectLength -= 3
                         image.add(image.rect((xAxeRectStart, currYLvl), size=(rectLength, 10), fill=colour))
-                        # Add a shape visualising that the start address of a drawing object is smaller than given start point
+
+                        # Add a shape (triangle) visualising that the start address of a drawing object is smaller than given start point
                         image.add(image.path(d="M 0 " + str(currYLvl + 5) + " L" + str(xAxeRectStart + 0.1) + " " + str(currYLvl) + " L " + str(xAxeRectStart + 0.1) + " " + str(currYLvl + 10), fill=colour))
                     else:
                         image.add(image.rect((xAxeRectStart, currYLvl), size=(rectLength, 10), fill=colour))
@@ -285,11 +286,11 @@ class MemoryManager:
                     else:
                         # Check if address end of a drawing object is bigger than end point
                         if element[Element.addressEnd] > endPoint:
-                            xAxeEnd = endPoint - startPoint - smallSpacing
+                            xAxeEnd = endPoint - startPoint
                         else:
-                            xAxeEnd = element[Element.addressEnd] - startPoint - smallSpacing
+                            xAxeEnd = element[Element.addressEnd] - startPoint
                         image.add(image.text(hex(originalStartAddress), insert=(xAxeRectStart + smallSpacing, currYLvl), font_size=str(fontSize)+"px", writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        image.add(image.text(hex(element[Element.addressEnd]), insert=(xAxeEnd, currYLvl), font_size='2px', writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
+                        image.add(image.text(hex(element[Element.addressEnd]), insert=(xAxeEnd - smallSpacing, currYLvl), font_size="2px", writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
                         image.add(image.text(element[Element.fqn], insert=(xAxeRectStart + 5, currYLvl + 2), font_size=str(fontSize)+"px", writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
                         plottedElements.append((element[Element.addressEnd], currYLvl))
                     # Update y level
@@ -328,6 +329,7 @@ class MemoryManager:
             # Plot objects
             drawElements(image, getElementsToPlot("Object_Summary"), startPoint, y2, svgwrite.rgb(198, 233, 175))
             image.save()
+            sc().info("An SVG file was stored:", os.path.abspath(reportPath))
 
         def createTeamScaleReports():
             """
