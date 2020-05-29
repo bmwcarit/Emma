@@ -227,17 +227,27 @@ class MemoryManager:
                 drawingOffset = 15
                 smallSpacing = 1        # Small spacing in px used for spacing between edges of the rectangle and start/ end address label
                 fontSize = 2
+                startOfDrawingArea = 3
+                fontColour = "black"
+
                 for index, element in enumerate(elementsToPlot):
-                    xAxeRectStart = element[Element.addressStart] - startPoint
+                    endAddrBigger = False           # flag that marks that end address of the current element is bigger than given end point
+                    xAxeRectStart = element[Element.addressStart] - startPoint + startOfDrawingArea
                     rectLength = element[Element.addressLength] - 1
                     originalStartAddress = element[Element.addressStart]
-                    fontColour = "black"
                     if len(str(element[Element.addressEnd])) > 11 or len(str(originalStartAddress)) > 11:          # Check if address start / end fits in the rectangle, 11 (pixels) is the height of the rectangle
                         currYLvl += len(str(element[Element.addressEnd])) - 11
                     if element[Element.addressStart] < startPoint:
-                        xAxeRectStart = 0
+                        xAxeRectStart = startOfDrawingArea
                         rectLength = element[Element.addressEnd] - startPoint
                         originalStartAddress = element[Element.originalAddressStart]
+                    # Check if address end of a drawing object is bigger than end point
+                    if element[Element.addressEnd] > endPoint:
+                        endAddrBigger = True
+                        rectLength = xAxeRectStart + (endPoint - startPoint - 3)
+                        xAxeEnd = endPoint - startPoint + startOfDrawingArea
+                    else:
+                        xAxeEnd = element[Element.addressEnd] - startPoint + startOfDrawingArea
                     if index == 0:
                         biggestEndAddrSoFar = element[Element.addressEnd]
                     else:
@@ -258,15 +268,13 @@ class MemoryManager:
                             currYLvl = y
                             biggestEndAddrSoFar = element[Element.addressEnd]
                     # Plot new element
+                    image.add(image.rect((xAxeRectStart, currYLvl), size=(rectLength, 10), fill=colour))
+                    if endAddrBigger:
+                        # Add a shape (triangle) visualising that the end address of a drawing object is bigger than given end point
+                        image.add(image.path(d="M " + str(endPoint - startPoint + 6) + " " + str(currYLvl + 5) + " L " + str(endPoint - startPoint + startOfDrawingArea) + " " + str(currYLvl) + " L " + str(endPoint - startPoint + startOfDrawingArea) + " " + str(currYLvl + 10), fill=colour))
                     if originalStartAddress < startPoint and rectLength > 3:
-                        xAxeRectStart += 3
-                        rectLength -= 3
-                        image.add(image.rect((xAxeRectStart, currYLvl), size=(rectLength, 10), fill=colour))
-
                         # Add a shape (triangle) visualising that the start address of a drawing object is smaller than given start point
                         image.add(image.path(d="M 0 " + str(currYLvl + 5) + " L" + str(xAxeRectStart + 0.1) + " " + str(currYLvl) + " L " + str(xAxeRectStart + 0.1) + " " + str(currYLvl + 10), fill=colour))
-                    else:
-                        image.add(image.rect((xAxeRectStart, currYLvl), size=(rectLength, 10), fill=colour))
                     # Add metadata to drawn element
 
                     # Check if the FQN fits in the rectangle (assumption: FQN is always longer than start, end address + obj/sec length)
@@ -274,20 +282,18 @@ class MemoryManager:
                         image.add(image.text(element[Element.fqn], insert=(xAxeRectStart, currYLvl - smallSpacing), font_size=str(fontSize)+"px", writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
                         # Prepare plot of start and end address
                         xAxeStart = xAxeRectStart + smallSpacing            # Add spacing for start address (one px); rectangles do have no border
-                        xAxeEnd = element[Element.addressEnd] - startPoint - smallSpacing
+                        xAxeEnd = element[Element.addressEnd] - startPoint + startOfDrawingArea - smallSpacing
                         # If the rectangle smaller than 4, then write the end address outside the rectangle
                         if rectLength < fontSize * 2:
-                            xAxeEnd = element[Element.addressEnd] - startPoint + smallSpacing
+                            xAxeEnd = element[Element.addressEnd] - startPoint + startOfDrawingArea + smallSpacing
                         image.add(image.text(hex(originalStartAddress), insert=(xAxeStart, currYLvl), font_size=str(fontSize)+"px", writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
                         image.add(image.text(hex(element[Element.addressEnd]), insert=(xAxeEnd, currYLvl), font_size=str(fontSize)+"px", writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
-                        plottedElements.append((element[Element.addressEnd] + len(element[Element.fqn]), currYLvl))
+                        additionalSpace = len(element[Element.fqn]) - rectLength            # compute how much space after the rectangle is needed to plot FQN
+                        plottedElements.append((element[Element.addressEnd] + additionalSpace, currYLvl))
+                        if biggestEndAddrSoFar < element[Element.addressEnd] + additionalSpace:
+                            biggestEndAddrSoFar = element[Element.addressEnd] + additionalSpace
                     # FQN fits into element
                     else:
-                        # Check if address end of a drawing object is bigger than end point
-                        if element[Element.addressEnd] > endPoint:
-                            xAxeEnd = endPoint - startPoint
-                        else:
-                            xAxeEnd = element[Element.addressEnd] - startPoint
                         image.add(image.text(hex(originalStartAddress), insert=(xAxeRectStart + smallSpacing, currYLvl), font_size=str(fontSize)+"px", writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
                         image.add(image.text(hex(element[Element.addressEnd]), insert=(xAxeEnd - smallSpacing, currYLvl), font_size="2px", writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour))
                         image.add(image.text(element[Element.fqn], insert=(xAxeRectStart + 5, currYLvl + 2), font_size=str(fontSize)+"px", writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour))
@@ -322,7 +328,11 @@ class MemoryManager:
                 return elementsToPlot
 
             imageHeight = 3000      # Define some height of the image
-            image = svgwrite.Drawing(reportPath, size=(endPoint - startPoint, imageHeight))
+            image = svgwrite.Drawing(reportPath, size=(endPoint - startPoint + 100, imageHeight))
+            # Plot a line defining the beginning of the chosen address area
+            image.add(image.rect((2, 0), size=(1, imageHeight), fill="grey", opacity=0.1))
+            # Plot a line defining the end of the chosen address area
+            image.add(image.rect((endPoint - startPoint + 3, 0), size=(1, imageHeight), fill="grey", opacity=0.1))
             # Plot sections
             y2 = drawElements(image, getElementsToPlot("Section_Summary"), startPoint, 5, svgwrite.rgb(255, 230, 128)) + 15        # Distance 15 px from the lowest section element
             # Plot objects
