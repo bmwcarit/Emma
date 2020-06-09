@@ -244,9 +244,9 @@ class MemoryManager:
                         originalStartAddress = element[Element.originalAddressStart]
                     # Check if address end of a drawing object is bigger than end point
                     if element[Element.addressEnd] > endPoint:
-                        endAddrBigger = True
-                        rectLength = xAxeRectStart + (endPoint - startPoint - 3)
+                        rectLength = endPoint - startPoint - xAxeRectStart + startOfDrawingArea
                         xAxeEnd = endPoint - startPoint + startOfDrawingArea
+                        endAddrBigger = True
                     else:
                         xAxeEnd = element[Element.addressEnd] - startPoint + startOfDrawingArea
                     if index == 0:
