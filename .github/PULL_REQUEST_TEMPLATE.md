@@ -4,6 +4,8 @@
 ### Quality assurance tasks
 * General
     * [ ] An issue exists to this pull request
+    * [ ] Reviewer were set (mostly this will be `Emma developers`)
+    * [ ] Assignee is set (you)
     * [ ] Related commits have been squashed
     * [ ] PyLint results have been checked and issues resolved
     * [ ] Emma version updated
