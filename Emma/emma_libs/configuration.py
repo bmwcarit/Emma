@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
-
 from pypiscout.SCout_Logger import Logger as sc
 
 from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
@@ -86,6 +85,8 @@ class Configuration:
         # Remove unwanted configIDs
         for configId in configIDsToRemove:
             self.globalConfig.pop(configId, None)
+        if len(self.globalConfig) == 0:
+            sc().error("No mapfiles for any configId were found. Nothing to analyse. Exiting...")
 
     @staticmethod
     def __readGlobalConfigJson(path):
