@@ -48,10 +48,10 @@ def main(arguments):
     memoryManager = Emma.emma_libs.memoryManager.MemoryManager(*processArguments(arguments))
     memoryManager.readConfiguration()
     memoryManager.processMapfiles()
-    if memoryManager.settings.createCategories:
-        sc().info("No results were generated since categorisation option is active.")
+    if memoryManager.settings.createCategories or memoryManager.settings.dryRun:
+        sc().info("No results were generated since categorisation or dryRun option is active.")
     else:
-        memoryManager.createReports(arguments.teamscale)
+        memoryManager.createReports(arguments.teamscale, arguments.dryRun)
 
     # Stop and display time measurement
     TIME_END = timeit.default_timer()
@@ -148,6 +148,13 @@ def initParser():
         default=False,
         action="store_true",
     )
+
+    parser.add_argument(
+        "--dryRun",
+        help="Do not store any standard reports",
+        default=False,
+        action="store_true",
+    )
     return parser
 
 
@@ -188,9 +195,10 @@ def processArguments(arguments):
     noPrompt = arguments.noprompt
     noResolveOverlap = arguments.noResolveOverlap
     teamscale = arguments.teamscale
+    dryRun = arguments.dryRun
     # TODO: It would be more convenient if arguments which are not modified are passed without manually modifying the code (MSc)
 
-    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamscale
+    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamscale, dryRun
 
 
 def runEmma():
