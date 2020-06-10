@@ -51,7 +51,7 @@ def main(arguments):
     if memoryManager.settings.createCategories:
         sc().info("No results were generated since categorisation option is active.")
     else:
-        memoryManager.createReports(arguments.teamscale)
+        memoryManager.createReports(arguments.teamscale, arguments.noreports)
 
     # Stop and display time measurement
     TIME_END = timeit.default_timer()
@@ -148,6 +148,13 @@ def initParser():
         default=False,
         action="store_true",
     )
+
+    parser.add_argument(
+        "--noreports",
+        help="Do not store any standard reports",
+        default=False,
+        action="store_true",
+    )
     return parser
 
 
@@ -188,9 +195,10 @@ def processArguments(arguments):
     noPrompt = arguments.noprompt
     noResolveOverlap = arguments.noResolveOverlap
     teamscale = arguments.teamscale
+    noReports = arguments.noreports
     # TODO: It would be more convenient if arguments which are not modified are passed without manually modifying the code (MSc)
 
-    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamscale
+    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamscale, noReports
 
 
 def runEmma():

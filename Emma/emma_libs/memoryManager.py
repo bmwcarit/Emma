@@ -41,7 +41,7 @@ class MemoryManager:
         """
         Settings that influence the operation of the MemoryManager object.
         """
-        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale):
+        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale, noReports):
             self.projectName = projectName
             self.configurationPath = configurationPath
             self.mapfilesPath = mapfilesPath
@@ -52,13 +52,14 @@ class MemoryManager:
             self.noPrompt = noPrompt
             self.noResolveOverlap = noResolveOverlap
             self.teamScale = teamScale
+            self.noReports = noReports
 
-    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale):
+    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale, noReports):
         # pylint: disable=too-many-arguments
         # Rationale: We need to initialize the Settings, so the number of arguments are needed.
 
         # Processing the command line arguments and storing it into the settings member
-        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale)
+        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale, noReports)
         # Check whether the configuration and the mapfiles folders exist
         Emma.shared_libs.emma_helper.checkIfFolderExists(self.settings.mapfilesPath)
         self.configuration = None                   # The configuration is empty at this moment, it can be read in with another method
@@ -135,7 +136,7 @@ class MemoryManager:
         else:
             sc().error("The configuration needs to be loaded before processing the mapfiles!")
 
-    def createReports(self, teamscale=False):
+    def createReports(self, teamscale=False, noReports=False):
         """
         Creates the reports
         :return: None
@@ -213,8 +214,11 @@ class MemoryManager:
             Emma.shared_libs.emma_helper.writeJson(reportPath, resultsLst)
 
         if self.memoryContent is not None:
-            # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separted string) (MSc)
-            createStandardReports()
+            # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separated string) (MSc)
+            if not noReports:
+                createStandardReports()
+            else:
+                sc().info("`--noreports` is active. No standard reports were stored.")
             # createDotReports()
             if teamscale:
                 createTeamScaleReports()
