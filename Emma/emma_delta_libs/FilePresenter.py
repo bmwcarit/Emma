@@ -40,17 +40,41 @@ class FilePresenter:
     def __init__(self, fileSelector: Emma.emma_delta_libs.FileSelector):
         self.__fileSelector: Emma.emma_delta_libs.FileSelector = fileSelector
 
+    def validateNumber(self, selectedNumber):
+        try:
+            if int(selectedNumber) in self.__filetypes:
+                return True
+            else:
+                return False
+        except ValueError:
+            return False
+
+    @staticmethod
+    def validateIndices(indices, candidates):
+        if type(indices) != list:
+            return False
+        if len(indices) == 2:
+            try:
+                if int(indices[0]) in candidates and int(indices[1]) in candidates:
+                    return True
+                else:
+                    return False
+            except ValueError:
+                return False
+        else:
+            return False
+
     def chooseCandidates(self) -> typing.List[str]:
         """
         Select two files for the further analysis
-        :return: list with chosen filenames
+        :return: list with chosen file names
         """
-        # TODO: Validate all inputs (FM)
         self.__printFileType()
+
         while True:
             selectedNumber = (input("Choose File type >\n"))
             if len(str(selectedNumber)) == 1:
-                if int(selectedNumber) in self.__filetypes:                      # pylint: disable=no-else-break
+                if self.validateNumber(selectedNumber):                      # pylint: disable=no-else-break
                     filetype: str = self.__filetypes[int(selectedNumber)]
                     break
                 else:
@@ -63,13 +87,10 @@ class FilePresenter:
         while True:
             indices: str = input("Select two indices separated by one space >")
             indices: typing.List[str] = indices.split(" ")
-            if len(indices) == 2:
-                if int(indices[0]) in candidates and int(indices[1]) in candidates:      # pylint: disable=no-else-break
-                    break
-                else:
-                    sc().warning("select two of the numbers presented above")
+            if self.validateIndices(indices, candidates):          # pylint: disable=no-else-break
+                break
             else:
-                sc().warning("Select exactly two files.")
+                sc().warning("Select two of the numbers presented above.")
 
         selectedFiles: typing.List[str] = self.__fileSelector.selectFiles(indices)
         self.__printSelectedFiles(selectedFiles)
