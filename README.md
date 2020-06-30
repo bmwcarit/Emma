@@ -166,6 +166,7 @@ emma-dev (. at) googlegroups.com
 | Pygments (v2.3.1+)   | [Pygments](https://pypi.org/project/Pygments/)      | BSD-2-Clause                         | [https://bitbucket.org/birkenfeld/pygments-main/src/default/](https://bitbucket.org/birkenfeld/pygments-main/src/default/); [http://pygments.org/download/](http://pygments.org/download/)   |
 | Matplotlib (v3.0.0+) | [matplotlib](https://pypi.org/project/matplotlib/)  | Matplotlib License (BSD compatible)  | [https://matplotlib.org/users/installing.html](https://matplotlib.org/users/installing.html); [https://github.com/matplotlib/matplotlib](https://github.com/matplotlib/matplotlib)           |
 | SCout (v1.8+)        | [pypiscout](https://pypi.org/project/pypiscout/)    | MIT                                  | [https://github.com/holzkohlengrill/SCout](https://github.com/holzkohlengrill/SCout)                                                                                                         |
+| svgwrite (v1.4+)    | [svgwrite](https://pypi.org/project/svgwrite/)          | MIT License (MIT License)           | [https://github.com/mozman/svgwrite](https://github.com/mozman/svgwrite); [https://svgwrite.readthedocs.io/en/latest/](https://svgwrite.readthedocs.io/en/latest/)                           |
 
 
 **Optional dependencies:**
