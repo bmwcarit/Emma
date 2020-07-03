@@ -1,21 +1,26 @@
 import os
 import sys
 import unittest
+import tempfile
 from unittest import TestCase
 import Emma.emma_delta_libs.FilePresenter
 import Emma.emma_delta_libs.FileSelector
 
-sys.path.append(os.path.join(os.path.dirname(__file__)))
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
 class FilePresenterTestCase(TestCase):
 
     def setUp(self) -> None:
         self.thisDir = os.path.dirname(os.path.abspath(__file__))
+        tempdir = tempfile.TemporaryDirectory(dir=self.thisDir)
+        pathToDir = os.path.join(tempdir.name, "memStats")
+        if not os.path.exists(pathToDir):
+            os.makedirs(pathToDir)
 
-        self.testFile1 = os.path.join(self.thisDir, "memStats", "Object_Summary_2020_05_06.csv")
-        self.testFile2 = os.path.join(self.thisDir, "memStats", "Object_Summary_2020_04_06.csv")
-        self.FileSelector = Emma.emma_delta_libs.FileSelector.FileSelector(self.thisDir)
+        self.testFile1 = os.path.join(pathToDir, "Object_Summary_2020_05_06.csv")
+        self.testFile2 = os.path.join(pathToDir, "Object_Summary_2020_04_06.csv")
+        self.FileSelector = Emma.emma_delta_libs.FileSelector.FileSelector(tempdir.name)
         self.filePresenter = Emma.emma_delta_libs.FilePresenter.FilePresenter(self.FileSelector)
         self.candidates = {1: self.testFile1, 2: self.testFile2}
 
