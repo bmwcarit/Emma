@@ -1,16 +1,36 @@
+""""
+Emma - Emma Memory and Mapfile Analyser
+Copyright (C) 2019 The Emma authors
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>
+"""
+
 import os
 import sys
 import unittest
 import tempfile
 from unittest import TestCase
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
+# pylint: disable=wrong-import-position
+# Rationale: This module needs to access modules that are above them in the folder structure.
+
 import Emma.emma_delta_libs.FilePresenter
 import Emma.emma_delta_libs.FileSelector
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-
 
 class FilePresenterTestCase(TestCase):
-
     def setUp(self) -> None:
         self.thisDir = os.path.dirname(os.path.abspath(__file__))
         tempdir = tempfile.TemporaryDirectory(dir=self.thisDir)
