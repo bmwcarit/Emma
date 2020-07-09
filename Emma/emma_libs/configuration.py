@@ -107,6 +107,8 @@ class Configuration:
         # Remove unwanted configIDs
         for configId in configIDsToRemove:
             self.globalConfig.pop(configId, None)
+        if len(self.globalConfig) == 0:
+            sc().error("No mapfiles for any configId were found. Nothing to analyse. Exiting...")
 
     @staticmethod
     def __readGlobalConfigJson(path):
