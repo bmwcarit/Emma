@@ -41,25 +41,33 @@ class FilePresenter:
         self.__fileSelector: Emma.emma_delta_libs.FileSelector = fileSelector
 
     def validateNumber(self, selectedNumber):
+        """
+        Proof if the given file type index is valid
+        :param selectedNumber: index of file type
+        :return: True or False
+        """
         try:
             if int(selectedNumber) in self.__filetypes:
                 return True
-            else:
-                return False
-        except ValueError:
+
+            return False
+        except (TypeError, ValueError):
             return False
 
     @staticmethod
     def validateIndices(indices, candidates):
-        if type(indices) != list:
+        """
+        Proof if given file names indices are valid
+        :param indices: list with indices of 2 file names
+        :param candidates: dictionary with file names as value and their indices as key
+        :return: True or False
+        """
+        if not isinstance(indices, list):
             return False
         if len(indices) == 2:
             try:
-                if int(indices[0]) in candidates and int(indices[1]) in candidates:
-                    return True
-                else:
-                    return False
-            except ValueError:
+                return bool(int(indices[0]) in candidates and int(indices[1]) in candidates)
+            except (TypeError, ValueError):
                 return False
         else:
             return False
