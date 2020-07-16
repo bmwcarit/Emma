@@ -41,6 +41,8 @@ class MemoryMap(Emma.emma_vis_libs.dataVisualiser.Visualiser):
         Generate pie plots per configID and per memType, then save them to disk
         :param plotShow: [bool] if True: open window showing the plots
         :return: None
+
+        
         """
         data = Emma.emma_vis_libs.dataVisualiser.removeDataWithFlags(sourceData=self.data, rmContained=True, rmDuplicate=True)
 
@@ -69,7 +71,7 @@ class MemoryMap(Emma.emma_vis_libs.dataVisualiser.Visualiser):
                 title = "Categories [%] | " + self.project + " - " + configID + " - " + memType + "   (created: " + self.statsTimestamp + ")"
 
                 byMemType = groupedByConfigID.loc[groupedByConfigID[MEM_TYPE] == memType].drop([MEM_TYPE], 1).set_index(CATEGORY)
-                pieChart = byMemType.plot.pie(y=PERCENTAGE, x=CATEGORY, autopct='%.2f %%', fontsize=6, labeldistance=None)
+                pieChart = byMemType.plot.pie(y=PERCENTAGE, x=CATEGORY, autopct='%.2f %%', fontsize=6, labeldistance=None, colormap='tab20')
                 pieChart.axes.get_yaxis().set_visible(False)
                 pieChart.set_title(fontsize=10, label=title)
                 matplotlib.pyplot.legend(loc='lower left', bbox_to_anchor=(-0.4, -0.2), ncol=2, fontsize=8)
