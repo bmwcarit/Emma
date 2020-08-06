@@ -27,10 +27,8 @@ import re
 from pypiscout.SCout_Logger import Logger as sc
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-
+import Emma                                                              # For version number
 import Emma.shared_libs.emma_helper
-                                                            # For version number
-
 from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 
 # TODO: support conversion of lt command via argument switch (MSc)
