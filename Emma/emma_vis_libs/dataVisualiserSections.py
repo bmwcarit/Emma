@@ -196,7 +196,7 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
             if i >= len(barGraph.patches) / 2:
                 # Show budgets annotations in kiB
                 barGraph.annotate(
-                    s=Emma.shared_libs.emma_helper.toHumanReadable(int(self.consumptionByMemType[BUDGET][i % (len(barGraph.patches) / 2)])),  # Format of budget text
+                    s=Emma.shared_libs.emma_helper.toHumanReadable(int(self.consumptionByMemType[BUDGET].iloc[int(i % (len(barGraph.patches) / 2))])),  # Format of budget text
                     xy=(bar.get_x(), 100),                                                                         # Location of budget annotation, set to 100 so the annotation appears at the 100% line
                     color="#505359")
             else:
