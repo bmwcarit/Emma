@@ -25,6 +25,7 @@ import argparse
 import re
 
 from pypiscout.SCout_Logger import Logger as sc
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 import Emma                                                              # For version number
 import Emma.shared_libs.emma_helper
@@ -38,6 +39,7 @@ START = "start"
 END = "end"
 ATTR = "attr"
 NAME = "name"
+
 
 class MapGroups:
     """
@@ -164,7 +166,7 @@ def processArguments(arguments):
     # and assign to variables
     mapLogFilePath = Emma.shared_libs.emma_helper.joinPath(arguments.map_log)
     if arguments.out is None:
-        out = os.path.dirname(mapLogFilePath)
+        out = os.path.dirname(os.path.abspath(mapLogFilePath))
         arguments.out = mapLogFilePath
     else:
         out = Emma.shared_libs.emma_helper.joinPath(arguments.out)
