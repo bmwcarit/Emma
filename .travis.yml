@@ -122,8 +122,8 @@ jobs:
                 local_dir: site
 #                on:
 #                    tags: true
-                on:
-                    branch: 61-mkdocs-material-fix
+#                on:
+#                    branch: 61-mkdocs-material-fix
               # Deploy on PyPi database
               - provider: pypi
 #                server: https://test.pypi.org/legacy/       # Activate for testing
