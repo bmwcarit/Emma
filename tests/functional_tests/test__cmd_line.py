@@ -26,6 +26,7 @@ import shutil
 
 from pypiscout.SCout_Logger import Logger as sc
 from matplotlib import pyplot as plt
+from shutil import copyfile
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 # pylint: disable=wrong-import-position
@@ -33,6 +34,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 import Emma.emma
 import Emma.emma_vis
+import Emma.emma_deltas
 from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 
 
@@ -265,6 +267,72 @@ class CmdEmmaVis(TestHelper):
         except Exception as e:  # pylint: disable=broad-except
                                 # Rationale: The purpose here is to catch any exception.
             self.fail("Unexpected exception: " + str(e))
+
+
+class CmdEmmaDelta(TestHelper):
+    """
+    Class containing tests for testing the command line argument processing for Emma-Delta.
+    """
+    def setUp(self) -> None:
+        self.init("CmdEmmaDelta")
+        self.runEmma(self.cmdLineTestOutputFolder)
+
+    def tearDown(self) -> None:
+        self.deInit()
+
+    def runEmma(self, outputFolder):
+        """
+        Run Emma Analyser
+        :param outputFolder: The output folder that will be given as the --dir parameter. If it is None, the --dir parameter will not be given to
+        :return: None
+        """
+        if outputFolder is not None:
+            args = Emma.emma.parseArgs(
+                ["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesFolder,
+                 "--dir", outputFolder, "--noprompt"])
+        else:
+            args = Emma.emma.parseArgs(
+                ["--project", self.cmdLineTestProjectFolder, "--mapfiles", self.cmdLineTestProjectMapfilesFolder,
+                 "--noprompt"])
+        Emma.emma.main(args)
+        for file in os.listdir(os.path.join(self.cmdLineTestOutputFolder, "memStats")):        # create a second csv file of the same category
+            if "Section_Summary" in file:
+                self.file1 = os.path.join(self.cmdLineTestOutputFolder, "memStats", file)
+                self.file2 = os.path.join(self.cmdLineTestOutputFolder, "memStats", "copy_" + file)
+                copyfile(self.file1, self.file2)
+                break
+
+    def test_normalRun(self):
+        """
+        Check that an ordinary run is successful
+        """
+        try:
+            # TODO: mock input
+            argsEmmaVis = Emma.emma_deltas.parseArgs(
+                ["--project", self.cmdLineTestProjectFolder, "--outfile", self.cmdLineTestOutputFolder, "--infiles", self.file1, self.file2])
+            Emma.emma_deltas.main(argsEmmaVis)
+        except Exception as e:  # pylint: disable=broad-except
+            # Rationale: The purpose here is to catch any exception.
+            self.fail("Unexpected exception: " + str(e))
+
+    def test_help(self):
+        """
+        Check that `--help` does not raise an exception but exits with SystemExit(0)
+        """
+        with self.assertRaises(SystemExit) as context:
+            args = Emma.emma_deltas.parseArgs(["--help"])
+            Emma.emma_deltas.main(args)
+        self.assertEqual(context.exception.code, 0)
+
+    def test_unrecognisedArgs(self):
+        """
+        Check that an unexpected argument does raise an exception
+        """
+        with self.assertRaises(SystemExit) as context:
+            args = Emma.emma_deltas.parseArgs(
+                ["--project", self.cmdLineTestProjectFolder, "--outfile", self.cmdLineTestOutputFolder, "--blahhhhhh"])
+            Emma.emma_deltas.main(args)
+        self.assertEqual(context.exception.code, 2)
 
 
 if __name__ == '__main__':
