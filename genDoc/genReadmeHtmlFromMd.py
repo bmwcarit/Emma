@@ -34,6 +34,7 @@ import Emma.shared_libs.emma_helper
 import genDoc._genCallGraphs
 import genDoc._genUmlDiagrams
 
+
 def ParseArguments():
     """
     Argument parser
@@ -121,7 +122,6 @@ def main(arguments):
         markdownFilePath = r"../doc/test_project/readme.md"
         Emma.shared_libs.emma_helper.convertMarkdownFileToHtmlFile(Emma.shared_libs.emma_helper.joinPath(os.path.dirname(__file__), markdownFilePath), (os.path.splitext(markdownFilePath)[0] + ".html"))
         sc().info("Done.\n")
-
 
         sc().info("Storing the top level README as a .html file...")
         # Change the working directory; otherwise we get errors about the relative image import paths in emma_helper.changePictureLinksToEmbeddingInHtmlData()
