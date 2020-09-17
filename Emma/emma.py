@@ -42,7 +42,7 @@ def main(arguments):
     sc().header("Emma Memory and Mapfile Analyser", symbol="/")
 
     # Start and display time measurement
-    timeStart = timeit.default_timer()
+    TIME_START = timeit.default_timer()
     sc().info("Started processing at", datetime.datetime.now().strftime("%H:%M:%S"))
 
     memoryManager = Emma.emma_libs.memoryManager.MemoryManager(*processArguments(arguments))
@@ -54,8 +54,8 @@ def main(arguments):
         memoryManager.createReports(arguments.teamscale)
 
     # Stop and display time measurement
-    timeEnd = timeit.default_timer()
-    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " "{0:.2f}".format(timeEnd - timeStart) + "s)")
+    TIME_END = timeit.default_timer()
+    sc().info("Finished job at:", datetime.datetime.now().strftime("%H:%M:%S"), "(duration: " "{0:.2f}".format(TIME_END - TIME_START) + "s)")
 
 
 def initParser():
