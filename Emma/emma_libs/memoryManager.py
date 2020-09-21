@@ -136,7 +136,7 @@ class MemoryManager:
         else:
             sc().error("The configuration needs to be loaded before processing the mapfiles!")
 
-    def createReports(self, teamscale=False, dryRun=False):
+    def createReports(self, teamscale=False):
         """
         Creates the reports
         :return: None
@@ -215,10 +215,8 @@ class MemoryManager:
 
         if self.memoryContent is not None:
             # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separated string) (MSc)
-            if not dryRun:
-                createStandardReports()
-            else:
-                sc().info("`--dryRun` is active. No standard reports were stored.")
+            createStandardReports()
+
             # createDotReports()
             if teamscale:
                 createTeamScaleReports()

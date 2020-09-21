@@ -51,7 +51,7 @@ def main(arguments):
     if memoryManager.settings.createCategories or memoryManager.settings.dryRun:
         sc().info("No results were generated since categorisation or dryRun option is active.")
     else:
-        memoryManager.createReports(arguments.teamscale, arguments.dryRun)
+        memoryManager.createReports(arguments.teamscale)
 
     # Stop and display time measurement
     TIME_END = timeit.default_timer()
