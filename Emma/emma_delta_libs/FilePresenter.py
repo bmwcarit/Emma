@@ -42,32 +42,34 @@ class FilePresenter:
 
     def validateNumber(self, selectedNumber):
         """
-        Proof if the given file type index is valid
-        :param selectedNumber: index of file type
-        :return: True or False
+        Check if the given file type index is valid
+        :param selectedNumber: Index of file type
+        :return: valid(= True) or invalid (= False)
         """
         try:
             if int(selectedNumber) in self.__filetypes:
                 return True
-
             return False
-        except (TypeError, ValueError):
+        except Exception:
             return False
 
     @staticmethod
     def validateIndices(indices, candidates):
         """
-        Proof if given file names indices are valid
-        :param indices: list with indices of 2 file names
-        :param candidates: dictionary with file names as value and their indices as key
-        :return: True or False
+        Check if the given file names indices are valid
+        :param indices: List with indices of 2 file names
+        :param candidates: Dictionary with file names candidates (= value) and their indices (= key)
+        :return: [bool] checks successful
         """
         if not isinstance(indices, list):
             return False
         if len(indices) == 2:
             try:
-                return bool(int(indices[0]) in candidates and int(indices[1]) in candidates)
-            except (TypeError, ValueError):
+                if int(indices[0]) in candidates and int(indices[1]) in candidates:
+                    return True
+                else:
+                    return False
+            except Exception:
                 return False
         else:
             return False
@@ -75,7 +77,7 @@ class FilePresenter:
     def chooseCandidates(self) -> typing.List[str]:
         """
         Select two files for the further analysis
-        :return: list with chosen file names
+        :return: List of chosen file names
         """
         self.__printFileType()
 
@@ -98,7 +100,7 @@ class FilePresenter:
             if self.validateIndices(indices, candidates):          # pylint: disable=no-else-break
                 break
             else:
-                sc().warning("Select two of the numbers presented above.")
+                sc().warning("Select two numbers presented above.")
 
         selectedFiles: typing.List[str] = self.__fileSelector.selectFiles(indices)
         self.__printSelectedFiles(selectedFiles)
