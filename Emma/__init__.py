@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
+
 class SUBPARSER_STRINGS:
     ANALYSER: str = "a"
     VISUALISER: str = "v"
@@ -23,8 +24,9 @@ class SUBPARSER_STRINGS:
 
 
 VERSION_MAJOR = "3"
-VERSION_MINOR = "2"
-VERSION_PATCH = "5"
+VERSION_MINOR = "4"
+VERSION_PATCH = "0"
+
 EMMA_VERSION = ".".join([VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH])
 EMMA_VISUALISER_VERSION = EMMA_VERSION
 EMMA_DELTAS_VERSION = EMMA_VERSION
