@@ -106,19 +106,19 @@ def initParser():
         default=None
     )
     parser.add_argument(
-        "--analyse_debug",
+        "--analyseDebug",
         help="Include DWARF debug sections in analysis",
         default=False,
         action="store_true"
     )
     parser.add_argument(        # TODO: Create Categories only (FM)
-        "--create_categories",
+        "--createCategories",
         help="Create categories.json from keywords.",
         default=False,
         action="store_true"
     )
     parser.add_argument(
-        "--remove_unmatched",
+        "--removeUnmatched",
         help="Remove unmatched modules from categories.json.",
         default=False,
         action="store_true"
@@ -189,9 +189,9 @@ def processArguments(arguments):
     subDir = Emma.shared_libs.emma_helper.joinPath(arguments.subdir) if arguments.subdir is not None else ""
 
     outputPath = Emma.shared_libs.emma_helper.joinPath(directory, subDir, OUTPUT_DIR)
-    analyseDebug = arguments.analyse_debug
-    createCategories = arguments.create_categories
-    removeUnmatched = arguments.remove_unmatched
+    analyseDebug = arguments.analyseDebug
+    createCategories = arguments.createCategories
+    removeUnmatched = arguments.removeUnmatched
     noPrompt = arguments.noprompt
     noResolveOverlap = arguments.noResolveOverlap
     teamscale = arguments.teamscale
