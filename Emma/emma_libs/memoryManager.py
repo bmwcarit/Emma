@@ -81,7 +81,7 @@ class MemoryManager:
                                                                            Emma.shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_KEYWORDS_OBJECTS_JSON),
                                                                            Emma.shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_SECTIONS_JSON),
                                                                            Emma.shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_KEYWORDS_SECTIONS_JSON),
-                                                                           self.settings.noPrompt
+                                                                           self.settings.noPrompt, self.settings.createCategories
                                                                            )
 
     def processMapfiles(self):

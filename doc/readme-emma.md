@@ -225,7 +225,7 @@ This function can be used for example to group the software components together 
 The `categoriesObjects.json` is used for the objects and the `categoriesSections.json` is  used for the section categorisation.
 
 1. The objects and sections will be first tried to be categorised by these files.
-2. If they could not be categorised, then the software will try to categorise them based on the `categoriesObjectsKeywords.json` and `categoriesSectionsKeywords.json` files.
+2. If they could not be categorised, their categorie will be marked as unknown.
 
 These configuration files have to have the following format:
 
