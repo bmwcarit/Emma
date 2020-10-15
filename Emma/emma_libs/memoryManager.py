@@ -195,12 +195,13 @@ class MemoryManager:
         #     graph.node('C', 'C', _attributes={'shape': 'triangle'})
         #
         #     print(graph.source)
-        def createSvgReport(startPoint, endPoint, scalingValue="1"):
+        def createSvgReport(startPoint, endPoint, xScalingValue="1", yScalingValue="1"):
             """
             Plot sections and objects of a given memory area
             :param startPoint: Beginning of address area
             :param endPoint: End of address area
-            :param scalingValue: Scaling value, default 1
+            :param xScalingValue: Scaling value of x axe, default 1
+            :param yScalingValue: Scaling value of y axe, default 1
             """
             class Element(IntEnum):
                 addressStart = 0
@@ -333,7 +334,7 @@ class MemoryManager:
 
             imageHeight = 3000      # Define some height of the image
             imageWidth = endPoint - startPoint + 100
-            scaling = "scale(" + scalingValue + ")"
+            scaling = "scale(" + xScalingValue + ", " + yScalingValue + ")"
             image = svgwrite.Drawing(reportPath, size=(imageWidth, imageHeight))
             # Plot a line defining the beginning of the chosen address area
             image.add(image.rect((3, 0), size=(0.2, imageHeight), fill="grey", opacity=0.1, transform=scaling))
@@ -343,7 +344,7 @@ class MemoryManager:
             y2 = drawElements(image, getElementsToPlot("Section_Summary"), startPoint, 5, svgwrite.rgb(255, 230, 128), scaling) + 15       # Distance 15 px from the lowest section element
             # Plot objects
             imageHeight = drawElements(image, getElementsToPlot("Object_Summary"), startPoint, y2, svgwrite.rgb(198, 233, 175), scaling) + 15
-            image.update({"height": str(imageHeight * float(scalingValue)), "width": imageWidth * float(scalingValue)})
+            image.update({"height": str(imageHeight * float(yScalingValue)), "width": imageWidth * float(xScalingValue)})
             image.save()
             sc().info("An SVG file was stored:", os.path.abspath(reportPath))
 
@@ -407,12 +408,20 @@ class MemoryManager:
                         break
                     else:
                         sc().wwarning("The input is not a valid dec number. Please enter the start and end address again: \n")
-                print("Enter the scaling value. If you don't enter the valid float number, scaling value 1 will be assumed.")
-                value = input("> ")
+                # Define scaling value of x axe.
+                print("Enter the scaling x-value. If you don't enter the valid float number, scaling value 1 will be assumed.")
+                xValue = input("> ")
                 try:
-                    float(value)
+                    float(xValue)
                 except ValueError:
-                    value = "1"
-                createSvgReport(startRegion, endRegion, value)
+                    xValue = "1"
+                # Define scaling value of y axe.
+                print("Enter the scaling y-value. If you don't enter the valid float number, scaling value 1 will be assumed.")
+                yValue = input("> ")
+                try:
+                    float(yValue)
+                except ValueError:
+                    yValue = "1"
+                createSvgReport(startRegion, endRegion, xValue, yValue)
         else:
             sc().error("The mapfiles need to be processed before creating the reports!")
