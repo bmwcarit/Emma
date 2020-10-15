@@ -69,8 +69,8 @@ setuptools.setup(
     extras_require={"dev":                                      # Install dev version via `pip3 install pypiemma[dev]`
                         ["gprof2dot",
                          "pylint",
-                         "mkdocs",
-                         "mkdocs-material"
+                         "mkdocs>=1.1.2",                       # There was a break in the config files: https://squidfunk.github.io/mkdocs-material/releases/5/
+                         "mkdocs-material>=5.2.1"               # There was a break in the config files: https://squidfunk.github.io/mkdocs-material/releases/5/
                          ],
                     },
     entry_points={                                              # Make Emma available as independent scripts

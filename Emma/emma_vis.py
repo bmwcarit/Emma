@@ -105,8 +105,8 @@ def initParser():
         default=False
     )
     parser.add_argument(
-        "--categorised_image_csv",
-        "-cat_img",
+        "--categorisedImageCsv",
+        "-catImg",
         help="Save a .csv of categories found inside the image summary",
         action="store_true",
         default=False
@@ -174,7 +174,7 @@ def processArguments(arguments):
     del arguments.subDir
     del arguments.inOutDir
 
-    return arguments.verbosity, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt, arguments.projectDir, arguments.categorised_image_csv, arguments.overview, arguments.Werror
+    return arguments.verbosity, arguments.inOutPath, arguments.quiet, arguments.append, arguments.noprompt, arguments.projectDir, arguments.categorisedImageCsv, arguments.overview, arguments.Werror
 
 
 def main(arguments):
@@ -203,6 +203,7 @@ def main(arguments):
     Emma.shared_libs.emma_helper.mkDirIfNeeded(resultsPath)
 
     # Init classes for summaries
+    sc().info("Analysing", objectsInSectionsFile)
     consumptionObjectsInSections = Emma.emma_vis_libs.dataVisualiserMemoryMap.MemoryMap(projectPath=projectDir, fileToUse=objectsInSectionsFile, resultsPath=resultsPath)
     consumptionObjectsInSections.plotPieChart(plotShow=False)
 
@@ -227,6 +228,7 @@ def main(arguments):
     gc.collect()
 
     sc().info("\n", consumptionImage.calcConsumptionByMemType())
+    sc().info("\n", consumptionImage.calcConsumptionByMemTypeDetailed())
 
     # FIXME: Deactivated; colours of legend in figure not correct - possibly this figure is not even needed/useful (MSc)
     # categorisedImage.plotNdisplay(plotShow=False)

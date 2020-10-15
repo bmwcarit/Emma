@@ -196,7 +196,7 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
             if i >= len(barGraph.patches) / 2:
                 # Show budgets annotations in kiB
                 barGraph.annotate(
-                    s=Emma.shared_libs.emma_helper.toHumanReadable(int(self.consumptionByMemType[BUDGET][i % (len(barGraph.patches) / 2)])),  # Format of budget text
+                    s=Emma.shared_libs.emma_helper.toHumanReadable(int(self.consumptionByMemType[BUDGET].iloc[int(i % (len(barGraph.patches) / 2))])),  # Format of budget text
                     xy=(bar.get_x(), 100),                                                                         # Location of budget annotation, set to 100 so the annotation appears at the 100% line
                     color="#505359")
             else:
@@ -229,14 +229,6 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
         """
         title = self.project + "-Memory_Report_by_configID-memType"
         self.__appendStatsConsumption(self.consumptionByMemType, title)
-
-    def printStats(self):
-        """
-        Print all three consumption lists
-        """
-        print(self.consumptionByMemType)
-        print(self.consumptionByMemTypeDetailed)
-        print(self.consumptionByMemTypePerMap)
 
     def plotByMemType(self, plotShow=True):
         """
@@ -285,20 +277,19 @@ class ImageConsumptionList(Emma.emma_vis_libs.dataVisualiser.Visualiser):
         :param markdownFilePath: The path of the Markdown file to which the data will be appended to
         :return: nothing
         """
-        supplementDirPath =Emma.shared_libs.emma_helper.joinPath(self.projectPath, SUPPLEMENT)
+        supplementDirPath = Emma.shared_libs.emma_helper.joinPath(self.projectPath, SUPPLEMENT)
         supplementFiles = []
-
-        with open(markdownFilePath, 'a') as markdown:
-            if os.path.isdir(supplementDirPath):
+        if os.path.isdir(supplementDirPath):
+            with open(markdownFilePath, 'a') as markdown:
                 for supplementRootPath, directories, filesInSupplementDir in os.walk(supplementDirPath):
                     for aSupplementFile in filesInSupplementDir:
-                        aAbsSupplementFilePath =Emma.shared_libs.emma_helper.joinPath(supplementRootPath, aSupplementFile)
+                        aAbsSupplementFilePath = Emma.shared_libs.emma_helper.joinPath(supplementRootPath, aSupplementFile)
                         supplementFiles.append(aAbsSupplementFilePath)
-            else:
-                sc().error(f"Supplement path (`{supplementDirPath}`) is not a directory!")
-            for supplementFile in supplementFiles:
-                try:
-                    with open(supplementFile, "r") as supplement:
-                        markdown.write(supplement.read())
-                except FileNotFoundError:                                                               # This case should hardly appear since the files were found milliseconds before
-                    sc().error(f"The file `{os.path.abspath(supplementFile)}` was not found!")
+                for supplementFile in supplementFiles:
+                    try:
+                        with open(supplementFile, "r") as supplement:
+                            markdown.write(supplement.read())
+                    except FileNotFoundError:                                                               # This case should hardly appear since the files were found milliseconds before
+                        sc().error(f"The file `{os.path.abspath(supplementFile)}` was not found!")
+        else:
+            sc().wwarning(f"A supplement folder does not exist in {self.projectPath}. No supplement files will be attached to the report")

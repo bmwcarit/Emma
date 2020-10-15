@@ -102,6 +102,7 @@ class CategorisedImageConsumptionList:
 
         return usedByModulesInImage
 
+    # FIXME: Function not used (DP)
     def __groupCategorisedImage(self):
         """
         Function to group __categorisedImage
@@ -111,7 +112,7 @@ class CategorisedImageConsumptionList:
         groupedImage = groupedImage.groupby([CONFIG_ID, MEM_TYPE, CATEGORY, SECTION_NAME, SECTION_SIZE_BYTE, OBJECT_NAME]).sum()
         return groupedImage
 
-    # FIXME: Colours of the legend are not working (MSc)
+    # FIXME: Colours of the legend are not working (MSc), function not used (DP)
     def displayUsedByModulesInImage(self):
         """
         Creates the figure for the plot.
@@ -164,20 +165,7 @@ class CategorisedImageConsumptionList:
 
         return barGraph.get_figure()
 
-    def printModulesInImage(self):
-        """
-        Print wrapper for self.__usedByModulesInImage
-        :return: nothing
-        """
-        print(self.__usedByModulesInImage)
-
-    def printCategorisedImage(self):
-        """
-        Print wrapper for self.__usedByModulesInImage
-        :return: nothing
-        """
-        print(self.__categorisedImage)
-
+    # FIXME: Function not used (DP)
     def appendCategorisedImageToMarkdownOverview(self, markdownFilePath):
         """
         Appends categorisedImage to the markdown file
@@ -215,8 +203,7 @@ class CategorisedImageConsumptionList:
         filename = self.project + MEMORY_ESTIMATION_CATEGORISED_IMAGE_CVS_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + ".csv"
         self.__categorisedImage.to_csv(Emma.shared_libs.emma_helper.joinPath(self.resultsPath, filename), sep=";", mode="w", index=True)
 
-
-    # FIXME: This function is never uses (MSc)
+    # FIXME: This function is never used (MSc)
     # def createCategoriesSections(self):
     #     csvfilepath = self.resultsPath + self.project + MEMORY_ESTIMATION_CATEGORISED_IMAGE_CVS_NAME_FIX_PART + self.statsTimestamp.replace(" ", "") + ".csv"
     #     jsonfile = open('categoriesSections.json', 'w')
