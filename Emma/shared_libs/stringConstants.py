@@ -286,11 +286,6 @@ DWARF_SECTIONS = frozenset(
         ".debug_types"  # Type descriptions
     }
 )
-SECTIONS_TO_EXCLUDE = DWARF_SECTIONS.union(frozenset(
-    {
-        ".unused_ram",
-        ".mr_rw_NandFlashDataBuffer"
-    }
-))
+GLOBAL_SECTIONS_TO_EXCLUDE = set()
 
 COMPILER_NAME_GHS = "GHS"
