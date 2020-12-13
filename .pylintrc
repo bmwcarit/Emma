@@ -62,7 +62,8 @@ confidence=
 # --disable=W".
 disable=max-line-length,
         C0301,                  # Line to long
-        spelling,
+        D205,                   # Blank line required between summary line and description
+        # spelling,
         # Not applicable to Python >= 3.0
         apply-builtin,
         backtick,
