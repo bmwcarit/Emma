@@ -1,7 +1,7 @@
 # Emma
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8c6208f6f0bf4d429b13e2fa701aa780)](https://www.codacy.com/app/holzkohlengrill/Emma?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bmwcarit/Emma&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/8c6208f6f0bf4d429b13e2fa701aa780)](https://www.codacy.com/app/holzkohlengrill/Emma?utm_source=github.com&utm_medium=referral&utm_content=bmwcarit/Emma&utm_campaign=Badge_Coverage)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/a39f1478889d4400b336356f84e3d768)](https://www.codacy.com/gh/bmwcarit/Emma/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bmwcarit/Emma&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/a39f1478889d4400b336356f84e3d768)](https://www.codacy.com/gh/bmwcarit/Emma/dashboard?utm_source=github.com&utm_medium=referral&utm_content=bmwcarit/Emma&utm_campaign=Badge_Coverage)
 [![Build Status](https://travis-ci.org/bmwcarit/Emma.svg?branch=master)](https://travis-ci.org/bmwcarit/Emma)
 [![PyPi](https://img.shields.io/pypi/v/pypiemma)](https://pypi.org/project/pypiemma/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
