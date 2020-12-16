@@ -17,6 +17,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
 
+import sys
+
 from pypiscout.SCout_Logger import Logger as sc
 
 from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
@@ -108,7 +110,8 @@ class Configuration:
         for configId in configIDsToRemove:
             self.globalConfig.pop(configId, None)
         if len(self.globalConfig) == 0:
-            sc().warning("No mapfiles for any configId were found. Nothing to analyse.")
+            sc().warning("No mapfiles for any configId were found. Nothing to analyse. Exiting...")
+            sys.exit(-10)                                                                   # We must exit here since reports depend on present data and will fail otherwise
 
     @staticmethod
     def __readGlobalConfigJson(path):
