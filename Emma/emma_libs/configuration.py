@@ -104,11 +104,11 @@ class Configuration:
             else:
                 sc().error(f"The configuration of the configID `{configId}` does not contain a `compiler` key!")
 
-            if "sectionsToExclude" in self.globalConfig[configId]:
-                if type(self.globalConfig[configId]["sectionsToExclude"]) != list:
+            if SECTIONS_TO_EXCLUDE_TAG in self.globalConfig[configId]:
+                if type(self.globalConfig[configId][SECTIONS_TO_EXCLUDE_TAG]) != list:
                     sc().warning(f"The type of sectionsToExclude in the configID {configId} is invalid (must be of type list of strings). Only DWARF sections will be excluded.")
                 else:
-                    for section in self.globalConfig[configId]["sectionsToExclude"]:
+                    for section in self.globalConfig[configId][SECTIONS_TO_EXCLUDE_TAG]:
                         GLOBAL_SECTIONS_TO_EXCLUDE.add(section)
             elif not analyseDebug:
                 sc().wwarning(f"Sections to exclude are not defined for the configID {configId}. Only DWARF sections will be excluded.")
