@@ -76,7 +76,7 @@ class MemoryManager:
         """
         # Reading in the configuration
         self.configuration = Emma.emma_libs.configuration.Configuration()
-        self.configuration.readConfiguration(self.settings.configurationPath, self.settings.mapfilesPath, self.settings.noPrompt)
+        self.configuration.readConfiguration(self.settings.configurationPath, self.settings.mapfilesPath, self.settings.noPrompt, self.settings.analyseDebug)
         # Creating the categorisation object
         self.categorisation = Emma.emma_libs.categorisation.Categorisation(Emma.shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_OBJECTS_JSON),
                                                                            Emma.shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_KEYWORDS_OBJECTS_JSON),
