@@ -78,7 +78,7 @@ class MemoryMap(Emma.emma_vis_libs.dataVisualiser.Visualiser):
                 for i, row in byMemType.iterrows():
                     label = i + " - " + str(round(row[PERCENTAGE], 2)) + "%"
                     labels.append(label)
-                matplotlib.pyplot.legend(labels, loc='lower left', bbox_to_anchor=(-0.4, -0.2), ncol=2, fontsize=8)
+                matplotlib.pyplot.legend(labels, loc="lower left", bbox_to_anchor=(-0.4, -0.2), ncol=2, fontsize=8)
 
                 filename = self.project + "_" + configID + "_" + memType + "_" + self.statsTimestamp + ".png"
                 matplotlib.pyplot.savefig(Emma.shared_libs.emma_helper.joinPath(self.resultsPath, filename), dpi=MEMORY_ESTIMATION_PICTURE_DPI, transparent=False, bbox_inches="tight")
