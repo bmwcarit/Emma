@@ -25,6 +25,7 @@ from Emma.shared_libs.stringConstants import *                 # pylint: disable
 import Emma.shared_libs.emma_helper
 from pypiscout.SCout_Logger import Logger as sc
 
+
 class FileSelector:
     """
     Class which searches for file candidates
