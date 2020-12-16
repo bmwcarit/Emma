@@ -41,17 +41,27 @@ class FilePresenter:
         self.__fileSelector: Emma.emma_delta_libs.FileSelector = fileSelector
 
     def validateNumber(self, selectedNumber):
+        """
+        Check if the given file type index is valid
+        :param selectedNumber: Index of file type
+        :return: valid(= True) or invalid (= False)
+        """
         try:
             if int(selectedNumber) in self.__filetypes:
                 return True
-            else:
-                return False
-        except ValueError:
+            return False
+        except Exception:
             return False
 
     @staticmethod
     def validateIndices(indices, candidates):
-        if type(indices) != list:
+        """
+        Check if the given file names indices are valid
+        :param indices: List with indices of 2 file names
+        :param candidates: Dictionary with file names candidates (= value) and their indices (= key)
+        :return: [bool] checks successful
+        """
+        if not isinstance(indices, list):
             return False
         if len(indices) == 2:
             try:
@@ -59,7 +69,7 @@ class FilePresenter:
                     return True
                 else:
                     return False
-            except ValueError:
+            except Exception:
                 return False
         else:
             return False
@@ -67,7 +77,7 @@ class FilePresenter:
     def chooseCandidates(self) -> typing.List[str]:
         """
         Select two files for the further analysis
-        :return: list with chosen file names
+        :return: List of chosen file names
         """
         self.__printFileType()
 
@@ -90,7 +100,7 @@ class FilePresenter:
             if self.validateIndices(indices, candidates):          # pylint: disable=no-else-break
                 break
             else:
-                sc().warning("Select two of the numbers presented above.")
+                sc().warning("Select two numbers presented above.")
 
         selectedFiles: typing.List[str] = self.__fileSelector.selectFiles(indices)
         self.__printSelectedFiles(selectedFiles)

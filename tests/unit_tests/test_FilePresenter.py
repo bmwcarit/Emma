@@ -32,26 +32,39 @@ import Emma.emma_delta_libs.FileSelector
 
 class FilePresenterTestCase(TestCase):
     def setUp(self) -> None:
+        """
+        Set up a temporary directory and create a filePresenter object
+        :return: None
+        """
         self.thisDir = os.path.dirname(os.path.abspath(__file__))
-        tempdir = tempfile.TemporaryDirectory(dir=self.thisDir)
-        pathToDir = os.path.join(tempdir.name, "memStats")
+        self.tempdir = tempfile.TemporaryDirectory(dir=self.thisDir)
+        pathToDir = os.path.join(self.tempdir.name, "memStats")
         if not os.path.exists(pathToDir):
             os.makedirs(pathToDir)
 
         self.testFile1 = os.path.join(pathToDir, "Object_Summary_2020_05_06.csv")
         self.testFile2 = os.path.join(pathToDir, "Object_Summary_2020_04_06.csv")
-        self.FileSelector = Emma.emma_delta_libs.FileSelector.FileSelector(tempdir.name)
+        self.FileSelector = Emma.emma_delta_libs.FileSelector.FileSelector(self.tempdir.name)
         self.filePresenter = Emma.emma_delta_libs.FilePresenter.FilePresenter(self.FileSelector)
         self.candidates = {1: self.testFile1, 2: self.testFile2}
+
+    def tearDown(self) -> None:
+        """
+        Clean up temporary directory
+        :return: None
+        """
+        self.tempdir.cleanup()
 
     def test_selectNumber(self):
         self.assertEqual(False, Emma.emma_delta_libs.FilePresenter.FilePresenter.validateNumber(self.filePresenter, "1 4"))
         self.assertEqual(False, Emma.emma_delta_libs.FilePresenter.FilePresenter.validateNumber(self.filePresenter, 3))
+        self.assertEqual(False, Emma.emma_delta_libs.FilePresenter.FilePresenter.validateNumber(self.filePresenter, [3, 4]))
         self.assertEqual(True, Emma.emma_delta_libs.FilePresenter.FilePresenter.validateNumber(self.filePresenter, 1))
 
     def test_selectIndices(self):
         self.assertEqual(False, Emma.emma_delta_libs.FilePresenter.FilePresenter.validateIndices(1, self.candidates))
         self.assertEqual(False, Emma.emma_delta_libs.FilePresenter.FilePresenter.validateIndices(["b", 2], self.candidates))
+        self.assertEqual(False, Emma.emma_delta_libs.FilePresenter.FilePresenter.validateIndices([[2, 3], 2], self.candidates))
         self.assertEqual(True, Emma.emma_delta_libs.FilePresenter.FilePresenter.validateIndices([2, 1], self.candidates))
 
 
