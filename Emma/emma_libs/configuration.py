@@ -106,7 +106,7 @@ class Configuration:
 
             if "sectionsToExclude" in self.globalConfig[configId]:
                 if type(self.globalConfig[configId]["sectionsToExclude"]) != list:
-                    sc().warning(f"The type of sectionsToExclude of the configID {configId} is invalid. Only DWARF sections will be excluded.")
+                    sc().warning(f"The type of sectionsToExclude in the configID {configId} is invalid (must be of type list of strings). Only DWARF sections will be excluded.")
                 else:
                     for section in self.globalConfig[configId]["sectionsToExclude"]:
                         GLOBAL_SECTIONS_TO_EXCLUDE.add(section)
