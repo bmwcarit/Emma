@@ -122,12 +122,14 @@ Output files are:
 * Overview mode creates `.md` and `.html` files of the overview
 * A `.csv` file showing which section contains which modules
 
+Important note: Some bars or rows might not be shown in the created graphs if you forget to adapt the `<CONFIG_ID>` in `budgets.json`
+
 
 ## Examples
 After the Image Summary has been created with `Emma.py a` and the memStats CSV files were saved to the directory `../[PROJECT]/results/memStats`, it can be visualised using:
 
 ```bash
-python Emma.py v --project ..\<PROJECT> --dir ..\[PROJECT]\results --quiet --overview
+python Emma.py v --projectDir ..\<PROJECT> --quiet --overview
 ```
 
 ### Calling Graph Emma Visualiser

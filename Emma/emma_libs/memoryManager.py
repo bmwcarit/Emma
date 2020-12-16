@@ -41,7 +41,7 @@ class MemoryManager:
         """
         Settings that influence the operation of the MemoryManager object.
         """
-        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale):
+        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale, dryRun):
             self.projectName = projectName
             self.configurationPath = configurationPath
             self.mapfilesPath = mapfilesPath
@@ -52,13 +52,14 @@ class MemoryManager:
             self.noPrompt = noPrompt
             self.noResolveOverlap = noResolveOverlap
             self.teamScale = teamScale
+            self.dryRun = dryRun
 
-    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale):
+    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale, dryRun):
         # pylint: disable=too-many-arguments
         # Rationale: We need to initialize the Settings, so the number of arguments are needed.
 
         # Processing the command line arguments and storing it into the settings member
-        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale)
+        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale, dryRun)
         # Check whether the configuration and the mapfiles folders exist
         Emma.shared_libs.emma_helper.checkIfFolderExists(self.settings.mapfilesPath)
         self.configuration = None                   # The configuration is empty at this moment, it can be read in with another method
@@ -75,13 +76,13 @@ class MemoryManager:
         """
         # Reading in the configuration
         self.configuration = Emma.emma_libs.configuration.Configuration()
-        self.configuration.readConfiguration(self.settings.configurationPath, self.settings.mapfilesPath, self.settings.noPrompt)
+        self.configuration.readConfiguration(self.settings.configurationPath, self.settings.mapfilesPath, self.settings.noPrompt, self.settings.analyseDebug)
         # Creating the categorisation object
         self.categorisation = Emma.emma_libs.categorisation.Categorisation(Emma.shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_OBJECTS_JSON),
                                                                            Emma.shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_KEYWORDS_OBJECTS_JSON),
                                                                            Emma.shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_SECTIONS_JSON),
                                                                            Emma.shared_libs.emma_helper.joinPath(self.settings.configurationPath, CATEGORIES_KEYWORDS_SECTIONS_JSON),
-                                                                           self.settings.noPrompt
+                                                                           self.settings.noPrompt, self.settings.createCategories
                                                                            )
 
     def processMapfiles(self):
@@ -213,8 +214,9 @@ class MemoryManager:
             Emma.shared_libs.emma_helper.writeJson(reportPath, resultsLst)
 
         if self.memoryContent is not None:
-            # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separted string) (MSc)
+            # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separated string) (MSc)
             createStandardReports()
+
             # createDotReports()
             if teamscale:
                 createTeamScaleReports()

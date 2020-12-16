@@ -42,7 +42,7 @@ DESCRIPTION_EMMA = "Conduct static (i.e. worst case) memory consumption analyses
 DELTA_CONFIG = ".delta_config.json"
 DELTA_LATEST_PATH = "Latest path"
 DMA = "DMA"
-DPI_DOCUMENTATION = 300             # Dots per inch for visualiser figure output
+DPI_DOCUMENTATION = 200             # Dots per inch for visualiser figure output, a bigger value leads to a failure in .png files created from the unfiltered call graph dot files
 DUPLICATE_FLAG = "Duplicate  [configID::mapfile::section::object]"
 END = "end"
 EPILOG =\
@@ -72,6 +72,7 @@ PERCENTAGE = "percentage"
 REGEX = "regex"
 SECTION_NAME = "section"
 SECTION_SIZE_BYTE = "Section Size [Byte]"
+SECTIONS_TO_EXCLUDE_TAG = "sectionsToExclude"
 SIZE_DEC = "sizeDec [Byte]"
 SIZE_DEC_ORIGINAL = "sizeDecOriginal [Byte]"
 SIZE_DEC_BY_CATEGORY = "sizeDec by category"
@@ -95,7 +96,7 @@ MEMORY_ESTIMATION_BY_MODULES_PICTURE_NAME_FIX_PART = "-Memory_Estimation_by_Modu
 MEMORY_ESTIMATION_PARTITION_OF_ALLOCATED_MEMORY_PICTURE_NAME_FIX_PART = "-Memory_Estimation-Partition_of_allocated_Memory_generated_"
 MEMORY_ESTIMATION_CATEGORISED_IMAGE_CVS_NAME_FIX_PART = "-Memory_Estimation_categorised_Image_generated_"
 MEMORY_ESTIMATION_PICTURE_FILE_EXTENSION = "png"
-MEMORY_ESTIMATION_PICTURE_DPI = 500
+MEMORY_ESTIMATION_PICTURE_DPI = 300         # Should not be changed, a bigger value leads to a failure in .png files created from the unfiltered call graph dot files
 README_CALL_GRAPH_AND_UML_PATH = "doc/images/call_graph_uml"
 README_PICTURE_FORMAT = "png"
 OBJECTS_IN_SECTIONS_SECTION_ENTRY = "<Emma_SectionEntry>"
@@ -286,11 +287,6 @@ DWARF_SECTIONS = frozenset(
         ".debug_types"  # Type descriptions
     }
 )
-SECTIONS_TO_EXCLUDE = DWARF_SECTIONS.union(frozenset(
-    {
-        ".unused_ram",
-        ".mr_rw_NandFlashDataBuffer"
-    }
-))
+GLOBAL_SECTIONS_TO_EXCLUDE = set()
 
 COMPILER_NAME_GHS = "GHS"

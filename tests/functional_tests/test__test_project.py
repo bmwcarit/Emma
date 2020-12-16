@@ -34,6 +34,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import Emma.emma
 
+
 class EmmaTestProject(unittest.TestCase):
     # pylint: disable=invalid-name
     # Rationale: Tests need to have the following method names in order to be discovered: test_<METHOD_NAME>().
