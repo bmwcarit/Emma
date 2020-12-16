@@ -71,7 +71,7 @@ class MemoryMap(Emma.emma_vis_libs.dataVisualiser.Visualiser):
                 title = "Categories [%] | " + self.project + " - " + configID + " - " + memType + "   (created: " + self.statsTimestamp + ")"
 
                 byMemType = groupedByConfigID.loc[groupedByConfigID[MEM_TYPE] == memType].drop([MEM_TYPE], 1).set_index(CATEGORY)
-                pieChart = byMemType.plot.pie(y=PERCENTAGE, x=CATEGORY, labels=None, colormap='tab20')
+                pieChart = byMemType.plot.pie(y=PERCENTAGE, x=CATEGORY, labels=None, colormap="tab20")
                 pieChart.axes.get_yaxis().set_visible(False)
                 pieChart.set_title(fontsize=10, label=title)
                 labels = []
