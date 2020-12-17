@@ -309,7 +309,7 @@ class MemoryManager:
                 return biggestYSoFar
 
             consumerCollections = consumerCollections2GlobalList()
-            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, str(hex(startPoint)) + '-' + str(hex(endPoint)), "svg")
+            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, str(hex(startPoint)) + "-" + str(hex(endPoint)), "svg")
 
             def getElementsToPlot(ElementName):
                 elementsToPlot = []
@@ -390,7 +390,7 @@ class MemoryManager:
                     if startRegion.startswith("0x"):
                         try:
                             startRegion = int(startRegion, 16)
-                        except ValueError:
+                        except Exception:
                             sc().wwarning("The input is not a valid hex number. Please enter the start and end address again: \n")
                             continue
                     print("Enter the end address of the region to be plotted (start with `0x` for hex; otherwise dec is assumed):")
@@ -398,7 +398,7 @@ class MemoryManager:
                     if endRegion.startswith("0x"):
                         try:
                             endRegion = int(endRegion, 16)
-                        except ValueError:
+                        except Exception:
                             sc().wwarning("The input is not a valid hex number. Please enter the start and end address again: \n")
                             continue
                     if str(startRegion).isdigit() and str(endRegion).isdigit():
@@ -413,14 +413,14 @@ class MemoryManager:
                 xValue = input("> ")
                 try:
                     float(xValue)
-                except ValueError:
+                except Exception:
                     xValue = "1"
                 # Define scaling value of y axe.
                 print("Enter the scaling y-value. If you don't enter the valid float number, scaling value 1 will be assumed.")
                 yValue = input("> ")
                 try:
                     float(yValue)
-                except ValueError:
+                except Exception:
                     yValue = "1"
                 createSvgReport(startRegion, endRegion, xValue, yValue)
         else:
