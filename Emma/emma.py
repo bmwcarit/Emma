@@ -155,7 +155,7 @@ def initParser():
         action="store_true",
     )
     parser.add_argument(
-        '--memVisResolved',
+        "--memVisResolved",
         help="Plot figure visualising how Emma resolved the overlaps for a specified address area. Not possible if noResolveOverlap is active",
         default=False,
         action="store_true"
@@ -177,7 +177,7 @@ def parseArgs(arguments=""):
 
 def processArguments(arguments):
     """
-    Function to extract the settings values from the command line arguments.
+    Extract the settings values from the command line arguments.
     :param arguments: The command line arguments, that is the result of the parser.parse_args().
     :return: The setting values.
     """

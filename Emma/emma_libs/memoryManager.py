@@ -308,7 +308,7 @@ class MemoryManager:
                 return biggestYSoFar
 
             consumerCollections = consumerCollections2GlobalList()
-            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, str(hex(startPoint)) + '-' + str(hex(endPoint)), "svg")
+            reportPath = Emma.emma_libs.memoryMap.createReportPath(self.settings.outputPath, self.settings.projectName, str(hex(startPoint)) + "-" + str(hex(endPoint)), "svg")
 
             def getElementsToPlot(ElementName):
                 elementsToPlot = []

@@ -71,5 +71,5 @@ def getLastModFileOrPrompt(subStringIdentifier: str, inOutPath: str, quiet: bool
                 pypiscout.SCout.warning("Invalid input.")
 
     if fileToUse is None:
-        sc().error("No file containing '" + subStringIdentifier + "' found in " + path)
+        sc().error(f"No file containing  `{subStringIdentifier}` found in {path}")
     return fileToUse
