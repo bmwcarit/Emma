@@ -70,7 +70,7 @@ class GhsMapfileProcessor(Emma.emma_libs.mapfileProcessor.MapfileProcessor):
         # Reading the hexadecimal offset value from the addressSpaces*.json. This value is optional, in case it is not defined, we will assume that it is 0.
         offset = int(configuration["addressSpaces"]["offset"], 16) if "offset" in configuration["addressSpaces"].keys() else 0
         # Defining a list of sections that will be excluded (including the objects residing in it) from the analysis based on the value that was loaded from the arguments
-        listOfExcludedSections = [".unused_ram"] if self.analyseDebug else SECTIONS_TO_EXCLUDE
+        listOfExcludedSections = [] if self.analyseDebug else DWARF_SECTIONS.union(GLOBAL_SECTIONS_TO_EXCLUDE)
 
         # Importing every mapfile that was found
         for mapfile in configuration["patterns"]["mapfiles"]:

@@ -48,10 +48,10 @@ def main(arguments):
     memoryManager = Emma.emma_libs.memoryManager.MemoryManager(*processArguments(arguments))
     memoryManager.readConfiguration()
     memoryManager.processMapfiles()
-    if memoryManager.settings.createCategories:
-        sc().info("No results were generated since categorisation option is active.")
+    if memoryManager.settings.createCategories or memoryManager.settings.dryRun:
+        sc().info("No results were generated since categorisation or dryRun option is active.")
     else:
-        memoryManager.createReports(arguments.memVis, arguments.memVisResolved, arguments.noprompt)
+        memoryManager.createReports(arguments.teamscale)
 
     # Stop and display time measurement
     TIME_END = timeit.default_timer()
@@ -106,19 +106,19 @@ def initParser():
         default=None
     )
     parser.add_argument(
-        "--analyse_debug",
+        "--analyseDebug",
         help="Include DWARF debug sections in analysis",
         default=False,
         action="store_true"
     )
     parser.add_argument(        # TODO: Create Categories only (FM)
-        "--create_categories",
+        "--createCategories",
         help="Create categories.json from keywords.",
         default=False,
         action="store_true"
     )
     parser.add_argument(
-        "--remove_unmatched",
+        "--removeUnmatched",
         help="Remove unmatched modules from categories.json.",
         default=False,
         action="store_true"
@@ -141,19 +141,20 @@ def initParser():
         action="store_true",
         default=False
     )
+
     parser.add_argument(
-        '--memVis',
-        help="Plot unresolved view of sections and objects for a specified address area",
+        "--teamscale",
+        help="Create team scale reports",
         default=False,
-        action="store_true"
-    )
-    parser.add_argument(
-        '--memVisResolved',
-        help="Plot figure visualising how Emma resolved the overlaps for a specified address area. Not possible if noResolveOverlap is active",
-        default=False,
-        action="store_true"
+        action="store_true",
     )
 
+    parser.add_argument(
+        "--dryRun",
+        help="Do not store any standard reports",
+        default=False,
+        action="store_true",
+    )
     return parser
 
 
@@ -187,26 +188,17 @@ def processArguments(arguments):
     # Get paths straight (only forward slashes) or set it to empty if it was empty
     subDir = Emma.shared_libs.emma_helper.joinPath(arguments.subdir) if arguments.subdir is not None else ""
 
-    if arguments.memVis and arguments.memVisResolved:
-        sc().error("Select either `--memVis` or `--memVisResolved`")
-    if arguments.memVisResolved and arguments.noResolveOverlap:
-        sc().warning("Incompatible arguments `--noResolveOverlap` and `--memVisResolved` were found. SVG figure will depict the unresolved scenario.")
-        arguments.memVisResolved = False
-        arguments.memVis = True
-
     outputPath = Emma.shared_libs.emma_helper.joinPath(directory, subDir, OUTPUT_DIR)
-    analyseDebug = arguments.analyse_debug
-    createCategories = arguments.create_categories
-    removeUnmatched = arguments.remove_unmatched
+    analyseDebug = arguments.analyseDebug
+    createCategories = arguments.createCategories
+    removeUnmatched = arguments.removeUnmatched
     noPrompt = arguments.noprompt
     noResolveOverlap = arguments.noResolveOverlap
-    memVis = arguments.memVis
-    memVisResolved = arguments.memVisResolved
-
+    teamscale = arguments.teamscale
+    dryRun = arguments.dryRun
     # TODO: It would be more convenient if arguments which are not modified are passed without manually modifying the code (MSc)
 
-    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, \
-           noPrompt, noResolveOverlap, memVis, memVisResolved
+    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamscale, dryRun
 
 
 def runEmma():

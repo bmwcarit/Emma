@@ -35,7 +35,7 @@ class Categorisation:
     """
     Class to implement functionality that are related to categorisation of MemEntry objects.
     """
-    def __init__(self, categoriesObjectsPath, categoriesObjectsKeywordsPath, categoriesSectionsPath, categoriesSectionsKeywordsPath, noPrompt):
+    def __init__(self, categoriesObjectsPath, categoriesObjectsKeywordsPath, categoriesSectionsPath, categoriesSectionsKeywordsPath, noPrompt, createCategories):
         # pylint: disable=too-many-arguments
         # Rationale: The categorisation paths and the settings needs to be set-up by this function.
 
@@ -53,6 +53,7 @@ class Categorisation:
         self.categoriesSections = Categorisation.__readCategoriesJson(self.categoriesSectionsPath)
         self.categoriesObjectsKeywords = Categorisation.__readCategoriesJson(self.categoriesObjectsKeywordsPath)
         self.categoriesSectionsKeywords = Categorisation.__readCategoriesJson(self.categoriesSectionsKeywordsPath)
+        self.createCategories = createCategories
 
     def fillOutCategories(self, sectionCollection, objectCollection):
         """
@@ -89,9 +90,12 @@ class Categorisation:
         """
         if os.path.exists(path):
             categoriesJson = Emma.shared_libs.emma_helper.readJson(path)
+            if len(categoriesJson) == 0:
+                sc().wwarning(f"The {os.path.basename(path)} file is empty. The categorisation based thereof will be skipped.")
         else:
             categoriesJson = {}
             sc().wwarning("No " + os.path.basename(path) + " file found. The categorisation based thereof will be skipped.")
+
         return categoriesJson
 
     def __fillOutSectionCategories(self, sectionCollection):
@@ -103,7 +107,7 @@ class Categorisation:
         # Filling out sections
         for consumer in sectionCollection:
             consumerName = consumer.sectionName
-            consumer.category = Categorisation.__evalCategoryOfAnElement(consumerName, self.categoriesSections, self.categoriesSectionsKeywords, self.keywordCategorisedSections)
+            consumer.category = self.__evalCategoryOfAnElement(consumerName, self.categoriesSections, self.categoriesSectionsKeywords, self.keywordCategorisedSections)
 
     def __fillOutObjectCategories(self, objectCollection):
         """
@@ -114,7 +118,7 @@ class Categorisation:
         # Filling out objects
         for consumer in objectCollection:
             consumerName = consumer.objectName
-            consumer.category = Categorisation.__evalCategoryOfAnElement(consumerName, self.categoriesObjects, self.categoriesObjectsKeywords, self.keywordCategorisedObjects)
+            consumer.category = self.__evalCategoryOfAnElement(consumerName, self.categoriesObjects, self.categoriesObjectsKeywords, self.keywordCategorisedObjects)
 
     def __manageSectionCategoriesFiles(self, updateCategoriesFromKeywordMatches, removeUnmatchedCategories, sectionCollection):
         """
@@ -197,12 +201,10 @@ class Categorisation:
             else:
                 sc().info(text + " was entered, aborting the removal. The " + self.categoriesObjectsPath + " was not changed.")
 
-    @staticmethod
-    def __evalCategoryOfAnElement(nameString, categories, categoriesKeywords, keywordCategorisedElements):
+    def __evalCategoryOfAnElement(self, nameString, categories, categoriesKeywords=None, keywordCategorisedElements=None):
         """
-        Function to find the category of an element. First the categorisation will be tried with the categories file,
-        and if that fails with the categoriesKeywords file. If this still fails a default value will be set for the category.
-        If the element was categorised by a keyword then the element will be added to the keywordCategorisedElements list.
+        Function to find the category of an element. The categorisation will be tried with the categories file.
+        If this fails a default value will be set for the category and a weak warning will be shown.
         :param nameString: The name string of the element that needs to be categorised.
         :param categories: Content of the categories file.
         :param categoriesKeywords: Content of the categoriesKeywords file.
@@ -210,9 +212,10 @@ class Categorisation:
         :return: Category string
         """
         foundCategory = Categorisation.__searchCategoriesJson(nameString, categories)
-        if foundCategory is None:
-            # If there is no match check for keyword specified in categoriesKeywordsJson
-            foundCategory = Categorisation.__categoriseByKeyword(nameString, categoriesKeywords, keywordCategorisedElements)
+        if foundCategory is None and self.createCategories:
+            # If there is no match check for keyword specified in categoriesKeywordsJson if createCategories is active
+            foundCategory = Categorisation.__categoriseByKeyword(nameString, categoriesKeywords,
+                                                                 keywordCategorisedElements)
         if foundCategory is None:
             # If there is still no match then we will assign the default constant
             foundCategory = UNKNOWN_CATEGORY
