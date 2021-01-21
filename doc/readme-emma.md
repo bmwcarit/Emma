@@ -225,7 +225,7 @@ This function can be used for example to group the software components together 
 The `categoriesObjects.json` is used for the objects and the `categoriesSections.json` is  used for the section categorisation.
 
 1. The objects and sections will be first tried to be categorised by these files.
-2. If they could not be categorised, then the software will try to categorise them based on the `categoriesObjectsKeywords.json` and `categoriesSectionsKeywords.json` files.
+2. If they could not be categorised, their categorie will be marked as unknown.
 
 These configuration files have to have the following format:
 
@@ -623,4 +623,4 @@ The dummy entry of `addressSpaces*.json` may look like this:
 <div align="center"> <img src="images/emmaClassDiagram.png" width="1000"> </div>
 
 ### Calling Graph Emma
-<div align="center"> <img src="../genDoc/call_graph_uml/emma_filtered.profile.png" onerror="this.onerror=null;this.src='https%3A%2F%2Fgithub.com%2Fbmwcarit%2FEmma%2Fblob%2Fmaster%2FgenDoc%2Fcall_graph_uml%2Femma_filtered.profile.png';" width="1000"> </div>
+<div align="center"> <img src="images/call_graph_uml/emma_filtered.profile.png" onerror="this.onerror=null;this.src='https://github.com/bmwcarit/Emma/blob/master/doc/images/call_graph_uml/emma_filtered.profile.png';" width="1000"> </div>

@@ -16,6 +16,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>
 """
 
+
+import sys
+
 from pypiscout.SCout_Logger import Logger as sc
 
 from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
@@ -34,7 +37,7 @@ class Configuration:
         self.specificConfigurations = dict()
         self.globalConfig = None
 
-    def readConfiguration(self, configurationPath, mapfilesPath, noPrompt):
+    def readConfiguration(self, configurationPath, mapfilesPath, noPrompt, analyseDebug):
         """
         Function to read in the configuration and process it´s data.
         :param configurationPath: This is the path of the folder where the configuration files are.
@@ -103,11 +106,21 @@ class Configuration:
             else:
                 sc().error(f"The configuration of the configID `{configId}` does not contain a `compiler` key!")
 
+            if SECTIONS_TO_EXCLUDE_TAG in self.globalConfig[configId]:
+                if type(self.globalConfig[configId][SECTIONS_TO_EXCLUDE_TAG]) != list:
+                    sc().warning(f"The type of sectionsToExclude in the configID {configId} is invalid (must be of type list of strings). Only DWARF sections will be excluded.")
+                else:
+                    for section in self.globalConfig[configId][SECTIONS_TO_EXCLUDE_TAG]:
+                        GLOBAL_SECTIONS_TO_EXCLUDE.add(section)
+            elif not analyseDebug:
+                sc().wwarning(f"Sections to exclude are not defined for the configID {configId}. Only DWARF sections will be excluded.")
+
         # Remove unwanted configIDs
         for configId in configIDsToRemove:
             self.globalConfig.pop(configId, None)
         if len(self.globalConfig) == 0:
-            sc().error("No mapfiles for any configId were found. Nothing to analyse. Exiting...")
+            sc().warning("No mapfiles for any configId were found. Nothing to analyse. Exiting...")
+            sys.exit(-10)                                                                   # We must exit here since reports depend on present data and will fail otherwise
 
     @staticmethod
     def __readGlobalConfigJson(path):

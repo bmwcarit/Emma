@@ -48,10 +48,10 @@ def main(arguments):
     memoryManager = Emma.emma_libs.memoryManager.MemoryManager(*processArguments(arguments))
     memoryManager.readConfiguration()
     memoryManager.processMapfiles()
-    if memoryManager.settings.createCategories:
-        sc().info("No results were generated since categorisation option is active.")
+    if memoryManager.settings.createCategories or memoryManager.settings.dryRun:
+        sc().info("No results were generated since categorisation or dryRun option is active.")
     else:
-        memoryManager.createReports(arguments.memVis, arguments.memVisResolved, arguments.noprompt)
+        memoryManager.createReports(arguments.teamscale, arguments.memVis, arguments.memVisResolved, arguments.noprompt)
 
     # Stop and display time measurement
     TIME_END = timeit.default_timer()
@@ -106,19 +106,19 @@ def initParser():
         default=None
     )
     parser.add_argument(
-        "--analyse_debug",
+        "--analyseDebug",
         help="Include DWARF debug sections in analysis",
         default=False,
         action="store_true"
     )
     parser.add_argument(        # TODO: Create Categories only (FM)
-        "--create_categories",
+        "--createCategories",
         help="Create categories.json from keywords.",
         default=False,
         action="store_true"
     )
     parser.add_argument(
-        "--remove_unmatched",
+        "--removeUnmatched",
         help="Remove unmatched modules from categories.json.",
         default=False,
         action="store_true"
@@ -154,6 +154,18 @@ def initParser():
         action="store_true"
     )
 
+    parser.add_argument(
+        "--teamscale",
+        help="Create team scale reports",
+        default=False,
+        action="store_true",
+    )
+    parser.add_argument(
+        "--dryRun",
+        help="Do not store any standard reports",
+        default=False,
+        action="store_true",
+    )
     return parser
 
 
@@ -195,18 +207,19 @@ def processArguments(arguments):
         arguments.memVis = True
 
     outputPath = Emma.shared_libs.emma_helper.joinPath(directory, subDir, OUTPUT_DIR)
-    analyseDebug = arguments.analyse_debug
-    createCategories = arguments.create_categories
-    removeUnmatched = arguments.remove_unmatched
+    analyseDebug = arguments.analyseDebug
+    createCategories = arguments.createCategories
+    removeUnmatched = arguments.removeUnmatched
     noPrompt = arguments.noprompt
     noResolveOverlap = arguments.noResolveOverlap
+    teamscale = arguments.teamscale
+    dryRun = arguments.dryRun
     memVis = arguments.memVis
     memVisResolved = arguments.memVisResolved
 
     # TODO: It would be more convenient if arguments which are not modified are passed without manually modifying the code (MSc)
 
-    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, \
-           noPrompt, noResolveOverlap, memVis, memVisResolved
+    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamscale, dryRun, memVis, memVisResolved
 
 
 def runEmma():

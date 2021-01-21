@@ -72,6 +72,7 @@ PERCENTAGE = "percentage"
 REGEX = "regex"
 SECTION_NAME = "section"
 SECTION_SIZE_BYTE = "Section Size [Byte]"
+SECTIONS_TO_EXCLUDE_TAG = "sectionsToExclude"
 SIZE_DEC = "sizeDec [Byte]"
 SIZE_DEC_ORIGINAL = "sizeDecOriginal [Byte]"
 SIZE_DEC_BY_CATEGORY = "sizeDec by category"
@@ -286,11 +287,6 @@ DWARF_SECTIONS = frozenset(
         ".debug_types"  # Type descriptions
     }
 )
-SECTIONS_TO_EXCLUDE = DWARF_SECTIONS.union(frozenset(
-    {
-        ".unused_ram",
-        ".mr_rw_NandFlashDataBuffer"
-    }
-))
+GLOBAL_SECTIONS_TO_EXCLUDE = set()
 
 COMPILER_NAME_GHS = "GHS"
