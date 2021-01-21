@@ -143,9 +143,9 @@ class MemoryManager:
     def createReports(self, teamscale=False):
         """
         Creates the reports
+        :param teamscale: create teamscale reports
         :param memVis: Create svg report with unresolved overlaps if True
         :param noprompt: No prompt is active if True
-        :param noResolveOverlap: No overlaps are resolved if True
         :param memVisResolved: Create svg report visualising resolved overlaps if True
         :return: None
         """
