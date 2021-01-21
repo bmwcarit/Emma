@@ -142,12 +142,12 @@ class MemoryManager:
         else:
             sc().error("The configuration needs to be loaded before processing the mapfiles!")
 
-    def createReports(self, memVis=False, memVisResolved=False, noprompt=False):
+    def createReports(self, teamscale=False, memVis=False, memVisResolved=False, noprompt=False):
         """
         Creates the reports
+        :param teamscale: create teamscale reports
         :param memVis: Create svg report with unresolved overlaps if True
         :param noprompt: No prompt is active if True
-        :param noResolveOverlap: No overlaps are resolved if True
         :param memVisResolved: Create svg report visualising resolved overlaps if True
         :return: None
         """
@@ -378,7 +378,6 @@ class MemoryManager:
         if self.memoryContent is not None:
             # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separated string) (MSc)
             createStandardReports()
-            createTeamScaleReports()
             svgReport = False
             if memVis or memVisResolved:
                 svgReport = True
