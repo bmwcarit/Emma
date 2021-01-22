@@ -237,11 +237,11 @@ class MemoryManager:
                 rectHeight = 11
 
                 for index, element in enumerate(elementsToPlot):
-                    endAddrBigger = False           # flag that marks that end address of the current element is bigger than given end point
+                    endAddrBigger = False                                                                                     # Flag that marks that the end address of the current element is bigger than the given end point
                     xAxeRectStart = element[Element.addressStart] - startPoint + startOfDrawingArea
                     rectLength = element[Element.addressLength] - 1
                     originalStartAddress = element[Element.addressStart]
-                    if len(str(element[Element.addressEnd])) > rectHeight or len(str(originalStartAddress)) > rectHeight:          # Check if address start / end fits in the rectangle
+                    if len(str(element[Element.addressEnd])) > rectHeight or len(str(originalStartAddress)) > rectHeight:     # Check if address start / end fits in the rectangle
                         currYLvl += len(str(element[Element.addressEnd])) - rectHeight
                     if element[Element.addressStart] < startPoint:
                         xAxeRectStart = startOfDrawingArea
@@ -285,16 +285,16 @@ class MemoryManager:
 
                     # Check if the FQN fits in the rectangle (assumption: FQN is always longer than start, end address + obj/sec length)
                     if rectLength <= len(element[Element.fqn]):
-                        image.add(image.text(element[Element.fqn], insert=(xAxeRectStart, currYLvl - smallSpacing), font_size=str(fontSize)+"px", writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour, transform=scaling))
+                        image.add(image.text(element[Element.fqn], insert=(xAxeRectStart, currYLvl - smallSpacing), font_size=str(fontSize) + "px", writing_mode="lr", font_family="Helvetica, sans-serif", fill=fontColour, transform=scaling))
                         # Prepare plot of start and end address
                         xAxeStart = xAxeRectStart + smallSpacing            # Add spacing for start address (one px); rectangles do have no border
                         xAxeEnd = element[Element.addressEnd] - startPoint + startOfDrawingArea - smallSpacing
-                        # If the rectangle smaller than 4, then write the end address outside the rectangle
+                        # If the rectangle smaller than two times font size, then write the end address outside the rectangle
                         if rectLength < fontSize * 2:
                             xAxeEnd = element[Element.addressEnd] - startPoint + startOfDrawingArea + smallSpacing
                         image.add(image.text(hex(originalStartAddress), insert=(xAxeStart, currYLvl), font_size=str(fontSize)+"px", writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour, transform=scaling))
                         image.add(image.text(hex(element[Element.addressEnd]), insert=(xAxeEnd, currYLvl), font_size=str(fontSize)+"px", writing_mode="tb", font_family="Helvetica, sans-serif", fill=fontColour, transform=scaling))
-                        additionalSpace = len(element[Element.fqn]) - rectLength            # compute how much space after the rectangle is needed to plot FQN
+                        additionalSpace = len(element[Element.fqn]) - rectLength            # Compute how much space after the rectangle is needed to plot FQN
                         plottedElements.append((element[Element.addressEnd] + additionalSpace, currYLvl))
                         if biggestEndAddrSoFar < element[Element.addressEnd] + additionalSpace:
                             biggestEndAddrSoFar = element[Element.addressEnd] + additionalSpace
