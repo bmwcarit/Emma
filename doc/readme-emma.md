@@ -32,7 +32,7 @@ This is done with the `Emma.py a` script. The second step is to visualise the da
 ## Limitations
 The devices must have a single linear physical address space:
 
-* Devices that use for example a Intel 8051 architecture have separate code and data address spaces that both start at address `0x0000`. Devices based on architectures like this can not entirely analysed with Emma.
+* Devices that use for example an Intel 8051 architecture have separate code and data address spaces that both start at address `0x0000`. Devices based on architectures like this can not entirely analysed with Emma.
 * Devices that use for example the ARMv6M architecture have a single linear address space.
     Devices based on architectures like this can be analysed with Emma.
 
