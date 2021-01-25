@@ -51,7 +51,7 @@ def main(arguments):
     if memoryManager.settings.createCategories or memoryManager.settings.dryRun:
         sc().info("No results were generated since categorisation or dryRun option is active.")
     else:
-        memoryManager.createReports(arguments.teamscale)
+        memoryManager.createReports(arguments.teamscale, arguments.memVis, arguments.memVisResolved, arguments.noprompt)
 
     # Stop and display time measurement
     TIME_END = timeit.default_timer()
@@ -141,6 +141,18 @@ def initParser():
         action="store_true",
         default=False
     )
+    parser.add_argument(
+        "--memVis",
+        help="Plot unresolved view of sections and objects for a specified address area",
+        default=False,
+        action="store_true"
+    )
+    parser.add_argument(
+        "--memVisResolved",
+        help="Plot figure visualising how Emma resolved the overlaps for a specified address area. Not possible if noResolveOverlap is active",
+        default=False,
+        action="store_true"
+    )
 
     parser.add_argument(
         "--teamscale",
@@ -148,7 +160,6 @@ def initParser():
         default=False,
         action="store_true",
     )
-
     parser.add_argument(
         "--dryRun",
         help="Do not store any standard reports",
@@ -171,7 +182,7 @@ def parseArgs(arguments=""):
 
 def processArguments(arguments):
     """
-    Function to extract the settings values from the command line arguments.
+    Extract the settings values from the command line arguments.
     :param arguments: The command line arguments, that is the result of the parser.parse_args().
     :return: The setting values.
     """
@@ -188,6 +199,13 @@ def processArguments(arguments):
     # Get paths straight (only forward slashes) or set it to empty if it was empty
     subDir = Emma.shared_libs.emma_helper.joinPath(arguments.subdir) if arguments.subdir is not None else ""
 
+    if arguments.memVis and arguments.memVisResolved:
+        sc().error("Select either `--memVis` or `--memVisResolved`")
+    if arguments.memVisResolved and arguments.noResolveOverlap:
+        sc().warning("Incompatible arguments `--noResolveOverlap` and `--memVisResolved` were found. SVG figure will depict the unresolved scenario.")
+        arguments.memVisResolved = False
+        arguments.memVis = True
+
     outputPath = Emma.shared_libs.emma_helper.joinPath(directory, subDir, OUTPUT_DIR)
     analyseDebug = arguments.analyseDebug
     createCategories = arguments.createCategories
@@ -196,9 +214,12 @@ def processArguments(arguments):
     noResolveOverlap = arguments.noResolveOverlap
     teamscale = arguments.teamscale
     dryRun = arguments.dryRun
+    memVis = arguments.memVis
+    memVisResolved = arguments.memVisResolved
+
     # TODO: It would be more convenient if arguments which are not modified are passed without manually modifying the code (MSc)
 
-    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamscale, dryRun
+    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamscale, dryRun, memVis, memVisResolved
 
 
 def runEmma():
