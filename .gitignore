@@ -12,6 +12,10 @@ doc/test_project/results
 pypiemma.egg-info/
 site/
 
+# Exclude all .svg except in the doc/image folder
+*.svg
+!doc/images/*
+
 
 # Exclude all but .png files for UML/call graphs
 doc/images/call_graph_uml/*
