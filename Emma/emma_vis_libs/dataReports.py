@@ -27,6 +27,7 @@ import os
 
 import pandas
 import matplotlib.pyplot
+from Emma import shared_libs
 
 from Emma.shared_libs.stringConstants import *                           # pylint: disable=unused-wildcard-import,wildcard-import
 import Emma.shared_libs.emma_helper
