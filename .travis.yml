@@ -7,33 +7,38 @@ git:
     submodules: false
 
 .ci-matrix-definitions:
-    - &linux-bionic-nightly
+    - &linux-focal-nightly
       os: linux
-      dist: bionic
+      dist: focal
       python: nightly
 
-    - &linux-bionic-3-8-dev
+    - &linux-focal-3-10-dev
       os: linux
-      dist: bionic
-      python: 3.8-dev
+      dist: focal
+      python: 3.10-dev
 
-    - &linux-bionic-3-8
+    - &linux-focal-3-9
       os: linux
-      dist: bionic
+      dist: focal
+      python: 3.9
+      
+    - &linux-focal-3-8
+      os: linux
+      dist: focal
       python: 3.8
 
-    - &linux-bionic-3-7
+    - &linux-focal-3-7
       os: linux
-      dist: bionic
+      dist: focal
       python: 3.7
 
-    - &linux-bionic-3-6
+    - &linux-focal-3-6
       os: linux
-      dist: bionic
+      dist: focal
       python: 3.6                       # = min required version for Emma
 
     - &linux-reference                  # An alias to the main version we use for coverage, linting, ...
-      <<: *linux-bionic-3-8
+      <<: *linux-focal-3-9
 
     # Disabled since travis does not support python on windows
     # - os: windows
@@ -77,19 +82,22 @@ install:
 jobs:
     include:
         - stage: testing
-          <<: *linux-bionic-nightly
+          <<: *linux-focal-nightly
           script: *emma-tests
         - stage: testing
-          <<: *linux-bionic-3-8-dev
+          <<: *linux-focal-3-10-dev
           script: *emma-tests
         - stage: testing
-          <<: *linux-bionic-3-8
+          <<: *linux-focal-3-9
           script: *emma-tests
         - stage: testing
-          <<: *linux-bionic-3-7
+          <<: *linux-focal-3-8
           script: *emma-tests
         - stage: testing
-          <<: *linux-bionic-3-6
+          <<: *linux-focal-3-7
+          script: *emma-tests
+        - stage: testing
+          <<: *linux-focal-3-6
           script: *emma-tests
 
         - stage: linting
@@ -140,6 +148,7 @@ jobs:
     # Must be last point at this indentation level below include (see: https://travis-ci.community/t/why-allow-failures-didnt-work-for-this-build/5582/6 or https://github.com/svenfuchs/test-2/blob/dff1020f3a42159465967b9fa1b4d09f933c4da9/.travis.yml)
     allow_failures:
         - python: nightly
+        - python: 3.10-dev
         - python: 3.9-dev
         - python: 3.8-dev
         - python: 3.7-dev
