@@ -44,20 +44,33 @@ The devices must have a single linear physical address space:
 
     --mapfiles MAPFILES, --map MAPFILES
 
-### Optional Arguments
+### Some Optional Arguments
+This section will provide a more in-depth description about selected command line arguments when a short description (like in `--help`) might be to short, the behaviour is too complex or background knowledge might assist you to understand the whole picture. For the full list execute Emma with `--help`.
 
 * `--dir`
     * User defined path for the top folder holding the `memStats`/output files. Per default it uses the same directory as the configuration files.
 * `--stats_dir`
-  * User defined path inside the folder given in the `--dir` argument. This is usefull when batch analysing mapfiles from various development stages. Every analysis output gets it's own directory.
+    * User defined path inside the folder given in the `--dir` argument. This is usefull when batch analysing mapfiles from various development stages. Every analysis output gets it's own directory.
 * `--create_categories`
-  * Create `categories*.json` from `categories*Keywords.json` for easier categorisation.
+    * Create `categories*.json` from `categories*Keywords.json` for easier categorisation.
 * `--remove_unmatched`,
-  * Remove unmatched entries from `categories*.json`. This is useful when a `categories*.json` from another project is used.
+    * Remove unmatched entries from `categories*.json`. This is useful when a `categories*.json` from another project is used.
 * `--analyse_debug`, `--dbg`
-  * Normally we remove DWARF debug sections from the analysis to show the relevant information for a possible release software. This can be prevented if this argument is set. DWARF section names are defined in `stringConstants.py`. `.unused_ram` is always excluded (regardless of this flag)
+    * Normally we remove DWARF debug sections from the analysis to show the relevant information for a possible release software. This can be prevented if this argument is set. DWARF section names are defined in `stringConstants.py`. `.unused_ram` is always excluded (regardless of this flag)
 * `--noprompt`
-  * Exit and fail on user prompt. Normally this happens when some files or configurations are ambiguous. This is useful when running Emma on CI systems.
+    * Exit and fail on user prompt. Normally this happens when some files or configurations are ambiguous. This is useful when running Emma on CI systems.
+* `--memVis`
+    * This is a visualisation based on data you actually see in the map files (i.e. the data *before* the containment/duplicate/overlap resolution)
+    * Prompts for a start and end address (and x/y scaling) for which memory region a visualisation should be created (as `.svg`)
+    * This visualisation allows to better see complex overlaps/alignments of objects/sections (e.g. check your linker configuration, ...)
+    * Note that huge address ranges containing many objects/sections may cause your viewer to get slow/unresponsive due to the high amount of objects/sections; it is recommended to keep your viewing area small
+    * For huge `.svg`s the authors made good experiences with Inkscape and Google Chrome
+    * Usually you detect an interesting scenario in the `.csv` reports. It might be hard to see what is actually happening (e.g. many overlaps/containments, ...). That is where a visualisation is helpful
+    * If `--noPrompt` is active you will get a weak warning that no `.svg` reports will be generated
+        <div align="left"> <img src="./images/memVis.png" width="50%"> </div>
+* `--memVisResolved`
+    * Basically the same as `--memVis` but plots the *resolved* view (i.e. after Emma resolved the containment/duplicate overlap -> basically you will see what stands in `Objects_in_Sections`)
+    * Skipped if `--noResolveOverlap` is active
 
 
 ## Project Configuration
