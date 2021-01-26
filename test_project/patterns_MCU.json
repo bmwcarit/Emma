@@ -1,0 +1,11 @@
+{
+    "mapfiles": {
+        "MCU_Application": {
+            "regex": ["\\bMCU_Application\\.map"]
+        },
+        "MCU_Bootloader": {
+            "regex": ["\\bMCU_Bootloader\\.map"],
+            "memRegionExcludes": ["SRAM"]
+        }
+    }
+}

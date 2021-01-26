@@ -1,0 +1,58 @@
+// Emma - Emma Memory and Mapfile Analyser
+// Copyright (C) 2019 The Emma authors
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>
+
+Image Summary
+
+  Section              Base      Size(hex)    Size(dec)  SecOffs
+  .vectors             00000000  00000078     00000120   0000000
+  bootloader           00000100  00020000     00131072   0000000
+  .os                  00030000  00004900     00018688   0000000
+  .text                00034900  0000cd00     00052480   0000000
+  .rodata              00041600  000000e0     00000224   0000000
+  .data                20000000  00000c00     00003072   0000000
+  .bss                 20000c00  00000200     00000512   0000000
+  .heap                20020000  00010000     00065536   0000000
+  .stack               20030000  00010000     00065536   0000000
+
+Module Summary
+
+  Origin+Size    Section          Module
+00030000+001500  .os              os_scheduler.o
+00031500+000800  .os              os_tick.o
+00031d00+001000  .os              os_heap.o
+00032d00+000900  .os              os_queue.o
+00033600+001300  .os              os_diagnostics.o
+00034900+001000  .text            can_driver.o
+00035900+001500  .text            can_prot_frame.o
+00036e00+001400  .text            can_prot_transfer.o
+00038200+001700  .text            can_prot_message.o
+00039900+001600  .text            can_prot_connection.o
+0003af00+001000  .text            can_prot_control.o
+0003bf00+001200  .text            can_prot_firmware.o
+0003d100+001000  .text            spi_driver.o
+0003e100+001500  .text            ext_flash_driver.o
+0003f600+002000  .text            parameter_handler.o
+00041600+0000e0  .rodata          identifiers.o
+20000000+000c00  .data            globals.o
+20000c00+000200  .bss             globals.o
+
+Global Symbols (sorted alphabetically)
+
+ .rodata          00041600+00000080 sFirmwareId
+ .rodata          00041680+00000060 sHardwareId
+ .data            20000000+00000800 sNonPersData
+ .data            20000800+00000400 sPersData
+ .bss             20000c00+00000200 sParameters

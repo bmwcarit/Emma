@@ -1,0 +1,29 @@
+{
+    "memory": {
+        "Boot": {
+            "start": "0x00000000",
+            "end": "0x0FFFFFFF",
+            "type": "INT_FLASH"
+        },
+        "SRAM": {
+            "start": "0x10000000",
+            "end": "0x1FFFFFFF",
+            "type": "INT_RAM"
+        },
+		"Peripherals": {
+            "start": "0x40000000",
+            "end": "0x5FFFFFFF",
+            "type": "INT_RAM"
+		},
+        "DDR": {
+          "start": "0xC0000000",
+          "end": "0xFFFFFFFF",
+          "type": "EXT_RAM"
+        }
+    },
+    "ignoreMemory": [
+      "Boot",
+      "SRAM",
+      "Peripherals"
+    ]
+}

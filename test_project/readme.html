@@ -1,0 +1,1338 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.5">
+    
+    
+      
+        <title>Test Project - Emma Memmory and Mapfile Analyser</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.15aa0b43.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.75751829.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#000000">
+        
+      
+    
+    
+    
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="black" data-md-color-accent="amber">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#test-project" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+  
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../index.html" title="Emma Memmory and Mapfile Analyser" class="md-header-nav__button md-logo" aria-label="Emma Memmory and Mapfile Analyser">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Emma Memmory and Mapfile Analyser
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Test Project
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/bmwcarit/Emma.git/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Emma Memmory and Mapfile Analyser
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Emma Memmory and Mapfile Analyser" class="md-nav__button md-logo" aria-label="Emma Memmory and Mapfile Analyser">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+
+    </a>
+    Emma Memmory and Mapfile Analyser
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/bmwcarit/Emma.git/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Emma Memmory and Mapfile Analyser
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme-emma.html" class="md-nav__link">
+        Emma
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme-vis.html" class="md-nav__link">
+        Emma Visualiser
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Test Project
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="readme.html" class="md-nav__link md-nav__link--active">
+        Test Project
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#project-description" class="md-nav__link">
+    Project description
+  </a>
+  
+    <nav class="md-nav" aria-label="Project description">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mcu" class="md-nav__link">
+    MCU
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#soc" class="md-nav__link">
+    SOC
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-the-configuration" class="md-nav__link">
+    Creating the configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating the configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#globalconfigjson" class="md-nav__link">
+    globalConfig.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#addressspaces_mcujson" class="md-nav__link">
+    addressSpaces_MCU.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patterns_mcujson" class="md-nav__link">
+    patterns_MCU.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#addressspaces_socjson" class="md-nav__link">
+    addressSpaces_SOC.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patterns_socjson" class="md-nav__link">
+    patterns_SOC.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualsections_socjson" class="md-nav__link">
+    virtualSections_SOC.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#categorization" class="md-nav__link">
+    Categorization
+  </a>
+  
+    <nav class="md-nav" aria-label="Categorization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#categoriessectionsjson" class="md-nav__link">
+    categoriesSections.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#categoriessectionskeywordsjson" class="md-nav__link">
+    categoriesSectionsKeywords.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#categoriesobjectsjson" class="md-nav__link">
+    categoriesObjects.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#categoriesobjectskeywordsjson" class="md-nav__link">
+    categoriesObjectsKeywords.json
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#budgetsjson" class="md-nav__link">
+    budgets.json
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev-guide.html" class="md-nav__link">
+        Developer Guide
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#project-description" class="md-nav__link">
+    Project description
+  </a>
+  
+    <nav class="md-nav" aria-label="Project description">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mcu" class="md-nav__link">
+    MCU
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#soc" class="md-nav__link">
+    SOC
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-the-configuration" class="md-nav__link">
+    Creating the configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating the configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#globalconfigjson" class="md-nav__link">
+    globalConfig.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#addressspaces_mcujson" class="md-nav__link">
+    addressSpaces_MCU.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patterns_mcujson" class="md-nav__link">
+    patterns_MCU.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#addressspaces_socjson" class="md-nav__link">
+    addressSpaces_SOC.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patterns_socjson" class="md-nav__link">
+    patterns_SOC.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualsections_socjson" class="md-nav__link">
+    virtualSections_SOC.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#categorization" class="md-nav__link">
+    Categorization
+  </a>
+  
+    <nav class="md-nav" aria-label="Categorization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#categoriessectionsjson" class="md-nav__link">
+    categoriesSections.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#categoriessectionskeywordsjson" class="md-nav__link">
+    categoriesSectionsKeywords.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#categoriesobjectsjson" class="md-nav__link">
+    categoriesObjects.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#categoriesobjectskeywordsjson" class="md-nav__link">
+    categoriesObjectsKeywords.json
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#budgetsjson" class="md-nav__link">
+    budgets.json
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/bmwcarit/Emma.git/edit/master/docs/test_project/readme.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="test-project">Test Project<a class="headerlink" href="#test-project" title="Permanent link">&para;</a></h1>
+<p>This is an imaginary system, the mapfiles were created by hand and they are following the default Emma mapfile format.
+The goal of the project is to present a simple system without any complicated parts in order
+to introduce the new users step-by-step to creating an Emma configuration.</p>
+<p>The project can be analysed by running the following commands from the Emma top-level folder:</p>
+<p>Emma:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>python Emma.py a --project doc/test_project --mapfiles doc/test_project/mapfiles
+</code></pre></div>
+</td></tr></table>
+<p>Emma Visualier:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>python Emma.py v --project doc/test_project --dir doc/test_project/results --overview --quiet
+</code></pre></div>
+</td></tr></table>
+<p>The folder structure of the Test Project:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>+--[test_project]
+|   +-- [mapfiles]                          # The mapfiles of the project are stored here
+|   +-- [readme]                            # The folder of this description
+|   +-- [results]                           # The results of the analyse will be stored here by the commands above
+|   +-- [supplement]                        # Supplements to the result overview (see Emma Visualiser documentation)
+|   +-- globalConfig.json
+|   +-- addressSpaces_MCU.json
+|   +-- addressSpaces_SOC.json
+|   +-- patterns_MCU.json
+|   +-- patterns_SOC.json
+|   +-- virtualSections_SOC.json    
+|   +-- categoriesObjects.json
+|   +-- categoriesSections.json
+|   +-- categoriesObjectsKeywords.json    
+|   +-- categoriesSectionsKeywords.json
+</code></pre></div>
+</td></tr></table>
+<h2 id="project-description">Project description<a class="headerlink" href="#project-description" title="Permanent link">&para;</a></h2>
+<p>The project illustrates a system with a hardware that consists of two devices: an MCU and an SOC.</p>
+<h3 id="mcu">MCU<a class="headerlink" href="#mcu" title="Permanent link">&para;</a></h3>
+<p>The MCU software consists of two firmware, the application and the bootloader.
+Both of them are loaded into the internal Flash, but they are never running at the same time.
+They share the same stack area and none of them have a heap. Besides the internal Flash and RAM available on the MCU,
+there is an external Flash available trough SPI for the software to use. After a system start-up, the execution will be
+given to the Bootloader.</p>
+<p>The function of the bootloader is to check version number and the CRC value of the application firmware
+and in case an update is needed, (newer firmware available or CRC error of the current one) try to update it.
+The firmware for the update is stored in the external flash. The bootloader is a bare-metal firmware,
+it does not use an operating system.</p>
+<p>The function of the application is to load the parameter set from the external Flash memory and  run a complex CAN stack.
+It implements a connection based protocol called <code>CAN_PROT</code>. The protocol makes the Application firmware able to
+receive a firmware update which will then be stored in the external Flash. After executing the reset command received
+trough the CAN stack, the Bootloader can flash the application if all the firmware checks pass. The application has a
+simple RTOS running on it called OS.</p>
+<p>The memory layout of the MCU:</p>
+<div align="center"> <img src="../images/test_project/MCU_MemoryLayout.png" width="25%"> </div>
+
+<h3 id="soc">SOC<a class="headerlink" href="#soc" title="Permanent link">&para;</a></h3>
+<p>The SOC is running a complex operating system that utilizes the memory management unit (MMU) of the processor.
+The software running on the SOC contains multiple virtual address spaces. Besides the operating system,
+there are two processes running on the chip: the NetLogger and the application.</p>
+<p>The NetLogger is a logging framework, trough which the software can be remotely monitored. The log messages are
+sent from other processes trough the IPC service provided by the operating system. These messages can be accessed
+and filtered by a remote client trough a TCP/IP connection.</p>
+<p>The application is handling a capacitive touchscreen trough the Gfx graphics library and other software components.
+It is presenting animations to the user, which he can control trough the touch screen. The application is creating
+log messages about every event that occurs trough the NetLog library. The NetLog library will transfer the log messages
+to the NetLogger framework if available on the system.</p>
+<p>The memory layout of the SOC:</p>
+<div align="center"> <img src="../images/test_project/SOC_MemoryLayout.png" width="25%"> </div>
+
+<h2 id="creating-the-configuration">Creating the configuration<a class="headerlink" href="#creating-the-configuration" title="Permanent link">&para;</a></h2>
+<p>This chapter will explain creating the configuration for the project by explaining every step the user should take.</p>
+<h3 id="globalconfigjson">globalConfig.json<a class="headerlink" href="#globalconfigjson" title="Permanent link">&para;</a></h3>
+<p>Creating the project configuration starts with creating the <code>globalConfig.json</code>. This file lists the programmable devices of
+the system and assigns the further configuration files to configuration.</p>
+<p>We will add our two devices (MCU and SOC) as JSON objects. For every device, the used compiler and at least two config files must be assigned:
+the addressSpaces and the patterns. For devices using virtual address spaces, a third one, the sections is needed as well.
+As we are using Green Hills Compiler, so the mapfiles will be in this format, we will define the value <code>GHS</code> for both of the devices.</p>
+<p>Since in our system, we have different devices with different memory layout, we have assigned two different addressSpaces
+config files to them. If your system contains multiple devices of the same type, you can use the same
+addressSpaces config file for these devices.</p>
+<p>The patterns config file files are usually unique for all the configIDs.</p>
+<p>Since the MCU does not have an MMU so it does not have virtual address spaces, we will not assign a sections config file to it.
+In contrast to the MCU, the SOC does use virtual address spaces, so we will assign a sections config file to it.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;MCU&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;compiler&quot;</span><span class="p">:</span> <span class="s2">&quot;GHS&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;addressSpacesPath&quot;</span><span class="p">:</span> <span class="s2">&quot;addressSpaces_MCU.json&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;patternsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;patterns_MCU.json&quot;</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;SOC&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;compiler&quot;</span><span class="p">:</span> <span class="s2">&quot;GHS&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;addressSpacesPath&quot;</span><span class="p">:</span> <span class="s2">&quot;addressSpaces_SOC.json&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;patternsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;patterns_SOC.json&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;virtualSectionsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;virtualSections_SOC.json&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<p>In the following, the config files assigned to the MCU will be explained.</p>
+<h3 id="addressspaces_mcujson">addressSpaces_MCU.json<a class="headerlink" href="#addressspaces_mcujson" title="Permanent link">&para;</a></h3>
+<p>In this config file, the memory areas of the MCU will be defined. You can collect information on them from the data sheet of the
+device. For every memory area, we have to define the <code>start</code> and <code>end</code> addresses in bytes and assign a <code>type</code> to it as well.
+For the possible values of the "type", see the Emma documentation.</p>
+<p>For the MCU used in the system, the following memory areas are available: <code>Code</code>, <code>SRAM</code> and <code>Device</code>.
+The <code>Code</code> area is an internal Flash area, where the program and the constants will be stored.
+The <code>SRAM</code> area is an internal RAM area, where data is stored. The last area is the <code>Device</code>,
+where the SFRs of the controller are located. Since our software will have neither data nor code in this area,
+we will add it to the <code>ignoreMemory</code> array so it will not be a analysed by Emma.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;memory&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;Code&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0x00000000&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0x1FFFFFFF&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;INT_FLASH&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;SRAM&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0x20000000&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0x3FFFFFFF&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;INT_RAM&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;Device&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0x40000000&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0x5FFFFFFF&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;INT_RAM&quot;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;ignoreMemory&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Device&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<h3 id="patterns_mcujson">patterns_MCU.json<a class="headerlink" href="#patterns_mcujson" title="Permanent link">&para;</a></h3>
+<p>This config file serves the purpose to find all the mapfiles that belong to the firmware on the MCU.
+We know that there is only two mapfiles we need to find: <code>MCU_Bootloader.map</code>, <code>MCU_Application.map</code>.
+We will create two keys in the <code>mapfiles</code> object and assign a regex pattern to each.
+If the mapfile names would not be this simple (for example they would change with every build),
+we could assign more than one pattern to the keys, but in this case a single pattern is enough.</p>
+<p>Since these mapfiles follow the default Emma mapfile format, is not needed to add regex patterns to
+process the content of the mapfiles, the built-in patterns will be used. Otherwise it could be done
+by adding patterns to the <code>UniquePatternSections</code> and <code>UniquePatternObjects</code> keys (for details see
+the Emma documentation).</p>
+<p>To the <code>MCU_Bootloader</code> we have added the ignoration of the SRAM memory area. The reason for this
+is that the Application and the Bootloader will never run at the same time. During the Application 
+runtime, the data of the Bootloader is not present in the memory, only the code, so the SRAM 
+memory are needs to be ignored to get the correct results. </p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;mapfiles&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;MCU_Application&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;\\bMCU_Application\\.map&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;MCU_Bootloader&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;\\bMCU_Bootloader\\.map&quot;</span><span class="p">]</span>
+            <span class="nt">&quot;memRegionExcludes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;SRAM&quot;</span><span class="p">]</span>                
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<p>At this point the absolute minimum configuration for the MCU is done. You can try it out by adding
+the following line to the <code>SOC</code> object in the <code>globalConfig.json</code>:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="nt">&quot;ignoreConfigID&quot;</span><span class="p">:</span> <span class="kc">true</span>
+</code></pre></div>
+</td></tr></table>
+<p>This will lead to, that Emma will completely ignore the <code>SOC</code> configID and will not throw an error
+or warning messages for the missing config files. Emma can be run with the command in the
+beginning of this document.</p>
+<p>The MCU configuration can be extended with defining the categories. This will be explained later in
+this document together with the SOC.</p>
+<p>In the following, the config files assigned to the SOC will be explained.</p>
+<h3 id="addressspaces_socjson"><code>addressSpaces_SOC.json</code><a class="headerlink" href="#addressspaces_socjson" title="Permanent link">&para;</a></h3>
+<p>Just like the <code>addressSpaces_MCU.json</code> of the MCU, this config file describe the memory areas of the SOC
+and has the same format. You can collect information on the memory areas from the data sheet of the device.</p>
+<p>For the SOC used in the system, the following memory areas are available: <code>Boot</code>, <code>SRAM</code>, <code>Peripherals</code> and <code>DDR</code>.</p>
+<p>The "BOOT" area is an internal Flash area, where the ROM Bootloader is located.
+The "SRAM" area is an internal RAM area, where data can be stored, and the secondary program loader (SPL)
+will be loaded to, but in our system none of the components we want to analyse use this area.
+The <code>Peripherals</code> area is where the different peripheral devices are mapped to.
+And finally the <code>DDR</code> area where the operating system and the other software units that we want to analyse is located.
+During the booting process, the third stage bootloader will be loaded to this area as well,
+but it will not be present after the booting process anymore so it will not be part of the Emma analyse.</p>
+<p>Based on all these info we will ignore the <code>Boot</code>, <code>SRAM</code> and <code>Peripherals</code> memory areas by adding them
+to the <code>ignoreMemory</code> array.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;memory&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;Boot&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0x00000000&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0x0FFFFFFF&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;INT_FLASH&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;SRAM&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0x10000000&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0x1FFFFFFF&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;INT_RAM&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;Peripherals&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0x40000000&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0x5FFFFFFF&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;INT_RAM&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;DDR&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0xC0000000&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0xFFFFFFFF&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;EXT_RAM&quot;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;ignoreMemory&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Boot&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;SRAM&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Peripherals&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<h3 id="patterns_socjson"><code>patterns_SOC.json</code><a class="headerlink" href="#patterns_socjson" title="Permanent link">&para;</a></h3>
+<p>Just like the <code>patterns_MCU.json</code> of the MCU, this config file serves the purpose to find all
+the mapfiles that belong to the software units of the SOC. Since the operating system of the SOC
+is using virtual address spaces, this config file will be somewhat more complex than the one of the MCU.
+We know that there are in total four mapfiles we need to find: <code>SOC_OperatingSystem.map</code>,
+<code>SOC_Application.map</code>, <code>SOC_NetLogger.map</code> and <code>SOC_monolith.map</code>. The first three contains the sections and the
+objects for the respective software units. These can be either phyisical and virtual addresses. It is also
+possible that a software unit has both virtual and physical sections defined in the same mapfile. Because
+of this, a further config file, the <code>sections_SOC.json</code> is needed as well (for description, see below).
+The <code>SOC_monolith.map</code> contains the information where the virtual sections will be mapped to in the physical memory.</p>
+<p>We will create a key in the <code>mapfiles</code> object for each software unit and assign a regex pattern to them.
+If the mapfile names would not be this simple (for example they would change with every build),
+we could assign more than one pattern to the keys, but in this case a single pattern is enough.</p>
+<p>For the software units with a virtual address space, we will define a key <code>VAS</code> to which we will assign
+a user defined unique name. The virtual address space will be represented in the results with this name.</p>
+<p>Since these mapfiles follow the default Emma mapfile format, is not needed to add regex patterns to
+process the content of the mapfiles, the built-in patterns will be used. Otherwise it could be done
+by adding patterns to the <code>UniquePatternSections</code> and <code>UniquePatternObjects</code> keys (for details see
+the Emma documentation).</p>
+<p>For the <code>SOC_monolith.map</code>, we need to create the <code>monoliths</code> object. This object will contain a user defined
+name for the monolith, in this case <code>SOC_monolith</code> with a regex pattern just like the for the other mapfiles.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;mapfiles&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;SOC_OperatingSystem&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;\\bSOC_OperatingSystem\\.map&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;SOC_Application&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;\\bSOC_Application\\.map&quot;</span><span class="p">],</span>
+            <span class="nt">&quot;VAS&quot;</span><span class="p">:</span> <span class="s2">&quot;APP&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;SOC_NetLogger&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;\\bSOC_NetLogger\\.map&quot;</span><span class="p">],</span>
+            <span class="nt">&quot;VAS&quot;</span><span class="p">:</span> <span class="s2">&quot;NETLOG&quot;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;monoliths&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;SOC_monolith&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;\\bSOC_monolith\\.map&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<h3 id="virtualsections_socjson"><code>virtualSections_SOC.json</code><a class="headerlink" href="#virtualsections_socjson" title="Permanent link">&para;</a></h3>
+<p>This config file assigns the sections that were defined in mapfiles to a virtual address space that was
+defined in the <code>patterns_SOC.json</code> with the <code>VAS</code> key. This is needed because the mapfiles can contain physical and virtual
+sections as well and Emma needs to identify the virtual ones and assign them to a specific virtual address space.
+In this configuration only the SOC has virtual address spaces. The MCU does not need a
+config file like this.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;APP&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;.app_text&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.app_rodata&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.app_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.app_bss&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.app_heap&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.app_stack&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;NETLOG&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;.netlog_text&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.netlog_rodata&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.netlog_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.netlog_bss&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.netlog_heap&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.netlog_stack&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<h3 id="categorization">Categorization<a class="headerlink" href="#categorization" title="Permanent link">&para;</a></h3>
+<p>In the following, the section and object categorization will be explained. Categorization is used to
+group the sections and objects together in the results. This is useful because then we will be able
+to filter the results by these groups or calculate the used memory by these groups.</p>
+<p>The grouping is completely optional, if it is not needed, none of the config files described in this chapter
+needs to be created. It is also possible to add only some of these config files to the configuration if you
+do not wish to use all of them.</p>
+<p>The group names are defined by the user. All the sections and objects for that no group was found,
+will be assigned to a default group (for details see the Emma documentation).
+This is useful because you can filter for this default group in the results during the creation of the these config files.</p>
+<p>Grouping can be done by specifying either the full names of the sections and objects in the
+<code>categoriesSections.json</code> and <code>categoriesObjects.json</code> respectively or by specifying name patterns for the
+section and object names in the <code>categoriesSectionsKeywords.json</code> or <code>categoriesObjectsKeywords.json</code> respecively.</p>
+<p>The name patterns are case-sensitive partial names of the sections and objects.
+For example the name pattern <code>stack</code> will match for <code>.stack</code>, <code>.process_stack</code> and <code>.user_stack_memory</code>
+, but not for <code>.Stack</code> or <code>.user_sTaCk</code>.</p>
+<p>The sections and objects will be first categorized by their full name, and if there was no group
+found for them, they will be categorized with the name patterns. If after that they still do not
+have a group, they will be assigned to the default group.</p>
+<h4 id="categoriessectionsjson"><code>categoriesSections.json</code><a class="headerlink" href="#categoriessectionsjson" title="Permanent link">&para;</a></h4>
+<p>This config file is used for grouping sections with their full name.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;ReservedArea&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;bootloader&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;application&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<h4 id="categoriessectionskeywordsjson"><code>categoriesSectionsKeywords.json</code><a class="headerlink" href="#categoriessectionskeywordsjson" title="Permanent link">&para;</a></h4>
+<p>This config file is used for grouping sections with name patterns.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;InterruptVectors&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;vectors&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;Code&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;os&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;ConstantData&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;rodata&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;StaticData&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bss&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;DynamicData&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;stack&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;heap&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<h4 id="categoriesobjectsjson"><code>categoriesObjects.json</code><a class="headerlink" href="#categoriesobjectsjson" title="Permanent link">&para;</a></h4>
+<p>This config file is used for grouping objects with their full name. </p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;Identifiers&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;identifiers.o&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;Globals&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;globals.o&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;MCU_RTOS&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;os_scheduler.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;os_tick.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;os_heap.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;os_queue.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;os_diagnostics.o&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;MCU_CAN_Stack&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;can_driver.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;can_prot_frame.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;can_prot_transfer.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;can_prot_message.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;can_prot_connection.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;can_prot_control.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;can_prot_firmware.o&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;SOC_OperatingSystem&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;kernel.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;kernel_api.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;scheduler.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;memory_manager.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;network_manager.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;process_manager.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ethernet_driver.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;tcp_ip_stack.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;display_driver.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;touch_driver.o&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;SOC_ApplicationLogging&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;netlog_lib.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;logging.o&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;SOC_ApplicationGraphics&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;gfx_lib.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;touch_screen.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;gui_main.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;gui_animations.o&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;SOC_NetLog&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;netlog_driver.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;netlog_filter.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;netlog_network_handler.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;netlog_transfer.o&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;netlog_connection.o&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<h4 id="categoriesobjectskeywordsjson"><code>categoriesObjectsKeywords.json</code><a class="headerlink" href="#categoriesobjectskeywordsjson" title="Permanent link">&para;</a></h4>
+<p>This config file is used for grouping sections with name patterns.
+This configuration does not use this file, so it is not present. If your system needs it,
+you can easily create it based on the Emma documentation.</p>
+<h3 id="budgetsjson"><code>budgets.json</code><a class="headerlink" href="#budgetsjson" title="Permanent link">&para;</a></h3>
+<p>This config file defines the available memory resources for every memory type for every configID.
+It also defines a threshold value so that you can see if the used memory is above your defined reserve limit.</p>
+<p>This is only needed for the Emma Visualiser, if you only intend to use Emma, you don´t have to include it to your
+configurations.</p>
+<p>For this system, we have defined a 20% reserve that we should not exceed. The values for the "Budgets" array 
+are decimal values, and representing Bytes. You can find these values for your device in their documentation.</p>
+<p>In this case, even though the MCU have the addresses as defined in the addressSpaces_MCU.json, the actually implemented
+memory is smaller than those. This config file shall contain the memory sizes that physically exist in the device.  </p>
+<p>We have to include every memory type: <code>INT_RAM</code>, <code>EXT_RAM</code>, <code>INT_FLASH</code>, <code>EXT_FLASH</code>. If your project has more than one
+memory area that are not ignored, with the same type, simply add their sizes together and include them like that in this file. </p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;Project Threshold in %&quot;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span>
+
+
+    <span class="nt">&quot;Budgets&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s2">&quot;MCU&quot;</span><span class="p">,</span> <span class="s2">&quot;INT_RAM&quot;</span><span class="p">,</span>    <span class="mi">262144</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;MCU&quot;</span><span class="p">,</span> <span class="s2">&quot;EXT_RAM&quot;</span><span class="p">,</span>         <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;MCU&quot;</span><span class="p">,</span> <span class="s2">&quot;INT_FLASH&quot;</span><span class="p">,</span>  <span class="mi">524288</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;MCU&quot;</span><span class="p">,</span> <span class="s2">&quot;EXT_FLASH&quot;</span><span class="p">,</span>       <span class="mi">0</span><span class="p">],</span>
+
+        <span class="p">[</span><span class="s2">&quot;SOC&quot;</span><span class="p">,</span> <span class="s2">&quot;INT_RAM&quot;</span><span class="p">,</span>          <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;SOC&quot;</span><span class="p">,</span> <span class="s2">&quot;EXT_RAM&quot;</span><span class="p">,</span>   <span class="mi">33554432</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;SOC&quot;</span><span class="p">,</span> <span class="s2">&quot;INT_FLASH&quot;</span><span class="p">,</span>        <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;SOC&quot;</span><span class="p">,</span> <span class="s2">&quot;EXT_FLASH&quot;</span><span class="p">,</span>        <span class="mi">0</span><span class="p">]</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../readme-vis.html" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Emma Visualiser
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../dev-guide.html" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Developer Guide
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            The Emma Authors
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://github.com/bmwcarit/Emma" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/vendor.93c04032.min.js"></script>
+      <script src="../assets/javascripts/bundle.83e5331e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "..",
+          features: ['tabs', 'instant'],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.8c7e0a7e.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

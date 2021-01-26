@@ -1,0 +1,30 @@
+// Emma - Emma Memory and Mapfile Analyser
+// Copyright (C) 2019 The Emma authors
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>
+
+     Virtual    Physical        Size  Section
+  ==========  ==========  ==========  =======
+  0x00000000  0xc0500000  0x00103c58  .app_text
+  0x00103c58  0xc0603c58  0x00010000  .app_rodata
+  0x00113c58  0xc0613c58  0x00010000  .app_data
+  0x00123c58  0xc0623c58  0x00010000  .app_bss
+  0x00133c58  0xc0633c58  0x00010000  .app_stack
+  0x00143c58  0xc0643c58  0x00010000  .app_heap
+  0x00000000  0xc0a00000  0x0002ed00  .netlog_text
+  0x0002ed00  0xc0a2ed00  0x00010000  .netlog_rodata
+  0x0003ed00  0xc0a3ed00  0x00010000  .netlog_data
+  0x0004ed00  0xc0a4ed00  0x00010000  .netlog_bss
+  0x0005ed00  0xc0a5ed00  0x00010000  .netlog_stack
+  0x0006ed00  0xc0a6ed00  0x00010000  .netlog_heap

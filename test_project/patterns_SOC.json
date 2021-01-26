@@ -1,0 +1,20 @@
+{
+    "mapfiles": {
+        "SOC_OperatingSystem": {
+            "regex": ["\\bSOC_OperatingSystem\\.map"]
+        },
+        "SOC_Application": {
+            "regex": ["\\bSOC_Application\\.map"],
+            "VAS": "APP"
+        },
+        "SOC_NetLogger": {
+            "regex": ["\\bSOC_NetLogger\\.map"],
+            "VAS": "NETLOG"
+        }
+    },
+    "monoliths": {
+        "SOC_monolith": {
+            "regex": ["\\bSOC_monolith\\.map"]
+        }
+    }
+}

@@ -1,0 +1,6 @@
+{
+  "ReservedArea": [
+    "bootloader",
+    "application"
+  ]
+}

@@ -1,0 +1,40 @@
+// Emma - Emma Memory and Mapfile Analyser
+// Copyright (C) 2019 The Emma authors
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>
+
+Image Summary
+
+  Section              Base      Size(hex)    Size(dec)  SecOffs
+  .app_text            00000000  00103c58     01064024   0000000
+  .app_rodata          00103c58  00010000     00065536   0000000
+  .app_data            00113c58  00010000     00065536   0000000
+  .app_bss             00123c58  00010000     00065536   0000000
+  .app_heap            00133c58  00010000     00065536   0000000
+  .app_stack           00143c58  00010000     00065536   0000000
+
+Module Summary
+
+  Origin+Size    Section          Module
+00000000+000400  .text            main.o
+00000400+009c40  .text            glibc.o
+0000a040+03e800  .text            netlog_lib.o
+00048840+07d000  .text            gfx_lib.o
+000c5840+0186a0  .text            backend.o
+000ddee0+009c40  .text            logging.o
+000e7b20+007530  .text            touch_screen.o
+000ef050+0061a8  .text            gui_main.o
+000f51f8+00ea60  .text            gui_animations.o
+
+Global Symbols (sorted alphabetically)

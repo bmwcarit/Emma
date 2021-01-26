@@ -1,0 +1,40 @@
+// Emma - Emma Memory and Mapfile Analyser
+// Copyright (C) 2019 The Emma authors
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>
+
+Image Summary
+
+  Section              Base      Size(hex)    Size(dec)  SecOffs
+  .vectors             00000000  00000078     00000120   0000000
+  .text                00000100  00004500     00017664   0000000
+  .rodata              00004600  000000e0     00000224   0000000
+  application          00030000  00040000     00262144   0000000
+  .data                20000000  00010000     00065536   0000000
+  .bss                 20010000  00010000     00065536   0000000
+  .heap                20020000  00010000     00065536   0000000
+  .stack               20030000  00010000     00065536   0000000
+
+Module Summary
+
+  Origin+Size    Section          Module
+00000100+001000  .text            spi_driver.o
+00001100+001500  .text            ext_flash_driver.o
+00002600+002000  .text            firmware_updater.o
+00004600+0000e0  .rodata          identifiers.o
+
+Global Symbols (sorted alphabetically)
+
+ .rodata          00004600+00000080 sFirmwareId
+ .rodata          00004680+00000060 sHardwareId

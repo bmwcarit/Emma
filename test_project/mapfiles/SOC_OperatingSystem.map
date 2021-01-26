@@ -1,0 +1,42 @@
+// Emma - Emma Memory and Mapfile Analyser
+// Copyright (C) 2019 The Emma authors
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>
+
+Image Summary
+
+  Section              Base      Size(hex)    Size(dec)  SecOffs
+  .vectors             00000000  00000400     00001024   0000000
+  .text                c0000000  003be800     00065536   0000000
+  .rodata              c03be800  00010000     00065536   0000000
+  .data                c03ce800  00010000     00065536   0000000
+  .bss                 c03de800  00010000     00065536   0000000
+  .heap                c03ee800  00010000     00065536   0000000
+  .stack               c03fe800  00010000     00065536   0000000
+
+Module Summary
+
+  Origin+Size    Section          Module
+c0000000+300000  .text            kernel.o
+c0300000+002800  .text            kernel_api.o
+c0302800+012c00  .text            scheduler.o
+c0315400+014000  .text            memory_manager.o
+c0329400+01c000  .text            network_manager.o
+c0345400+010000  .text            process_manager.o
+c0355400+008000  .text            ethernet_driver.o
+c035d400+054000  .text            tcp_ip_stack.o
+c03b1400+009400  .text            display_driver.o
+c03ba800+004000  .text            touch_driver.o
+
+Global Symbols (sorted alphabetically)

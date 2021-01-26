@@ -1,0 +1,1889 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.5">
+    
+    
+      
+        <title>Emma - Emma Memmory and Mapfile Analyser</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.15aa0b43.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.75751829.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#000000">
+        
+      
+    
+    
+    
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="black" data-md-color-accent="amber">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#emma" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+  
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="./index.html" title="Emma Memmory and Mapfile Analyser" class="md-header-nav__button md-logo" aria-label="Emma Memmory and Mapfile Analyser">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Emma Memmory and Mapfile Analyser
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Emma
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/bmwcarit/Emma.git/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Emma Memmory and Mapfile Analyser
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="./index.html" title="Emma Memmory and Mapfile Analyser" class="md-nav__button md-logo" aria-label="Emma Memmory and Mapfile Analyser">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+
+    </a>
+    Emma Memmory and Mapfile Analyser
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/bmwcarit/Emma.git/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Emma Memmory and Mapfile Analyser
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Emma
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="readme-emma.html" class="md-nav__link md-nav__link--active">
+        Emma
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    Requirements
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#process" class="md-nav__link">
+    Process
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    Limitations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arguments" class="md-nav__link">
+    Arguments
+  </a>
+  
+    <nav class="md-nav" aria-label="Arguments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-arguments" class="md-nav__link">
+    Required Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#some-optional-arguments" class="md-nav__link">
+    Some Optional Arguments
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-configuration" class="md-nav__link">
+    Project Configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Project Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#formal-definition-of-the-generic-configuration" class="md-nav__link">
+    Formal definition of the generic configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Formal definition of the generic configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#project" class="md-nav__link">
+    PROJECT
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supplement" class="md-nav__link">
+    supplement
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#globalconfigjson" class="md-nav__link">
+    globalConfig.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#addressspacesjson" class="md-nav__link">
+    addressSpaces*.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#budgetsjson" class="md-nav__link">
+    budgets.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#categoriesobjectsjson-and-categoriessectionsjson" class="md-nav__link">
+    categoriesObjects.json and categoriesSections.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#categoriesobjectskeywordsjson-and-categoriessectionskeywordsjson" class="md-nav__link">
+    categoriesObjectsKeywords.json and categoriesSectionsKeywords.json
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#formal-definition-of-the-ghs-compiler-specific-configuration" class="md-nav__link">
+    Formal Definition of the GHS compiler specific configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Formal Definition of the GHS compiler specific configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#extensions-to-the-globalconfigjson" class="md-nav__link">
+    Extensions to the globalConfig.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patternsjson" class="md-nav__link">
+    patterns*.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualsectionsjson" class="md-nav__link">
+    virtualSections*.json
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-files" class="md-nav__link">
+    Output Files
+  </a>
+  
+    <nav class="md-nav" aria-label="Output Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#section-summary" class="md-nav__link">
+    Section Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#object-summary" class="md-nav__link">
+    Object Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#overlap-resolution" class="md-nav__link">
+    Overlap resolution
+  </a>
+  
+    <nav class="md-nav" aria-label="Overlap resolution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objects-in-sections" class="md-nav__link">
+    Objects in Sections
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#csv-header" class="md-nav__link">
+    CSV header
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#terminology" class="md-nav__link">
+    Terminology
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matching-object-name-and-category-using-categorieskeywordsjson" class="md-nav__link">
+    Matching object name and category using categoriesKeywords.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removing-not-needed-object-names-from-categoriesobjectsjson" class="md-nav__link">
+    Removing not needed object names from categoriesObjects.json
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#general-information-about-map-files-and-build-chains" class="md-nav__link">
+    General Information About Map Files and Build Chains
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technical-details" class="md-nav__link">
+    Technical Details
+  </a>
+  
+    <nav class="md-nav" aria-label="Technical Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ghs" class="md-nav__link">
+    GHS
+  </a>
+  
+    <nav class="md-nav" aria-label="GHS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#monolith-files" class="md-nav__link">
+    Monolith files
+  </a>
+  
+    <nav class="md-nav" aria-label="Monolith files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generation" class="md-nav__link">
+    Generation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#device-trees" class="md-nav__link">
+    Device Trees
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ghs-map-command-converter" class="md-nav__link">
+    GHS map command converter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-diagram-emma" class="md-nav__link">
+    Class diagram Emma
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calling-graph-emma" class="md-nav__link">
+    Calling Graph Emma
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="readme-vis.html" class="md-nav__link">
+        Emma Visualiser
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="test_project/readme.html" class="md-nav__link">
+        Test Project
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dev-guide.html" class="md-nav__link">
+        Developer Guide
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    Requirements
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#process" class="md-nav__link">
+    Process
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    Limitations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arguments" class="md-nav__link">
+    Arguments
+  </a>
+  
+    <nav class="md-nav" aria-label="Arguments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-arguments" class="md-nav__link">
+    Required Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#some-optional-arguments" class="md-nav__link">
+    Some Optional Arguments
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-configuration" class="md-nav__link">
+    Project Configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Project Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#formal-definition-of-the-generic-configuration" class="md-nav__link">
+    Formal definition of the generic configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Formal definition of the generic configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#project" class="md-nav__link">
+    PROJECT
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supplement" class="md-nav__link">
+    supplement
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#globalconfigjson" class="md-nav__link">
+    globalConfig.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#addressspacesjson" class="md-nav__link">
+    addressSpaces*.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#budgetsjson" class="md-nav__link">
+    budgets.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#categoriesobjectsjson-and-categoriessectionsjson" class="md-nav__link">
+    categoriesObjects.json and categoriesSections.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#categoriesobjectskeywordsjson-and-categoriessectionskeywordsjson" class="md-nav__link">
+    categoriesObjectsKeywords.json and categoriesSectionsKeywords.json
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#formal-definition-of-the-ghs-compiler-specific-configuration" class="md-nav__link">
+    Formal Definition of the GHS compiler specific configuration
+  </a>
+  
+    <nav class="md-nav" aria-label="Formal Definition of the GHS compiler specific configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#extensions-to-the-globalconfigjson" class="md-nav__link">
+    Extensions to the globalConfig.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patternsjson" class="md-nav__link">
+    patterns*.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualsectionsjson" class="md-nav__link">
+    virtualSections*.json
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-files" class="md-nav__link">
+    Output Files
+  </a>
+  
+    <nav class="md-nav" aria-label="Output Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#section-summary" class="md-nav__link">
+    Section Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#object-summary" class="md-nav__link">
+    Object Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#overlap-resolution" class="md-nav__link">
+    Overlap resolution
+  </a>
+  
+    <nav class="md-nav" aria-label="Overlap resolution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objects-in-sections" class="md-nav__link">
+    Objects in Sections
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#csv-header" class="md-nav__link">
+    CSV header
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#terminology" class="md-nav__link">
+    Terminology
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matching-object-name-and-category-using-categorieskeywordsjson" class="md-nav__link">
+    Matching object name and category using categoriesKeywords.json
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removing-not-needed-object-names-from-categoriesobjectsjson" class="md-nav__link">
+    Removing not needed object names from categoriesObjects.json
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#general-information-about-map-files-and-build-chains" class="md-nav__link">
+    General Information About Map Files and Build Chains
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technical-details" class="md-nav__link">
+    Technical Details
+  </a>
+  
+    <nav class="md-nav" aria-label="Technical Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ghs" class="md-nav__link">
+    GHS
+  </a>
+  
+    <nav class="md-nav" aria-label="GHS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#monolith-files" class="md-nav__link">
+    Monolith files
+  </a>
+  
+    <nav class="md-nav" aria-label="Monolith files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generation" class="md-nav__link">
+    Generation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#device-trees" class="md-nav__link">
+    Device Trees
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ghs-map-command-converter" class="md-nav__link">
+    GHS map command converter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class-diagram-emma" class="md-nav__link">
+    Class diagram Emma
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calling-graph-emma" class="md-nav__link">
+    Calling Graph Emma
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/bmwcarit/Emma.git/edit/master/docs/readme-emma.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="emma">Emma<a class="headerlink" href="#emma" title="Permanent link">&para;</a></h1>
+<p><strong>Emma Memory and Mapfile Analyser</strong></p>
+<blockquote>
+<p>Conduct static (i.e. worst case) memory consumption analyses based on linker map files (currently only Green Hills map files are supported).
+This tool creates a summary/overview about static memory usage in form of a comma separated values (CSV) file.</p>
+</blockquote>
+<h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Python 3.6 or higher</li>
+<li>Python libraries<ul>
+<li>pypiscout 2.0 or higher: (<code>pip3 install pypiscout</code>)</li>
+</ul>
+</li>
+<li>Tested on Windows and Linux systems</li>
+</ul>
+<details closed>
+<summary>Optional: Cython</summary>
+For bigger projects escpecially the number of objects will grow. We provide an optional Cython implementation which can speed-up your analysis (you will gain typically about **30 % speed-up**).
+
+For now we do not provide the binaries with Emma, hence you have to compile (make sure a suitable compiler is installed) it yourself (don't worry it is quick and easy):
+
+Install the `Cython` package (`pip install Cython`) and (in the Emma top level folder) execute (MSVC is recommended on Windows):
+
+
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="err">python setup.py build_ext --inplace --compiler=msvc</span>
+</code></pre></div>
+</td></tr></table>
+
+</details>
+
+<h2 id="process">Process<a class="headerlink" href="#process" title="Permanent link">&para;</a></h2>
+<p>Using the Mapfile Analyser is a two step process. The first step is to extract the required information from the mapfiles and save it to .csv files.
+This is done with the <code>Emma.py a</code> script. The second step is to visualise the data. This document explains the first part only, the visualisation is documented in the Emma visualiser readme document.</p>
+<h2 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h2>
+<p>The devices must have a single linear physical address space:</p>
+<ul>
+<li>Devices that use for example an Intel 8051 architecture have separate code and data address spaces that both start at address <code>0x0000</code>. Devices based on architectures like this can not entirely analysed with Emma.</li>
+<li>Devices that use for example the ARMv6M architecture have a single linear address space.
+    Devices based on architectures like this can be analysed with Emma.</li>
+</ul>
+<h2 id="arguments">Arguments<a class="headerlink" href="#arguments" title="Permanent link">&para;</a></h2>
+<h3 id="required-arguments">Required Arguments<a class="headerlink" href="#required-arguments" title="Permanent link">&para;</a></h3>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1">--project PROJECT, -p PROJECT</span>
+
+<span class="c1">--mapfiles MAPFILES, --map MAPFILES</span>
+</code></pre></div>
+</td></tr></table>
+<h3 id="some-optional-arguments">Some Optional Arguments<a class="headerlink" href="#some-optional-arguments" title="Permanent link">&para;</a></h3>
+<p>This section will provide a more in-depth description about selected command line arguments when a short description (like in <code>--help</code>) might be to short, the behaviour is too complex or background knowledge might assist you to understand the whole picture. For the full list execute Emma with <code>--help</code>.</p>
+<ul>
+<li><code>--dir</code><ul>
+<li>User defined path for the top folder holding the <code>memStats</code>/output files. Per default it uses the same directory as the configuration files.</li>
+</ul>
+</li>
+<li><code>--stats_dir</code><ul>
+<li>User defined path inside the folder given in the <code>--dir</code> argument. This is usefull when batch analysing mapfiles from various development stages. Every analysis output gets it's own directory.</li>
+</ul>
+</li>
+<li><code>--create_categories</code><ul>
+<li>Create <code>categories*.json</code> from <code>categories*Keywords.json</code> for easier categorisation.</li>
+</ul>
+</li>
+<li><code>--remove_unmatched</code>,<ul>
+<li>Remove unmatched entries from <code>categories*.json</code>. This is useful when a <code>categories*.json</code> from another project is used.</li>
+</ul>
+</li>
+<li><code>--analyse_debug</code>, <code>--dbg</code><ul>
+<li>Normally we remove DWARF debug sections from the analysis to show the relevant information for a possible release software. This can be prevented if this argument is set. DWARF section names are defined in <code>stringConstants.py</code>. <code>.unused_ram</code> is always excluded (regardless of this flag)</li>
+</ul>
+</li>
+<li><code>--noprompt</code><ul>
+<li>Exit and fail on user prompt. Normally this happens when some files or configurations are ambiguous. This is useful when running Emma on CI systems.</li>
+</ul>
+</li>
+<li><code>--memVis</code><ul>
+<li>This is a visualisation based on data you actually see in the map files (i.e. the data <em>before</em> the containment/duplicate/overlap resolution)</li>
+<li>Prompts for a start and end address (and x/y scaling) for which memory region a visualisation should be created (as <code>.svg</code>)</li>
+<li>This visualisation allows to better see complex overlaps/alignments of objects/sections (e.g. check your linker configuration, ...)</li>
+<li>Note that huge address ranges containing many objects/sections may cause your viewer to get slow/unresponsive due to the high amount of objects/sections; it is recommended to keep your viewing area small</li>
+<li>For huge <code>.svg</code>s the authors made good experiences with Inkscape and Google Chrome</li>
+<li>Usually you detect an interesting scenario in the <code>.csv</code> reports. It might be hard to see what is actually happening (e.g. many overlaps/containments, ...). That is where a visualisation is helpful</li>
+<li>If <code>--noPrompt</code> is active you will get a weak warning that no <code>.svg</code> reports will be generated
+    <div align="left"> <img src="./images/memVis.png" width="50%"> </div></li>
+</ul>
+</li>
+<li><code>--memVisResolved</code><ul>
+<li>Basically the same as <code>--memVis</code> but plots the <em>resolved</em> view (i.e. after Emma resolved the containment/duplicate overlap -&gt; basically you will see what stands in <code>Objects_in_Sections</code>)</li>
+<li>Skipped if <code>--noResolveOverlap</code> is active</li>
+</ul>
+</li>
+</ul>
+<h2 id="project-configuration">Project Configuration<a class="headerlink" href="#project-configuration" title="Permanent link">&para;</a></h2>
+<p>The memory analysis will be executed based on the project configuration. In order to be able to use Emma with your project, you need to create a configuration matching your project's hardware and software. <strong>Configure Emma with high diligence since errors may lead to incorrect results of your analysis</strong>. During the analysis Emma performs some sanity checks which helps you detecting misconfiguration.</p>
+<p>This chapter explains the role and functionality of each part of the configuration and illustrates all the settings that can be used.
+Based on this description the user will have to create his/her own configuration.</p>
+<p>Creating a configuration is done by writing several JSON files (if you are not familiar with JSON, please visit <a href="https://www.json.org">https://www.json.org</a>).
+This chapter will go trough the topic by formally defining the format, rules and the functionality of the configuration files.
+There are practical example projects available in the <strong><code>doc</code></strong> folder. These projects will lead you step by step trough the process of
+creating a configuration and they also contain map files that can be analysed.</p>
+<p>Currently the following example projects are available:</p>
+<ul>
+<li><strong><code>doc/test_project</code></strong> - A project that illustrates a system with a hardware that consists of two devices: an MCU and an SOC.
+Both of the devices have a GHS compiler specific configuration and mapfiles.</li>
+</ul>
+<p>An Emma project configuration consists of two parts: the generic configuration and the compiler specific configuration.</p>
+<h3 id="formal-definition-of-the-generic-configuration">Formal definition of the generic configuration<a class="headerlink" href="#formal-definition-of-the-generic-configuration" title="Permanent link">&para;</a></h3>
+<p>The generic part of the configuration contains the following files:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="o">+--</span><span class="w"> </span><span class="o">[</span><span class="n">&lt;PROJECT&gt;</span><span class="o">]</span><span class="w"></span>
+<span class="o">|</span><span class="w">   </span><span class="o">+--</span><span class="w"> </span><span class="o">[</span><span class="n">supplement</span><span class="o">]</span><span class="w"></span>
+<span class="o">|</span><span class="w">   </span><span class="o">+--</span><span class="w"> </span><span class="n">globalConfig</span><span class="p">.</span><span class="n">json</span><span class="w"></span>
+<span class="o">|</span><span class="w">   </span><span class="o">+--</span><span class="w"> </span><span class="n">addressSpaces</span><span class="o">*</span><span class="p">.</span><span class="n">json</span><span class="w"></span>
+<span class="o">|</span><span class="w">   </span><span class="o">+--</span><span class="w"> </span><span class="n">budgets</span><span class="p">.</span><span class="n">json</span><span class="w"></span>
+<span class="o">|</span><span class="w">   </span><span class="o">+--</span><span class="w"> </span><span class="n">categoriesObjects</span><span class="p">.</span><span class="n">json</span><span class="w"></span>
+<span class="o">|</span><span class="w">   </span><span class="o">+--</span><span class="w"> </span><span class="n">categoriesObjectsKeywords</span><span class="p">.</span><span class="n">json</span><span class="w"></span>
+<span class="o">|</span><span class="w">   </span><span class="o">+--</span><span class="w"> </span><span class="n">categoriesSections</span><span class="p">.</span><span class="n">json</span><span class="w"></span>
+<span class="o">|</span><span class="w">   </span><span class="o">+--</span><span class="w"> </span><span class="n">categoriesSectionsKeywords</span><span class="p">.</span><span class="n">json</span><span class="w"></span>
+<span class="o">|</span><span class="w">   </span><span class="o">+</span><span class="c1">-- &lt;COMPILER_SPECIFIC_CONFIGURATION_FILES&gt;</span>
+</code></pre></div>
+</td></tr></table>
+<p>The files containing the asterisk symbol can be freely named by the user because the actual file names will have to be
+listed in the globalConfig.json.</p>
+<h4 id="project"><code>PROJECT</code><a class="headerlink" href="#project" title="Permanent link">&para;</a></h4>
+<p>The configuration has to be contained by a folder. The name of the folder will be the name of the configuration.
+From the files ending with a * symbol, the configuration can contain more than one but maximum up to the number of configIDs defined in globalConfig.json.</p>
+<h4 id="supplement"><code>supplement</code><a class="headerlink" href="#supplement" title="Permanent link">&para;</a></h4>
+<p>You can add .md files into this folder with Markdown syntax to add information regarding your project that will be contained by the .html overview.
+For more information please refer to the Emma Visualiser's documentation.</p>
+<h4 id="globalconfigjson"><code>globalConfig.json</code><a class="headerlink" href="#globalconfigjson" title="Permanent link">&para;</a></h4>
+<p>The globalConfig.json is the starting point of a configuration, this file defines the <strong>configId</strong>-s.
+The configId-s are the hardware units of the system that have memory associated to them, for example an MCU, MPU or an SOC.
+During the analysis, it will be examined to which extent these memory resources are used.</p>
+<p>For each configId, globalConfig.json assigns a compiler. This means that the mapfiles belonging to the configId were created by the selected compiler.
+This is important, since the format of these files are specific to the compiler. For each configId an addressSpaces*.json configuration file will be assigned.
+Furthermore the globalConfig.json assigns compiler specific configuration files to each configId, that need to be consistent with the selected compiler.
+For example if a GHS compiler was selected to the configId, then the compiler specific configuration part of this configId have to fulfill the requirements
+described in the <a href="#formal-definition-of-the-GHS-compiler-specific-configuration">Formal Definition of the GHS compiler specific configuration</a> chapter.</p>
+<p>The globalConfig.json has to have the following format:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;&lt;CONFIG_ID&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;compiler&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;COMPILER_NAME&gt;&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;addressSpacesPath&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;CONFIG_FILE&gt;&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;mapfiles&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;MAPFILES_REL_PATH&gt;&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ignoreConfigID&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;BOOL&gt;&quot;</span><span class="p">,</span>
+        <span class="err">&lt;COMPILER_SPECIFIC_KEY_VALUE_PAIRS&gt;</span>
+    <span class="p">},</span>
+    <span class="err">.</span>
+    <span class="err">.</span>
+    <span class="err">.</span>
+    <span class="nt">&quot;&lt;CONFIG_ID&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;compiler&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;COMPILER_NAME&gt;&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;addressSpacesPath&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;CONFIG_FILE&gt;&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;mapfiles&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;MAPFILES_REL_PATH&gt;&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ignoreConfigID&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;BOOL&gt;&quot;</span><span class="p">,</span>
+        <span class="err">&lt;COMPILER_SPECIFIC_KEY_VALUE_PAIRS&gt;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<p>The following rules apply:</p>
+<ul>
+<li>The file contains a single unnamed JSON object</li>
+<li>The types used in the description:<ul>
+<li><code>&lt;CONFIG_ID&gt;</code> is a string</li>
+<li><code>&lt;COMPILER_NAME&gt;</code> is a string</li>
+<li><code>&lt;CONFIG_FILE&gt;</code> is a string </li>
+<li><code>&lt;MAPFILES_REL_PATH&gt;</code> is a string, with the special characters escaped in it</li>
+<li><code>&lt;BOOL&gt;</code> is a boolean value containing either <strong>true</strong> or <strong>false</strong>  </li>
+<li><code>&lt;COMPILER_SPECIFIC_KEY_VALUE_PAIRS&gt;</code> are the key-value pairs that are required by the selected compiler</li>
+</ul>
+</li>
+<li>There has to be at least one <strong>configID</strong> defined</li>
+<li>You must select a compiler for every configID, by defining the <strong>compiler</strong> key. The possible values are:<ul>
+<li>"GHS" - Green Hills Compiler</li>
+</ul>
+</li>
+<li>You must assign the following configuration files for each configID by defining the following key, value pairs:<ul>
+<li>by defining <strong>addressSpacesPath</strong>, the configuration file that defines the address spaces is assigned</li>
+<li>The configuration files have to be in the same folder as the globalConfig.json</li>
+<li>The configuration files don't need to be different for each configID (for example you can use the same address spaces configuration file for all the configIDs)</li>
+</ul>
+</li>
+<li>The mapfiles:<ul>
+<li>specifies a folder <strong>relative</strong> to the one given via <strong>--mapfiles</strong> command line argument</li>
+<li>is optional, if is defined for a configID, then the map files belonging to this configId will be searched for within this folder</li>
+<li>Otherwise the mapfiles will be searched for in the <strong>--mapfiles</strong> root map file path</li>
+</ul>
+</li>
+<li>The ignoreConfigID:<ul>
+<li>can be used to mark a configID as ignored, which means that this will not be processed during the analysis</li>
+<li>is optional, it does not need to be included in every configID, leaving it has the same effect as including it with false</li>
+</ul>
+</li>
+</ul>
+<h4 id="addressspacesjson"><code>addressSpaces*.json</code><a class="headerlink" href="#addressspacesjson" title="Permanent link">&para;</a></h4>
+<p>The address spaces configuration files define the existing memory areas for the configIDs they were assigned to in the globalConfigs.json.</p>
+<p>These configuration files have to have the following format:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;offset&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;ADDRESS&gt;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;memory&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;&lt;MEMORY_AREA&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;ADDRESS&gt;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;ADDRESS&gt;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;MEMORY_TYPE&gt;&quot;</span>
+        <span class="p">},</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="nt">&quot;&lt;MEMORY_AREA&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;ADDRESS&gt;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;ADDRESS&gt;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;MEMORY_TYPE&gt;&quot;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;ignoreMemory&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;&lt;MEMORY_AREA&gt;&quot;</span><span class="p">,</span> <span class="err">...</span> <span class="s2">&quot;&lt;MEMORY_AREA&gt;&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<p>The following rules apply:</p>
+<ul>
+<li>The file contains a single unnamed JSON object</li>
+<li>The types used in the description:<ul>
+<li><code>&lt;ADDRESS&gt;</code> is a string containing a 64bit hexadecimal value, for example "0x1FFFFFFF" </li>
+<li><code>&lt;MEMORY_AREA&gt;</code> is a string containing a unique name</li>
+<li><code>&lt;MEMORY_TYPE&gt;</code> is a string containing one of the following values:<ul>
+<li>"INT_RAM" - internal RAM</li>
+<li>"EXT_RAM" - external RAM</li>
+<li>"INT_FLASH" - internal Flash</li>
+<li>"EXT_FLASH" - external Flash     </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>offset</strong>: a global address offset applied to addresses of all memories. If the address is non-virtual (=&gt; DMA) the offset is subtracted from it otherwise normal address translation (virtual -&gt; physical) is applied.</li>
+<li><strong>memory</strong> is a JSON object that defines the memory areas</li>
+<li>Each memory area is a JSON object that has three elements:<ul>
+<li>start - start address</li>
+<li>end - end address</li>
+<li>type - memory type</li>
+</ul>
+</li>
+<li>The <strong>ignoreMemory</strong> is a JSON array used to mark one or more <code>&lt;MEMORY_AREA&gt;</code> to be ignored during the analysis:<ul>
+<li>The the elements of this array can be selected from the ones defined in the "memory" object</li>
+<li>It is optional, not including it or including it as an empty array means none of the <code>&lt;MEMORY_AREA&gt;</code>s are ignored</li>
+</ul>
+</li>
+</ul>
+<h4 id="budgetsjson"><code>budgets.json</code><a class="headerlink" href="#budgetsjson" title="Permanent link">&para;</a></h4>
+<p>The budgets configuration file belongs to the Emma Visualiser. For a description, please see: <strong><code>doc/readme-vis.md</code></strong>.</p>
+<h4 id="categoriesobjectsjson-and-categoriessectionsjson"><code>categoriesObjects.json</code> and <code>categoriesSections.json</code><a class="headerlink" href="#categoriesobjectsjson-and-categoriessectionsjson" title="Permanent link">&para;</a></h4>
+<p>The categories configuration files are used to categorise objects and sections to user defined categories by using their <em>full names</em>.
+These files are optional. If no categorisation is needed, these configuration files do not need to be created.
+This function can be used for example to group the software components together which will make the results easier to understand and aggregate.</p>
+<p>The <code>categoriesObjects.json</code> is used for the objects and the <code>categoriesSections.json</code> is  used for the section categorisation.</p>
+<ol>
+<li>The objects and sections will be first tried to be categorised by these files.</li>
+<li>If they could not be categorised, their categorie will be marked as unknown.</li>
+</ol>
+<p>These configuration files have to have the following format:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;&lt;CATEGORY&gt;&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;&lt;NAME&gt;&quot;</span><span class="p">,</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="s2">&quot;&lt;NAME&gt;&quot;</span>
+    <span class="p">],</span>
+    <span class="err">.</span>
+    <span class="err">.</span>
+    <span class="err">.</span>
+    <span class="nt">&quot;&lt;CATEGORY&gt;&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;&lt;NAME&gt;&quot;</span><span class="p">,</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="s2">&quot;&lt;NAME&gt;&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<p>The following rules apply:</p>
+<ul>
+<li>The file contains a single unnamed JSON object</li>
+<li>The types used in the description:<ul>
+<li><code>&lt;CATEGORY&gt;</code> is a string containing a unique category name</li>
+<li><code>&lt;NAME&gt;</code> is a string</li>
+</ul>
+</li>
+<li>The categorisation can be done either by hand or with the <strong>--create_categories</strong> command line argument (for usage see there)</li>
+<li>The <code>&lt;NAME&gt;</code> has to contain full names of the sections or objects</li>
+</ul>
+<h4 id="categoriesobjectskeywordsjson-and-categoriessectionskeywordsjson"><code>categoriesObjectsKeywords.json</code> and <code>categoriesSectionsKeywords.json</code><a class="headerlink" href="#categoriesobjectskeywordsjson-and-categoriessectionskeywordsjson" title="Permanent link">&para;</a></h4>
+<p>The categories keywords configuration files are used to categorise objects and sections to user defined categories by using <em>substrings</em> of their names.
+These files are <em>optional</em>. If no categorisation is needed, these configuration files do not need to be created.</p>
+<p>The <code>categoriesObjectsKeywords.json</code> is used for the objects and the <code>categoriesSectionsKeywords.json</code> is  used for the section categorisation.
+If no matching category keywords was found the software will assign them to a category called <code>&lt;Emma_UnknownCategory&gt;</code>.</p>
+<p>These configuration files have to have the following format:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;&lt;CATEGORY&gt;&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;&lt;KEYWORD&gt;&quot;</span><span class="p">,</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="s2">&quot;&lt;KEYWORD&gt;&quot;</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;&lt;CATEGORY&gt;&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;&lt;KEYWORD&gt;&quot;</span><span class="p">,</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="s2">&quot;&lt;KEYWORD&gt;&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<p>The following rules apply:</p>
+<ul>
+<li>The file contains a single unnamed JSON object</li>
+<li>The types used in the description:<ul>
+<li><code>&lt;CATEGORY&gt;</code> is a string containing a unique category name</li>
+<li><code>&lt;KEYWORD&gt;</code> is a string</li>
+</ul>
+</li>
+<li>The categorisation has to be done by hand</li>
+<li>The <code>&lt;KEYWORD&gt;</code> contains a regex pattern for the names of the sections or objects</li>
+</ul>
+<h3 id="formal-definition-of-the-ghs-compiler-specific-configuration">Formal Definition of the GHS compiler specific configuration<a class="headerlink" href="#formal-definition-of-the-ghs-compiler-specific-configuration" title="Permanent link">&para;</a></h3>
+<p>The GHS compiler specific part of the configuration contains the following files:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="err">+-- [&lt;PROJECT&gt;]</span>
+<span class="err">|   +-- &lt;GENERIC_CONFIGURATION_FILES&gt;</span>
+<span class="err">|   +-- patterns*.json</span>
+<span class="err">|   +-- virtualSections*.json</span>
+</code></pre></div>
+</td></tr></table>
+<p>The following dependencies exist within this type of a configuration:</p>
+<div align="center"> <img src="./images/configDependencies.png" width="100%"> </div>
+
+<p>In <code>globalConfig.json</code>, you need to reference (ref relations on the picture):</p>
+<ol>
+<li><code>addressSpaces*.json</code></li>
+<li><code>patterns*.json</code></li>
+<li><code>sections*.json</code></li>
+</ol>
+<p><code>memRegionExcludes</code>: You can exclude certain memory regions with this keyword in <code>patterns*.json</code>. In order to do this the memory regions/tags must match with those defined in <code>addressSpaces*.json</code>.</p>
+<p>If you have virtual address spaces (VASes) defined. You need a "monolith file" pattern defined in <code>patterns*.json</code> in order to be able to translate virtual addresses back to physical addresses. In the same file you give each VAS a name. This name is later used to identify which section belongs to which VAS (defined in <code>virtualSections*.json</code>). <em>The VAS names must match between those two files.</em> This is needed in order to avoid name clashes of sections names between different VASes.</p>
+<p>If you are unsure what VASes you have check out the <code>.int</code> ("integrate") files (the <code>.ael</code> files might also be of your interest).</p>
+<h4 id="extensions-to-the-globalconfigjson">Extensions to the <code>globalConfig.json</code><a class="headerlink" href="#extensions-to-the-globalconfigjson" title="Permanent link">&para;</a></h4>
+<p>The globalConfig.json has to have the following format <strong>for configId-s that have selected "GHS" as compiler</strong>:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;&lt;CONFIG_ID&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="err">&lt;GENERIC_KEY_VALUE_PAIRS&gt;</span><span class="p">,</span>
+        <span class="nt">&quot;patternsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;CONFIG_FILE&gt;&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;virtualSectionsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;CONFIG_FILE&gt;&quot;</span>
+    <span class="p">},</span>
+    <span class="err">.</span>
+    <span class="err">.</span>
+    <span class="err">.</span>
+    <span class="nt">&quot;&lt;CONFIG_ID&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="err">&lt;GENERIC_KEY_VALUE_PAIRS&gt;</span><span class="p">,</span>
+        <span class="nt">&quot;patternsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;CONFIG_FILE&gt;&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;virtualSectionsPath&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;CONFIG_FILE&gt;&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<p>The following rules apply:</p>
+<ul>
+<li>The types used in the description:<ul>
+<li><code>&lt;GENERIC_KEY_VALUE_PAIRS&gt;</code> are the key-value pairs discussed in the <a href="#formal-definition-of-the-generic-configuration">Formal definition of the generic configuration</a> chapter</li>
+<li><code>&lt;CONFIG_FILE&gt;</code> is a string</li>
+</ul>
+</li>
+<li>You must assign a patterns configuration file for each configID by defining the <strong>patternsPath</strong> key</li>
+<li>If the configId contains virtual address spaces, you must assign a configuration file describing them by defining <strong>virtualSectionsPath</strong> key</li>
+<li>The assigned configuration files have to be in the same folder as the globalConfig.json</li>
+<li>The configuration files don't need to be different for each configID (for example you can use the same virtual sections configuration file for all the configIDs)</li>
+</ul>
+<h4 id="patternsjson"><code>patterns*.json</code><a class="headerlink" href="#patternsjson" title="Permanent link">&para;</a></h4>
+<p>The patterns configuration files define regex patterns for finding the mapfiles, monolith files and processing their content.
+They belong to the <code>configID</code> they were assigned to in the <code>globalConfigs.json</code>.</p>
+<p>These configuration files have to have the following format:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;mapfiles&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;&lt;SW_NAME&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">,</span> <span class="err">...</span> <span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">],</span>
+            <span class="nt">&quot;VAS&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;VAS_NAME&gt;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;UniquePatternSections&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;UniquePatternObjects&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;memRegionExcludes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;MEMORY_AREA&gt;&quot;</span><span class="p">,</span> <span class="err">...</span> <span class="s2">&quot;&lt;MEMORY_AREA&gt;&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="nt">&quot;&lt;SW_NAME&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">,</span> <span class="err">...</span> <span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">],</span>
+            <span class="nt">&quot;VAS&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;VAS_NAME&gt;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;UniquePatternSections&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;UniquePatternObjects&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;memRegionExcludes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;MEMORY_AREA&gt;&quot;</span><span class="p">,</span> <span class="err">...</span> <span class="s2">&quot;&lt;MEMORY_AREA&gt;&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;monoliths&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;&lt;MONILITH_NAME&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;regex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">,</span> <span class="err">...</span> <span class="s2">&quot;&lt;REGEX_PATTERN&gt;&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<p>The following rules apply:</p>
+<ul>
+<li>The file contains a single unnamed JSON object</li>
+<li>The types used in the description:<ul>
+<li><code>&lt;SW_NAME&gt;</code> is a string containing a unique name</li>
+<li><code>&lt;REGEX_PATTERN&gt;</code> is a string containing a regex pattern following the format used by the "re" Python library</li>
+<li><code>&lt;VAS_NAME&gt;</code> is a string</li>
+<li><code>&lt;MONOLITH_NAME&gt;</code> is a string containing a unique name</li>
+</ul>
+</li>
+<li>The <strong>mapfiles</strong> object must be present in the file with at least one entry:<ul>
+<li>Each entry describes a SW unit of the configId (eg. a bootloader or application if an MCU is used or a process if an OS, like Linux is used):<ul>
+<li>The <strong>regex</strong> defines one ore more regex pattern to find the mapfile that contains the data for this SW unit:<ul>
+<li>It is possible to give more than one regex patterns in case of non-uniform mapfile names</li>
+<li>If more than one map file will be found for the SW unit, a warning will be thrown</li>
+<li>The search will be done in the mapfile folder defined by the command line arguments</li>
+</ul>
+</li>
+<li>The <strong>VAS</strong> is optional element, defining the name of the virtual address space of this SW unit<ul>
+<li>It is only required if the SW unit has entries that belong to virtual address spaces</li>
+<li>More than one mapfiles can contain data belonging to one virtual address space, so the VAS name does not need to be unique</li>
+</ul>
+</li>
+<li>The <strong>UniquePatternSections</strong> is an optional element defining a regex pattern for collecting the sections from the mapfile<ul>
+<li>It only needs to be defined if the default regex pattern has to be overridden</li>
+<li>This can be necessary if the toolchain where the mapfile coming from, produces another format</li>
+</ul>
+</li>
+<li>The <strong>UniquePatternObjects</strong> is an optional element defining a regex pattern for collecting the objects from the mapfile<ul>
+<li>It only needs to be defined if the default regex pattern has to be overridden</li>
+<li>This can be necessary if the toolchain where the mapfile coming from, produces another format</li>
+</ul>
+</li>
+<li>The <strong>memRegionExcludes</strong> lists the memory areas that needs to be ignored during the analysis of the mapfile<ul>
+<li>The sections and objects of the mapfile that belong to the memory areas listed here will be ignored</li>
+<li>The memory areas can be selected from the <MEMORY_AREA> elements defined in the "memory" object of address spaces configuration file</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>The <strong>monoliths</strong> object is optional, it is only needed if the configId has virtual address spaces<ul>
+<li>If one the of the mapfiles object has a VAS key, then a monolith is needed</li>
+<li>It is possible to give more than one regex patterns in case of non-uniform monolith file names</li>
+<li>If more than one monolith file will be found for the SW unit, a warning will be thrown</li>
+<li>The search will be done in the mapfile folder defined by the command line arguments</li>
+</ul>
+</li>
+</ul>
+<h4 id="virtualsectionsjson"><code>virtualSections*.json</code><a class="headerlink" href="#virtualsectionsjson" title="Permanent link">&para;</a></h4>
+<p>The virtual sections configuration files are used to assign the sections of the virtual address spaces to
+a virtual address spaces defined in the <code>patterns*.json</code>file. This is needed because the mapfiles can contain physical
+and virtual sections as well and Emma needs to identify the virtual ones and assign them to a specific virtual address space.
+If your configuration does not use virtual address spaces, the <code>virtualSections*.json</code> file is not needed.</p>
+<p>This configuration file have to have the following format:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="nt">&quot;&lt;VAS_NAME&gt;&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;&lt;SECTION_NAME&gt;&quot;</span><span class="p">,</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="s2">&quot;&lt;SECTION_NAME&gt;&quot;</span>
+    <span class="p">],</span>
+    <span class="err">...</span>
+    <span class="nt">&quot;&lt;VAS_NAME&gt;&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;&lt;SECTION_NAME&gt;&quot;</span><span class="p">,</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="err">.</span>
+        <span class="s2">&quot;&lt;SECTION_NAME&gt;&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<p>The following rules apply:</p>
+<ul>
+<li>The file contains a single unnamed JSON object</li>
+<li>The types used in the description:<ul>
+<li><code>&lt;VAS_NAME&gt;</code> is a string</li>
+<li><code>&lt;SECTION_NAME&gt;</code> is a string</li>
+</ul>
+</li>
+<li>The <code>&lt;VAS_NAME&gt;</code> keys are the ones that were defined in the <code>patterns*.json</code></li>
+<li>Every <code>&lt;VAS_NAME&gt;</code> key has an array as value that lists the sections that belong to the virtual address space </li>
+<li>There are no rules for the assignment, this needs to be done intuitively based on the project being analysed</li>
+</ul>
+<h2 id="output-files">Output Files<a class="headerlink" href="#output-files" title="Permanent link">&para;</a></h2>
+<p>The output Files will be saved to the memStats folder of the respective project. The filename will have this form: </p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>&lt;PROJECT_NAME&gt;_Section_Summary_TIMESTAMP.csv
+&lt;PROJECT_NAME&gt;_Object_Summary_TIMESTAMP.csv
+&lt;PROJECT_NAME&gt;_Objects_in_Sections_TIMESTAMP.csv
+</code></pre></div>
+</td></tr></table>
+<h3 id="section-summary">Section Summary<a class="headerlink" href="#section-summary" title="Permanent link">&para;</a></h3>
+<p>The file <code>&lt;PROJECT_NAME&gt;_Section_Summary_&lt;TIMESTAMP&gt;.csv</code> contains the sections from the mapfiles.</p>
+<h3 id="object-summary">Object Summary<a class="headerlink" href="#object-summary" title="Permanent link">&para;</a></h3>
+<p>The file <code>&lt;PROJECT_NAME&gt;_Object_Summary_&lt;TIMESTAMP&gt;.csv</code> contains the objects from the mapfiles.</p>
+<h3 id="overlap-resolution">Overlap resolution<a class="headerlink" href="#overlap-resolution" title="Permanent link">&para;</a></h3>
+<p>Generally all overlaps will get resolved by Emma with default settings. However Objects in Sections can be disabled via command line argument. The general process works as follows:</p>
+<p>Objects/sections that are "touching" or overlapping each other in some way (see the above figure) are resolved in all three reports (object summary, section summary and "Objects in Sections"). Therefore the "weaker" section/object is split (and has therefore a reduced by size after each step). A section/object is considered "weaker" if its <em>start</em> address is higher.</p>
+<div align="center"> <img src="images/objectsInSectionsResolution.png" width="800"> </div>
+
+<ol>
+<li>All overlaps between sections and sections are resolved and between objects and objects. This will be the results of two reports.</li>
+<li>Then they will be merged together which will result in "Objects in Sections". This results in the third report created by Emma. Here some "virtual" sections are introduced and overlaps between sections and objects are considered.</li>
+</ol>
+<p>As a result you will get output files in form of a <code>.csv</code> file which sets you up to do later processing on this data easily.</p>
+<h4 id="objects-in-sections">Objects in Sections<a class="headerlink" href="#objects-in-sections" title="Permanent link">&para;</a></h4>
+<p>"Objects in sections" provides ways to obtain a finer granularity of the categorisation result. Therefore categorised sections containing (smaller) objects of a different category got split up and result into a more accurate categorisation. In this <code>.csv</code> file additional information is added like:</p>
+<ul>
+<li>Overlaps (of sections/objects)</li>
+<li>Containments (e.g. sections containing objects)</li>
+<li>Duplicates</li>
+<li>All meta data about the origin of each section/object (mapfile, addess space, ...)</li>
+<li>...</li>
+</ul>
+<div align="center"> <img src="./images/objectsInSections.png" width="90%"> </div>
+
+<p>The file <code>&lt;PROJECT_NAME&gt;_Objects_in_Sections_&lt;TIMESTAMP&gt;.csv</code> is the result of the "merge" of the objects and the sections file.</p>
+<p>The information on such occurrences can be observed in columns of the Emma report:</p>
+<ul>
+<li><code>overlapFlag</code>: Overlaps with the stated section ("overlapped by X" means X is an object/section which has a lower start address and therefore overlaps the current element)</li>
+<li><code>containmentFlag</code>: Is contained by the stated section</li>
+<li><code>duplicateFlag</code>: Duplicate entry</li>
+<li><code>containgOthers</code>: Contains stated sections/objects</li>
+<li><code>addrStartHexOriginal</code>: Address before correction (in contrast to the "new" addresses due to the above actions)</li>
+<li><code>addrEndHexOriginal</code>: Address before correction (in contrast to the "new" addresses due to the above actions)</li>
+</ul>
+<p>The above figure also shows how sizes of objects/sections are calculated correctly (-&gt; namely: <code>start - end + 1</code>). Besides this a specific case of an overlap is shown above. A section/object having the same end address like the start address of another section/object. This happens to be already an overlap of one byte.</p>
+<p>As a result you see the <code>+ 1</code> addition for the size calculation.
+This might sound counter-intuitive at the first spot. However we can see memory addresses as memory blocks itself rather than infinitesimal barriers (what the term start and end address would intuitively suggest by its name).</p>
+<p>At the end you will find three remaining "types":</p>
+<ol>
+<li><strong>Real objects:</strong> (Un)modified objects due to the above actions</li>
+<li><strong>Section reserves (<code>&lt;Emma_SectionReserve&gt;</code>):</strong> Resolved sections minus resolved objects. A section that describes the unused part of a section that was not filled up with objects. This is what remains when you resolve all "touching" occurrences and subtract objects from sections that we obtain (multiple) smaller sections</li>
+<li><strong>Section entry (<code>&lt;Emma_SectionEntry&gt;</code>):</strong> The original section size (without any modification); this is a pure virtual entry and has a size of <code>0</code> bytes; these are the only <code>0</code> byte sections which are a result of the Emma processing. Note that section-section overlaps might (depending on the chosen Emma command line flags) already be resolved at this stage and are considered as original section size.</li>
+</ol>
+<p>Section names for section reserves and entries are <code>&lt;Emma_SectionReserve&gt;</code> and <code>&lt;Emma_SectionEntry&gt;</code> respectively. The <code>&lt;Emma_xxxx&gt;</code> pattern shows you names introduced by Emma.</p>
+<h3 id="csv-header">CSV header<a class="headerlink" href="#csv-header" title="Permanent link">&para;</a></h3>
+<p>The CSV file has the following columns:</p>
+<ul>
+<li>The address start, end and sizes: <code>addrStartHex; addrEndHex; sizeHex; addrStartDec; addrEndDec; sizeDec; sizeHumanReadable</code></li>
+<li>The section and object name: <code>sectionName; moduleName</code> Note: If the image summary contains only sections, the column moduleName will be left empty.</li>
+<li><code>configID</code>, <code>memType</code> and <code>tag</code> are from the configuration files.</li>
+<li><code>vasName</code> is the virtual address space name defined in sections.json. The <code>DMA</code> field indicates whether a section/object is in a VAS. </li>
+<li><code>category</code>: The category evaluated from categories*.json</li>
+<li><code>mapfile</code>: The mapfile, the entry originates from.</li>
+<li><code>overlapFlag</code>: Indicates whether one section overlaps with another.</li>
+<li><code>containmentFlag</code>: Indicates whether a section is contained in another.</li>
+<li><code>duplicateFlag</code>: Indicates whether a section has duplicates.</li>
+</ul>
+<h2 id="terminology">Terminology<a class="headerlink" href="#terminology" title="Permanent link">&para;</a></h2>
+<p>In places there is some specific terminology used which is explained in the following chapter:</p>
+<ul>
+<li>DMA: Direct Memory Addressing; addresses which do not have to be translated (from virtual to physical); this has nothing to do with direct access to memory on the target (by bypassing the CPU core(s))</li>
+<li>Emma was formerly known as MAdZ</li>
+</ul>
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
+<p>Create a Mapfile Summary for <PROJECT>:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>Emma.py a --project ..<span class="se">\&lt;</span>PROJECT&gt; <span class="se">\</span>
+--mapfiles ..<span class="se">\M</span>yMapfiles <span class="se">\</span>
+--dir ..<span class="se">\M</span>yMapfiles<span class="se">\r</span>esults
+</code></pre></div>
+</td></tr></table>
+<h3 id="matching-object-name-and-category-using-categorieskeywordsjson">Matching object name and category using <code>categoriesKeywords.json</code><a class="headerlink" href="#matching-object-name-and-category-using-categorieskeywordsjson" title="Permanent link">&para;</a></h3>
+<p><code>categoriesObjectsKeywords.json</code> can be used to match object names with catgories by user defined keywords.</p>
+<ul>
+<li>Arguments required:  <code>--create_categories</code></li>
+<li>This step will append the newly categorised modules to <code>categories.json</code>. The program will ask you to confirm to overwrite the file.</li>
+</ul>
+<h3 id="removing-not-needed-object-names-from-categoriesobjectsjson">Removing not needed object names from <code>categoriesObjects.json</code><a class="headerlink" href="#removing-not-needed-object-names-from-categoriesobjectsjson" title="Permanent link">&para;</a></h3>
+<p>Not needed object names can be removed from <code>categoriesObjects.json</code>, for example when <code>categoriesObjects.json</code> from another project is used.</p>
+<ul>
+<li>Arguments required:  <code>--remove_unmatched</code></li>
+<li>This step will remove never matching object names from <code>categoriesObjects.json</code>. Some modules never match because e.g. the object got removed or is not present in the current release. The program will ask you to confirm to overwrite the file.</li>
+</ul>
+<h2 id="general-information-about-map-files-and-build-chains">General Information About Map Files and Build Chains<a class="headerlink" href="#general-information-about-map-files-and-build-chains" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="http://www.tenouk.com/ModuleW.html">COMPILER, ASSEMBLER, LINKER AND LOADER: A BRIEF STORY</a></li>
+<li><a href="http://resources.infosecinstitute.com/hello-world-c-assembly-object-file-and-executable">Hello World: C, Assembly, Object File and Executable</a></li>
+<li><a href="https://www.embeddedrelated.com/showarticle/900.php">Analyzing the Linker Map file with a little help from the ELF and the DWARF</a></li>
+<li><a href="http://duartes.org/gustavo/blog/post/anatomy-of-a-program-in-memory">Anatomy of a Program in Memory</a></li>
+<li><a href="https://www.cs.rutgers.edu/~pxk/416/notes/10-paging.html">Memory Management: Paging</a></li>
+<li><a href="http://www.lurklurk.org/linkers/linkers.html">Beginner's Guide to Linkers</a></li>
+<li><a href="http://www.scoberlin.de/content/media/http/informatik/gcc_docs/ld_3.html">Linker Scripts</a></li>
+</ul>
+<h2 id="technical-details">Technical Details<a class="headerlink" href="#technical-details" title="Permanent link">&para;</a></h2>
+<h3 id="ghs">GHS<a class="headerlink" href="#ghs" title="Permanent link">&para;</a></h3>
+<h4 id="monolith-files">Monolith files<a class="headerlink" href="#monolith-files" title="Permanent link">&para;</a></h4>
+<h5 id="generation">Generation<a class="headerlink" href="#generation" title="Permanent link">&para;</a></h5>
+<p>Execute this to generate the monolith files (you need to have the ELF file for this step).</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>gdump.exe -virtual_mapping -no_trunc_sec_names Application.elf &gt;&gt; monolith.map
+gdump.exe -map             -no_trunc_sec_names Application.elf &gt;&gt; monolith.map
+</code></pre></div>
+</td></tr></table>
+<p>By default long names will be truncated. This can lead to inaccurate results. In order to prevent this use <code>-no_trunc_sec_names</code>. If you get very high physical addresses it is probable that device trees are used in your project (see below).</p>
+<h5 id="device-trees">Device Trees<a class="headerlink" href="#device-trees" title="Permanent link">&para;</a></h5>
+<p>Device Trees are present since Integrity version 11.7.6 (sometimes this can be found in older versions too if it was back ported). Those are similar to those known from the Linux world (e.g. <code>.dtb</code>s and <code>.dts</code> files). Only the bootloader process is done a lot less complex than in Linux.</p>
+<p>Usually an offset of <code>0xffffffa000000000</code> (to be sure check a line like <code>ram_memory : ORIGIN = 0xffffffa000000000,</code> in the <code>default.ld</code> linker file) is added. You can see that in the <code>gdump</code> output.
+In order to get the device tree - and therefore the real physical addresses of your hardware - it is helpful to decompile the correct <code>.dtb</code> (depending on your hardware variant) file:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>dtc -I dtb -O dts dev-tree.dtb &gt; decompiled-dev-tree.dts
+</code></pre></div>
+</td></tr></table>
+<h3 id="ghs-map-command-converter">GHS map command converter<a class="headerlink" href="#ghs-map-command-converter" title="Permanent link">&para;</a></h3>
+<p>If you allocate memory dynamically during runtime you would like to analyse that state and a strict static analysis is not very useful since you miss out a lot of memory which is indeed allocated but you cannot see it in the static view.</p>
+<p>To solve this problem you can do the following:</p>
+<ol>
+<li>Run the GHS <code>map</code> command on the target during a debug session</li>
+<li>Save the output</li>
+<li>Convert it via the Emma <code>tools/ghs-map-converter</code> to a GHS mapfile alike format</li>
+<li>and add it as a map file in the Emma config<ol>
+<li>The addresses of the map command are physical - no address translation / VAS needs to be configured</li>
+<li>Note: In combination with device trees you will loose information (and potentialy you have to add a pseudo memory region like stated below) since it cannot be mapped to the physical hardware anymore since you get only virtual dummy addresses from <code>gdump.exe -virtual_mapping</code> command.</li>
+</ol>
+</li>
+</ol>
+<p>The dummy entry of <code>addressSpaces*.json</code> may look like this:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="nt">&quot;memory&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;Pseudo_Memory&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;0x0000000000000000&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;0xffffffffffffffff&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;EXT_RAM&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<h3 id="class-diagram-emma">Class diagram Emma<a class="headerlink" href="#class-diagram-emma" title="Permanent link">&para;</a></h3>
+<div align="center"> <img src="images/emmaClassDiagram.png" width="1000"> </div>
+
+<h3 id="calling-graph-emma">Calling Graph Emma<a class="headerlink" href="#calling-graph-emma" title="Permanent link">&para;</a></h3>
+<div align="center"> <img src="images/call_graph_uml/emma_filtered.profile.png" onerror="this.onerror=null;this.src='https://github.com/bmwcarit/Emma/blob/master/doc/images/call_graph_uml/emma_filtered.profile.png';" width="1000"> </div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="index.html" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Home
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="readme-vis.html" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Emma Visualiser
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            The Emma Authors
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://github.com/bmwcarit/Emma" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="assets/javascripts/vendor.93c04032.min.js"></script>
+      <script src="assets/javascripts/bundle.83e5331e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: ".",
+          features: ['tabs', 'instant'],
+          search: Object.assign({
+            worker: "assets/javascripts/worker/search.8c7e0a7e.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>
