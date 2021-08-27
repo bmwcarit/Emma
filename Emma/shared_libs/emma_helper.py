@@ -92,7 +92,7 @@ def unifyAddress(address):
     """
     Convert hex or dec address and returns both (in this order)
     :param address: hex or dec address
-    :return: [addressHex, addressDec)
+    :return: [addressHex, addressDec]
     """
     if isinstance(address, str) and address is not None:
         address = int(address, 16)
