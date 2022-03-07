@@ -33,8 +33,6 @@ The Emma visualiser helps you to create nice plots and reports in a `.png` and `
 The whole Emma tool suite contains command line options making it convenient to be **run on a build server** like `--Werror` (treat all warnings as errors) or `--no-prompt` (exit and fail on user prompts; user prompts can happen when ambiguous configurations appear such as multiple matches for one configured map files).
 
 ------------------------
-<!-- We use onerror to make images visible when viewing the content using GitHub Pages etc. on the other side reading the markdown file using an editor should kept intact -->
-<div align="center"> <img src="./doc/images/architecture.png" onerror="this.onerror=null;this.src='images/architecture.png';" width="100%"> </div>
 
 
 ## Installation
@@ -167,8 +165,8 @@ emma-dev (. at) googlegroups.com
 | Pandas (v0.23.4+)    | [pandas](https://pypi.org/project/pandas/)          | BSD-3-Clause                         | [https://github.com/pandas-dev/pandas/](https://github.com/pandas-dev/pandas/); [http://pandas.pydata.org/getpandas.html](http://pandas.pydata.org/getpandas.html)                           |
 | Pygments (v2.3.1+)   | [Pygments](https://pypi.org/project/Pygments/)      | BSD-2-Clause                         | [https://bitbucket.org/birkenfeld/pygments-main/src/default/](https://bitbucket.org/birkenfeld/pygments-main/src/default/); [http://pygments.org/download/](http://pygments.org/download/)   |
 | Matplotlib (v3.0.0+) | [matplotlib](https://pypi.org/project/matplotlib/)  | Matplotlib License (BSD compatible)  | [https://matplotlib.org/users/installing.html](https://matplotlib.org/users/installing.html); [https://github.com/matplotlib/matplotlib](https://github.com/matplotlib/matplotlib)           |
-| SCout (v1.8+)        | [pypiscout](https://pypi.org/project/pypiscout/)    | MIT                                  | [https://github.com/holzkohlengrill/SCout](https://github.com/holzkohlengrill/SCout)                                                                                                         |
-| Graphviz (v0.11.1+)  | [graphviz](https://pypi.org/project/graphviz/)      | MIT                                  | [https://github.com/xflr6/graphviz](https://github.com/xflr6/graphviz)                                                                                                                       |
+| SCout (v2.0+)        | [pypiscout](https://pypi.org/project/pypiscout/)    | MIT                                  | [https://github.com/holzkohlengrill/SCout](https://github.com/holzkohlengrill/SCout)                                                                                                         |
+| svgwrite (v1.4+)    | [svgwrite](https://pypi.org/project/svgwrite/)          | MIT License (MIT License)           | [https://github.com/mozman/svgwrite](https://github.com/mozman/svgwrite); [https://svgwrite.readthedocs.io/en/latest/](https://svgwrite.readthedocs.io/en/latest/)                           |
 
 
 **Optional dependencies:**
@@ -191,8 +189,8 @@ Utility scripts used to build GitHub pages documentation. As a normal user you c
 
 | Library (version)             | pip package name                                                  | Licence                              | URL                                                                                                                                                |
 |-------------------------------|-------------------------------------------------------------------|--------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| MkDocs (v1.1.2+)              | [mkdocs](https://pypi.org/project/mkdocs/)                        | BSD-3Clause                          | [https://github.com/mkdocs/mkdocs](https://github.com/mkdocs/mkdocs)                                                                               |
-| Material for MkDocs (v5.2.1+) | [mkdocs-material](https://pypi.org/project/mkdocs-material/)      | MIT                                  | [https://github.com/squidfunk/mkdocs-material](https://github.com/squidfunk/mkdocs-material)                                                       |
+| MkDocs (v1.0.4+)              | [mkdocs](https://pypi.org/project/mkdocs/)                        | BSD-3Clause                          | [https://github.com/mkdocs/mkdocs](https://github.com/mkdocs/mkdocs)                                                                               |
+| Material for MkDocs (v4.4.1+) | [mkdocs-material](https://pypi.org/project/mkdocs-material/)      | MIT                                  | [https://github.com/squidfunk/mkdocs-material](https://github.com/squidfunk/mkdocs-material)                                                       |
 
 
 

@@ -51,7 +51,7 @@ def main(arguments):
     if memoryManager.settings.createCategories or memoryManager.settings.dryRun:
         sc().info("No results were generated since categorisation or dryRun option is active.")
     else:
-        memoryManager.createReports(arguments.teamscale)
+        memoryManager.createReports(arguments.teamscale, arguments.memVis, arguments.memVisResolved, arguments.noprompt)
 
     # Stop and display time measurement
     TIME_END = timeit.default_timer()
@@ -142,17 +142,10 @@ def initParser():
         default=False
     )
     parser.add_argument(
-        "--teamscale",
-        help="Create team scale reports",
+        "--memVis",
+        help="Plot unresolved view of sections and objects for a specified address area",
         default=False,
-        action="store_true",
-    )
-
-    parser.add_argument(
-        "--dryRun",
-        help="Do not store any standard reports",
-        default=False,
-        action="store_true",
+        action="store_true"
     )
     parser.add_argument(
         "--memVisResolved",
@@ -161,6 +154,18 @@ def initParser():
         action="store_true"
     )
 
+    parser.add_argument(
+        "--teamscale",
+        help="Create team scale reports",
+        default=False,
+        action="store_true",
+    )
+    parser.add_argument(
+        "--dryRun",
+        help="Do not store any standard reports",
+        default=False,
+        action="store_true",
+    )
     return parser
 
 
@@ -209,9 +214,12 @@ def processArguments(arguments):
     noResolveOverlap = arguments.noResolveOverlap
     teamscale = arguments.teamscale
     dryRun = arguments.dryRun
+    memVis = arguments.memVis
+    memVisResolved = arguments.memVisResolved
+
     # TODO: It would be more convenient if arguments which are not modified are passed without manually modifying the code (MSc)
 
-    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamscale, dryRun
+    return projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamscale, dryRun, memVis, memVisResolved
 
 
 def runEmma():

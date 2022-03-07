@@ -43,7 +43,7 @@ class MemoryManager:
         """
         Settings that influence the operation of the MemoryManager object.
         """
-        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale, dryRun):
+        def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale, dryRun, memVis, memVisResolved):
             self.projectName = projectName
             self.configurationPath = configurationPath
             self.mapfilesPath = mapfilesPath
@@ -53,15 +53,17 @@ class MemoryManager:
             self.removeUnmatched = removeUnmatched
             self.noPrompt = noPrompt
             self.noResolveOverlap = noResolveOverlap
+            self.memVis = memVis
+            self.memVisResolved = memVisResolved
             self.teamScale = teamScale
             self.dryRun = dryRun
 
-    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale, dryRun):
+    def __init__(self, projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale, dryRun, memVis, memVisResolved):
         # pylint: disable=too-many-arguments
         # Rationale: We need to initialize the Settings, so the number of arguments are needed.
 
         # Processing the command line arguments and storing it into the settings member
-        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale, dryRun)
+        self.settings = MemoryManager.Settings(projectName, configurationPath, mapfilesPath, outputPath, analyseDebug, createCategories, removeUnmatched, noPrompt, noResolveOverlap, teamScale, dryRun, memVis, memVisResolved)
         # Check whether the configuration and the mapfiles folders exist
         Emma.shared_libs.emma_helper.checkIfFolderExists(self.settings.mapfilesPath)
         self.configuration = None           # The configuration is empty at this moment, it can be read in with another method
@@ -140,7 +142,7 @@ class MemoryManager:
         else:
             sc().error("The configuration needs to be loaded before processing the mapfiles!")
 
-    def createReports(self, teamscale=False):
+    def createReports(self, teamscale=False, memVis=False, memVisResolved=False, noprompt=False):
         """
         Creates the reports
         :param teamscale: create teamscale reports
@@ -376,6 +378,51 @@ class MemoryManager:
         if self.memoryContent is not None:
             # TODO: Implement handling and choosing of which reports to create (via cmd line argument (like a comma separated string) (MSc)
             createStandardReports()
+            svgReport = False
+            if memVis or memVisResolved:
+                svgReport = True
+            if svgReport and noprompt:
+                sc().wwarning("No prompt is active. No SVG report will be created")
+            elif svgReport and noprompt is False:
+                while True:
+                    print("Enter the start address of the region to be plotted (start with `0x` for hex; otherwise dec is assumed):")
+                    startRegion = input("> ")
+                    if startRegion.startswith("0x"):
+                        try:
+                            startRegion = int(startRegion, 16)
+                        except Exception:
+                            sc().wwarning("The input is not a valid hex number. Please enter the start and end address again: \n")
+                            continue
+                    print("Enter the end address of the region to be plotted (start with `0x` for hex; otherwise dec is assumed):")
+                    endRegion = input("> ")
+                    if endRegion.startswith("0x"):
+                        try:
+                            endRegion = int(endRegion, 16)
+                        except Exception:
+                            sc().wwarning("The input is not a valid hex number. Please enter the start and end address again: \n")
+                            continue
+                    if str(startRegion).isdigit() and str(endRegion).isdigit():
+                        startRegion = int(startRegion)
+                        endRegion = int(endRegion)
+                        # Exit while loop and continue when everything is O.K.
+                        break
+                    else:
+                        sc().wwarning("The input is not a valid dec number. Please enter the start and end address again: \n")
+                # Define scaling value of x axe.
+                print("Enter the scaling x-value. If you don't enter the valid float number, scaling value 1 will be assumed.")
+                xValue = input("> ")
+                try:
+                    float(xValue)
+                except Exception:
+                    xValue = "1"
+                # Define scaling value of y axe.
+                print("Enter the scaling y-value. If you don't enter the valid float number, scaling value 1 will be assumed.")
+                yValue = input("> ")
+                try:
+                    float(yValue)
+                except Exception:
+                    yValue = "1"
+                createSvgReport(startRegion, endRegion, xValue, yValue)
 
             # createDotReports()
             if teamscale:
