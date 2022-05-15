@@ -81,7 +81,7 @@ Example projects (including Emma* outputs/results) can be found in `./doc/test_p
 *Since version 3.1* Emma can be called in two ways (if you want to run it from the installation folder) where the following variant is recommended:
 
 ```bash
-python Emma.py a --project doc/test_project --mapfiles doc/test_project/mapfiles --noprompt
+python Emma.py a --project doc/test_project --mapfiles doc/test_project/mapfiles
 ```
 
 The following table provides an overview how you call Emma:
